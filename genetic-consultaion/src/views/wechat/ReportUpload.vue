@@ -46,6 +46,7 @@ export default {
   name: 'report-upload',
   data () {
     return {
+      userId: 0,
       name: '',
       cellphone: '',
       nameError: false,
@@ -103,8 +104,9 @@ export default {
     // 上传方法 ---待抽提成组件
     sendRequest () {
       const xmlhttp = new XMLHttpRequest()
+      const param = this.userId > 0 ? ('&userId=' + this.userId) : ''
       const serverUrl = this.axios.defaults.baseURL + '/oss/upload/policy/report' +
-        '?name=' + this.name + '&cellphone=' + this.cellphone
+        '?name=' + this.name + '&cellphone=' + this.cellphone + param
       xmlhttp.open('GET', serverUrl, false)
       xmlhttp.setRequestHeader('Authorization', window.localStorage.token)
       xmlhttp.send()
@@ -242,7 +244,7 @@ export default {
                 objectKey: up.settings.multipart_params.key
               }
               if (this.userId > 0) {
-                param.user = this.userId
+                param.userId = this.userId
               }
               if (this.$route.query.openid !== undefined) {
                 param.openId = this.$route.query.openid
@@ -287,12 +289,17 @@ export default {
             openId: this.$route.query.openid
           }
         }).then(res => {
-          this.userId = res.data.id
-          this.name = res.data.fullName
-          this.cellphone = res.data.cellphone
+          window.localStorage.userId = res.data.id
+          window.localStorage.fullName = res.data.fullName
+          window.localStorage.cellphone = res.data.cellphone
         }).catch(err => {
           console.log(err)
         })
+      }
+      this.userId = window.localStorage.userId
+      this.name = window.localStorage.fullName
+      if (window.localStorage.cellphone !== 'null' && window.localStorage.cellphone !== undefined) {
+        this.cellphone = window.localStorage.cellphone
       }
     }
   },

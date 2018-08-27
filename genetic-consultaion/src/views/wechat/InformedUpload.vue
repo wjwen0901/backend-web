@@ -71,7 +71,7 @@ export default {
       hospitalName: '',
       deptName: '',
       deptId: '',
-      doctor: window.localStorage.doctor,
+      doctor: '',
       nameError: false,
       cellphoneError: false,
       hospitalError: false,
@@ -113,9 +113,11 @@ export default {
   },
   methods: {
     toSelectHospital () {
+      this.rememberInfo()
       this.$router.push('/wechat/hospital')
     },
     toSelectDept () {
+      this.rememberInfo()
       this.$router.push('/wechat/dept')
     },
     toUpload () {
@@ -157,8 +159,9 @@ export default {
     // 上传方法 ---待抽提成组件
     sendRequest () {
       const xmlhttp = new XMLHttpRequest()
+      const param = this.userId > 0 ? ('&userId=' + this.userId) : ''
       const serverUrl = this.axios.defaults.baseURL + '/oss/upload/policy/informed' +
-        '?name=' + this.name + '&cellphone=' + this.cellphone
+        '?name=' + this.name + '&cellphone=' + this.cellphone + param
       xmlhttp.open('GET', serverUrl, false)
       xmlhttp.setRequestHeader('Authorization', window.localStorage.token)
       xmlhttp.send()
@@ -305,7 +308,7 @@ export default {
                 deptId: this.deptId
               }
               if (this.userId > 0) {
-                param.user = this.userId
+                param.userId = this.userId
               }
               if (this.$route.query.openid !== undefined) {
                 param.openId = this.$route.query.openid
@@ -344,6 +347,20 @@ export default {
       uploader.init()
       that.uploader = uploader
     },
+    rememberInfo () {
+      if (this.$route.query.hid !== undefined) {
+        window.localStorage.hospital = this.$route.query.hid
+        window.localStorage.hospitalName = this.$route.query.hname
+      }
+      if (this.$route.query.did !== undefined) {
+        window.localStorage.dept = this.$route.query.did
+        window.localStorage.deptName = this.$route.query.dname
+      }
+      window.localStorage.userId = this.userId
+      window.localStorage.fullName = this.name
+      window.localStorage.cellphone = this.cellphone
+      window.localStorage.doctor = this.doctor
+    },
     initData () {
       if (this.$route.query.hid !== undefined) {
         window.localStorage.hospital = this.$route.query.hid
@@ -353,10 +370,6 @@ export default {
         window.localStorage.dept = this.$route.query.did
         window.localStorage.deptName = this.$route.query.dname
       }
-      this.hospitalId = window.localStorage.hospital
-      this.hospitalName = window.localStorage.hospitalName
-      this.deptId = window.localStorage.dept
-      this.deptName = window.localStorage.deptName
 
       if (this.$route.query.openid !== undefined) {
         this.axios.get('user/openid', {
@@ -364,20 +377,24 @@ export default {
             openId: this.$route.query.openid
           }
         }).then(res => {
-          this.userId = res.data.id
-          this.name = res.data.fullName
-          this.cellphone = res.data.cellphone
+          window.localStorage.userId = res.data.id
+          console.log(res.data.fullName)
+          console.log(res.data.cellphone !== null)
+          window.localStorage.fullName = res.data.fullName
+          window.localStorage.cellphone = res.data.cellphone
         }).catch(err => {
           console.log(err)
         })
       }
-      if (this.userId === 0 || this.userId === undefined) {
-        this.userId = window.localStorage.userId
-      }
-      if (this.name === '' || this.name === undefined) {
-        this.name = window.localStorage.fullName
-      }
-      if (this.cellphone === '' || this.cellphone === undefined) {
+      console.log(window.localStorage.cellphone)
+      this.hospitalId = window.localStorage.hospital
+      this.hospitalName = window.localStorage.hospitalName
+      this.deptId = window.localStorage.dept
+      this.deptName = window.localStorage.deptName
+      this.doctor = window.localStorage.doctor
+      this.userId = window.localStorage.userId
+      this.name = window.localStorage.fullName
+      if (window.localStorage.cellphone !== 'null' && window.localStorage.cellphone !== undefined) {
         this.cellphone = window.localStorage.cellphone
       }
     }
