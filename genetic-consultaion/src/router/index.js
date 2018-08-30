@@ -10,7 +10,7 @@ import DeptList from '@/views/wechat/dept_list'
 import ReportDownload from '@/views/wechat/report_download'
 import ReportView from '@/views/wechat/report_view'
 import Upload from '@/components/Upload'
-import OrderList from '@/components/wechat/order_list'
+import OrderList from '@/views/wechat/order_list'
 
 // 后台管理路由
 import Dashboard from '@/views/home/dashboard/dashboard'
@@ -109,7 +109,7 @@ export default new Router({
       ]
     },
     {
-      path: '/wechat/report',
+      path: '/wechat/order',
       name: 'OrderList',
       component: OrderList,
       meta: {

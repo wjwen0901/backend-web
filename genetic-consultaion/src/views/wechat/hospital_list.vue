@@ -49,12 +49,12 @@ export default {
     chooseHospital (id, name) {
       if (parseInt(id) === 0) {
         this.axios.post('hospital', {name: name}).then(res => {
-          this.$router.push({path: '/wechat/informed/upload', query: {hid: res.data.id, hname: name}})
+          this.$router.push({path: '/wechat/informed/upload', query: {hid: res.data.id, hname: name, openid: this.$route.query.openid}})
         }).catch(err => {
           console.log(err)
         })
       } else {
-        this.$router.push({path: '/wechat/informed/upload', query: {hid: id, hname: name}})
+        this.$router.push({path: '/wechat/informed/upload', query: {hid: id, hname: name, openid: this.$route.query.openid}})
       }
     }
   },

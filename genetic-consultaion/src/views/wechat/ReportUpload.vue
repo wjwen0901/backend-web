@@ -1,16 +1,22 @@
 <template>
   <el-container>
-    <el-header>上传报告</el-header>
     <div class="mdh-mobile-form">
-      <div class="mdh-input-row">
-        <label>姓名</label>
-        <input type="text" v-model="name" placeholder="请输入姓名">
-        <span class="error-tip" v-if="nameError">姓名不可为空</span>
+      <div class="title-info" v-if="hasUserInfo">
+        欢迎您，{{readyName}}({{readyCellphone}})
+        <el-button class="update-btn" type="text" @click="updateUserInfo">更正信息</el-button>
       </div>
-      <div class="mdh-input-row">
-        <label>手机号</label>
-        <input type="text" v-model="cellphone" placeholder="请输入手机号">
-        <span class="error-tip" v-if="cellphoneError">手机号不可为空</span>
+      <div v-else>
+        <p class="form-group-title">您的信息</p>
+        <div class="mdh-input-row">
+          <label>姓名</label>
+          <input type="text" v-model="name" placeholder="请输入姓名">
+          <span class="error-tip" v-if="nameError">姓名不可为空</span>
+        </div>
+        <div class="mdh-input-row">
+          <label>电话</label>
+          <input type="text" v-model="cellphone" placeholder="请输入手机号">
+          <span class="error-tip" v-if="cellphoneError">手机号不可为空</span>
+        </div>
       </div>
       <p class="form-group-title">选择文件</p>
       <div class="upload-row">
@@ -47,6 +53,8 @@ export default {
   data () {
     return {
       userId: 0,
+      readyName: '',
+      readyCellphone: '',
       name: '',
       cellphone: '',
       nameError: false,
@@ -68,7 +76,9 @@ export default {
       now: Date.parse(new Date()) / 1000,
       uniqueKey: '',
       fileList: [],
-      uploader: {}
+      uploader: {},
+
+      hasUserInfo: false
     }
   },
   props: {
@@ -86,6 +96,9 @@ export default {
     })
   },
   methods: {
+    updateUserInfo () {
+      this.hasUserInfo = false
+    },
     toUpload () {
       if (this.name.trim() === '') {
         this.nameError = true
@@ -249,29 +262,46 @@ export default {
               if (this.$route.query.openid !== undefined) {
                 param.openId = this.$route.query.openid
               }
-              window.localStorage.fullName = this.name
-              window.localStorage.cellphone = this.cellphone
               this.axios.post('report/upload', param).then(res => {
                 this.$message({
                   message: '上传成功',
-                  type: 'success'
+                  type: 'success',
+                  center: true,
+                  customClass: 'my-message'
                 })
               }).catch(err => {
-                this.$message.error(err.data.message)
+                this.$message({
+                  message: err.data.message,
+                  type: 'error',
+                  customClass: 'my-message'
+                })
                 console.log(err)
               })
             } else {
               d.setAttribute('class', 'el-upload-list__item is-warning')
             }
+            that.uploader.splice()
           },
           Error: (up, err) => {
             console.log('上传失败：', err, that.onError, up)
             if (err.code === -600) {
-              this.$message.error('文件大小超出限制，限制大小为5GB')
+              this.$message({
+                message: '文件大小超出限制，限制大小为5GB',
+                type: 'error',
+                customClass: 'my-message'
+              })
             } else if (err.status === 403) {
-              this.$message.error('页面失效，请刷新页面后重新上传文件!')
+              this.$message({
+                message: '页面失效，请刷新页面后重新上传文件!',
+                type: 'error',
+                customClass: 'my-message'
+              })
             } else {
-              this.$message.error('上传失败，请刷新页面后重新上传文件！')
+              this.$message({
+                message: '上传失败，请刷新页面后重新上传文件！',
+                type: 'error',
+                customClass: 'my-message'
+              })
             }
             if (that.onError) {
               that.onError(err.message, up, err)
@@ -289,17 +319,18 @@ export default {
             openId: this.$route.query.openid
           }
         }).then(res => {
-          window.localStorage.userId = res.data.id
-          window.localStorage.fullName = res.data.fullName
-          window.localStorage.cellphone = res.data.cellphone
+          this.userId = res.data.id
+          this.readyName = res.data.fullName
+          this.readyCellphone = res.data.cellphone
+          this.name = res.data.fullName
+          this.cellphone = res.data.cellphone
+          if (this.readyName !== undefined && this.readyCellphone !== undefined) {
+            this.hasUserInfo = true
+            console.log(this.hasUserInfo)
+          }
         }).catch(err => {
           console.log(err)
         })
-      }
-      this.userId = window.localStorage.userId
-      this.name = window.localStorage.fullName
-      if (window.localStorage.cellphone !== 'null' && window.localStorage.cellphone !== undefined) {
-        this.cellphone = window.localStorage.cellphone
       }
     }
   },
@@ -338,6 +369,7 @@ export default {
     width: 150px;
   }
   .mdh-mobile-form {
+    width: 100%;
     margin: 0;
     padding: 0;
     .form-group-title {
@@ -363,9 +395,8 @@ export default {
     }
     input {
       height: 40px;
-      width: calc(100% - 80px);
-      padding: 0;
-      padding-left: 80px;
+      width: calc(100%);
+      padding: 0px 0px 0px 80px;
       border: 0;
       line-height: 40px;
     }
@@ -424,5 +455,20 @@ export default {
     top: 0;
     font-size: 10px;
     line-height: 40px;
+  }
+
+  .title-info {
+    padding: 5px 20px;
+    font-size: 14px;
+  }
+  .update-btn {
+    margin-left: 10px;
+    font-size: 12px;
+  }
+  .my-message {
+    width: 80%;
+    min-width: auto;
+    background-color: rgba(0, 0, 0, .6);
+    border-color: rgba(0, 0, 0, .6);
   }
 </style>
