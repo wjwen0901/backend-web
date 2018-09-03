@@ -1,6 +1,5 @@
 <template>
   <el-container>
-    <el-header>订单列表</el-header>
     <el-table
       :data="informedList"
       style="width: 100%"
