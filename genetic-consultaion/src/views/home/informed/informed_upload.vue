@@ -112,9 +112,9 @@ export default {
       informedConsent: {
         hospital: window.localStorage.hospital !== undefined ? parseInt(window.localStorage.hospital) : '',
         dept: window.localStorage.dept !== undefined ? parseInt(window.localStorage.dept) : '',
-        doctor: window.localStorage.doctor
-        // name: window.localStorage.fullName === undefined ? '' : window.localStorage.fullName,
-        // cellphone: window.localStorage.cellphone === undefined ? '' : window.localStorage.cellphone
+        doctor: window.localStorage.doctor,
+        name: window.localStorage.fullName === undefined ? '' : window.localStorage.fullName,
+        cellphone: window.localStorage.cellphone === undefined ? '' : window.localStorage.cellphone
       },
       rules: {
         // name: [

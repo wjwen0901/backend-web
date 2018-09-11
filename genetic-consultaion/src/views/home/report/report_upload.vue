@@ -2,7 +2,13 @@
   <el-container>
     <el-header>上传报告</el-header>
     <el-main class="upload-main">
-      <el-form :rules="rules" :model="report" ref="report" label-width="80px" label-position="left" size="mini">
+      <el-form :rules="rules" :model="report" ref="report" label-width="100px" label-position="left" size="mini">
+        <el-form-item label="选择客户公司" prop="report.companyName">
+          <el-input v-model="report.companyName"></el-input>
+        </el-form-item>
+        <el-form-item label="选择客户" prop="report.fullName">
+          <el-input v-model="report.fullName"></el-input>
+        </el-form-item>
         <el-form-item label="选择文件" prop="fileNum">
           <div>
             <div>
@@ -69,7 +75,7 @@ export default {
     }
     return {
       report: {
-        name: window.localStorage.fullName === undefined ? '' : window.localStorage.fullName,
+        fullName: window.localStorage.fullName === undefined ? '' : window.localStorage.fullName,
         cellphone: window.localStorage.cellphone === undefined ? '' : window.localStorage.cellphone
       },
       rules: {
@@ -83,8 +89,6 @@ export default {
           {required: true, validator: checkFileNum, trigger: 'blur'}
         ]
       },
-      hospitalList: [],
-      deptList: [],
       dialogImageUrl: '',
       dialogVisible: false,
       hospitalSelLoading: false,
@@ -107,7 +111,9 @@ export default {
       now: Date.parse(new Date()) / 1000,
       uniqueKey: '',
       fileList: [],
-      uploader: {}
+      uploader: {},
+      companyList: [],
+      deptList: []
     }
   },
   props: {
@@ -266,6 +272,8 @@ export default {
               console.log(file.mime_types)
               const param = {
                 userId: window.localStorage.userId,
+                name: this.report.fullName,
+                cellphone: this.report.cellphone,
                 fileName: file.name,
                 size: file.size,
                 mimeType: file.type,

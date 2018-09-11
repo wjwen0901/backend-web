@@ -19,6 +19,7 @@
           <span class="error-tip" v-if="cellphoneError">手机号不可为空</span>
         </div>
       </div>
+      <p class="order-no">订单编号：{{orderNo}}</p>
       <p class="form-group-title">送检信息</p>
       <div class="mdh-input-row" @click="toSelectHospital">
         <label>医院</label>
@@ -105,7 +106,8 @@ export default {
       fileList: [],
       uploader: {},
 
-      hasUserInfo: false
+      hasUserInfo: false,
+      orderNo: this.$route.query.orderNo
     }
   },
   props: {
@@ -327,6 +329,9 @@ export default {
               if (this.$route.query.openid !== undefined) {
                 param.openId = this.$route.query.openid
               }
+              if (this.$route.query.orderId !== undefined) {
+                param.orderId = this.$route.query.orderId
+              }
               window.localStorage.doctor = this.doctor
               this.axios.post('informed/upload', param).then(res => {
                 this.$message({
@@ -346,7 +351,9 @@ export default {
             } else {
               d.setAttribute('class', 'el-upload-list__item is-warning')
             }
-            that.uploader.splice()
+          },
+          UploadComplete: (up) => {
+            up.refresh()
           },
           Error: (up, err) => {
             console.log('上传失败：', err, that.onError, up)
@@ -413,7 +420,7 @@ export default {
           this.readyCellphone = res.data.cellphone
           this.name = res.data.fullName
           this.cellphone = res.data.cellphone
-          if (this.readyName !== undefined && this.readyCellphone !== undefined) {
+          if (this.readyName !== undefined && this.readyCellphone !== undefined && this.readyCellphone !== null) {
             this.hasUserInfo = true
             console.log(this.hasUserInfo)
           }
@@ -621,6 +628,12 @@ export default {
   }
   .update-btn {
     margin-left: 10px;
+    padding: 6px 0px;
+    font-size: 12px;
+    line-height: 14px;
+  }
+  .order-no {
+    padding: 0px 20px;
     font-size: 12px;
   }
 </style>

@@ -1,9 +1,13 @@
 <template>
   <div class="pdf-viewer">
     <header class="pdf-viewer__header box-shadow">
-      <div class="pdf-preview-toggle">
-        <a @click.prevent.stop="togglePreview" class="icon"><i class="el-icon-date"></i></a>
-      </div>
+      <!--<el-button type="text" @click="downloadInfo">下载</el-button>-->
+      <el-button type="success" size="mini" plain icon="el-icon-download" circle
+                 class="fl-right"
+                 @click="downloadInfo"></el-button>
+      <!--<div class="pdf-preview-toggle">-->
+        <!--<a @click.prevent.stop="togglePreview" class="icon"><i class="el-icon-date"></i></a>-->
+      <!--</div>-->
 
       <!--<PDFZoom-->
         <!--:scale="scale"-->
@@ -47,6 +51,12 @@
         @scale-change="updateScale"
         />
     </PDFData>
+    <a :href="url" id="JdownApp">点击下载APP</a>
+    <a :href="url" id="JdownApp2" class="btn-warn">点击下载APP2</a>
+    <div class="wxtip" v-if="JweixinTip" @click="hideTip">
+      <span class="wxtip-icon"></span>
+      <p class="wxtip-txt">点击右上角<br/>选择在浏览器中打开</p>
+    </div>
   </div>
 </template>
 
@@ -86,7 +96,8 @@ export default {
       fit: undefined,
       currentPage: 1,
       pageCount: undefined,
-      isPreviewEnabled: false
+      isPreviewEnabled: false,
+      JweixinTip: false
     }
   },
 
@@ -119,6 +130,24 @@ export default {
 
     togglePreview () {
       this.isPreviewEnabled = !this.isPreviewEnabled
+    },
+
+    downloadInfo () {
+      console.log('ddd')
+      let ua = navigator.userAgent
+      console.log(ua)
+      let isWeixin = !!/MicroMessenger/i.test(ua)
+      console.log(isWeixin)
+      if (isWeixin) {
+        this.JweixinTip = true
+      } else {
+        window.location.href = this.url
+        // window.open(this.url)
+      }
+    },
+
+    hideTip () {
+      this.JweixinTip = false
     }
   },
 
@@ -136,19 +165,22 @@ export default {
 <style scoped>
 header {
   display: flex;
-  justify-content: center;
+  /*justify-content: center;*/
   align-items: center;
   flex-wrap: wrap;
-  padding: 1.5em;
+  padding: 5px 5px;
   position: relative;
   z-index: 99;
   width: 100%;
-  background: #2c3e50;
+  background: #ccc;
 }
 .header-item {
   margin: 0 1em;
 }
-
+.fl-right {
+  position: absolute;
+  right: 20px;
+}
 .pdf-viewer {
   width: 100%;
 }
@@ -186,4 +218,11 @@ header {
   -webkit-box-shadow: 0 15px 30px 0 rgba(0,0,0,.11), 0 5px 15px 0 rgba(0,0,0,.08);
   box-shadow: 0 15px 30px 0 rgba(0,0,0,.11), 0 5px 15px 0 rgba(0,0,0,.08);
 }
+.wxtip{
+  background: rgba(0,0,0,0.8);
+  text-align: center;
+  position: fixed;
+  left:0; top: 0; width: 100%; height: 100%; z-index: 998;}
+.wxtip-icon{width: 52px; height: 67px; background: rgba(0,0,0,.5); display: block; position: absolute; right: 20px; top: 20px;}
+.wxtip-txt{margin-top: 107px; color: #fff; font-size: 16px; line-height: 1.5;}
 </style>

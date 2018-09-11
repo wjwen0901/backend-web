@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-table
-      :data="orderList"
+      :data="reportList"
       style="width: 100%"
       size="mini">
       <el-table-column
@@ -9,21 +9,17 @@
         <template slot-scope="scope">
           <div class="order-title">
             <div>
-              订单编号：{{scope.row.tid}}
+              受检者姓名：{{scope.row.patientName}}({{scope.row.patientCellphone}})
             </div>
             <div>
               创建时间：{{scope.row.createTime | formatDate}}
             </div>
-            <span class="status">{{scope.row.statusStr}}</span>
           </div>
           <div class="item-title">
-            {{scope.row.itemTitle}}
-            <span class="money">{{scope.row.payment}} ¥</span>
+            {{scope.row.solutionName}}
           </div>
           <div class="right-btn">
-            <el-button v-if="scope.row.reportNum>0" type="primary" size="mini" plain @click="toShowReport(scope.row.id)">查看报告</el-button>
-            <el-button v-if="scope.row.informedNum>0" type="primary" size="mini" plain @click="toShowInformed(scope.row.id, scope.row.tid)">查看知情</el-button>
-            <el-button v-if="scope.row.informedNum==0" type="primary" size="mini" plain @click="toUploadInformed(scope.row.id, scope.row.tid)">上传知情</el-button>
+            <el-button type="primary" size="mini" plain @click="toReportDetail(scope.row.id)">查看报告</el-button>
           </div>
         </template>
       </el-table-column>
@@ -32,10 +28,10 @@
 </template>
 <script>
 export default {
-  name: 'informed_list',
+  name: 'report_list',
   data () {
     return {
-      orderList: [],
+      reportList: [],
       pageNum: 1,
       pageSize: 100,
       totalPage: 0
@@ -43,12 +39,13 @@ export default {
   },
   methods: {
     getList () {
-      this.axios.get('order/page', {
+      this.axios.get('report/wechat', {
         params: {
-          openId: this.$route.query.openid
+          openid: this.$route.query.openid,
+          orderId: this.$route.query.orderId
         }
       }).then(res => {
-        this.orderList = res.data.list
+        this.reportList = res.data.list
         this.pageSize = res.data.pageSize
         this.pageNum = res.data.pageNum
         this.totalPage = res.data.total
@@ -56,14 +53,21 @@ export default {
         console.log(err)
       })
     },
-    toUploadInformed (orderId, orderNo) {
-      this.$router.push({path: '/wechat/informed/upload', query: {openid: this.$route.query.openid, orderId: orderId, orderNo: orderNo}})
-    },
-    toUploadReport (orderId, orderNo) {
-      this.$router.push({path: '/wechat/report/upload', query: {openid: this.$route.query.openid, orderId: orderId, orderNo: orderNo}})
-    },
-    toShowReport (orderId, orderNo) {
-      this.$router.push({path: '/wechat/report/list', query: {openid: this.$route.query.openid, orderId: orderId, orderNo: orderNo}})
+    toReportDetail (id) {
+      this.axios.get('report/' + id).then(res => {
+        this.report = res.data
+        this.axios.get('oss/upload/show', {
+          params: {
+            objectKey: res.data.path
+          }
+        }).then(res1 => {
+          this.$router.push({path: '/report/view/', query: {path: res1.data}})
+        }).catch(err => {
+          console.log(err)
+        })
+      }).catch(err => {
+        console.log(err)
+      })
     }
   },
   watch: {},

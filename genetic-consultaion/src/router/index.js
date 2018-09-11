@@ -11,6 +11,7 @@ import ReportDownload from '@/views/wechat/report_download'
 import ReportView from '@/views/wechat/report_view'
 import Upload from '@/components/Upload'
 import OrderList from '@/views/wechat/order_list'
+import WechatReportList from '@/views/wechat/report_list'
 
 // 后台管理路由
 import Dashboard from '@/views/home/dashboard/dashboard'
@@ -154,6 +155,14 @@ export default new Router({
       component: DeptList,
       meta: {
         title: '选择科室'
+      }
+    },
+    {
+      path: '/wechat/report/list',
+      name: 'WechatReportList',
+      component: WechatReportList,
+      meta: {
+        title: '我的报告'
       }
     },
     {

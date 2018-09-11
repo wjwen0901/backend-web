@@ -280,7 +280,9 @@ export default {
             } else {
               d.setAttribute('class', 'el-upload-list__item is-warning')
             }
-            that.uploader.splice()
+          },
+          UploadComplete: (up) => {
+            up.refresh()
           },
           Error: (up, err) => {
             console.log('上传失败：', err, that.onError, up)
