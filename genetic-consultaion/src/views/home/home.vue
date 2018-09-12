@@ -29,10 +29,9 @@
       <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
         <!--<el-menu class="el-menu-vertical-demo" router :collapse="isCollapse">-->
         <el-menu class="el-menu-vertical-demo"
-                 default-active="activeIndex"
+                 default-active="dashboard"
                  @select="handleSelect"
                  router
-                 unique-opened
                  background-color="#545c64"
                  text-color="#fff"
                  active-text-color="#ffd04b">

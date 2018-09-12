@@ -4,11 +4,42 @@
       <el-breadcrumb-item>信息复核</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="user-container">
+      <div class="search-box">
+        <el-form :inline="true" label-width="80px" label-position="left">
+          <el-form-item>
+            <el-button type="primary" @click="toSendEmail">邮件发送报告</el-button>
+          </el-form-item>
+          <el-form-item class="fl-right" label="选择公司" prop="report.companyName">
+            <el-select class="width-100-p"
+                       v-model="companyName"
+                       filterable
+                       remote
+                       reserve-keyword
+                       allow-create
+                       default-first-option
+                       placeholder="请输入关键词"
+                       :remote-method="getCompanyList"
+                       :loading="companySelLoading">
+              <el-option
+                v-for="item in companyList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+      </div>
       <el-table
         :data="reportList"
         size="mini"
         border
-        style="width: 100%">
+        style="width: 100%"
+        @selection-change="handleSelectionChange">
+        <el-table-column
+          type="selection"
+          width="55">
+        </el-table-column>
         <el-table-column
           prop="sampleCode"
           label="编号"
@@ -103,6 +134,67 @@
         <el-button type="primary" @click="reviewPass">确定匹配</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="发送报告" :visible.sync="sendEmailFormVisible">
+      <div>
+        <el-form ref="form" label-width="80px">
+          <el-form-item label="选择公司" prop="report.companyName">
+            <el-select class="width-100-p"
+                       v-model="companyName"
+                       filterable
+                       remote
+                       reserve-keyword
+                       allow-create
+                       default-first-option
+                       placeholder="请输入关键词"
+                       :remote-method="getCompanyList"
+                       :loading="companySelLoading">
+              <el-option
+                v-for="item in companyList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="接收邮箱">
+            <el-checkbox-group v-model="companyEmail">
+              <el-checkbox label="美食/餐厅线上活动" name="type"></el-checkbox>
+              <el-checkbox label="地推活动" name="type"></el-checkbox>
+              <el-checkbox label="线下主题活动" name="type"></el-checkbox>
+              <el-checkbox label="单纯品牌曝光" name="type"></el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="已选报告">
+            <el-table
+              :data="reportList"
+              size="mini"
+              border
+              style="width: 100%"
+              @selection-change="handleSelectionChange">
+              <el-table-column
+                type="selection"
+                width="55">
+              </el-table-column>
+              <el-table-column
+                prop="solutionName"
+                label="项目">
+              </el-table-column>
+              <el-table-column
+                label="受检者">
+                <template slot-scope="scope">
+                  {{scope.row.patientCellphone }}
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="sendEmail">发送</el-button>
+            <el-button @click="dialogFormVisible = false">取消</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -117,7 +209,13 @@ export default {
       totalPage: 0,
       dialogFormVisible: false,
       report: {},
-      informed: {}
+      informed: {},
+      multipleSelection: [],
+      companyName: '',
+      companyList: [],
+      companySelLoading: false,
+      sendEmailFormVisible: false,
+      companyEmail: ''
     }
   },
   methods: {
@@ -185,6 +283,23 @@ export default {
         })
         console.log(err)
       })
+    },
+    handleSelectionChange (val) {
+      this.multipleSelection = val
+      console.log(val)
+    },
+    getCompanyList () {
+      this.axios.get('report/pass').then(res => {
+        this.companyList = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    toSendEmail () {
+      this.sendEmailFormVisible = true
+    },
+    sendEmail () {
+      this.sendEmailFormVisible = false
     }
   },
   filters: {
@@ -211,6 +326,10 @@ export default {
     margin-bottom: 20px;
     font-size: 18px;
   }
+  .search-box {
+    min-height: 30px;
+    padding-bottom: 10px;
+  }
   .el-col {
     border-radius: 4px;
   }
@@ -227,5 +346,8 @@ export default {
     border-radius: 4px;
     min-height: 36px;
     padding: 10px 20px;
+  }
+  .fl-right {
+    float: right;
   }
 </style>

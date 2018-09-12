@@ -2,11 +2,27 @@
   <el-container>
     <el-header>上传报告</el-header>
     <el-main class="upload-main">
-      <el-form :rules="rules" :model="report" ref="report" label-width="100px" label-position="left" size="mini">
+      <el-form :rules="rules" :model="report" ref="report" label-width="120px" label-position="left" size="mini">
         <el-form-item label="选择客户公司" prop="report.companyName">
-          <el-input v-model="report.companyName"></el-input>
+          <el-select class="width-100-p"
+                     v-model="report.companyName"
+                     filterable
+                     remote
+                     reserve-keyword
+                     allow-create
+                     default-first-option
+                     placeholder="请输入关键词"
+                     :remote-method="getCompanyList"
+                     :loading="companySelLoading">
+            <el-option
+              v-for="item in companyList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="选择客户" prop="report.fullName">
+        <el-form-item label="选择客户" prop="report.fullName" v-if="userId == 1">
           <el-input v-model="report.fullName"></el-input>
         </el-form-item>
         <el-form-item label="选择文件" prop="fileNum">
@@ -50,22 +66,6 @@ import plupload from 'plupload'
 export default {
   name: 'report-upload',
   data () {
-    // var checkName = (rule, value, callback) => {
-    //   if (!this.report.name) {
-    //     return callback(new Error('请输入姓名'))
-    //   } else {
-    //     callback()
-    //   }
-    // }
-    // var checkCellphone = (rule, value, callback) => {
-    //   if (!this.report.cellphone) {
-    //     callback(new Error('请输入手机号码'))
-    //   } else if (!(/^1\d{10}$/.test(parseInt(this.report.cellphone)))) {
-    //     callback(new Error('请输入11位数字'))
-    //   } else {
-    //     callback()
-    //   }
-    // }
     var checkFileNum = (rule, value, callback) => {
       if (this.fileNum === 0) {
         callback(new Error('请选择文件'))
@@ -76,27 +76,21 @@ export default {
     return {
       report: {
         fullName: window.localStorage.fullName === undefined ? '' : window.localStorage.fullName,
-        cellphone: window.localStorage.cellphone === undefined ? '' : window.localStorage.cellphone
+        cellphone: window.localStorage.cellphone === undefined ? '' : window.localStorage.cellphone,
+        companyName: window.localStorage.companyName === undefined ? '' : window.localStorage.companyName
       },
       rules: {
-        // name: [
-        //   {required: true, validator: checkName, trigger: 'blur'}
-        // ],
-        // cellphone: [
-        //   {required: true, validator: checkCellphone, trigger: 'blur'}
-        // ],
         fileNum: [
           {required: true, validator: checkFileNum, trigger: 'blur'}
         ]
       },
       dialogImageUrl: '',
       dialogVisible: false,
-      hospitalSelLoading: false,
-      deptSelLoading: false,
+      companySelLoading: false,
+      userSelLoading: false,
       uploadAction: this.axios.defaults.baseURL + '/report/upload',
       uploadHeader: {'Authorization': window.localStorage.token},
       fileNum: 0,
-
       accessid: '',
       accesskey: '',
       host: '',
@@ -113,7 +107,8 @@ export default {
       fileList: [],
       uploader: {},
       companyList: [],
-      deptList: []
+      userList: [],
+      userId: window.localStorage.userId
     }
   },
   props: {
@@ -131,6 +126,9 @@ export default {
     })
   },
   methods: {
+    getCompanyList () {
+
+    },
     submitForm () {
       this.$refs.report.validate((valid) => {
         if (valid) {
