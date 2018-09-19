@@ -3,9 +3,9 @@
     <el-header>上传报告</el-header>
     <el-main class="upload-main">
       <el-form :rules="rules" :model="report" ref="report" label-width="120px" label-position="left" size="mini">
-        <el-form-item label="选择客户公司" prop="report.companyName">
+        <el-form-item label="选择客户公司">
           <el-select class="width-100-p"
-                     v-model="report.companyName"
+                     v-model="report.companyId"
                      filterable
                      remote
                      reserve-keyword
@@ -22,7 +22,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="选择客户" prop="report.fullName" v-if="userId == 1">
+        <el-form-item label="选择客户" v-if="userId == 1">
           <el-input v-model="report.fullName"></el-input>
         </el-form-item>
         <el-form-item label="选择文件" prop="fileNum">
@@ -77,7 +77,7 @@ export default {
       report: {
         fullName: window.localStorage.fullName === undefined ? '' : window.localStorage.fullName,
         cellphone: window.localStorage.cellphone === undefined ? '' : window.localStorage.cellphone,
-        companyName: window.localStorage.companyName === undefined ? '' : window.localStorage.companyName
+        companyId: window.localStorage.companyId === undefined ? '' : window.localStorage.companyId
       },
       rules: {
         fileNum: [
@@ -126,8 +126,20 @@ export default {
     })
   },
   methods: {
+    init () {
+      this.getCompanyList()
+    },
     getCompanyList () {
-
+      this.axios.get('company/CustCompany', {
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
+        this.companyList = res.data
+      }).catch(err => {
+        this.$message.error(err.data.message)
+        console.log(err)
+      })
     },
     submitForm () {
       this.$refs.report.validate((valid) => {
@@ -277,7 +289,8 @@ export default {
                 mimeType: file.type,
                 uniqueKey: up.settings.multipart_params.uniqueKey,
                 filePath: up.settings.multipart_params.key,
-                objectKey: up.settings.multipart_params.key
+                objectKey: up.settings.multipart_params.key,
+                companyId: this.report.companyId
               }
               this.axios.post('report/upload', param).then(res => {
                 this.$message({
@@ -310,6 +323,9 @@ export default {
       uploader.init()
       that.uploader = uploader
     }
+  },
+  created () {
+    this.init()
   },
   filters: {
     formatSize (fileSize) {

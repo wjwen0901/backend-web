@@ -99,7 +99,11 @@ export default {
   methods: {
     logout () {
       window.localStorage.clear()
-      window.location.href = 'https://z.mdhcare.cn/login.html'
+      if (this.axios.defaults.baseURL.includes('qa.mdhcare.cn')) {
+        window.location.href = 'http://qa.mdhcare.cn/website/login.html'
+      } else {
+        window.location.href = 'https://z.mdhcare.cn/login.html'
+      }
     },
     handleSelect (key, keyPath) {
       this.activeIndex = key

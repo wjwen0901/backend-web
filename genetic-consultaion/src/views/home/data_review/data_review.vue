@@ -7,17 +7,18 @@
       <div class="search-box">
         <el-form :inline="true" label-width="80px" label-position="left">
           <el-form-item>
-            <el-button type="primary" @click="toSendEmail">邮件发送报告</el-button>
+            <el-button type="primary" @click="toSendEmail" :disabled="this.multipleSelection.length == 0">邮件发送报告</el-button>
           </el-form-item>
-          <el-form-item class="fl-right" label="选择公司" prop="report.companyName">
+          <el-form-item class="fl-right" label="选择公司">
             <el-select class="width-100-p"
-                       v-model="companyName"
+                       v-model="companyId"
                        filterable
                        remote
                        reserve-keyword
                        allow-create
                        default-first-option
                        placeholder="请输入关键词"
+                       @change="getData"
                        :remote-method="getCompanyList"
                        :loading="companySelLoading">
               <el-option
@@ -138,9 +139,9 @@
     <el-dialog title="发送报告" :visible.sync="sendEmailFormVisible">
       <div>
         <el-form ref="form" label-width="80px">
-          <el-form-item label="选择公司" prop="report.companyName">
+          <el-form-item label="选择公司">
             <el-select class="width-100-p"
-                       v-model="companyName"
+                       v-model="companyId"
                        filterable
                        remote
                        reserve-keyword
@@ -159,38 +160,36 @@
           </el-form-item>
           <el-form-item label="接收邮箱">
             <el-checkbox-group v-model="companyEmail">
-              <el-checkbox label="美食/餐厅线上活动" name="type"></el-checkbox>
-              <el-checkbox label="地推活动" name="type"></el-checkbox>
-              <el-checkbox label="线下主题活动" name="type"></el-checkbox>
-              <el-checkbox label="单纯品牌曝光" name="type"></el-checkbox>
+              <el-checkbox v-for="email in emailList" :label="email.address" :key="email.id" checked></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="已选报告">
             <el-table
-              :data="reportList"
+              :data="multipleSelection"
               size="mini"
               border
               style="width: 100%"
               @selection-change="handleSelectionChange">
               <el-table-column
-                type="selection"
-                width="55">
+                prop="sampleCode"
+                label="编号"
+                width="120">
               </el-table-column>
-              <el-table-column
-                prop="solutionName"
-                label="项目">
-              </el-table-column>
+              <!--<el-table-column-->
+                <!--prop="solutionName"-->
+                <!--label="项目">-->
+              <!--</el-table-column>-->
               <el-table-column
                 label="受检者">
                 <template slot-scope="scope">
-                  {{scope.row.patientCellphone }}
+                  {{scope.row.patientName }}({{scope.row.patientCellphone }})
                 </template>
               </el-table-column>
             </el-table>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="sendEmail">发送</el-button>
-            <el-button @click="dialogFormVisible = false">取消</el-button>
+            <el-button @click="sendEmailFormVisible = false">取消</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -211,21 +210,25 @@ export default {
       report: {},
       informed: {},
       multipleSelection: [],
-      companyName: '',
+      reportIds: [],
+      companyId: '',
       companyList: [],
       companySelLoading: false,
       sendEmailFormVisible: false,
-      companyEmail: ''
+      companyEmail: [],
+      emailList: []
     }
   },
   methods: {
     _initData () {
       this.getData()
+      this.getCompanyList()
     },
     getData () {
       this.axios.get('report/recheck', {
         params: {
           userId: window.localStorage.userId,
+          companyId: this.companyId,
           pageNum: this.pageNum,
           pageSize: this.pageSize
         }
@@ -235,6 +238,18 @@ export default {
         this.pageNum = res.data.pageNum
         this.totalPage = res.data.total
       }).catch(err => {
+        console.log(err)
+      })
+    },
+    getCompanyList () {
+      this.axios.get('company/CustCompany', {
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
+        this.companyList = res.data
+      }).catch(err => {
+        this.$message.error(err.data.message)
         console.log(err)
       })
     },
@@ -286,20 +301,58 @@ export default {
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
-      console.log(val)
-    },
-    getCompanyList () {
-      this.axios.get('report/pass').then(res => {
-        this.companyList = res.data
-      }).catch(err => {
-        console.log(err)
-      })
+      let that = this
+      if (this.multipleSelection.length > 0) {
+        that.reportIds = []
+        this.multipleSelection.forEach(function (item) {
+          that.reportIds.push(item.id)
+        })
+      }
+      console.log(that.reportIds)
     },
     toSendEmail () {
-      this.sendEmailFormVisible = true
+      if (this.multipleSelection.length > 0) {
+        this.sendEmailFormVisible = true
+        this.axios.get('email/address', {
+          params: {
+            companyId: this.companyId
+          }
+        }).then(res => {
+          this.emailList = res.data
+        }).catch(err => {
+          console.log(err)
+        })
+      }
     },
     sendEmail () {
-      this.sendEmailFormVisible = false
+      const params = {
+        companyId: this.companyId,
+        reportIds: this.reportIds,
+        emailAddress: this.companyEmail
+      }
+      const instance = this.axios.create({
+        headers: {
+          'Authorization': window.localStorage.token,
+          'Content-Type': 'application/json'
+        }
+      })
+      let _this = this
+      instance({
+        method: 'post',
+        url: 'email/send',
+        data: params,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Content-Type': 'application/json'
+        }
+      }).then(function (response) {
+        _this.$message({
+          message: '发送成功',
+          type: 'success'
+        })
+        _this._initData()
+        _this.sendEmailFormVisible = false
+      })
     }
   },
   filters: {
