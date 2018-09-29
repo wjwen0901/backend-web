@@ -3,6 +3,12 @@
     <el-header>上传报告</el-header>
     <el-main class="upload-main">
       <el-form :rules="rules" :model="report" ref="report" label-width="120px" label-position="left" size="mini">
+        <el-form-item label="订单编号" v-if="order.id !== undefined">
+          {{order.tid}}
+        </el-form-item>
+        <el-form-item label="检测项目" v-if="order.id !== undefined">
+          {{order.itemTitle}}
+        </el-form-item>
         <el-form-item label="选择客户公司">
           <el-select class="width-100-p"
                      v-model="report.companyId"
@@ -22,9 +28,9 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="选择客户" v-if="userId == 1">
-          <el-input v-model="report.fullName"></el-input>
-        </el-form-item>
+        <!--<el-form-item label="选择客户" v-if="userId == 1">-->
+          <!--<el-input v-model="report.fullName"></el-input>-->
+        <!--</el-form-item>-->
         <el-form-item label="选择文件" prop="fileNum">
           <div>
             <div>
@@ -108,7 +114,8 @@ export default {
       uploader: {},
       companyList: [],
       userList: [],
-      userId: window.localStorage.userId
+      userId: window.localStorage.userId,
+      order: {}
     }
   },
   props: {
@@ -128,6 +135,16 @@ export default {
   methods: {
     init () {
       this.getCompanyList()
+      if (this.$route.query.orderId !== undefined) {
+        this.getOrder()
+      }
+    },
+    getOrder () {
+      this.axios.get('order/' + this.$route.query.orderId).then(res => {
+        this.order = res.data
+      }).catch(err => {
+        console.log(err)
+      })
     },
     getCompanyList () {
       this.axios.get('company/CustCompany', {
@@ -290,7 +307,8 @@ export default {
                 uniqueKey: up.settings.multipart_params.uniqueKey,
                 filePath: up.settings.multipart_params.key,
                 objectKey: up.settings.multipart_params.key,
-                companyId: this.report.companyId
+                companyId: this.report.companyId,
+                orderId: this.$route.query.orderId
               }
               this.axios.post('report/upload', param).then(res => {
                 this.$message({

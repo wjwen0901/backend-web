@@ -1,28 +1,26 @@
 <template>
   <div class="pdf-zoom">
-    <a v-on:click.stop.prevent="zoomIn" class="icon" :disabled="isDisabled">
-      <i class="el-icon-zoom-in"></i>
-    </a>
-    <a v-on:click.stop.prevent="zoomOut" class="icon" :disabled="isDisabled"><i class="el-icon-zoom-out"></i></a>
-    <a v-on:click.stop.prevent="fitWidth" class="icon" :disabled="isDisabled"><i class="el-icon-plus"></i></a>
-    <a v-on:click.stop.prevent="fitAuto" class="icon" :disabled="isDisabled"><i class="el-icon-minus"></i></a>
+    <a @click.prevent.stop="zoomIn" class="icon" :disabled="isDisabled"><ZoomInIcon /></a>
+    <a @click.prevent.stop="zoomOut" class="icon" :disabled="isDisabled"><ZoomOutIcon /></a>
+    <a @click.prevent.stop="fitWidth" class="icon" :disabled="isDisabled"><ExpandIcon /></a>
+    <a @click.prevent.stop="fitAuto" class="icon" :disabled="isDisabled"><ShrinkIcon /></a>
   </div>
 </template>
 
 <script>
-// import ZoomInIcon from '../assets/icon-zoom-in.svg'
-// import ZoomOutIcon from '../assets/icon-zoom-out.svg'
-// import ExpandIcon from '../assets/icon-expand.svg'
-// import ShrinkIcon from '../assets/icon-shrink.svg'
+import ZoomInIcon from '../assets/icon-zoom-in.svg'
+import ZoomOutIcon from '../assets/icon-zoom-out.svg'
+import ExpandIcon from '../assets/icon-expand.svg'
+import ShrinkIcon from '../assets/icon-shrink.svg'
 
 export default {
   name: 'PDFZoom',
 
   components: {
-    // ZoomInIcon,
-    // ZoomOutIcon,
-    // ExpandIcon,
-    // ShrinkIcon
+    ZoomInIcon,
+    ZoomOutIcon,
+    ExpandIcon,
+    ShrinkIcon
   },
 
   props: {

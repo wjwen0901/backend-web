@@ -7,7 +7,8 @@
     <div class="user-container">
       <el-tabs v-model="activeName" class="tab-list" type="card" @tab-click="handleClick">
         <el-tab-pane label="业务代表" name="business-agent"></el-tab-pane>
-        <el-tab-pane label="厂商客服" name="firm-service" v-if="roleCode === 'manager'"></el-tab-pane>
+        <el-tab-pane label="渠道商" name="channel" v-if="roleCode === 'manager'"></el-tab-pane>
+        <el-tab-pane label="实验室客服" name="firm-service" v-if="roleCode === 'manager'"></el-tab-pane>
         <el-tab-pane label="“见康”客服" name="jk-service" v-if="roleCode === 'manager'"></el-tab-pane>
         <el-tab-pane label="医生" name="doctor" v-if="roleCode === 'manager'"></el-tab-pane>
         <el-tab-pane label="患者" name="patient" v-if="roleCode === 'manager'"></el-tab-pane>

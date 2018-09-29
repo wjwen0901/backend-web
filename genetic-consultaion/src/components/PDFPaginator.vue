@@ -42,7 +42,7 @@ export default {
   font-weight: bold;
 }
 .pdf-paginator input {
-  width: 1em;
-  padding: 0.2em;
+  width: 2em;
+  padding: 0.3em;
 }
 </style>

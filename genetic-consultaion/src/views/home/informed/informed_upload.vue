@@ -3,6 +3,12 @@
     <el-header>上传知情同意</el-header>
     <el-main class="upload-main">
       <el-form :rules="rules" :model="informedConsent" ref="informedConsent" label-width="100px" label-position="left" size="mini">
+        <el-form-item label="订单编号" v-if="order.id !== undefined">
+          {{order.tid}}
+        </el-form-item>
+        <el-form-item label="检测项目" v-if="order.id !== undefined">
+          {{order.itemTitle}}
+        </el-form-item>
         <el-form-item label="送检医院" prop="hospital">
           <el-select class="width-100-p"
             v-model="informedConsent.hospital"
@@ -145,7 +151,6 @@ export default {
       showProgress: false,
 
       accessid: '',
-      accesskey: '',
       host: '',
       policyBase64: '',
       signature: '',
@@ -158,7 +163,8 @@ export default {
       now: Date.parse(new Date()) / 1000,
       uniqueKey: '',
       fileList: [],
-      uploader: {}
+      uploader: {},
+      order: {}
     }
   },
   props: {
@@ -378,7 +384,8 @@ export default {
                 mimeType: file.type,
                 uniqueKey: up.settings.multipart_params.uniqueKey,
                 filePath: up.settings.multipart_params.key,
-                objectKey: up.settings.multipart_params.key
+                objectKey: up.settings.multipart_params.key,
+                orderId: this.$route.query.orderId
               }
               if (isNaN(parseInt(this.informedConsent.hospital))) {
                 window.localStorage.hospitalName = this.informedConsent.hospital
@@ -448,9 +455,19 @@ export default {
       uploader.init()
       that.uploader = uploader
     },
+    getOrder () {
+      this.axios.get('order/' + this.$route.query.orderId).then(res => {
+        this.order = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     initData () {
       this.getHospitalList()
       this.getDeptList()
+      if (this.$route.query.orderId !== undefined) {
+        this.getOrder()
+      }
     }
   },
   created () {

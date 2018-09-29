@@ -42,14 +42,17 @@ export default {
       const {width: actualSizeWidth, height: actualSizeHeight} = this.actualSizeViewport
       const [pixelWidth, pixelHeight] = [actualSizeWidth, actualSizeHeight]
         .map(dim => Math.ceil(dim / PIXEL_RATIO))
-      return `width: ${pixelWidth}px height: ${pixelHeight}px`
+      return `width: ${pixelWidth}px; height: ${pixelHeight}px`
     },
 
     canvasAttrs () {
-      let {width, height} = this.viewport;
-      [width, height] = [width, height].map(dim => Math.ceil(dim))
+      let info = {}
+      info = this.viewport
+      let width = Math.ceil(info.width)
+      let height = Math.ceil(info.height)
+      // let {width, height} = this.viewport
+      // [width, height] = [width, height].map(dim => Math.ceil(dim))
       const style = this.canvasStyle
-
       return {
         width,
         height,

@@ -12,6 +12,7 @@ import ReportView from '@/views/wechat/report_view'
 import Upload from '@/components/Upload'
 import OrderList from '@/views/wechat/order_list'
 import WechatReportList from '@/views/wechat/report_list'
+import WechatInformedList from '@/views/wechat/informed_list'
 
 // 后台管理路由
 import Dashboard from '@/views/home/dashboard/dashboard'
@@ -30,6 +31,10 @@ import ReportEdit from '@/views/home/data_collect/report_edit'
 import DataReview from '@/views/home/data_review/data_review'
 
 import BarcodeUserList from '@/views/home/channel/list'
+
+import Order from '@/views/home/order/order'
+import OrderDetail from '@/views/home/order/detail'
+import CustomerList from '@/views/home/customer/list'
 
 Vue.use(Router)
 
@@ -106,6 +111,21 @@ export default new Router({
           path: '/review',
           name: 'DataReview',
           component: DataReview
+        },
+        {
+          path: '/order',
+          name: 'Order',
+          component: Order
+        },
+        {
+          path: '/order/:id',
+          name: 'OrderDetail',
+          component: OrderDetail
+        },
+        {
+          path: '/customer',
+          name: 'CustomerList',
+          component: CustomerList
         }
       ]
     },
@@ -155,6 +175,14 @@ export default new Router({
       component: DeptList,
       meta: {
         title: '选择科室'
+      }
+    },
+    {
+      path: '/wechat/informed/list',
+      name: 'WechatInformedList',
+      component: WechatInformedList,
+      meta: {
+        title: '我的知情'
       }
     },
     {

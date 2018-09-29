@@ -24,14 +24,14 @@
 export default {
   name: 'report-download',
   data () {
-    var checkName = (rule, value, callback) => {
+    const checkName = (rule, value, callback) => {
       if (!this.informedConsent.name) {
         return callback(new Error('请输入姓名'))
       } else {
         callback()
       }
     }
-    var checkCellphone = (rule, value, callback) => {
+    const checkCellphone = (rule, value, callback) => {
       if (!this.informedConsent.cellphone) {
         callback(new Error('请输入手机号码'))
       } else if (!(/^1\d{10}$/.test(parseInt(this.informedConsent.cellphone)))) {
@@ -40,11 +40,9 @@ export default {
         callback()
       }
     }
-    var checkIdcode = (rule, value, callback) => {
+    const checkIdcode = (rule, value, callback) => {
       if (!this.informedConsent.idCode) {
         callback(new Error('请输入身份证后四位'))
-      } else if (!(/^\d{4}$/.test(parseInt(this.informedConsent.idCode)))) {
-        callback(new Error('请输入4位数字'))
       } else {
         callback()
       }
@@ -81,30 +79,30 @@ export default {
         this.$router.push({path: '/report/view/', query: {path: res.data}})
       }).catch(err => {
         console.log(err)
-        if (err.status === 'userError') {
-          this.$alert('暂未查询到您的检测信息，请检查是否输入正确', '温馨提示', {
-            confirmButtonText: '确定',
-            callback: action => {
-              this.$message({
-                type: 'info',
-                message: `action: ${action}`
-              })
-            }
-          })
-        }
-        if (err.status === 'reportError') {
-          this.$alert('您的检测正在实验中，报告生成我们会推送到您的微信，请耐心等待', '温馨提示', {
-            confirmButtonText: '确定',
-            callback: action => {
-              this.$message({
-                type: 'info',
-                message: `action: ${action}`,
-                customClass: 'confirm-message'
-              })
-            }
-          })
-        }
-        console.log(err)
+        // if (err.status === 'userError') {
+        this.$alert('暂未查询到您的检测信息，如有报告生成我们会推送到您的微信', '温馨提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            // this.$message({
+            //   type: 'info',
+            //   message: `action: ${action}`
+            // })
+          }
+        })
+        // }
+        // if (err.status === 'reportError') {
+        //   this.$alert('您的检测正在实验中，报告生成我们会推送到您的微信，请耐心等待', '温馨提示', {
+        //     confirmButtonText: '确定',
+        //     callback: action => {
+        //       this.$message({
+        //         type: 'info',
+        //         message: `action: ${action}`,
+        //         customClass: 'confirm-message'
+        //       })
+        //     }
+        //   })
+        // }
+        // console.log(err)
       })
     }
   }

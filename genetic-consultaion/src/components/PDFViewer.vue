@@ -1,28 +1,27 @@
 <template>
   <div class="pdf-viewer">
     <header class="pdf-viewer__header box-shadow">
-      <!--<el-button type="text" @click="downloadInfo">下载</el-button>-->
-      <el-button type="success" size="mini" plain icon="el-icon-download" circle
-                 class="fl-right"
-                 @click="downloadInfo"></el-button>
-      <!--<div class="pdf-preview-toggle">-->
-        <!--<a @click.prevent.stop="togglePreview" class="icon"><i class="el-icon-date"></i></a>-->
-      <!--</div>-->
+      <div class="pdf-preview-toggle">
+        <a @click.prevent.stop="togglePreview" class="icon"><PreviewIcon /></a>
+      </div>
 
-      <!--<PDFZoom-->
-        <!--:scale="scale"-->
-        <!--@change="updateScale"-->
-        <!--@fit="updateFit"-->
-        <!--class="header-item"-->
-        <!--/>-->
+      <PDFZoom
+        :scale="scale"
+        @change="updateScale"
+        @fit="updateFit"
+        class="header-item"
+        />
 
       <PDFPaginator
         v-model="currentPage"
         :pageCount="pageCount"
         class="header-item"
         />
-
-      <!--<slot name="header"></slot>-->
+      <div class="pdf-preview-toggle pdf-download">
+        <!--<a @click.prevent.stop="toggleDownload" class="icon" :href="url" download><DownloadIcon /></a>-->
+        <a @click="toggleDownload" class="icon" :href="url" download><DownloadIcon /></a>
+      </div>
+      <slot name="header"></slot>
     </header>
 
     <PDFData
@@ -51,17 +50,21 @@
         @scale-change="updateScale"
         />
     </PDFData>
-    <a :href="url" id="JdownApp">点击下载APP</a>
-    <a :href="url" id="JdownApp2" class="btn-warn">点击下载APP2</a>
-    <div class="wxtip" v-if="JweixinTip" @click="hideTip">
-      <span class="wxtip-icon"></span>
-      <p class="wxtip-txt">点击右上角<br/>选择在浏览器中打开</p>
+    <div class="wechat-download-tips" v-if="isWechat">
+      <!--<WechatArrowPng/>-->
+      <img src="../assets/wechat-arrow.png" class="tips-arrow">
+      <div>
+        <p>点击右上角</p>
+        <p>选择在浏览器中打开</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-// import PreviewIcon from '../assets/icon-preview.svg'
+import PreviewIcon from '../assets/icon-preview.svg'
+import DownloadIcon from '../assets/icon-download.svg'
+// import WechatArrowPng from '../assets/wechat-arrow.png'
 
 import PDFDocument from './PDFDocument'
 import PDFData from './PDFData'
@@ -82,7 +85,10 @@ export default {
     PDFData,
     PDFPaginator,
     PDFPreview,
-    PDFZoom
+    PDFZoom,
+    PreviewIcon,
+    DownloadIcon
+    // WechatArrowPng
   },
 
   props: {
@@ -97,7 +103,7 @@ export default {
       currentPage: 1,
       pageCount: undefined,
       isPreviewEnabled: false,
-      JweixinTip: false
+      isWechat: false
     }
   },
 
@@ -132,22 +138,11 @@ export default {
       this.isPreviewEnabled = !this.isPreviewEnabled
     },
 
-    downloadInfo () {
-      console.log('ddd')
-      let ua = navigator.userAgent
-      console.log(ua)
-      let isWeixin = !!/MicroMessenger/i.test(ua)
-      console.log(isWeixin)
-      if (isWeixin) {
-        this.JweixinTip = true
-      } else {
-        window.location.href = this.url
-        // window.open(this.url)
+    toggleDownload () {
+      let ua = navigator.userAgent.toLowerCase()
+      if (ua.match(/MicroMessenger/i) === 'micromessenger') {
+        this.isWechat = true
       }
-    },
-
-    hideTip () {
-      this.JweixinTip = false
     }
   },
 
@@ -156,6 +151,7 @@ export default {
       this.currentPage = undefined
     }
   },
+
   mounted () {
     document.body.classList.add('overflow-hidden')
   }
@@ -165,28 +161,20 @@ export default {
 <style scoped>
 header {
   display: flex;
-  /*justify-content: center;*/
+  justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  padding: 5px 5px;
+  padding: 8px 20px;
   position: relative;
   z-index: 99;
-  width: 100%;
-  background: #ccc;
 }
 .header-item {
-  margin: 0 1em;
+  margin-left: 1.2em;
 }
-.fl-right {
-  position: absolute;
-  right: 20px;
-}
-.pdf-viewer {
-  width: 100%;
-}
+
 .pdf-viewer .pdf-viewer__document,
 .pdf-viewer .pdf-viewer__preview {
-  top: 70px;
+  top: 42px;
 }
 
 .pdf-viewer__preview {
@@ -205,24 +193,43 @@ header {
   width: 85%;
   left: 15%;
 }
-.pdf-preview-toggle {
-  background: #ffffff;
-  padding: 2px;
+.pdf-preview-toggle a {
+  float: left;
+  cursor: pointer;
+  display: block;
+  border: 1px #333 solid;
+  background: white;
+  color: #333;
+  font-weight: bold;
+  line-height: 1.2em;
+  width: 1.2em;
+  height: 1.2em;
+  font-size: 1.2em;
+}
+.pdf-download {
+  padding-left: 1.2em;
+}
+.wechat-download-tips {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, .8);
+  z-index: 999;
+  padding-top:100px;
+  text-align: center;
+  color: #fff;
+  line-height: 1em;
+}
+.tips-arrow {
+  position: absolute;
+  top: -10px;
+  right: -20px;
+  width: 100px;
 }
 @media print {
   header {
     display: none;
   }
 }
-.box-shadow {
-  -webkit-box-shadow: 0 15px 30px 0 rgba(0,0,0,.11), 0 5px 15px 0 rgba(0,0,0,.08);
-  box-shadow: 0 15px 30px 0 rgba(0,0,0,.11), 0 5px 15px 0 rgba(0,0,0,.08);
-}
-.wxtip{
-  background: rgba(0,0,0,0.8);
-  text-align: center;
-  position: fixed;
-  left:0; top: 0; width: 100%; height: 100%; z-index: 998;}
-.wxtip-icon{width: 52px; height: 67px; background: rgba(0,0,0,.5); display: block; position: absolute; right: 20px; top: 20px;}
-.wxtip-txt{margin-top: 107px; color: #fff; font-size: 16px; line-height: 1.5;}
 </style>

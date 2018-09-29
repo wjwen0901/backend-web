@@ -61,7 +61,7 @@ export default {
             objectKey: res.data.path
           }
         }).then(res1 => {
-          this.$router.push({path: '/report/view/', query: {path: res1.data}})
+          this.$router.push({path: '/wechat/report/view/', query: {path: res1.data}})
         }).catch(err => {
           console.log(err)
         })

@@ -12,13 +12,17 @@
       @document-errored="onDocumentErrored"
       v-if="url.includes('.pdf')"
     >
-      <PDFUploader
-        v-if="enableUploader"
-        :documentError="documentError"
-        @updated="urlUpdated"
-        slot="header"
-        class="header-item"
-      />
+    <!--<PDFViewer-->
+      <!--v-bind="{url}"-->
+      <!--@document-errored="onDocumentErrored"-->
+    <!--&gt;-->
+      <!--<PDFUploader-->
+        <!--v-if="enableUploader"-->
+        <!--:documentError="documentError"-->
+        <!--@updated="urlUpdated"-->
+        <!--slot="header"-->
+        <!--class="header-item"-->
+      <!--/>-->
     </PDFViewer>
     <img :src="url" class="img-report" v-else>
   </el-container>
@@ -35,6 +39,7 @@ export default {
   },
   data () {
     return {
+      // url: 'http://localhost:3100/static/%E5%8C%BB%E5%AD%A6%E6%A3%80%E6%B5%8B%E4%BA%A7%E5%93%81-%E5%AE%A3%E4%BC%A0%E5%86%8C-%E5%8D%95%E9%A1%B5-%E5%8D%B0%E5%88%B7.pdf',
       url: '',
       documentError: undefined,
       enableUploader: 'true'
@@ -61,28 +66,28 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-  .el-container {
-    background: #fff;
-    height: 100%;
-  }
-  .el-main {
-    background: #f2f2f2;
-  }
-  .img-report {
-    width: fit-content;
-    height: fit-content;
-  }
-  body {
-    margin: 0;
-    padding: 0;
-    background-color: #606f7b;
-  }
-  #app {
+  /*body {*/
+    /*margin: 0;*/
+    /*padding: 0;*/
+    /*background-color: #606f7b;*/
+  /*}*/
+  .el-container, #app {
+    /*background: #fff;*/
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #62637a;
+    margin: 0;
+    padding: 0;
+    background-color: #606f7b;
+  }
+  .img-report {
+    width: 100%;
+    height: auto;
+  }
+  .header-item {
+    margin: 0 2.5em;
   }
   .pdf-content {
     width: 100%;
@@ -130,7 +135,7 @@ export default {
     body {
       background-color: transparent;
     }
-    #app {
+    #el-container {
       margin: 0;
       padding: 0;
     }

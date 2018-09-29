@@ -92,7 +92,8 @@ export default {
             page: this.page,
             text: `Rendered thumbnail ${this.pageNumber}`
           })
-        }).catch(response => {
+        })
+        .catch(response => {
           this.destroyRenderTask()
           this.$emit('thumbnail-errored', {
             response,
@@ -102,7 +103,7 @@ export default {
         })
     },
 
-    destroyPage (_newPage, page) {
+    destroyPag (_newPage, page) {
       // PDFPageProxy#_destroy
       // https://mozilla.github.io/pdf.js/api/draft/PDFPageProxy.html
       if (page) page._destroy()

@@ -52,6 +52,7 @@ export default {
       default: true
     }
   },
+
   data () {
     return {
       focusedPage: undefined,

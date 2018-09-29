@@ -26,10 +26,11 @@
       </el-row>
     </el-header>
     <el-container>
-      <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+      <el-aside width="180px" style="background-color: rgb(238, 241, 246)">
         <!--<el-menu class="el-menu-vertical-demo" router :collapse="isCollapse">-->
         <el-menu class="el-menu-vertical-demo"
                  default-active="dashboard"
+                 :default-openeds="openMenu"
                  @select="handleSelect"
                  router
                  background-color="#545c64"
@@ -41,6 +42,13 @@
               <span slot="title">首页</span>
             </template>
           </el-menu-item>
+          <el-submenu index="fly" v-if="sec.includes('upload')">
+            <template slot="title"><i class="el-icon-upload"></i><span slot="title">元鹊管理</span></template>
+            <el-menu-item-group>
+              <el-menu-item index="/order" v-if="sec.includes('upload:informed')">订单管理</el-menu-item>
+              <el-menu-item index="/customer" v-if="sec.includes('upload:report')">客户管理</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
           <el-submenu index="upload" v-if="sec.includes('upload')">
             <template slot="title"><i class="el-icon-upload"></i><span slot="title">文件上传</span></template>
             <el-menu-item-group>
@@ -68,7 +76,7 @@
               <el-menu-item index="/channel/count">统计</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="3" v-if="sec.includes('system')">
+          <el-submenu index="system" v-if="sec.includes('system')">
             <template slot="title"><i class="el-icon-setting"></i><span slot="title">系统管理</span></template>
             <el-menu-item-group>
               <!--<template slot="title">用户信息</template>-->
@@ -93,7 +101,8 @@ export default {
     return {
       username: window.localStorage.username,
       sec: window.localStorage.sec,
-      activeIndex: '/dashboard'
+      activeIndex: '/dashboard',
+      openMenu: ['fly', 'upload', 'info', 'chann', 'system']
     }
   },
   methods: {
@@ -115,6 +124,7 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
   .home-container {
     min-height: 100%;
+    min-width: 1200px;
   }
   .el-header {
     background-color: #00c2a9;
