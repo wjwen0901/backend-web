@@ -24,7 +24,7 @@
         <!--class="header-item"-->
       <!--/>-->
     </PDFViewer>
-    <img :src="url" class="img-report" v-else>
+    <img v-else :src="url" class="img-report">
   </el-container>
 </template>
 
@@ -47,9 +47,11 @@ export default {
   },
   methods: {
     initData () {
+      console.log(this.$route.query.path)
       this.url = this.axios.defaults.baseURL.includes('https://')
         ? this.$route.query.path.replace('http://', 'https://') : this.$route.query.path
       // this.url = this.$route.query.path
+      console.log(this.url)
     },
     urlUpdated (url) {
       this.documentError = undefined
@@ -84,7 +86,7 @@ export default {
   }
   .img-report {
     width: 100%;
-    height: auto;
+    height: -webkit-fill-available;
   }
   .header-item {
     margin: 0 2.5em;
