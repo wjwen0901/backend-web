@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="24">
         <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item>信息提取</el-breadcrumb-item>
+          <el-breadcrumb-item>报告管理</el-breadcrumb-item>
           <el-breadcrumb-item :to="{ path: '/report/list' }">报告</el-breadcrumb-item>
           <el-breadcrumb-item>编辑</el-breadcrumb-item>
         </el-breadcrumb>

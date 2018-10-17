@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/' }">信息提取</el-breadcrumb-item>
+      <el-breadcrumb-item>报告管理</el-breadcrumb-item>
       <el-breadcrumb-item>报告列表</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="user-container">
