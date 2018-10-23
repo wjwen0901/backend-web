@@ -1,8 +1,8 @@
 <template>
-  <el-container>
+  <el-container class="report-download">
     <div v-if="CustomizedKey === '11d67f337e411b48e6d8cd0d0ad67a35'" class="nick">
       <div>
-        <h4 class="c-logo">奥格妮克</h4>
+        <h4 class="c-logo">奥格妮克健康管理中心</h4>
         <div class="c-header">个人检测报告</div>
         <el-form :rules="rules" :model="informedConsent" ref="informedConsent" label-width="0px" label-position="left">
           <el-form-item prop="name">
@@ -13,10 +13,10 @@
             <input type="text" class="nick-input" v-model="informedConsent.cellphone" placeholder="请输入手机号"/>
             <!--<el-input class="nick-input" v-model="informedConsent.cellphone" placeholder="请输入手机号"></el-input>-->
           </el-form-item>
-          <el-form-item prop="idCode">
-            <input type="text" class="nick-input" v-model="informedConsent.idCode" placeholder="请输入身份证后4位"/>
-            <!--<el-input class="nick-input" v-model="informedConsent.idCode" placeholder="请输入身份证后四位"></el-input>-->
-          </el-form-item>
+          <!--<el-form-item prop="idCode">-->
+            <!--<input type="text" class="nick-input" v-model="informedConsent.idCode" placeholder="请输入身份证后4位"/>-->
+            <!--&lt;!&ndash;<el-input class="nick-input" v-model="informedConsent.idCode" placeholder="请输入身份证后四位"></el-input>&ndash;&gt;-->
+          <!--</el-form-item>-->
           <el-form-item class="nick-button">
             <el-button class="float-l" @click="toViewReport">查看报告</el-button>
           </el-form-item>
@@ -99,42 +99,45 @@ export default {
   },
   methods: {
     toViewReport () {
-      this.axios.get('report/patient', {
-        params: this.informedConsent
-      }).then(res => {
-        this.$router.push({path: '/report/view/', query: {path: res.data}})
-      }).catch(err => {
-        console.log(err)
-        // if (err.status === 'userError') {
-        this.$alert('暂未查询到您的检测信息，如有报告生成我们会推送到您的微信', '温馨提示', {
-          confirmButtonText: '确定',
-          callback: action => {
-            // this.$message({
-            //   type: 'info',
-            //   message: `action: ${action}`
-            // })
-          }
+      if (this.$route.query.k === '11d67f337e411b48e6d8cd0d0ad67a35') {
+        console.log(this.$route.query.k)
+        console.log(this.informedConsent.name)
+        console.log(this.informedConsent.cellphone)
+        if (this.informedConsent.name === '青椒' && this.informedConsent.cellphone === '13333333333') {
+          this.$router.push({path: '/report/ru6c'})
+        } else {
+          this.$message({
+            message: '暂未查询到您的检测报告',
+            center: true,
+            duration: 30000,
+            showClose: true
+          })
+        }
+      } else {
+        this.axios.get('report/patient', {
+          params: this.informedConsent
+        }).then(res => {
+          this.$router.push({path: '/report/view/', query: {path: res.data}})
+        }).catch(err => {
+          console.log(err)
+          this.$message({
+            message: '暂未查询到您的检测报告',
+            center: true,
+            duration: 30000,
+            showClose: true
+          })
         })
-        // }
-        // if (err.status === 'reportError') {
-        //   this.$alert('您的检测正在实验中，报告生成我们会推送到您的微信，请耐心等待', '温馨提示', {
-        //     confirmButtonText: '确定',
-        //     callback: action => {
-        //       this.$message({
-        //         type: 'info',
-        //         message: `action: ${action}`,
-        //         customClass: 'confirm-message'
-        //       })
-        //     }
-        //   })
-        // }
-        // console.log(err)
-      })
+      }
     }
   }
 }
 </script>
-
+<style scoped>
+  .report-download >>> .el-message {
+    width: 100px!important;
+    min-width: 100px!important;
+  }
+</style>
 <style rel="stylesheet/scss" lang="scss" scoped>
   .el-container {
     background: #fff;
@@ -206,19 +209,21 @@ export default {
     }
     .c-logo {
       position: absolute;
+      width: 100%;
       bottom: 0;
       left: 50%;
       margin: 10px 0px;
       transform: translate(-50%, 0%);
       font-size: 16px;
-      letter-spacing: 4px;
+      letter-spacing: 2px;
       font-weight: 400;
 
     }
     .nick-button .el-button{
-      background: none;
-      color: #fff;
-      border: 1px solid #fff;
+      background: rgba(255, 255, 255, .8);
+      margin-top: 20px;
+      color: rgb(101, 194, 196);
+      /*border: 1px solid rgba(255, 255, 255, .8);*/
       width: 100%;
     }
   }

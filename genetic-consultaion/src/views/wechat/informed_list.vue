@@ -25,7 +25,8 @@
               送检医生：{{scope.row.doctor}}
             </div>
             <div>
-              检测产品：{{scope.row.solutionName}}
+              检测产品：
+              <el-button type="text" class="text-btn" @click="toProDetail(scope.row.yzDetailUrl)">{{scope.row.solutionName}}</el-button>
             </div>
             <div>
               创建时间：{{scope.row.createTime | formatDate}}
@@ -62,6 +63,9 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    toProDetail (yzUrl) {
+      window.location.href = yzUrl
     }
   },
   watch: {},
@@ -84,6 +88,10 @@ export default {
       position: absolute;
       right: 0;
       bottom: 2px;
+    }
+    .el-button {
+      font-size: 12px;
+      padding: 0;
     }
   }
   .item-title {

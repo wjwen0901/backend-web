@@ -9,10 +9,11 @@ import HospitalList from '@/views/wechat/hospital_list'
 import DeptList from '@/views/wechat/dept_list'
 import ReportDownload from '@/views/wechat/report_download'
 import ReportView from '@/views/wechat/report_view'
-import Upload from '@/components/Upload'
 import OrderList from '@/views/wechat/order_list'
 import WechatReportList from '@/views/wechat/report_list'
 import WechatInformedList from '@/views/wechat/informed_list'
+// 移动端报告页面
+import RU6C from '@/views/wechat/report/ru6c'
 
 // 后台管理路由
 import Dashboard from '@/views/home/dashboard/dashboard'
@@ -210,11 +211,11 @@ export default new Router({
       }
     },
     {
-      path: '/upload',
-      name: 'Upload',
-      component: Upload,
+      path: '/report/ru6c',
+      name: 'RU6C',
+      component: RU6C,
       meta: {
-        title: '预览报告'
+        title: '健康检测报告'
       }
     }
   ]

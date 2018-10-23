@@ -14,6 +14,9 @@
             <div>
               创建时间：{{scope.row.createTime | formatDate}}
             </div>
+            <div>
+              下单人：{{scope.row.fullName}}({{scope.row.cellphone}})
+            </div>
             <span class="status">{{scope.row.statusStr}}</span>
           </div>
           <div class="item-title">

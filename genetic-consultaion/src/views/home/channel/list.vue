@@ -120,9 +120,11 @@ export default {
     },
     handleSizeChange (val) {
       this.pageSize = val
+      this.getData()
     },
     handleCurrentChange (val) {
       this.pageNum = val
+      this.getData()
     },
     downloadCode (alias, name, period, price, code) {
       this.dialogFormVisible = true
@@ -132,8 +134,8 @@ export default {
           alias: alias,
           name: name,
           period: '7个工作日',
-          price: '1400',
-          code: 'MDHC012-0001'
+          price: '1000',
+          code: 'MDHC012-0001002'
         }
       }).then(res => {
         window.open(this.axios.defaults.baseURL + '/barcode/down?filename=' + res.data + '&Authorization=' + window.localStorage.token)
