@@ -66,7 +66,14 @@ export default {
     }
   },
   created () {
+    let loading = this.$loading({
+      lock: true,
+      text: 'Loading',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)'
+    })
     this.getHospitalList()
+    loading.close()
   }
 }
 </script>

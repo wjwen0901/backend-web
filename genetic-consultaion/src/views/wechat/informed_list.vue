@@ -13,7 +13,8 @@
               <span v-if="scope.row.patientName !== undefined">{{scope.row.patientName}}
                 <span v-if="scope.row.cellphone!== undefined && scope.row.cellphone!== ''">({{scope.row.cellphone}})</span>
               </span>
-              <span v-else>暂未提取姓名</span>
+              <span v-else>信息识别中</span>
+              <el-tag type="info" class="status" size="mini">{{scope.row.state | stateFilter}}</el-tag>
             </div>
             <div>
               送检医院：{{scope.row.hospitalName}}
@@ -45,7 +46,9 @@ export default {
       informedList: [],
       pageNum: 1,
       pageSize: 100,
-      totalPage: 0
+      totalPage: 0,
+      loading: null,
+      loading2: true
     }
   },
   methods: {
@@ -66,11 +69,28 @@ export default {
     },
     toProDetail (yzUrl) {
       window.location.href = yzUrl
+    },
+    openLoading () {
+      this.loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
     }
   },
   watch: {},
+  filters: {
+    stateFilter: function (state) {
+      if (state <= 1) return '检测中'
+      if (state === 2) return '无法识别'
+      if (state === 3) return '报告已出'
+    }
+  },
   created () {
+    this.openLoading()
     this.getData()
+    this.loading.close()
   }
 }
 </script>
@@ -86,6 +106,7 @@ export default {
     }
     .status {
       position: absolute;
+      top: 0;
       right: 0;
       bottom: 2px;
     }

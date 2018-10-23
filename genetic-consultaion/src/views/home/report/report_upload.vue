@@ -133,7 +133,7 @@ export default {
     })
   },
   methods: {
-    init () {
+    initData () {
       this.getCompanyList()
       if (this.$route.query.orderId !== undefined) {
         this.getOrder()
@@ -343,7 +343,14 @@ export default {
     }
   },
   created () {
-    this.init()
+    let loading = this.$loading({
+      lock: true,
+      text: 'Loading',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)'
+    })
+    this.initData()
+    loading.close()
   },
   filters: {
     formatSize (fileSize) {

@@ -16,6 +16,29 @@
             <el-form-item label="订单编号">
               <el-input v-model="informedContent.orderNo"></el-input>
             </el-form-item>
+            <el-form-item label="送检医院">
+              <el-select class="width-100-p" v-model="informedContent.hospitalId" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in hospitals"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="送检科室">
+              <el-select class="width-100-p" v-model="informedContent.deptId" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in depts"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="送检医生">
+              <el-input v-model="informedContent.doctor"></el-input>
+            </el-form-item>
             <el-form-item label="条码编号">
               <el-input v-model="informedContent.sampleCode"></el-input>
             </el-form-item>
@@ -106,6 +129,8 @@ export default {
     return {
       informedContent: {},
       projects: [],
+      hospitals: [],
+      depts: [],
       idType: [
         {'id': 0, 'name': '身份证'},
         {'id': 1, 'name': '军官证'},
@@ -139,6 +164,16 @@ export default {
 
       this.axios.get('solution').then(res => {
         this.projects = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+      this.axios.get('hospital').then(res => {
+        this.hospitals = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+      this.axios.get('hospital-dept').then(res => {
+        this.depts = res.data
       }).catch(err => {
         console.log(err)
       })
@@ -192,7 +227,14 @@ export default {
     }
   },
   created () {
+    let loading = this.$loading({
+      lock: true,
+      text: 'Loading',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)'
+    })
     this._initData()
+    loading.close()
   },
   mounted () {},
   destroyed () {}
@@ -216,8 +258,11 @@ export default {
   }
   .img-content {
     margin: 20px 0px 20px 20px;
-    height: 500px;
+    height: 700px;
     background: #ffffff;
     overflow: auto;
+    img {
+      width: 100%;
+    }
   }
 </style>
