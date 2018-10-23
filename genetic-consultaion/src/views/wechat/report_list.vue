@@ -1,5 +1,6 @@
 <template>
   <el-container>
+
     <el-table
       :data="reportList"
       style="width: 100%"
@@ -34,7 +35,8 @@ export default {
       reportList: [],
       pageNum: 1,
       pageSize: 100,
-      totalPage: 0
+      totalPage: 0,
+      orderNo: this.$route.query.orderNo
     }
   },
   methods: {

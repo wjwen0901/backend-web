@@ -148,6 +148,9 @@ export default {
     _initData () {
       this.axios.get('informed/' + this.$route.params.informedId).then(res => {
         this.informedContent = res.data
+        if (res.data.tid !== undefined) {
+          this.informedContent.orderNo = res.data.tid
+        }
         this.axios.get('oss/upload/show', {
           params: {
             objectKey: res.data.path
