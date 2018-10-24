@@ -57,27 +57,74 @@
       </el-pagination>
     </div>
 
-    <el-dialog title="选择产品" :visible.sync="dialogFormVisible">
+    <el-dialog title="生成二维码" :visible.sync="dialogFormVisible">
       <div>
-        <el-table
-          :data="solutionList"
-          size="mini"
-          border
-          style="width: 100%">
-          <el-table-column
-            prop="name"
-            label="姓名">
-          </el-table-column>
-          <el-table-column
-            label="操作"
-            width="200">
-            <template slot-scope="scope">
-              <el-button @click="downloadCode(scope.row.yzAlias, scope.row.name, scope.row.period, scope.row.directPrice, scope.row.code)" type="text" size="small">下载二维码</el-button>
-              <!--<el-button @click="printCode(scope.row.id)" type="text" size="small">打印二维码</el-button>-->
-            </template>
-          </el-table-column>
-        </el-table>
+        <el-form ref="form" label-width="80px">
+          <el-form-item label="选择产品">
+            <el-select class="width-100-p" v-model="selSolution" filterable placeholder="请选择">
+            <el-option
+              v-for="item in solutionList"
+              :key="item.id"
+              :label="item.name"
+              :value="item">
+            </el-option>
+          </el-select>
+          </el-form-item>
+          <el-form-item label="单价">
+            <el-input v-model="price"></el-input>
+          </el-form-item>
+          <el-form-item label="检测周期">
+            <el-input v-model="period"></el-input>
+          </el-form-item>
+          <el-form-item label="送检医院">
+            <el-select class="width-100-p" v-model="hospitalId" filterable placeholder="请选择">
+              <el-option
+                v-for="item in hospitals"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="送检科室">
+            <el-select class="width-100-p" v-model="deptId" filterable placeholder="请选择">
+              <el-option
+                v-for="item in depts"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="送检医生">
+            <el-input v-model="doctor"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="downloadCode()">确定</el-button>
+            <el-button @click="dialogFormVisible = false">取消</el-button>
+          </el-form-item>
+        </el-form>
       </div>
+      <!--<div>-->
+        <!--<el-table-->
+          <!--:data="solutionList"-->
+          <!--size="mini"-->
+          <!--border-->
+          <!--style="width: 100%">-->
+          <!--<el-table-column-->
+            <!--prop="name"-->
+            <!--label="姓名">-->
+          <!--</el-table-column>-->
+          <!--<el-table-column-->
+            <!--label="操作"-->
+            <!--width="200">-->
+            <!--<template slot-scope="scope">-->
+              <!--<el-button @click="downloadCode(scope.row.yzAlias, scope.row.name, scope.row.period, scope.row.directPrice, scope.row.code)" type="text" size="small">下载二维码</el-button>-->
+              <!--&lt;!&ndash;<el-button @click="printCode(scope.row.id)" type="text" size="small">打印二维码</el-button>&ndash;&gt;-->
+            <!--</template>-->
+          <!--</el-table-column>-->
+        <!--</el-table>-->
+      <!--</div>-->
     </el-dialog>
   </div>
 </template>
@@ -95,7 +142,16 @@ export default {
       dialogFormVisible: false,
       userId: 0,
       name: '',
-      solutionList: []
+      solutionList: [],
+      price: 0,
+      period: '',
+      code: '',
+      selSolution: {},
+      hospitals: [],
+      depts: [],
+      hospitalId: null,
+      deptId: null,
+      doctor: ''
     }
   },
   methods: {
@@ -126,16 +182,19 @@ export default {
       this.pageNum = val
       this.getData()
     },
-    downloadCode (alias, name, period, price, code) {
+    downloadCode () {
       this.dialogFormVisible = true
       // 获取权限列表
       this.axios.get('barcode/create/' + this.userId, {
         params: {
-          alias: alias,
-          name: name,
-          period: '7个工作日',
-          price: '1000',
-          code: 'MDHC012-0001002'
+          alias: this.selSolution.yzAlias,
+          name: this.selSolution.name,
+          period: this.period + '个工作日',
+          price: this.price,
+          code: this.code,
+          hospitalId: this.hospitalId,
+          deptId: this.deptId,
+          doctor: this.doctor
         }
       }).then(res => {
         window.open(this.axios.defaults.baseURL + '/barcode/down?filename=' + res.data + '&Authorization=' + window.localStorage.token)
@@ -151,6 +210,16 @@ export default {
       this.name = name
       this.axios.get('solution').then(res => {
         this.solutionList = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+      this.axios.get('hospital').then(res => {
+        this.hospitals = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+      this.axios.get('hospital-dept').then(res => {
+        this.depts = res.data
       }).catch(err => {
         console.log(err)
       })
