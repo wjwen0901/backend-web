@@ -35,8 +35,8 @@ axios.interceptors.response.use(
       switch (error.response.status) {
         case 401:
           // 401 清除token信息并跳转到登录页面
-          // window.localStorage.clear()
-          // window.location.href = 'https://z.mdhcare.cn/login.html'
+          window.localStorage.clear()
+          window.location.href = 'https://z.mdhcare.cn/login.html'
           // router.replace({
           //   path: 'login',
           //   query: {redirect: router.currentRoute.fullPath}

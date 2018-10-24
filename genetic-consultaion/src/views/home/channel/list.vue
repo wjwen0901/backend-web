@@ -59,22 +59,22 @@
 
     <el-dialog title="生成二维码" :visible.sync="dialogFormVisible">
       <div>
-        <el-form ref="form" label-width="80px">
+        <el-form ref="form" label-width="100px">
           <el-form-item label="选择产品">
             <el-select class="width-100-p" v-model="selSolution" filterable placeholder="请选择">
-            <el-option
-              v-for="item in solutionList"
-              :key="item.id"
-              :label="item.name"
-              :value="item">
-            </el-option>
-          </el-select>
+              <el-option
+                v-for="item in solutionList"
+                :key="item.id"
+                :label="item.name"
+                :value="item">
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="单价">
-            <el-input v-model="price"></el-input>
+            <el-input v-model="price" placeholder="1300"></el-input>
           </el-form-item>
           <el-form-item label="检测周期">
-            <el-input v-model="period"></el-input>
+            <el-input v-model="period" placeholder="7个工作日"></el-input>
           </el-form-item>
           <el-form-item label="送检医院">
             <el-select class="width-100-p" v-model="hospitalId" filterable placeholder="请选择">
@@ -97,7 +97,10 @@
             </el-select>
           </el-form-item>
           <el-form-item label="送检医生">
-            <el-input v-model="doctor"></el-input>
+            <el-input v-model="doctor" placeholder="王大夫"></el-input>
+          </el-form-item>
+          <el-form-item label="识别代码">
+            <el-input v-model="code" placeholder="MDHCARE1001"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="downloadCode()">确定</el-button>
@@ -105,26 +108,6 @@
           </el-form-item>
         </el-form>
       </div>
-      <!--<div>-->
-        <!--<el-table-->
-          <!--:data="solutionList"-->
-          <!--size="mini"-->
-          <!--border-->
-          <!--style="width: 100%">-->
-          <!--<el-table-column-->
-            <!--prop="name"-->
-            <!--label="姓名">-->
-          <!--</el-table-column>-->
-          <!--<el-table-column-->
-            <!--label="操作"-->
-            <!--width="200">-->
-            <!--<template slot-scope="scope">-->
-              <!--<el-button @click="downloadCode(scope.row.yzAlias, scope.row.name, scope.row.period, scope.row.directPrice, scope.row.code)" type="text" size="small">下载二维码</el-button>-->
-              <!--&lt;!&ndash;<el-button @click="printCode(scope.row.id)" type="text" size="small">打印二维码</el-button>&ndash;&gt;-->
-            <!--</template>-->
-          <!--</el-table-column>-->
-        <!--</el-table>-->
-      <!--</div>-->
     </el-dialog>
   </div>
 </template>
@@ -143,9 +126,9 @@ export default {
       userId: 0,
       name: '',
       solutionList: [],
-      price: 0,
-      period: '',
-      code: '',
+      price: null,
+      period: null,
+      code: null,
       selSolution: {},
       hospitals: [],
       depts: [],
@@ -256,5 +239,8 @@ export default {
   .user-container .header {
     margin-bottom: 20px;
     font-size: 18px;
+  }
+  .width-100-p {
+    width: 100%;
   }
 </style>
