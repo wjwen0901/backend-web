@@ -14,6 +14,7 @@ import WechatReportList from '@/views/wechat/report_list'
 import WechatInformedList from '@/views/wechat/informed_list'
 // 移动端报告页面
 import RU6C from '@/views/wechat/report/ru6c'
+import RU6CDetail from '@/views/wechat/report/ru6c_detail'
 
 // 后台管理路由
 import Dashboard from '@/views/home/dashboard/dashboard'
@@ -214,6 +215,14 @@ export default new Router({
       path: '/report/ru6c',
       name: 'RU6C',
       component: RU6C,
+      meta: {
+        title: '健康检测报告'
+      }
+    },
+    {
+      path: '/report/ru6c/detail',
+      name: 'RU6CDetail',
+      component: RU6CDetail,
       meta: {
         title: '健康检测报告'
       }

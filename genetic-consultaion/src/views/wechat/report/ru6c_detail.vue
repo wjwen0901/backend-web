@@ -1,9 +1,9 @@
 <template>
   <div class="ru6c nick">
-    <div class="c-header">{{category}}</div>
+    <div class="c-header">{{resultInfo.category}}</div>
     <div>
       <div class="result-list">
-        <div class="result-info" v-for="result in phenotypes" v-bind:key="result.category">
+        <div class="result-info" v-for="result in resultInfo.phenotypes" v-bind:key="result.category">
           <div class="category">{{result.phenotype}}</div>
           <div class="comment">
             <span :class="result.comment | commentCssfilter">{{result.comment}}</span>
@@ -21,149 +21,7 @@ export default {
   name: 'ru6c',
   data () {
     return {
-      resultInfo: [
-        {
-          category: '肿瘤健康风险',
-          phenotypes: [
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            }
-          ]
-        },
-        {
-          category: '遗传特征及遗传疾病',
-          phenotypes: [
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            }
-          ]
-        },
-        {
-          category: '免疫系统风险',
-          phenotypes: [
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            }
-          ]
-        },
-        {
-          category: '胶原蛋白及黑色素等皮肤基因',
-          phenotypes: [
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            }
-          ]
-        },
-        {
-          category: '瘦身运动基因',
-          phenotypes: [
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            }
-          ]
-        },
-        {
-          category: '人体天赋基因',
-          phenotypes: [
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            }
-          ]
-        },
-        {
-          category: '药物过敏检测',
-          phenotypes: [
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            }
-          ]
-        }
-      ],
-      CustomizedKey: this.$route.query.k
+      resultInfo: this.$route.query.result
     }
   },
   methods: {

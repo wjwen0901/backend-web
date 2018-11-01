@@ -3,10 +3,10 @@
     <div class="c-header">报告预览</div>
     <div>
       <div class="result-list">
-        <div class="result-info" v-for="result in reportList" v-bind:key="result.category">
+        <div class="result-info" v-for="result in reportList" v-bind:key="result.category" @click="toRu6cDetail(result)">
           <div class="category">{{result.category}}</div>
           <div class="comment">
-            <span :class="result.phenotypes | commentCssfilter">{{result.phenotypes}}</span>
+            <span>{{result.phenotypes.length}}项</span>
           </div>
         </div>
       </div>
@@ -189,6 +189,9 @@ export default {
   methods: {
     toViewReport () {
       this.$router.push({path: '/report/view/', query: {path: 'https://z.mdhcare.cn/ru6c-demo.pdf'}})
+    },
+    toRu6cDetail (result) {
+      this.$router.push({path: '/report/ru6c/detail', query: {result: result}})
     }
   },
   filters: {
