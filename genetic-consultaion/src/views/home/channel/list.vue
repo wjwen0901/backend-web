@@ -61,7 +61,7 @@
       <div>
         <el-form ref="form" label-width="100px">
           <el-form-item label="选择产品">
-            <el-select class="width-100-p" v-model="selSolution" filterable placeholder="请选择">
+            <el-select class="width-100-p" v-model="selSolution" value-key="id" filterable placeholder="请选择">
               <el-option
                 v-for="item in solutionList"
                 :key="item.id"
@@ -69,6 +69,9 @@
                 :value="item">
               </el-option>
             </el-select>
+          </el-form-item>
+          <el-form-item label="商品优惠链接">
+            <el-input v-model="uri" placeholder="http://..."></el-input>
           </el-form-item>
           <el-form-item label="单价">
             <el-input v-model="price" placeholder="1300"></el-input>
@@ -134,7 +137,8 @@ export default {
       depts: [],
       hospitalId: null,
       deptId: null,
-      doctor: ''
+      doctor: '',
+      uri: null
     }
   },
   methods: {
@@ -177,7 +181,8 @@ export default {
           code: this.code,
           hospitalId: this.hospitalId,
           deptId: this.deptId,
-          doctor: this.doctor
+          doctor: this.doctor,
+          uri: this.uri
         }
       }).then(res => {
         window.open(this.axios.defaults.baseURL + '/barcode/down?filename=' + res.data + '&Authorization=' + window.localStorage.token)

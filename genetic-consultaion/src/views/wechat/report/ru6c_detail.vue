@@ -1,38 +1,18 @@
 <template>
   <div class="ru6c nick">
-    <div class="c-header">报告预览</div>
+    <div class="c-header">{{category}}</div>
     <div>
       <div class="result-list">
-        <div class="result-info" v-for="result in reportList" v-bind:key="result.category">
-          <div class="category">{{result.category}}</div>
+        <div class="result-info" v-for="result in phenotypes" v-bind:key="result.category">
+          <div class="category">{{result.phenotype}}</div>
           <div class="comment">
-            <span :class="result.phenotypes | commentCssfilter">{{result.phenotypes}}</span>
+            <span :class="result.comment | commentCssfilter">{{result.comment}}</span>
           </div>
         </div>
       </div>
       <div class="nick-button">
         <el-button @click="toViewReport">查看详细报告</el-button>
       </div>
-      <!--<el-table-->
-        <!--:data="reportList"-->
-        <!--style="width: 100%;background: none;"-->
-        <!--row-class-name="row-class"-->
-      <!--&gt;-->
-        <!--<el-table-column-->
-          <!--prop="category"-->
-          <!--label="检测项目"-->
-          <!--align="left">-->
-        <!--</el-table-column>-->
-        <!--<el-table-column-->
-          <!--label="检测结果"-->
-          <!--prop="comment"-->
-          <!--align="right"-->
-          <!--width="80">-->
-          <!--<template slot-scope="scope">-->
-            <!--<span :class="scope.row.comment | commentCssfilter">{{scope.row.comment}}</span>-->
-          <!--</template>-->
-        <!--</el-table-column>-->
-      <!--</el-table>-->
     </div>
   </div>
 </template>
@@ -41,7 +21,7 @@ export default {
   name: 'ru6c',
   data () {
     return {
-      reportList: [
+      resultInfo: [
         {
           category: '肿瘤健康风险',
           phenotypes: [

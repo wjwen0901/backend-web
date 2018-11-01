@@ -159,7 +159,7 @@ export default {
         params: {
           id: window.localStorage.userId,
           pageNum: this.pageNum,
-          pageSize: this.pageSize,
+          pageSize: this.pageSize
         }
       }).then(res => {
         this.customerList = res.data.list
