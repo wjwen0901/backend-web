@@ -13,6 +13,7 @@ import OrderList from '@/views/wechat/order_list'
 import WechatReportList from '@/views/wechat/report_list'
 import WechatInformedList from '@/views/wechat/informed_list'
 // 移动端报告页面
+import PersonalReport from '@/views/wechat/report/personal_report'
 import RU6C from '@/views/wechat/report/ru6c'
 import RU6CDetail from '@/views/wechat/report/ru6c_detail'
 
@@ -37,6 +38,9 @@ import BarcodeUserList from '@/views/home/channel/list'
 import Order from '@/views/home/order/order'
 import OrderDetail from '@/views/home/order/detail'
 import CustomerList from '@/views/home/customer/list'
+
+import ProductList from '@/views/home/product/list'
+import ProductEdit from '@/views/home/product/edit'
 
 Vue.use(Router)
 
@@ -128,6 +132,21 @@ export default new Router({
           path: '/customer',
           name: 'CustomerList',
           component: CustomerList
+        },
+        {
+          path: '/product',
+          name: 'ProductList',
+          component: ProductList
+        },
+        {
+          path: '/product/edit/:id',
+          name: 'ProductEdit',
+          component: ProductEdit
+        },
+        {
+          path: '/product/add',
+          name: 'ProductAdd',
+          component: ProductEdit
         }
       ]
     },
@@ -209,6 +228,14 @@ export default new Router({
       component: ReportView,
       meta: {
         title: '预览报告'
+      }
+    },
+    {
+      path: '/report/personal',
+      name: 'PersonalReport',
+      component: PersonalReport,
+      meta: {
+        title: '个人检测报告'
       }
     },
     {

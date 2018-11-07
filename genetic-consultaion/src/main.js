@@ -15,7 +15,6 @@ router.beforeEach((to, from, next) => {
   next()
 })
 
-// Vue.use(Plupload)
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 // 将axios挂载到prototype上，在组件中可以直接使用this.axios访问
@@ -43,6 +42,7 @@ Vue.filter('formatDate', function (time) {
   }
   return fmt
 })
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

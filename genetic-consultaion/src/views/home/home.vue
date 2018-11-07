@@ -87,14 +87,10 @@
             <i class="el-icon-view"></i>
             <span slot="title">信息复核</span>
           </el-menu-item>
-          <!--<el-submenu index="chann" v-if="sec.includes('system')">-->
-            <!--<template slot="title"><i class="el-icon-setting"></i><span slot="title">渠道管理</span></template>-->
-            <!--<el-menu-item-group>-->
-              <!--&lt;!&ndash;<template slot="title">用户信息</template>&ndash;&gt;-->
-              <!--<el-menu-item index="/channel/barcode">生成二维码</el-menu-item>-->
-              <!--<el-menu-item index="/channel/count">统计</el-menu-item>-->
-            <!--</el-menu-item-group>-->
-          <!--</el-submenu>-->
+          <el-menu-item index="/product" v-if="sec.includes('product')">
+            <i class="el-icon-view"></i>
+            <span slot="title">产品管理</span>
+          </el-menu-item>
           <el-submenu index="system" v-if="sec.includes('system')">
             <template slot="title"><i class="el-icon-setting"></i><span slot="title">系统管理</span></template>
             <el-menu-item-group>

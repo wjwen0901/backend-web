@@ -13,26 +13,6 @@
       <div class="nick-button">
         <el-button @click="toViewReport">查看详细报告</el-button>
       </div>
-      <!--<el-table-->
-        <!--:data="reportList"-->
-        <!--style="width: 100%;background: none;"-->
-        <!--row-class-name="row-class"-->
-      <!--&gt;-->
-        <!--<el-table-column-->
-          <!--prop="category"-->
-          <!--label="检测项目"-->
-          <!--align="left">-->
-        <!--</el-table-column>-->
-        <!--<el-table-column-->
-          <!--label="检测结果"-->
-          <!--prop="comment"-->
-          <!--align="right"-->
-          <!--width="80">-->
-          <!--<template slot-scope="scope">-->
-            <!--<span :class="scope.row.comment | commentCssfilter">{{scope.row.comment}}</span>-->
-          <!--</template>-->
-        <!--</el-table-column>-->
-      <!--</el-table>-->
     </div>
   </div>
 </template>
@@ -41,154 +21,26 @@ export default {
   name: 'ru6c',
   data () {
     return {
-      reportList: [
-        {
-          category: '肿瘤健康风险',
-          phenotypes: [
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            }
-          ]
-        },
-        {
-          category: '遗传特征及遗传疾病',
-          phenotypes: [
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            }
-          ]
-        },
-        {
-          category: '免疫系统风险',
-          phenotypes: [
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            }
-          ]
-        },
-        {
-          category: '胶原蛋白及黑色素等皮肤基因',
-          phenotypes: [
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            }
-          ]
-        },
-        {
-          category: '瘦身运动基因',
-          phenotypes: [
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            }
-          ]
-        },
-        {
-          category: '人体天赋基因',
-          phenotypes: [
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            }
-          ]
-        },
-        {
-          category: '药物过敏检测',
-          phenotypes: [
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            },
-            {
-              phenotype: '选择性IgA缺陷',
-              comment: '高风险',
-              level: 2
-            }
-          ]
-        }
-      ],
-      CustomizedKey: this.$route.query.k
+      reportList: [],
+      pdfPath: ''
     }
   },
   methods: {
+    initData () {
+      console.log(this.$route.query)
+      this.axios.get('report/list', {
+        params: {
+          name: this.$route.query.name,
+          cellphone: this.$route.query.cellphone
+        }
+      }).then(res => {
+        console.log(res.data)
+        this.reportList = res.data.menuList
+        this.pdfPath = res.data.path
+      })
+    },
     toViewReport () {
-      this.$router.push({path: '/report/view/', query: {path: 'https://z.mdhcare.cn/ru6c-demo.pdf'}})
+      this.$router.push({path: '/report/view/', query: {'path': this.pdfPath}})
     },
     toRu6cDetail (result) {
       this.$router.push({path: '/report/ru6c/detail', query: {result: result}})
@@ -207,6 +59,9 @@ export default {
       }
       return classText
     }
+  },
+  created () {
+    this.initData()
   }
 }
 </script>

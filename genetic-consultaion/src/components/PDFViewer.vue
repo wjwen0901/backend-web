@@ -139,6 +139,7 @@ export default {
     },
 
     toggleDownload () {
+      console.log(this.url)
       let ua = navigator.userAgent.toLowerCase()
       if (ua.match(/MicroMessenger/i) === 'micromessenger') {
         this.isWechat = true

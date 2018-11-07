@@ -4,9 +4,14 @@
     <div>
       <div class="result-list">
         <div class="result-info" v-for="result in resultInfo.phenotypes" v-bind:key="result.category">
-          <div class="category">{{result.phenotype}}</div>
-          <div class="comment">
-            <span :class="result.comment | commentCssfilter">{{result.comment}}</span>
+          <div v-if="resultInfo.category.indexOf('药物过敏检测') > -1" class="text-left">
+            <span :class="result.level | commentCssfilter">{{result.comment}}</span>
+          </div>
+          <div v-else>
+            <div class="category">{{result.phenotype}}</div>
+            <div class="comment">
+              <span :class="result.level | commentCssfilter">{{result.comment}}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -31,13 +36,12 @@ export default {
   },
   filters: {
     commentCssfilter (arg) {
-      console.log(arg)
       let classText = 'comment-high'
-      if (arg === '中风险') {
+      if (arg === '1') {
         classText = 'comment-middle'
-      } else if (arg === '低风险') {
+      } else if (arg === '0') {
         classText = 'comment-low'
-      } else if (arg === '高风险') {
+      } else if (arg === '2') {
         classText = 'comment-high'
       }
       return classText
@@ -54,6 +58,10 @@ export default {
   }
   .upload-btn {
     width: 150px;
+  }
+  .text-left {
+    line-height: 40px;
+    text-align: left;
   }
   .result-list {
     position: relative;

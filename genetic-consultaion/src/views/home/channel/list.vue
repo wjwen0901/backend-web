@@ -59,7 +59,7 @@
 
     <el-dialog title="生成二维码" :visible.sync="dialogFormVisible">
       <div>
-        <el-form ref="form" label-width="100px">
+        <el-form ref="form" label-width="150px">
           <el-form-item label="选择产品">
             <el-select class="width-100-p" v-model="selSolution" value-key="id" filterable placeholder="请选择">
               <el-option
@@ -71,13 +71,14 @@
             </el-select>
           </el-form-item>
           <el-form-item label="商品优惠链接">
-            <el-input v-model="uri" placeholder="http://..."></el-input>
+            <el-input v-model="url" placeholder="http://..."></el-input>
           </el-form-item>
           <el-form-item label="单价">
             <el-input v-model="price" placeholder="1300"></el-input>
           </el-form-item>
-          <el-form-item label="检测周期">
-            <el-input v-model="period" placeholder="7个工作日"></el-input>
+          <el-form-item label="检测周期（工作日）">
+            <el-input-number v-model="period" :min="1" :max="100" label="请输入"></el-input-number>
+            <!--<el-input type="" v-model="period" placeholder="7"></el-input>&lt;!&ndash;&ndash;&gt;-->
           </el-form-item>
           <el-form-item label="送检医院">
             <el-select class="width-100-p" v-model="hospitalId" filterable placeholder="请选择">
@@ -138,7 +139,7 @@ export default {
       hospitalId: null,
       deptId: null,
       doctor: '',
-      uri: null
+      url: null
     }
   },
   methods: {
@@ -147,8 +148,9 @@ export default {
     },
     getData () {
       // 获取权限列表
-      this.axios.get('channel/user', {
+      this.axios.get('user/customer', {
         params: {
+          id: window.localStorage.userId,
           pageSize: this.pageSize,
           pageNum: this.pageNum
         }
@@ -174,15 +176,16 @@ export default {
       // 获取权限列表
       this.axios.get('barcode/create/' + this.userId, {
         params: {
+          solutionId: this.selSolution.id,
           alias: this.selSolution.yzAlias,
           name: this.selSolution.name,
-          period: this.period + '个工作日',
+          period: this.period,
           price: this.price,
           code: this.code,
           hospitalId: this.hospitalId,
           deptId: this.deptId,
           doctor: this.doctor,
-          uri: this.uri
+          url: this.url
         }
       }).then(res => {
         window.open(this.axios.defaults.baseURL + '/barcode/down?filename=' + res.data + '&Authorization=' + window.localStorage.token)

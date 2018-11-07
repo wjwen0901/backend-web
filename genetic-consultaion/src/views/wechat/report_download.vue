@@ -7,11 +7,9 @@
         <el-form :rules="rules" :model="informedConsent" ref="informedConsent" label-width="0px" label-position="left">
           <el-form-item prop="name">
             <input type="text" class="nick-input" v-model="informedConsent.name" placeholder="请输入姓名"/>
-            <!--<el-input class="nick-input" v-model="informedConsent.name" placeholder="请输入姓名"></el-input>-->
           </el-form-item>
           <el-form-item prop="cellphone">
             <input type="text" class="nick-input" v-model="informedConsent.cellphone" placeholder="请输入手机号"/>
-            <!--<el-input class="nick-input" v-model="informedConsent.cellphone" placeholder="请输入手机号"></el-input>-->
           </el-form-item>
           <!--<el-form-item prop="idCode">-->
             <!--<input type="text" class="nick-input" v-model="informedConsent.idCode" placeholder="请输入身份证后4位"/>-->
@@ -100,9 +98,19 @@ export default {
   methods: {
     toViewReport () {
       if (this.$route.query.k === '11d67f337e411b48e6d8cd0d0ad67a35') {
-        console.log(this.$route.query.k)
-        console.log(this.informedConsent.name)
-        console.log(this.informedConsent.cellphone)
+        this.axios.get('report/list', {
+          params: this.informedConsent
+        }).then(res => {
+          this.$router.push({path: '/report/ru6c', query: {name: this.informedConsent.name, cellphone: this.informedConsent.cellphone}})
+        }).catch(err => {
+          console.log(err)
+          this.$message({
+            message: '暂未查询到您的检测报告',
+            center: true,
+            duration: 30000,
+            showClose: true
+          })
+        })
         if (this.informedConsent.name === '青椒' && this.informedConsent.cellphone === '13333333333') {
           this.$router.push({path: '/report/ru6c'})
         } else {
