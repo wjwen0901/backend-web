@@ -3,7 +3,9 @@
     <div v-if="CustomizedKey === '11d67f337e411b48e6d8cd0d0ad67a35'" class="nick">
       <div>
         <h4 class="c-logo">奥格妮克健康管理中心</h4>
-        <div class="c-header">个人检测报告</div>
+        <div class="c-header">
+          <p>个人健康报告</p>
+        </div>
         <el-form :rules="rules" :model="informedConsent" ref="informedConsent" label-width="0px" label-position="left">
           <el-form-item prop="name">
             <input type="text" class="nick-input" v-model="informedConsent.name" placeholder="请输入姓名"/>
@@ -16,7 +18,7 @@
             <!--&lt;!&ndash;<el-input class="nick-input" v-model="informedConsent.idCode" placeholder="请输入身份证后四位"></el-input>&ndash;&gt;-->
           <!--</el-form-item>-->
           <el-form-item class="nick-button">
-            <el-button class="float-l" @click="toViewReport">查看报告</el-button>
+            <el-button @click="toViewReport">查看报告</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -101,7 +103,7 @@ export default {
         this.axios.get('report/list', {
           params: this.informedConsent
         }).then(res => {
-          this.$router.push({path: '/report/ru6c', query: {name: this.informedConsent.name, cellphone: this.informedConsent.cellphone}})
+          this.$router.push({path: '/report/personal', query: {name: this.informedConsent.name, cellphone: this.informedConsent.cellphone}})
         }).catch(err => {
           console.log(err)
           this.$message({
@@ -111,16 +113,6 @@ export default {
             showClose: true
           })
         })
-        if (this.informedConsent.name === '青椒' && this.informedConsent.cellphone === '13333333333') {
-          this.$router.push({path: '/report/ru6c'})
-        } else {
-          this.$message({
-            message: '暂未查询到您的检测报告',
-            center: true,
-            duration: 30000,
-            showClose: true
-          })
-        }
       } else {
         this.axios.get('report/patient', {
           params: this.informedConsent
@@ -181,23 +173,23 @@ export default {
   .nick {
     width: 100%;
     min-height: 100%;
-    background-color: rgb(101, 194, 196);
-    padding: 10px 20px;
+    /*background-color: rgba(101, 194, 196, .1);*/
+    padding: 30px 20px;
     text-align: center;
-    color: #fff;
+    color: rgb(101, 194, 196);
     font-weight: 400;
     .el-form-item {
       margin-bottom: 16px;
     }
     .nick-input {
-      width: 100%;
+      width: 80%!important;
       -webkit-appearance: none;
       background: none;
       border-radius: 4px;
-      border: 1px solid #fff;
+      border: 1px solid rgb(101, 194, 196);
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
-      color: #606266;
+      color: #333333;
       display: inline-block;
       font-size: inherit;
       height: 40px;
@@ -209,11 +201,17 @@ export default {
       width: 100%;
     }
     input::placeholder {
-      color: #fff;
+      color: #ddd;
     }
     .c-header {
-      padding: 40px 10px 20px 10px;
-      font-size: 18px;
+      margin: 60px auto 30px;
+      width: 60%;
+      padding: 6px 0px;
+      font-size: 20px;
+      font-weight: bold;
+      display: block;
+      /*border: 1px solid rgba(101, 194, 196, .8);*/
+      border-radius: 6px;
     }
     .c-logo {
       position: absolute;
@@ -228,9 +226,10 @@ export default {
 
     }
     .nick-button .el-button{
-      background: rgba(255, 255, 255, .8);
-      margin-top: 20px;
-      color: rgb(101, 194, 196);
+      margin: 40px auto;
+      width: 80%!important;
+      background: rgb(101, 194, 196);
+      color: #fff;
       /*border: 1px solid rgba(255, 255, 255, .8);*/
       width: 100%;
     }

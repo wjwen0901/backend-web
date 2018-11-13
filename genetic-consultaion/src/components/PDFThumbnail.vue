@@ -103,7 +103,7 @@ export default {
         })
     },
 
-    destroyPag (_newPage, page) {
+    destroyPage (_newPage, page) {
       // PDFPageProxy#_destroy
       // https://mozilla.github.io/pdf.js/api/draft/PDFPageProxy.html
       if (page) page._destroy()
