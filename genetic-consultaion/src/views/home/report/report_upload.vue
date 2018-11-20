@@ -6,10 +6,10 @@
         <el-form-item label="订单编号" v-if="order.id !== undefined">
           {{order.tid}}
         </el-form-item>
-        <el-form-item label="检测项目" v-if="order.id !== undefined">
-          {{order.itemTitle}}
-        </el-form-item>
-        <el-form-item label="选择客户公司">
+        <!--<el-form-item label="检测项目" v-if="order.id !== undefined">-->
+          <!--{{order.itemTitle}}-->
+        <!--</el-form-item>-->
+        <el-form-item label="选择客户公司" v-if="role === 'firm-service' || role === 'manager' || role === 'jk-service'">
           <el-select class="width-100-p"
                      v-model="report.companyId"
                      filterable
@@ -22,6 +22,16 @@
                      :loading="companySelLoading">
             <el-option
               v-for="item in companyList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="选择检测产品">
+          <el-select class="width-100-p" v-model="report.solutionId" filterable placeholder="请选择">
+            <el-option
+              v-for="item in projects"
               :key="item.id"
               :label="item.name"
               :value="item.id">
@@ -80,6 +90,7 @@ export default {
       }
     }
     return {
+      role: window.localStorage.role,
       report: {
         fullName: window.localStorage.fullName === undefined ? '' : window.localStorage.fullName,
         cellphone: window.localStorage.cellphone === undefined ? '' : window.localStorage.cellphone,
@@ -115,7 +126,8 @@ export default {
       companyList: [],
       userList: [],
       userId: window.localStorage.userId,
-      order: {}
+      order: {},
+      projects: []
     }
   },
   props: {
@@ -138,6 +150,15 @@ export default {
       if (this.$route.query.orderId !== undefined) {
         this.getOrder()
       }
+      this.axios.get('solution', {
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
+        this.projects = res.data
+      }).catch(err => {
+        console.log(err)
+      })
     },
     getOrder () {
       this.axios.get('order/' + this.$route.query.orderId).then(res => {
@@ -308,7 +329,8 @@ export default {
                 filePath: up.settings.multipart_params.key,
                 objectKey: up.settings.multipart_params.key,
                 companyId: this.report.companyId,
-                orderId: this.$route.query.orderId
+                orderId: this.$route.query.orderId,
+                solutionId: this.report.solutionId
               }
               this.axios.post('report/upload', param).then(res => {
                 this.$message({

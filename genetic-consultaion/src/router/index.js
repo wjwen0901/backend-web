@@ -12,6 +12,7 @@ import ReportView from '@/views/wechat/report_view'
 import OrderList from '@/views/wechat/order_list'
 import WechatReportList from '@/views/wechat/report_list'
 import WechatInformedList from '@/views/wechat/informed_list'
+import PathlogicUpload from '@/views/wechat/pathlogic_upload'
 // 移动端报告页面
 import PersonalReport from '@/views/wechat/report/personal_report'
 import RU6C from '@/views/wechat/report/ru6c'
@@ -24,7 +25,9 @@ import UserSec from '@/views/home/user/user'
 import UserList from '@/views/home/user/list'
 
 import InformedUpload from '@/views/home/informed/informed_upload'
+import InformedInfoList from '@/views/home/informed/list'
 import ReportUpload from '@/views/home/report/report_upload'
+import ReportInfoList from '@/views/home/report/list'
 
 import InformedList from '@/views/home/data_collect/informed_list'
 import InformedEdit from '@/views/home/data_collect/informed_edit'
@@ -41,6 +44,8 @@ import CustomerList from '@/views/home/customer/list'
 
 import ProductList from '@/views/home/product/list'
 import ProductEdit from '@/views/home/product/edit'
+
+import PatientList from '@/views/home/patient/list'
 
 Vue.use(Router)
 
@@ -89,6 +94,11 @@ export default new Router({
           component: InformedUpload
         },
         {
+          path: '/informed/info/list',
+          name: 'InformedInfoList',
+          component: InformedInfoList
+        },
+        {
           path: '/report/upload',
           name: 'ReportUpload',
           component: ReportUpload
@@ -102,6 +112,11 @@ export default new Router({
           path: '/report/list',
           name: 'ReportList',
           component: ReportList
+        },
+        {
+          path: '/report/info/list',
+          name: 'ReportInfoList',
+          component: ReportInfoList
         },
         {
           path: '/informed/edit/:informedId',
@@ -147,6 +162,11 @@ export default new Router({
           path: '/product/add',
           name: 'ProductAdd',
           component: ProductEdit
+        },
+        {
+          path: '/patient/list',
+          name: 'PatientList',
+          component: PatientList
         }
       ]
     },
@@ -172,6 +192,14 @@ export default new Router({
       component: WechatReportUpload,
       meta: {
         title: '上传报告'
+      }
+    },
+    {
+      path: '/wechat/pathlogic/upload',
+      name: 'PathlogicUpload',
+      component: PathlogicUpload,
+      meta: {
+        title: '上传病历'
       }
     },
     {

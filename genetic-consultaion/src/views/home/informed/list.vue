@@ -35,10 +35,8 @@
           prop="state"
           label="状态">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.state === 0">{{scope.row.state | stateFilter}}</el-tag>
-            <el-tag v-else-if="scope.row.state === 1" type="info">{{scope.row.state | stateFilter}}</el-tag>
-            <el-tag v-else-if="scope.row.state === 2" type="danger">{{scope.row.state | stateFilter}}</el-tag>
-            <el-tag v-else-if="scope.row.state === 3" type="success">{{scope.row.state | stateFilter}}</el-tag>
+            <el-tag v-if="scope.row.state === 3" type="success">{{scope.row.state | stateFilter}}</el-tag>
+            <el-tag v-else type="info">{{scope.row.state | stateFilter}}</el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -112,10 +110,11 @@ export default {
   },
   filters: {
     stateFilter: function (state) {
-      if (state === 0) return '新增'
-      if (state === 1) return '已录入'
-      if (state === 2) return '无法识别'
-      if (state === 3) return '报告已出'
+      if (state === 3) {
+        return '报告已出'
+      } else {
+        return '报告未出'
+      }
     }
   },
   computed: {},

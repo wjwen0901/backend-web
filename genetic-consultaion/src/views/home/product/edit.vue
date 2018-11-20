@@ -169,7 +169,7 @@ export default {
             solution: this.product,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
-            solutionExpands: this.expandParams
+            userId: window.localStorage.userId
           },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
@@ -181,6 +181,11 @@ export default {
             type: 'success'
           })
           _this.$router.push('/product')
+        }).catch(function () {
+          _this.$message({
+            message: '新增失败',
+            type: 'error'
+          })
         })
       } else {
         let instance = this.axios.create({
@@ -197,7 +202,8 @@ export default {
             solution: this.product,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
-            solutionExpands: this.expandParams
+            solutionExpands: this.expandParams,
+            userId: window.localStorage.userId
           },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
@@ -209,6 +215,11 @@ export default {
             type: 'success'
           })
           _this.$router.push('/product')
+        }).catch(function () {
+          _this.$message({
+            message: '修改失败',
+            type: 'error'
+          })
         })
       }
     },

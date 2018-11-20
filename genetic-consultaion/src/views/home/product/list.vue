@@ -67,6 +67,7 @@
           width="100">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="toDetail(scope.row.id)">编辑</el-button>
+            <el-button type="text" size="small" @click="toDelete(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -104,7 +105,8 @@ export default {
       this.axios.get('solution/page', {
         params: {
           pageNum: this.pageNum,
-          pageSize: this.pageSize
+          pageSize: this.pageSize,
+          userId: window.localStorage.userId
         }
       }).then(res => {
         this.solutionList = res.data.list
@@ -132,6 +134,25 @@ export default {
       this.$router.push({
         name: 'ProductAdd'
       })
+    },
+    toDelete (id) {
+      this.$confirm('确认删除？')
+        .then(_ => {
+          this.axios.delete('solution/' + id).then(res => {
+            this.getData()
+            this.$message({
+              message: '删除成功',
+              type: 'success'
+            })
+          }).catch(err => {
+            console.log(err)
+            this.$message({
+              message: '删除失败',
+              type: 'error'
+            })
+          })
+        })
+        .catch(_ => {})
     }
   },
   filters: {

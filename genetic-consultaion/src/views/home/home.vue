@@ -48,6 +48,7 @@
               <span slot="title">订单管理</span>
             </template>
           </el-menu-item>
+
           <el-menu-item index="/customer" v-if="sec.includes('customer')">
             <template slot="title">
               <i class="el-icon-view"></i>
@@ -58,14 +59,15 @@
             <template slot="title"><i class="el-icon-upload"></i><span slot="title">知情管理</span></template>
             <el-menu-item-group>
               <el-menu-item index="/informed/upload" v-if="sec.includes('upload:informed')">上传文件</el-menu-item>
-              <el-menu-item index="/informed/list" v-if="sec.includes('data-collect:informed')">查看知情</el-menu-item>
+              <el-menu-item index="/informed/list" v-if="sec.includes('data-collect:informed') && (role === 'manager' || role === 'jk-service')">查看知情</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="upload" v-if="sec.includes('upload:report') || sec.includes('data-collect:report')">
             <template slot="title"><i class="el-icon-upload"></i><span slot="title">报告管理</span></template>
             <el-menu-item-group>
               <el-menu-item index="/report/upload" v-if="sec.includes('upload:report')">上传报告</el-menu-item>
-              <el-menu-item index="/report/list" v-if="sec.includes('data-collect:report')">查看报告</el-menu-item>
+              <el-menu-item index="/report/list" v-if="sec.includes('data-collect:report')">提取报告</el-menu-item>
+              <el-menu-item index="/report/info/list" v-if="sec.includes('report:list')">查看报告</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <!--<el-submenu index="upload" v-if="sec.includes('upload')">-->
@@ -90,6 +92,12 @@
           <el-menu-item index="/product" v-if="sec.includes('product')">
             <i class="el-icon-view"></i>
             <span slot="title">产品管理</span>
+          </el-menu-item>
+          <el-menu-item index="/patient/list" v-if="sec.includes('patient:list')">
+            <template slot="title">
+              <i class="el-icon-view"></i>
+              <span slot="title">受检者管理</span>
+            </template>
           </el-menu-item>
           <el-submenu index="system" v-if="sec.includes('system')">
             <template slot="title"><i class="el-icon-setting"></i><span slot="title">系统管理</span></template>
@@ -117,6 +125,9 @@ export default {
     return {
       username: window.localStorage.username,
       sec: window.localStorage.sec,
+      // username: 'admin',
+      // sec: 'upload,upload:informed,upload:report,upload:medical-records,order,data-collect,data-collect:informed,data-collect:report,data-review,system,system:user-sec,customer,product,report:list,patient:list',
+      role: window.localStorage.role,
       activeIndex: '/dashboard',
       openMenu: ['fly', 'upload', 'info', 'chann', 'system']
     }

@@ -176,9 +176,12 @@ export default {
       // 获取权限列表
       this.axios.get('barcode/create/' + this.userId, {
         params: {
-          solutionId: this.selSolution.id,
-          alias: this.selSolution.yzAlias,
-          name: this.selSolution.name,
+          // solutionId: this.selSolution.id,
+          solutionId: 149,
+          // alias: this.selSolution.yzAlias,
+          alias: '3evj0vgmgvie1',
+          name: '结直肠癌化疗套餐—2',
+          // name: this.selSolution.name,
           period: this.period,
           price: this.price,
           code: this.code,
@@ -199,7 +202,11 @@ export default {
     selectItem (id, name) {
       this.userId = id
       this.name = name
-      this.axios.get('solution').then(res => {
+      this.axios.get('solution', {
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
         this.solutionList = res.data
       }).catch(err => {
         console.log(err)
