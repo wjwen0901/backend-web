@@ -6,6 +6,9 @@
     </el-breadcrumb>
     <div class="user-container">
       <div class="search-box">
+        <el-input placeholder="请输入下单人姓名/手机号/检测项目" v-model="condition" class="input-with-select">
+          <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
+        </el-input>
       </div>
       <el-table
         :data="orderList"
@@ -87,8 +90,8 @@ export default {
   data () {
     return {
       orderList: [],
-      pageNum: 1,
-      pageSize: 20,
+      pageNum: window.sessionStorage.orderPageNum === undefined ? 1 : window.sessionStorage.orderPageNum,
+      pageSize: window.sessionStorage.orderPageSize === undefined ? 20 : window.sessionStorage.orderPageSize,
       totalPage: 0,
       dialogFormVisible: false,
       multipleSelection: [],
@@ -99,7 +102,8 @@ export default {
       sendEmailFormVisible: false,
       companyEmail: [],
       emailList: [],
-      roleCode: window.localStorage.role
+      roleCode: window.localStorage.role,
+      condition: null
     }
   },
   methods: {
@@ -112,7 +116,8 @@ export default {
         params: {
           userId: window.localStorage.userId,
           pageNum: this.pageNum,
-          pageSize: this.pageSize
+          pageSize: this.pageSize,
+          condition: this.condition
         }
       }).then(res => {
         this.orderList = res.data.list
@@ -137,10 +142,12 @@ export default {
     },
     handleSizeChange (val) {
       this.pageSize = val
+      window.sessionStorage.orderPageSize = val
       this.getData()
     },
     handleCurrentChange (val) {
       this.pageNum = val
+      window.sessionStorage.orderPageNum = val
       this.getData()
     },
     toRecheck (reportId, informedId) {
@@ -187,6 +194,11 @@ export default {
     margin: 20px 0px;
     padding: 20px;
     background: #ffffff;
+    .search-box {
+      width: 400px;
+      float: right;
+      margin-bottom: 10px;
+    }
   }
   .user-container .header {
     margin-bottom: 20px;

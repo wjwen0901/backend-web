@@ -195,7 +195,7 @@ export default new Router({
       }
     },
     {
-      path: '/wechat/pathlogic/upload',
+      path: '/wechat/case/upload',
       name: 'PathlogicUpload',
       component: PathlogicUpload,
       meta: {

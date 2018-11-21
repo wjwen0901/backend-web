@@ -7,12 +7,8 @@
       <div>
         <el-button class="add-solution" size="small" type="primary" @click="toAdd">新增</el-button>
         <div class="search-box">
-          <el-input placeholder="请输入内容" v-model="paramInfo" class="input-with-select">
-            <el-select v-model="paramSelect" slot="prepend" placeholder="请选择" class="param-select">
-              <el-option label="方案名称" value="1"></el-option>
-              <el-option label="适用科室" value="2"></el-option>
-            </el-select>
-            <el-button slot="append" icon="el-icon-search"></el-button>
+          <el-input placeholder="请输入产品名称/适用科室" v-model="condition" class="input-with-select">
+            <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
           </el-input>
         </div>
       </div>
@@ -90,11 +86,11 @@ export default {
   data () {
     return {
       solutionList: [],
-      pageNum: 1,
-      pageSize: 20,
+      pageNum: window.sessionStorage.productPageNum === undefined ? 1 : window.sessionStorage.productPageNum,
+      pageSize: window.sessionStorage.productPageSize === undefined ? 20 : window.sessionStorage.productPageSize,
       totalPage: 0,
       paramSelect: '',
-      paramInfo: ''
+      condition: null
     }
   },
   methods: {
@@ -106,7 +102,8 @@ export default {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId,
+          condition: this.condition
         }
       }).then(res => {
         this.solutionList = res.data.list
@@ -119,10 +116,12 @@ export default {
     },
     handleSizeChange (val) {
       this.pageSize = val
+      window.sessionStorage.productPageSize = val
       this.getData()
     },
     handleCurrentChange (val) {
       this.pageNum = val
+      window.sessionStorage.productPageNum = val
       this.getData()
     },
     toDetail (id) {

@@ -5,6 +5,11 @@
       <el-breadcrumb-item>生成二维码</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="user-container">
+      <div class="search-box">
+        <el-input placeholder="请输入姓名/手机号/邮箱" v-model="condition" class="input-with-select">
+          <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
+        </el-input>
+      </div>
       <el-table
         :data="list"
         size="mini"
@@ -123,8 +128,8 @@ export default {
   data () {
     return {
       list: [],
-      pageNum: 1,
-      pageSize: 20,
+      pageNum: window.sessionStorage.channelPageNum === undefined ? 1 : window.sessionStorage.channelPageNum,
+      pageSize: window.sessionStorage.channelPageSize === undefined ? 20 : window.sessionStorage.channelPageSize,
       totalPage: 0,
       dialogFormVisible: false,
       userId: 0,
@@ -139,7 +144,8 @@ export default {
       hospitalId: null,
       deptId: null,
       doctor: '',
-      url: null
+      url: null,
+      condition: null
     }
   },
   methods: {
@@ -152,7 +158,8 @@ export default {
         params: {
           id: window.localStorage.userId,
           pageSize: this.pageSize,
-          pageNum: this.pageNum
+          pageNum: this.pageNum,
+          condition: this.condition
         }
       }).then(res => {
         this.list = res.data.list
@@ -165,10 +172,12 @@ export default {
     },
     handleSizeChange (val) {
       this.pageSize = val
+      window.sessionStorage.channelPageSize = val
       this.getData()
     },
     handleCurrentChange (val) {
       this.pageNum = val
+      window.sessionStorage.channelPageNum = val
       this.getData()
     },
     downloadCode () {
@@ -176,12 +185,12 @@ export default {
       // 获取权限列表
       this.axios.get('barcode/create/' + this.userId, {
         params: {
-          // solutionId: this.selSolution.id,
-          solutionId: 149,
-          // alias: this.selSolution.yzAlias,
-          alias: '3evj0vgmgvie1',
-          name: '结直肠癌化疗套餐—2',
-          // name: this.selSolution.name,
+          solutionId: this.selSolution.id,
+          // solutionId: 149,
+          alias: this.selSolution.yzAlias,
+          // alias: '3evj0vgmgvie1',
+          // name: '结直肠癌化疗套餐—2',
+          name: this.selSolution.name,
           period: this.period,
           price: this.price,
           code: this.code,
@@ -257,5 +266,10 @@ export default {
   }
   .width-100-p {
     width: 100%;
+  }
+  .search-box {
+    width: 400px;
+    float: right;
+    margin-bottom: 10px;
   }
 </style>
