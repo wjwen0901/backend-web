@@ -1,52 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '@/views/home/home'
-
-// 微信服务号路由
-import WechatInformedUpload from '@/views/wechat/InformedUpload'
-import WechatReportUpload from '@/views/wechat/ReportUpload'
-import HospitalList from '@/views/wechat/hospital_list'
-import DeptList from '@/views/wechat/dept_list'
-import ReportDownload from '@/views/wechat/report_download'
-import ReportView from '@/views/wechat/report_view'
-import OrderList from '@/views/wechat/order_list'
-import WechatReportList from '@/views/wechat/report_list'
-import WechatInformedList from '@/views/wechat/informed_list'
-import PathlogicUpload from '@/views/wechat/pathlogic_upload'
-// 移动端报告页面
-import PersonalReport from '@/views/wechat/report/personal_report'
-import RU6C from '@/views/wechat/report/ru6c'
-import RU6CDetail from '@/views/wechat/report/ru6c_detail'
-
-// 后台管理路由
-import Dashboard from '@/views/home/dashboard/dashboard'
-
-import UserSec from '@/views/home/user/user'
-import UserList from '@/views/home/user/list'
-
-import InformedUpload from '@/views/home/informed/informed_upload'
-import InformedInfoList from '@/views/home/informed/list'
-import ReportUpload from '@/views/home/report/report_upload'
-import ReportInfoList from '@/views/home/report/list'
-
-import InformedList from '@/views/home/data_collect/informed_list'
-import InformedEdit from '@/views/home/data_collect/informed_edit'
-
-import ReportList from '@/views/home/data_collect/report_list'
-import ReportEdit from '@/views/home/data_collect/report_edit'
-import DataReview from '@/views/home/data_review/data_review'
-
-import BarcodeUserList from '@/views/home/channel/list'
-
-import Order from '@/views/home/order/order'
-import OrderDetail from '@/views/home/order/detail'
-import CustomerList from '@/views/home/customer/list'
-
-import ProductList from '@/views/home/product/list'
-import ProductEdit from '@/views/home/product/edit'
-
-import PatientList from '@/views/home/patient/list'
-
 Vue.use(Router)
 
 export default new Router({
@@ -54,126 +7,118 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      component: Home,
+      component: resolve => require(['@/views/home/home'], resolve),
       redirect: '/dashboard',
       children: [
         {
           path: '/dashboard',
           name: 'Dashboard',
-          component: Dashboard
+          component: resolve => require(['@/views/home/dashboard/dashboard'], resolve)
         },
         {
           path: '/user',
           name: 'UserSec',
-          component: UserSec,
+          component: resolve => require(['@/views/home/user/user'], resolve),
           redirect: '/user/list/business-agent',
           children: [
             {
               path: '/user/list/:role',
               name: 'UserList',
-              component: UserList
+              component: resolve => require(['@/views/home/user/list'], resolve)
             }
           ]
         },
         {
-          path: '/channel',
+          path: '/channel/barcode',
           name: 'BarcodeUserList',
-          component: BarcodeUserList,
-          redirect: '/channel/barcode',
-          children: [
-            {
-              path: '/channel/barcode',
-              name: 'BarcodeUserList',
-              component: BarcodeUserList
-            }
-          ]
+          component: resolve => require(['@/views/home/channel/list'], resolve)
         },
         {
           path: '/informed/upload',
           name: 'InformedUpload',
-          component: InformedUpload
+          component: resolve => require(['@/views/home/informed/informed_upload'], resolve)
         },
         {
           path: '/informed/info/list',
           name: 'InformedInfoList',
-          component: InformedInfoList
+          component: resolve => require(['@/views/home/informed/list'], resolve)
         },
         {
           path: '/report/upload',
           name: 'ReportUpload',
-          component: ReportUpload
+          component: resolve => require(['@/views/home/report/report_upload'], resolve)
         },
         {
           path: '/informed/list',
           name: 'InformedList',
-          component: InformedList
+          component: resolve => require(['@/views/home/data_collect/informed_list'], resolve)
         },
         {
           path: '/report/list',
           name: 'ReportList',
-          component: ReportList
+          component: resolve => require(['@/views/home/data_collect/report_list'], resolve)
         },
         {
           path: '/report/info/list',
           name: 'ReportInfoList',
-          component: ReportInfoList
+          component: resolve => require(['@/views/home/report/list'], resolve)
         },
         {
           path: '/informed/edit/:informedId',
           name: 'InformedEdit',
-          component: InformedEdit
+          component: resolve => require(['@/views/home/data_collect/informed_edit'], resolve)
         },
         {
           path: '/report/edit/:reportId',
           name: 'ReportEdit',
-          component: ReportEdit
+          component: resolve => require(['@/views/home/data_collect/report_edit'], resolve)
         },
         {
           path: '/review',
           name: 'DataReview',
-          component: DataReview
+          component: resolve => require(['@/views/home/data_review/data_review'], resolve)
         },
         {
           path: '/order',
           name: 'Order',
-          component: Order
+          component: resolve => require(['@/views/home/order/order'], resolve)
         },
         {
           path: '/order/:id',
           name: 'OrderDetail',
-          component: OrderDetail
+          component: resolve => require(['@/views/home/order/detail'], resolve)
         },
         {
           path: '/customer',
           name: 'CustomerList',
-          component: CustomerList
+          component: resolve => require(['@/views/home/customer/list'], resolve)
         },
         {
           path: '/product',
           name: 'ProductList',
-          component: ProductList
+          component: resolve => require(['@/views/home/product/list'], resolve)
         },
         {
           path: '/product/edit/:id',
           name: 'ProductEdit',
-          component: ProductEdit
+          component: resolve => require(['@/views/home/product/edit'], resolve)
         },
         {
           path: '/product/add',
           name: 'ProductAdd',
-          component: ProductEdit
+          component: resolve => require(['@/views/home/product/edit'], resolve)
         },
         {
           path: '/patient/list',
           name: 'PatientList',
-          component: PatientList
+          component: resolve => require(['@/views/home/patient/list'], resolve)
         }
       ]
     },
     {
       path: '/wechat/order',
       name: 'OrderList',
-      component: OrderList,
+      component: resolve => require(['@/views/wechat/order_list'], resolve),
       meta: {
         title: '我的订单'
       }
@@ -181,7 +126,7 @@ export default new Router({
     {
       path: '/wechat/informed/upload',
       name: 'WechatInformedUpload',
-      component: WechatInformedUpload,
+      component: resolve => require(['@/views/wechat/InformedUpload'], resolve),
       meta: {
         title: '上传知情同意'
       }
@@ -189,7 +134,7 @@ export default new Router({
     {
       path: '/wechat/report/upload',
       name: 'WechatReportUpload',
-      component: WechatReportUpload,
+      component: resolve => require(['@/views/wechat/ReportUpload'], resolve),
       meta: {
         title: '上传报告'
       }
@@ -197,7 +142,7 @@ export default new Router({
     {
       path: '/wechat/case/upload',
       name: 'PathlogicUpload',
-      component: PathlogicUpload,
+      component: resolve => require(['@/views/wechat/pathlogic_upload'], resolve),
       meta: {
         title: '上传病历'
       }
@@ -205,15 +150,7 @@ export default new Router({
     {
       path: '/wechat/hospital',
       name: 'HospitalList',
-      component: HospitalList,
-      meta: {
-        title: '选择医院'
-      }
-    },
-    {
-      path: '/wechat/hospital',
-      name: 'HospitalList',
-      component: HospitalList,
+      component: resolve => require(['@/views/wechat/hospital_list'], resolve),
       meta: {
         title: '选择医院'
       }
@@ -221,7 +158,7 @@ export default new Router({
     {
       path: '/wechat/dept',
       name: 'DeptList',
-      component: DeptList,
+      component: resolve => require(['@/views/wechat/dept_list'], resolve),
       meta: {
         title: '选择科室'
       }
@@ -229,7 +166,7 @@ export default new Router({
     {
       path: '/wechat/informed/list',
       name: 'WechatInformedList',
-      component: WechatInformedList,
+      component: resolve => require(['@/views/wechat/informed_list'], resolve),
       meta: {
         title: '我的知情'
       }
@@ -237,7 +174,7 @@ export default new Router({
     {
       path: '/wechat/report/list',
       name: 'WechatReportList',
-      component: WechatReportList,
+      component: resolve => require(['@/views/wechat/report_list'], resolve),
       meta: {
         title: '我的报告'
       }
@@ -245,7 +182,7 @@ export default new Router({
     {
       path: '/report/download',
       name: 'ReportDownload',
-      component: ReportDownload,
+      component: resolve => require(['@/views/wechat/report_download'], resolve),
       meta: {
         title: '下载报告'
       }
@@ -253,7 +190,7 @@ export default new Router({
     {
       path: '/report/view',
       name: 'ReportView',
-      component: ReportView,
+      component: resolve => require(['@/views/wechat/report_view'], resolve),
       meta: {
         title: '预览报告'
       }
@@ -261,7 +198,7 @@ export default new Router({
     {
       path: '/report/personal',
       name: 'PersonalReport',
-      component: PersonalReport,
+      component: resolve => require(['@/views/wechat/report/personal_report'], resolve),
       meta: {
         title: '个人检测报告'
       }
@@ -269,7 +206,7 @@ export default new Router({
     {
       path: '/report/ru6c',
       name: 'RU6C',
-      component: RU6C,
+      component: resolve => require(['@/views/wechat/report/ru6c'], resolve),
       meta: {
         title: '健康检测报告'
       }
@@ -277,10 +214,18 @@ export default new Router({
     {
       path: '/report/ru6c/detail',
       name: 'RU6CDetail',
-      component: RU6CDetail,
+      component: resolve => require(['@/views/wechat/report/ru6c_detail'], resolve),
       meta: {
         title: '健康检测报告'
       }
     }
+    // {
+    //   path: '/wechat/salesman/add',
+    //   name: 'RU6C',
+    //   component: RU6C,
+    //   meta: {
+    //     title: '业务员绑定'
+    //   }
+    // }
   ]
 })

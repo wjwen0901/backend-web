@@ -165,7 +165,11 @@ export default {
         console.log(err)
       })
 
-      this.axios.get('solution').then(res => {
+      this.axios.get('solution', {
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
         this.projects = res.data
       }).catch(err => {
         console.log(err)

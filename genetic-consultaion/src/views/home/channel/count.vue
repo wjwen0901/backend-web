@@ -147,7 +147,11 @@ export default {
     selectItem (id, name) {
       this.userId = id
       this.name = name
-      this.axios.get('solution').then(res => {
+      this.axios.get('solution', {
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
         this.solutionList = res.data
       }).catch(err => {
         console.log(err)
