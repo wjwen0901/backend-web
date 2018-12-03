@@ -1,5 +1,6 @@
 <template>
   <el-container>
+
     <el-table
       :data="reportList"
       style="width: 100%"
@@ -34,7 +35,8 @@ export default {
       reportList: [],
       pageNum: 1,
       pageSize: 100,
-      totalPage: 0
+      totalPage: 0,
+      orderNo: this.$route.query.orderNo
     }
   },
   methods: {
@@ -61,7 +63,7 @@ export default {
             objectKey: res.data.path
           }
         }).then(res1 => {
-          this.$router.push({path: '/wechat/report/view/', query: {path: res1.data}})
+          this.$router.push({path: '/report/view/', query: {path: res1.data}})
         }).catch(err => {
           console.log(err)
         })
@@ -72,7 +74,14 @@ export default {
   },
   watch: {},
   created () {
+    let loading = this.$loading({
+      lock: true,
+      text: 'Loading',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)'
+    })
     this.getList()
+    loading.close()
   }
 }
 </script>

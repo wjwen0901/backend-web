@@ -1,5 +1,6 @@
 <template>
   <el-container>
+    <!--<el-header>上传知情同意</el-header>-->
     <div class="mdh-mobile-form">
       <div class="title-info" v-if="hasUserInfo">
         欢迎您，{{readyName}}({{readyCellphone}})
@@ -49,7 +50,7 @@
 <script>
 import plupload from 'plupload'
 export default {
-  name: 'report-upload',
+  name: 'informed-upload',
   data () {
     return {
       userId: 0,
@@ -78,7 +79,8 @@ export default {
       fileList: [],
       uploader: {},
 
-      hasUserInfo: false
+      hasUserInfo: false,
+      orderNo: this.$route.query.orderNo
     }
   },
   props: {
@@ -114,11 +116,20 @@ export default {
       }
       this.setUploadParam(this.uploader, '', false)
     },
+    handleUploadError (err) {
+      if (err.status === 403) {
+        this.$message({
+          message: '您的号码未注册，请微信联系我们注册',
+          type: 'warning',
+          customClass: 'my-message'
+        })
+      }
+    },
     // 上传方法 ---待抽提成组件
     sendRequest () {
       const xmlhttp = new XMLHttpRequest()
       const param = this.userId > 0 ? ('&userId=' + this.userId) : ''
-      const serverUrl = this.axios.defaults.baseURL + '/oss/upload/policy/report' +
+      const serverUrl = this.axios.defaults.baseURL + '/oss/upload/policy/case-history' +
         '?name=' + this.name + '&cellphone=' + this.cellphone + param
       xmlhttp.open('GET', serverUrl, false)
       xmlhttp.setRequestHeader('Authorization', window.localStorage.token)
@@ -224,8 +235,8 @@ export default {
         max_retries: 3,
         filters: {
           // mime_types: [{
-          //   title: '允许上传文件类型',
-          //   extensions: 'jpg,gif,png,bmp,pdf,doc,docx'
+          // title: '允许上传文件类型',
+          // extensions: 'jpg,gif,png,bmp,pdf'
           // }],
           // 最大只能上传10GB的文件
           max_file_size: '10gb',
@@ -233,6 +244,12 @@ export default {
           prevent_duplicates: true
         },
         init: {
+          // PostInit: () => {
+          //   document.getElementById('postfiles').onclick = () => {
+          //     that.setUploadParam(uploader, '', false)
+          //     return false
+          //   }
+          // },
           FilesAdded: (up, files) => {
             that.fileList = up.files
             that.fileNum = up.files.length
@@ -262,7 +279,7 @@ export default {
               if (this.$route.query.openid !== undefined) {
                 param.openId = this.$route.query.openid
               }
-              this.axios.post('report/upload', param).then(res => {
+              this.axios.post('pathlogic/upload', param).then(res => {
                 this.$message({
                   message: '上传成功',
                   type: 'success',
@@ -314,6 +331,11 @@ export default {
       uploader.init()
       that.uploader = uploader
     },
+    rememberInfo () {
+      window.localStorage.userId = this.userId
+      window.localStorage.fullName = this.name
+      window.localStorage.cellphone = this.cellphone
+    },
     initData () {
       if (this.$route.query.openid !== undefined) {
         this.axios.get('user/openid', {
@@ -326,13 +348,30 @@ export default {
           this.readyCellphone = res.data.cellphone
           this.name = res.data.fullName
           this.cellphone = res.data.cellphone
-          if (this.readyName !== undefined && this.readyCellphone !== undefined) {
+          if (this.readyName !== undefined && this.readyCellphone !== undefined && this.readyCellphone !== null) {
             this.hasUserInfo = true
             console.log(this.hasUserInfo)
           }
         }).catch(err => {
           console.log(err)
         })
+      }
+    }
+  },
+  watch: {
+    name: function (val, oldVal) {
+      if (oldVal !== undefined && oldVal !== 'null' && oldVal !== '') {
+        this.nameError = false
+      }
+    },
+    cellphone: function (val, oldVal) {
+      if (oldVal !== undefined && oldVal !== 'null' && oldVal !== '') {
+        this.cellphoneError = false
+      }
+    },
+    fileNum: function (val, oldVal) {
+      if (oldVal !== undefined && oldVal > 0) {
+        this.fileError = false
       }
     }
   },
@@ -355,8 +394,15 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+  .my-message {
+    width: 80%;
+    min-width: auto;
+    background-color: rgba(0, 0, 0, .6);
+    border-color: rgba(0, 0, 0, .6);
+  }
   .el-container {
     background: #f2f2f2;
+    min-height: 100%;
   }
   .upload-main {
     background: #f2f2f2;
@@ -370,17 +416,42 @@ export default {
   .float-l {
     float: left;
   }
-  .upload-content {
-    position: relative;
-    float: left;
+  .width-100-p {
+    width: 100%
   }
-  .upload-btn {
-    width: 150px;
+  .el-select-dropdown {
+    width: 70% !important;
+    left: 100px !important;
+  }
+  .el-popper[x-placement^=bottom] {
+    width: 70% !important;
+    left: 100px !important;
+  }
+  .el-scrollbar__wrap {
+    width: 100%;
+  }
+  .el-select-dropdown__list {
+    width: 100%;
+  }
+  .el-select-dropdown__item {
+    width: 100%;
+    height: auto;
+  }
+  .mui-table-view:after {
+    left: 15px;
+  }
+  .select-option {
+    margin: 8px 0px;
+    width: 100%;
+    height: auto;
+    line-height: 18px;
+    word-wrap: break-word !important;
+    white-space: normal;
   }
   .mdh-mobile-form {
-    width: 100%;
     margin: 0;
     padding: 0;
+    width: 100%;
     .form-group-title {
       padding-left: 20px;
       font-size: 12px;
@@ -472,12 +543,12 @@ export default {
   }
   .update-btn {
     margin-left: 10px;
+    padding: 6px 0px;
     font-size: 12px;
+    line-height: 14px;
   }
-  .my-message {
-    width: 80%;
-    min-width: auto;
-    background-color: rgba(0, 0, 0, .6);
-    border-color: rgba(0, 0, 0, .6);
+  .order-no {
+    padding: 0px 20px;
+    font-size: 12px;
   }
 </style>

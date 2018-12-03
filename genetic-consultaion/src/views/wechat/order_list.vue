@@ -1,33 +1,41 @@
 <template>
   <el-container>
-    <el-table
-      :data="orderList"
-      style="width: 100%"
-      size="mini">
-      <el-table-column
-        prop="tid">
-        <template slot-scope="scope">
-          <div class="order-title">
-            <div>
-              订单编号：{{scope.row.tid}}
+    <el-header height="40" v-if="orderNo !== undefined">
+      订单编号：{{orderNo}}
+    </el-header>
+    <el-main>
+      <el-table
+        :data="orderList"
+        style="width: 100%"
+        size="mini">
+        <el-table-column
+          prop="tid">
+          <template slot-scope="scope">
+            <div class="order-title">
+              <div>
+                订单编号：{{scope.row.tid}}
+              </div>
+              <div>
+                创建时间：{{scope.row.createTime | formatDate}}
+              </div>
+              <div>
+                下单人：{{scope.row.fullName}}({{scope.row.cellphone}})
+              </div>
+              <span class="status">{{scope.row.statusStr}}</span>
             </div>
-            <div>
-              创建时间：{{scope.row.createTime | formatDate}}
+            <div class="item-title">
+              {{scope.row.itemTitle}}
+              <span class="money">{{scope.row.payment}} ¥</span>
             </div>
-            <span class="status">{{scope.row.statusStr}}</span>
-          </div>
-          <div class="item-title">
-            {{scope.row.itemTitle}}
-            <span class="money">{{scope.row.payment}} ¥</span>
-          </div>
-          <div class="right-btn">
-            <el-button v-if="scope.row.reportNum>0" type="primary" size="mini" plain @click="toShowReport(scope.row.id)">查看报告</el-button>
-            <el-button v-if="scope.row.informedNum>0" type="primary" size="mini" plain @click="toShowInformed(scope.row.id, scope.row.tid)">查看知情</el-button>
-            <el-button v-if="scope.row.informedNum==0" type="primary" size="mini" plain @click="toUploadInformed(scope.row.id, scope.row.tid)">上传知情</el-button>
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
+            <div class="right-btn">
+              <el-button v-if="scope.row.reportNum>0" type="primary" size="mini" plain @click="toShowReport(scope.row.id)">查看报告</el-button>
+              <el-button v-if="scope.row.informedNum>0" type="primary" size="mini" plain @click="toShowInformed(scope.row.id, scope.row.tid)">查看知情</el-button>
+              <el-button v-if="scope.row.informedNum==0" type="primary" size="mini" plain @click="toUploadInformed(scope.row.id, scope.row.tid)">上传知情</el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-main>
   </el-container>
 </template>
 <script>
@@ -64,11 +72,21 @@ export default {
     },
     toShowReport (orderId, orderNo) {
       this.$router.push({path: '/wechat/report/list', query: {openid: this.$route.query.openid, orderId: orderId, orderNo: orderNo}})
+    },
+    toShowInformed (orderId, orderNo) {
+      this.$router.push({path: '/wechat/informed/list', query: {openid: this.$route.query.openid, orderId: orderId, orderNo: orderNo}})
     }
   },
   watch: {},
   created () {
+    let loading = this.$loading({
+      lock: true,
+      text: 'Loading',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)'
+    })
     this.getList()
+    loading.close()
   }
 }
 </script>

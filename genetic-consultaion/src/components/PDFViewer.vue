@@ -50,7 +50,7 @@
         @scale-change="updateScale"
         />
     </PDFData>
-    <div class="wechat-download-tips" v-if="isWechat">
+    <div class="wechat-download-tips" v-show="isWechat">
       <!--<WechatArrowPng/>-->
       <img src="../assets/wechat-arrow.png" class="tips-arrow">
       <div>

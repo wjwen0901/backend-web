@@ -147,7 +147,11 @@ export default {
     selectItem (id, name) {
       this.userId = id
       this.name = name
-      this.axios.get('solution').then(res => {
+      this.axios.get('solution', {
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
         this.solutionList = res.data
       }).catch(err => {
         console.log(err)
@@ -162,7 +166,14 @@ export default {
   computed: {
   },
   created () {
+    let loading = this.$loading({
+      lock: true,
+      text: 'Loading',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)'
+    })
     this._initData()
+    loading.close()
   },
   mounted () {
   },

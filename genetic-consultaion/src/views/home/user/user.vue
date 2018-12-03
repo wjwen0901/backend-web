@@ -6,6 +6,7 @@
     </el-breadcrumb>
     <div class="user-container">
       <el-tabs v-model="activeName" class="tab-list" type="card" @tab-click="handleClick">
+        <el-tab-pane label="普通客户" name="business-agent" v-if="roleCode === 'manager'"></el-tab-pane>
         <el-tab-pane label="业务代表" name="business-agent"></el-tab-pane>
         <el-tab-pane label="渠道商" name="channel" v-if="roleCode === 'manager'"></el-tab-pane>
         <el-tab-pane label="实验室客服" name="firm-service" v-if="roleCode === 'manager'"></el-tab-pane>

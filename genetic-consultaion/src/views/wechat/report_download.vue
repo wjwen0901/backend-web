@@ -1,22 +1,47 @@
 <template>
-  <el-container>
-    <el-header>个人健康报告下载</el-header>
-    <el-main>
-      <el-form :rules="rules" :model="informedConsent" ref="informedConsent" label-width="110px" label-position="left" size="mini">
-        <el-form-item label="您的姓名" prop="name">
-          <el-input class="width-100-p" v-model="informedConsent.name"></el-input>
-        </el-form-item>
-        <el-form-item label="手机号码" prop="cellphone">
-          <el-input class="width-100-p" v-model="informedConsent.cellphone"></el-input>
-        </el-form-item>
-        <el-form-item label="身份证后四位" prop="idCode">
-          <el-input class="width-100-p" v-model="informedConsent.idCode"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button class="float-l" type="primary" @click="toViewReport">查看报告</el-button>
-        </el-form-item>
-      </el-form>
-    </el-main>
+  <el-container class="report-download">
+    <div v-if="CustomizedKey === '11d67f337e411b48e6d8cd0d0ad67a35'" class="nick">
+      <div>
+        <h4 class="c-logo">奥格妮克健康管理中心</h4>
+        <div class="c-header">
+          <p>个人健康报告</p>
+        </div>
+        <el-form :rules="rules" :model="informedConsent" ref="informedConsent" label-width="0px" label-position="left">
+          <el-form-item prop="name">
+            <input type="text" class="nick-input" v-model="informedConsent.name" placeholder="请输入姓名"/>
+          </el-form-item>
+          <el-form-item prop="cellphone">
+            <input type="text" class="nick-input" v-model="informedConsent.cellphone" placeholder="请输入手机号"/>
+          </el-form-item>
+          <!--<el-form-item prop="idCode">-->
+            <!--<input type="text" class="nick-input" v-model="informedConsent.idCode" placeholder="请输入身份证后4位"/>-->
+            <!--&lt;!&ndash;<el-input class="nick-input" v-model="informedConsent.idCode" placeholder="请输入身份证后四位"></el-input>&ndash;&gt;-->
+          <!--</el-form-item>-->
+          <el-form-item class="nick-button">
+            <el-button @click="toViewReport">查看报告</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </div>
+    <div v-else>
+      <el-header>个人健康报告下载</el-header>
+      <el-main>
+        <el-form :rules="rules" :model="informedConsent" ref="informedConsent" label-width="110px" label-position="left" size="mini">
+          <el-form-item label="您的姓名" prop="name">
+            <el-input class="width-100-p" v-model="informedConsent.name"></el-input>
+          </el-form-item>
+          <el-form-item label="手机号码" prop="cellphone">
+            <el-input class="width-100-p" v-model="informedConsent.cellphone"></el-input>
+          </el-form-item>
+          <el-form-item label="身份证后四位" prop="idCode">
+            <el-input class="width-100-p" v-model="informedConsent.idCode"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button class="float-l" type="primary" @click="toViewReport">查看报告</el-button>
+          </el-form-item>
+        </el-form>
+      </el-main>
+    </div>
   </el-container>
 </template>
 
@@ -68,50 +93,55 @@ export default {
       reportList: [],
       pageNum: 1,
       pageSize: 20,
-      totalPage: 0
+      totalPage: 0,
+      CustomizedKey: this.$route.query.k
     }
   },
   methods: {
     toViewReport () {
-      this.axios.get('report/patient', {
-        params: this.informedConsent
-      }).then(res => {
-        this.$router.push({path: '/report/view/', query: {path: res.data}})
-      }).catch(err => {
-        console.log(err)
-        // if (err.status === 'userError') {
-        this.$alert('暂未查询到您的检测信息，如有报告生成我们会推送到您的微信', '温馨提示', {
-          confirmButtonText: '确定',
-          callback: action => {
-            // this.$message({
-            //   type: 'info',
-            //   message: `action: ${action}`
-            // })
-          }
+      if (this.$route.query.k === '11d67f337e411b48e6d8cd0d0ad67a35') {
+        this.axios.get('report/list', {
+          params: this.informedConsent
+        }).then(res => {
+          this.$router.push({path: '/report/personal', query: {name: this.informedConsent.name, cellphone: this.informedConsent.cellphone}})
+        }).catch(err => {
+          console.log(err)
+          this.$message({
+            message: '暂未查询到您的检测报告',
+            center: true,
+            duration: 30000,
+            showClose: true
+          })
         })
-        // }
-        // if (err.status === 'reportError') {
-        //   this.$alert('您的检测正在实验中，报告生成我们会推送到您的微信，请耐心等待', '温馨提示', {
-        //     confirmButtonText: '确定',
-        //     callback: action => {
-        //       this.$message({
-        //         type: 'info',
-        //         message: `action: ${action}`,
-        //         customClass: 'confirm-message'
-        //       })
-        //     }
-        //   })
-        // }
-        // console.log(err)
-      })
+      } else {
+        this.axios.get('report/patient', {
+          params: this.informedConsent
+        }).then(res => {
+          this.$router.push({path: '/report/view/', query: {path: res.data}})
+        }).catch(err => {
+          console.log(err)
+          this.$message({
+            message: '暂未查询到您的检测报告',
+            center: true,
+            duration: 30000,
+            showClose: true
+          })
+        })
+      }
     }
   }
 }
 </script>
-
+<style scoped>
+  .report-download >>> .el-message {
+    width: 100px!important;
+    min-width: 100px!important;
+  }
+</style>
 <style rel="stylesheet/scss" lang="scss" scoped>
   .el-container {
     background: #fff;
+    min-height: 100%;
   }
   .el-main {
     background: #f2f2f2;
@@ -122,7 +152,7 @@ export default {
     height: 40px !important;
   }
   .confirm-message {
-    width: 70% !important;
+    width: 50% !important;
   }
   .float-l {
     float: left;
@@ -140,4 +170,69 @@ export default {
   .upload-btn {
     width: 150px;
   }
+  .nick {
+    width: 100%;
+    min-height: 100%;
+    /*background-color: rgba(101, 194, 196, .1);*/
+    padding: 30px 20px;
+    text-align: center;
+    color: rgb(101, 194, 196);
+    font-weight: 400;
+    .el-form-item {
+      margin-bottom: 16px;
+    }
+    .nick-input {
+      width: 80%!important;
+      -webkit-appearance: none;
+      background: none;
+      border-radius: 4px;
+      border: 1px solid rgb(101, 194, 196);
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      color: #333333;
+      display: inline-block;
+      font-size: inherit;
+      height: 40px;
+      line-height: 40px;
+      outline: 0;
+      padding: 0 15px;
+      -webkit-transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+      transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+      width: 100%;
+    }
+    input::placeholder {
+      color: #ddd;
+    }
+    .c-header {
+      margin: 60px auto 30px;
+      width: 60%;
+      padding: 6px 0px;
+      font-size: 20px;
+      font-weight: bold;
+      display: block;
+      /*border: 1px solid rgba(101, 194, 196, .8);*/
+      border-radius: 6px;
+    }
+    .c-logo {
+      position: absolute;
+      width: 100%;
+      bottom: 0;
+      left: 50%;
+      margin: 10px 0px;
+      transform: translate(-50%, 0%);
+      font-size: 16px;
+      letter-spacing: 2px;
+      font-weight: 400;
+
+    }
+    .nick-button .el-button{
+      margin: 40px auto;
+      width: 80%!important;
+      background: rgb(101, 194, 196);
+      color: #fff;
+      /*border: 1px solid rgba(255, 255, 255, .8);*/
+      width: 100%;
+    }
+  }
+
 </style>

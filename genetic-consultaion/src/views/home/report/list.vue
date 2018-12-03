@@ -11,47 +11,43 @@
         border
         style="width: 100%">
         <el-table-column
+          prop="solutionName"
+          label="检测产品"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="fileName"
+          label="文件名称">
+        </el-table-column>
+        <el-table-column
           prop="sampleCode"
           label="条码编号"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="fileName"
-          label="文件名称"
-          width="180">
+          prop="truename"
+          label="受检者姓名">
+        </el-table-column>
+        <el-table-column
+          prop="cellphone"
+          label="受检者电话">
         </el-table-column>
         <el-table-column
           prop="createTime"
           label="上传时间"
-          width="180">
+          width="140">
           <template slot-scope="scope">
             {{scope.row.createTime | formatDate}}
           </template>
         </el-table-column>
         <el-table-column
-          prop="fullName"
-          label="实验员">
-        </el-table-column>
-        <el-table-column
-          prop="userCellphone"
-          label="联系电话">
-        </el-table-column>
-        <el-table-column
-          prop="state"
-          label="状态">
-          <template slot-scope="scope">
-            <el-tag v-if="scope.row.state === 0">{{scope.row.state | stateFilter}}</el-tag>
-            <el-tag v-else-if="scope.row.state === 1" type="info">{{scope.row.state | stateFilter}}</el-tag>
-            <el-tag v-else-if="scope.row.state === 2" type="danger">{{scope.row.state | stateFilter}}</el-tag>
-            <el-tag v-else-if="scope.row.state === 3" type="success">{{scope.row.state | stateFilter}}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
           fixed="right"
           label="操作"
-          width="100">
+          width="200">
           <template slot-scope="scope">
+            <el-button type="text" size="small" @click="toDetail(scope.row.id)">查看文件</el-button>
             <el-button type="text" size="small" @click="toDetail(scope.row.id)">编辑</el-button>
+            <!--<el-button type="text" size="small" @click="toDetail(scope.row.id)">删除</el-button>-->
           </template>
         </el-table-column>
       </el-table>

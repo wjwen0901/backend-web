@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>信息提取</el-breadcrumb-item>
+      <el-breadcrumb-item>知情管理</el-breadcrumb-item>
       <el-breadcrumb-item>知情列表</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="user-container">
@@ -120,7 +120,14 @@ export default {
   },
   computed: {},
   created () {
+    let loading = this.$loading({
+      lock: true,
+      text: 'Loading',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)'
+    })
     this._initData()
+    loading.close()
   },
   mounted () {},
   destroyed () {}

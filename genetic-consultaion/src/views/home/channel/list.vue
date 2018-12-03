@@ -5,6 +5,11 @@
       <el-breadcrumb-item>生成二维码</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="user-container">
+      <div class="search-box">
+        <el-input placeholder="请输入姓名/手机号/邮箱" v-model="condition" class="input-with-select">
+          <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
+        </el-input>
+      </div>
       <el-table
         :data="list"
         size="mini"
@@ -57,26 +62,60 @@
       </el-pagination>
     </div>
 
-    <el-dialog title="选择产品" :visible.sync="dialogFormVisible">
+    <el-dialog title="生成二维码" :visible.sync="dialogFormVisible">
       <div>
-        <el-table
-          :data="solutionList"
-          size="mini"
-          border
-          style="width: 100%">
-          <el-table-column
-            prop="name"
-            label="姓名">
-          </el-table-column>
-          <el-table-column
-            label="操作"
-            width="200">
-            <template slot-scope="scope">
-              <el-button @click="downloadCode(scope.row.yzAlias, scope.row.name, scope.row.period, scope.row.directPrice, scope.row.code)" type="text" size="small">下载二维码</el-button>
-              <!--<el-button @click="printCode(scope.row.id)" type="text" size="small">打印二维码</el-button>-->
-            </template>
-          </el-table-column>
-        </el-table>
+        <el-form ref="form" label-width="150px">
+          <el-form-item label="选择产品">
+            <el-select class="width-100-p" v-model="selSolution" value-key="id" filterable placeholder="请选择">
+              <el-option
+                v-for="item in solutionList"
+                :key="item.id"
+                :label="item.name"
+                :value="item">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="商品优惠链接">
+            <el-input v-model="url" placeholder="http://..."></el-input>
+          </el-form-item>
+          <el-form-item label="单价">
+            <el-input v-model="price" placeholder="1300"></el-input>
+          </el-form-item>
+          <el-form-item label="检测周期（工作日）">
+            <el-input-number v-model="period" :min="1" :max="100" label="请输入"></el-input-number>
+            <!--<el-input type="" v-model="period" placeholder="7"></el-input>&lt;!&ndash;&ndash;&gt;-->
+          </el-form-item>
+          <el-form-item label="送检医院">
+            <el-select class="width-100-p" v-model="hospitalId" filterable placeholder="请选择">
+              <el-option
+                v-for="item in hospitals"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="送检科室">
+            <el-select class="width-100-p" v-model="deptId" filterable placeholder="请选择">
+              <el-option
+                v-for="item in depts"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="送检医生">
+            <el-input v-model="doctor" placeholder="王大夫"></el-input>
+          </el-form-item>
+          <el-form-item label="识别代码">
+            <el-input v-model="code" placeholder="MDHCARE1001"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="downloadCode()">确定</el-button>
+            <el-button @click="dialogFormVisible = false">取消</el-button>
+          </el-form-item>
+        </el-form>
       </div>
     </el-dialog>
   </div>
@@ -89,13 +128,24 @@ export default {
   data () {
     return {
       list: [],
-      pageNum: 1,
-      pageSize: 20,
+      pageNum: window.sessionStorage.channelPageNum === undefined ? 1 : window.sessionStorage.channelPageNum,
+      pageSize: window.sessionStorage.channelPageSize === undefined ? 20 : window.sessionStorage.channelPageSize,
       totalPage: 0,
       dialogFormVisible: false,
       userId: 0,
       name: '',
-      solutionList: []
+      solutionList: [],
+      price: null,
+      period: null,
+      code: null,
+      selSolution: {},
+      hospitals: [],
+      depts: [],
+      hospitalId: null,
+      deptId: null,
+      doctor: '',
+      url: null,
+      condition: null
     }
   },
   methods: {
@@ -104,10 +154,12 @@ export default {
     },
     getData () {
       // 获取权限列表
-      this.axios.get('channel/user', {
+      this.axios.get('user/customer', {
         params: {
+          id: window.localStorage.userId,
           pageSize: this.pageSize,
-          pageNum: this.pageNum
+          pageNum: this.pageNum,
+          condition: this.condition
         }
       }).then(res => {
         this.list = res.data.list
@@ -120,20 +172,32 @@ export default {
     },
     handleSizeChange (val) {
       this.pageSize = val
+      window.sessionStorage.channelPageSize = val
+      this.getData()
     },
     handleCurrentChange (val) {
       this.pageNum = val
+      window.sessionStorage.channelPageNum = val
+      this.getData()
     },
-    downloadCode (alias, name, period, price, code) {
+    downloadCode () {
       this.dialogFormVisible = true
       // 获取权限列表
       this.axios.get('barcode/create/' + this.userId, {
         params: {
-          alias: alias,
-          name: name,
-          period: '7个工作日',
-          price: '1400',
-          code: 'MDHC012-0001'
+          solutionId: this.selSolution.id,
+          // solutionId: 149,
+          alias: this.selSolution.yzAlias,
+          // alias: '3evj0vgmgvie1',
+          // name: '结直肠癌化疗套餐—2',
+          name: this.selSolution.name,
+          period: this.period,
+          price: this.price,
+          code: this.code,
+          hospitalId: this.hospitalId,
+          deptId: this.deptId,
+          doctor: this.doctor,
+          url: this.url
         }
       }).then(res => {
         window.open(this.axios.defaults.baseURL + '/barcode/down?filename=' + res.data + '&Authorization=' + window.localStorage.token)
@@ -147,8 +211,22 @@ export default {
     selectItem (id, name) {
       this.userId = id
       this.name = name
-      this.axios.get('solution').then(res => {
+      this.axios.get('solution', {
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
         this.solutionList = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+      this.axios.get('hospital').then(res => {
+        this.hospitals = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+      this.axios.get('hospital-dept').then(res => {
+        this.depts = res.data
       }).catch(err => {
         console.log(err)
       })
@@ -162,7 +240,14 @@ export default {
   computed: {
   },
   created () {
+    let loading = this.$loading({
+      lock: true,
+      text: 'Loading',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)'
+    })
     this._initData()
+    loading.close()
   },
   mounted () {
   },
@@ -178,5 +263,13 @@ export default {
   .user-container .header {
     margin-bottom: 20px;
     font-size: 18px;
+  }
+  .width-100-p {
+    width: 100%;
+  }
+  .search-box {
+    width: 400px;
+    float: right;
+    margin-bottom: 10px;
   }
 </style>

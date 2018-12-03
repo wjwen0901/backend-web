@@ -1,11 +1,13 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>元鹊管理</el-breadcrumb-item>
       <el-breadcrumb-item>客户管理</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="user-container">
       <div class="search-box">
+        <el-input placeholder="请输入姓名/手机号/邮箱" v-model="condition" class="input-with-select">
+          <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
+        </el-input>
       </div>
       <el-table
         :data="customerList"
@@ -122,8 +124,8 @@ export default {
   data () {
     return {
       customerList: [],
-      pageNum: 1,
-      pageSize: 20,
+      pageNum: window.sessionStorage.customerPageNum === undefined ? 1 : window.sessionStorage.customerPageNum,
+      pageSize: window.sessionStorage.customerPageSize === undefined ? 20 : window.sessionStorage.customerPageSize,
       totalPage: 0,
       roleDialogFormVisible: false,
       userResource: {},
@@ -138,7 +140,8 @@ export default {
       companyId: '',
       companyList: [],
       companySelLoading: false,
-      roleCode: window.localStorage.role
+      roleCode: window.localStorage.role,
+      condition: null
     }
   },
   methods: {
@@ -151,7 +154,8 @@ export default {
         params: {
           id: window.localStorage.userId,
           pageNum: this.pageNum,
-          pageSize: this.pageSize
+          pageSize: this.pageSize,
+          condition: this.condition
         }
       }).then(res => {
         this.customerList = res.data.list
@@ -176,10 +180,12 @@ export default {
     },
     handleSizeChange (val) {
       this.pageSize = val
+      window.sessionStorage.customerPageSize = val
       this.getData()
     },
     handleCurrentChange (val) {
       this.pageNum = val
+      window.sessionStorage.customerPageNum = val
       this.getData()
     },
     getSecResource () {
@@ -305,6 +311,11 @@ export default {
     margin: 20px 0px;
     padding: 20px;
     background: #ffffff;
+    .search-box {
+      width: 400px;
+      float: right;
+      margin-bottom: 10px;
+    }
   }
   .user-container .header {
     margin-bottom: 20px;

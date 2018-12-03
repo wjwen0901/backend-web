@@ -345,7 +345,7 @@ export default {
         filters: {
           mime_types: [{
             title: '允许上传文件类型',
-            extensions: 'jpg,gif,png,bmp,pdf'
+            extensions: 'jpg,jpeg,gif,png,bmp,pdf,doc,docx'
           }],
           // 最大只能上传10GB的文件
           max_file_size: '10gb',
@@ -471,7 +471,14 @@ export default {
     }
   },
   created () {
+    let loading = this.$loading({
+      lock: true,
+      text: 'Loading',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)'
+    })
     this.initData()
+    loading.close()
   },
   filters: {
     formatSize (fileSize) {

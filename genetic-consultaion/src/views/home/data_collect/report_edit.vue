@@ -3,8 +3,9 @@
     <el-row>
       <el-col :span="24">
         <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item>信息提取</el-breadcrumb-item>
-          <el-breadcrumb-item :to="{ path: '/report/list' }">报告</el-breadcrumb-item>
+          <el-breadcrumb-item>报告管理</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: '/report/list' }" v-if="role === 'firm-service' || role === 'manager' || role === 'jk-service'">报告</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: '/report/info/list' }" v-if="role === 'channel'">报告</el-breadcrumb-item>
           <el-breadcrumb-item>编辑</el-breadcrumb-item>
         </el-breadcrumb>
       </el-col>
@@ -12,8 +13,8 @@
     <el-row>
       <el-col :span="10">
         <div class="user-container">
-          <el-form ref="reportForm" :model="report" label-width="80px" size="mini" class="edit-form">
-            <el-form-item label="条码编号">
+          <el-form ref="reportForm" :model="report" label-width="100px" size="mini" class="edit-form">
+            <el-form-item label="样本编号">
               <el-input v-model="report.sampleCode"></el-input>
             </el-form-item>
             <el-form-item label="送检项目">
@@ -26,10 +27,10 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="联系电话">
+            <el-form-item label="受检者电话">
               <el-input v-model="report.cellphone"></el-input>
             </el-form-item>
-            <el-form-item label="姓名">
+            <el-form-item label="受检者姓名">
               <el-input v-model="report.truename"></el-input>
             </el-form-item>
             <el-form-item>
@@ -56,6 +57,7 @@ export default {
   name: 'EditInformed',
   data () {
     return {
+      role: window.localStorage.role,
       report: {},
       projects: [],
       idType: [
@@ -72,9 +74,11 @@ export default {
     _initData () {
       this.axios.get('report/' + this.$route.params.reportId).then(res => {
         this.report = res.data
+        console.log(res.data.type)
         this.axios.get('oss/upload/show', {
           params: {
-            objectKey: res.data.path
+            objectKey: res.data.path,
+            bucket: res.data.type
           }
         }).then(res1 => {
           this.imagePath = this.axios.defaults.baseURL.includes('https://')
@@ -86,7 +90,11 @@ export default {
         console.log(err)
       })
 
-      this.axios.get('solution').then(res => {
+      this.axios.get('solution', {
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
         this.projects = res.data
       }).catch(err => {
         console.log(err)
@@ -99,7 +107,11 @@ export default {
           message: '修改成功',
           type: 'success'
         })
-        this.$router.push('/report/list')
+        if (this.role === 'firm-service' || this.role === 'manager' || this.role === 'jk-service') {
+          this.$router.push('/report/list')
+        } else {
+          this.$router.push('/report/info/list')
+        }
       }).catch(err => {
         this.$message({
           message: '修改失败',
@@ -128,7 +140,14 @@ export default {
   filters: {},
   computed: {},
   created () {
+    let loading = this.$loading({
+      lock: true,
+      text: 'Loading',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)'
+    })
     this._initData()
+    loading.close()
   },
   mounted () {},
   destroyed () {}

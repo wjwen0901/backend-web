@@ -1,39 +1,47 @@
 <template>
   <el-container>
-    <el-table
-      :data="informedList"
-      style="width: 100%"
-      size="mini">
-      <el-table-column
-        prop="tid">
-        <template slot-scope="scope">
-          <div class="order-title">
-            <div>
-              受检者姓名：
-              <span v-if="scope.row.patientName !== undefined">{{scope.row.patientName}}
-                <span v-if="scope.row.cellphone!== undefined && scope.row.cellphone!== ''">({{scope.row.cellphone}})</span>
-              </span>
-              <span v-else>暂未提取姓名</span>
+    <el-header height="40" v-if="orderNo !== undefined">
+      订单编号：{{orderNo}}
+    </el-header>
+    <el-main>
+      <el-table
+        :data="informedList"
+        style="width: 100%"
+        size="mini"
+        :show-header="showHeader">
+        <el-table-column
+          prop="tid">
+          <template slot-scope="scope">
+            <div class="order-title">
+              <div>
+                受检者姓名：
+                <span v-if="scope.row.patientName !== undefined">{{scope.row.patientName}}
+                  <span v-if="scope.row.cellphone!== undefined && scope.row.cellphone!== ''">({{scope.row.cellphone}})</span>
+                </span>
+                <span v-else>信息识别中</span>
+                <el-tag type="info" class="status" size="mini">{{scope.row.state | stateFilter}}</el-tag>
+              </div>
+              <div>
+                送检医院：{{scope.row.hospitalName}}
+              </div>
+              <div>
+                送检科室：{{scope.row.deptName}}
+              </div>
+              <div>
+                送检医生：{{scope.row.doctor}}
+              </div>
+              <div>
+                检测产品：
+                <el-button type="text" class="text-btn" @click="toProDetail(scope.row.yzDetailUrl)">{{scope.row.solutionName}}</el-button>
+              </div>
+              <div>
+                创建时间：{{scope.row.createTime | formatDate}}
+              </div>
             </div>
-            <div>
-              送检医院：{{scope.row.hospitalName}}
-            </div>
-            <div>
-              送检科室：{{scope.row.deptName}}
-            </div>
-            <div>
-              送检医生：{{scope.row.doctor}}
-            </div>
-            <div>
-              检测产品：{{scope.row.solutionName}}
-            </div>
-            <div>
-              创建时间：{{scope.row.createTime | formatDate}}
-            </div>
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-main>
   </el-container>
 </template>
 <script>
@@ -44,7 +52,11 @@ export default {
       informedList: [],
       pageNum: 1,
       pageSize: 100,
-      totalPage: 0
+      totalPage: 0,
+      loading: null,
+      loading2: true,
+      orderNo: this.$route.query.orderNo,
+      showHeader: false
     }
   },
   methods: {
@@ -62,16 +74,45 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    toProDetail (yzUrl) {
+      window.location.href = yzUrl
+    },
+    openLoading () {
+      this.loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
     }
   },
   watch: {},
+  filters: {
+    stateFilter: function (state) {
+      if (state <= 1) return '检测中'
+      if (state === 2) return '无法识别'
+      if (state === 3) return '报告已出'
+    }
+  },
   created () {
+    this.openLoading()
     this.getData()
+    this.loading.close()
   }
 }
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+  .el-header {
+    font-size: 12px;
+    padding: 10px;
+    height: 40px;
+  }
+  .el-main {
+    padding: 0;
+    min-height: 0;
+  }
   .search-input {
     margin-top: 10px;
   }
@@ -82,8 +123,13 @@ export default {
     }
     .status {
       position: absolute;
+      top: 0;
       right: 0;
       bottom: 2px;
+    }
+    .el-button {
+      font-size: 12px;
+      padding: 0;
     }
   }
   .item-title {
