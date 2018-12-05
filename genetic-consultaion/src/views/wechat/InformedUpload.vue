@@ -3,61 +3,61 @@
     <!--<el-header>上传知情同意</el-header>-->
     <div class="mdh-mobile-form">
       <div class="title-info" v-if="hasUserInfo">
-        欢迎您，{{readyName}}({{readyCellphone}})
-        <el-button class="update-btn" type="text" @click="updateUserInfo">更正信息</el-button>
+        {{readyName}}({{readyCellphone}})，您好 <br>
+        <el-button class="update-btn" type="text" @click="updateUserInfo">完善个人信息</el-button>
       </div>
       <div v-else>
-        <p class="form-group-title">您的信息</p>
         <div class="mdh-input-row">
-          <label>姓名</label>
+          <label>您的姓名</label>
           <input type="text" v-model="name" placeholder="请输入姓名">
           <span class="error-tip" v-if="nameError">姓名不可为空</span>
         </div>
         <div class="mdh-input-row">
-          <label>电话</label>
+          <label>您的电话</label>
           <input type="text" v-model="cellphone" placeholder="请输入手机号">
           <span class="error-tip" v-if="cellphoneError">手机号不可为空</span>
         </div>
       </div>
-      <p class="order-no">订单编号：{{orderNo}}</p>
-      <p class="form-group-title">送检信息</p>
+      <p class="order-no" v-if="orderNo !== undefined">订单编号：{{orderNo}}</p>
       <div class="mdh-input-row" @click="toSelectHospital">
-        <label>医院</label>
+        <label>送检医院</label>
         <input type="text" v-model="hospitalName" readonly placeholder="请选择医院">
         <a class="next-step"><i class="el-icon-arrow-right"></i></a>
         <span class="error-tip" v-if="hospitalError">医院不可为空</span>
       </div>
       <div class="mdh-input-row" @click="toSelectDept">
-        <label>科室</label>
+        <label>送检科室</label>
         <input type="text" v-model="deptName" readonly placeholder="请选择科室">
         <a class="next-step"><i class="el-icon-arrow-right"></i></a>
         <span class="error-tip" v-if="deptError">科室不可为空</span>
       </div>
       <div class="mdh-input-row">
-        <label>医生</label>
+        <label>送检医生</label>
         <input type="text" v-model="doctor" placeholder="请输入医生姓名">
         <span class="error-tip" v-if="doctorError">医生姓名不可为空</span>
       </div>
-      <p class="form-group-title">选择文件</p>
-      <div class="upload-row">
-        <div tabindex="0" class="el-upload el-upload--picture-card" id="selectfiles">
-          <i class="el-icon-plus"></i>
-          <input type="file" name="file" multiple="multiple" class="el-upload__input">
+      <div class="mdh-upload-row">
+        <label>选择文件</label>
+        <div class="upload-row">
+          <div tabindex="0" class="el-upload el-upload--picture-card" id="selectfiles">
+            <i class="el-icon-plus"></i>
+            <input type="file" name="file" multiple="multiple" class="el-upload__input">
+          </div>
+          <div class="el-upload__tip">只能上传jpg/gif/png/bmp/pdf文件，且不超过5G</div>
+          <span class="error-tip" v-if="fileError">请选择文件</span>
+          <ul class="el-upload-list el-upload-list--text" id="ossfile">
+            <li tabindex="0" class="el-upload-list__item is-ready" :id="file.id" v-for="file in fileList" v-bind:key="file.id" ref="file.id">
+              <a class="el-upload-list__item-name"><i class="el-icon-document"></i>{{file.name}} ({{file.size | formatSize}})</a>
+              <label class="el-upload-list__item-status-label">
+                <i class="el-icon-upload-success el-icon-circle-check"></i>
+              </label>
+              <i class="el-icon-close" @click="deleteUploadFile(file.id)"></i>
+              <i class="el-icon-close-tip">按 delete 键可删除</i>
+              <el-progress :percentage="file.percent" v-if="file.percent !== 100"></el-progress>
+            </li>
+          </ul>
+          <div id="container"></div>
         </div>
-        <div class="el-upload__tip">只能上传jpg/gif/png/bmp/pdf文件，且不超过5G</div>
-        <span class="error-tip" v-if="fileError">请选择文件</span>
-        <ul class="el-upload-list el-upload-list--text" id="ossfile">
-          <li tabindex="0" class="el-upload-list__item is-ready" :id="file.id" v-for="file in fileList" v-bind:key="file.id" ref="file.id">
-            <a class="el-upload-list__item-name"><i class="el-icon-document"></i>{{file.name}} ({{file.size | formatSize}})</a>
-            <label class="el-upload-list__item-status-label">
-              <i class="el-icon-upload-success el-icon-circle-check"></i>
-            </label>
-            <i class="el-icon-close" @click="deleteUploadFile(file.id)"></i>
-            <i class="el-icon-close-tip">按 delete 键可删除</i>
-            <el-progress :percentage="file.percent" v-if="file.percent !== 100"></el-progress>
-          </li>
-        </ul>
-        <div id="container"></div>
       </div>
       <div class="btn-row">
         <el-button type="primary" @click="toUpload">开始上传</el-button>
@@ -353,6 +353,24 @@ export default {
             }
           },
           UploadComplete: (up) => {
+            console.log(up)
+            const param = {
+              userId: this.userId,
+              count: up.files.length
+            }
+            if (this.$route.query.orderId !== undefined) {
+              param.orderId = this.$route.query.orderId
+            }
+            this.axios.post('informed/message', param).then(res => {
+              console.log(res.data)
+            }).catch(err => {
+              this.$message({
+                message: err.data.message,
+                type: 'error',
+                customClass: 'my-message'
+              })
+              console.log(err)
+            })
             up.refresh()
           },
           Error: (up, err) => {
@@ -432,7 +450,7 @@ export default {
       this.hospitalName = window.localStorage.hospitalName
       this.deptId = window.localStorage.dept
       this.deptName = window.localStorage.deptName
-      this.doctor = window.localStorage.doctor
+      this.doctor = window.localStorage.doctor ? '' : window.localStorage.doctor
     }
   },
   watch: {
@@ -493,11 +511,9 @@ export default {
     border-color: rgba(0, 0, 0, .6);
   }
   .el-container {
-    background: #f2f2f2;
     min-height: 100%;
   }
   .upload-main {
-    background: #f2f2f2;
     overflow: hidden;
   }
   .el-header {
@@ -542,15 +558,15 @@ export default {
   }
   .mdh-mobile-form {
     margin: 0;
-    padding: 0;
     width: 100%;
+    padding: 10px;
     .form-group-title {
-      padding-left: 20px;
-      font-size: 12px;
+      padding-left: 10px;
+      font-size: 14px;
       color: #333333;
     }
   }
-  .mdh-input-row {
+  .mdh-input-row{
     position: relative;
     width: 100%;
     background: #fff;
@@ -561,16 +577,18 @@ export default {
       left: 0;
       top: 0;
       width: 80px;
-      padding-left: 20px;
+      padding-left: 10px;
       line-height: 40px;
       font-size: 14px;
     }
     input {
       height: 40px;
-      width: calc(100%);
-      padding: 0px 0px 0px 80px;
+      width: calc(100% - 90px);
+      padding: 0px 0px 0px 90px;
       border: 0;
       line-height: 40px;
+      font-size: 14px;
+      color: #333333;
     }
     .next-step {
       position: absolute;
@@ -594,14 +612,32 @@ export default {
       background-color: #c8c7cc;
     }
   }
+  .mdh-upload-row {
+    position: relative;
+    width: 100%;
+    background: #fff;
+    padding: 0;
+    label {
+      width: 80px;
+      padding-left: 10px;
+      line-height: 40px;
+      font-size: 14px;
+    }
+    .upload-row {
+      position: relative;
+      padding: 0px 10px;
+    }
+  }
   .upload-row {
     position: relative;
-    padding: 0px 20px;
+    padding: 0px 10px;
   }
   .btn-row {
-    padding: 20px 20px;
+    padding: 20px 10px;
     .el-button {
       width: 100%;
+      background-color: #1ABC9C;
+      border-color: #1ABC9C;
     }
   }
   input::-webkit-input-placeholder{
@@ -630,17 +666,24 @@ export default {
   }
 
   .title-info {
-    padding: 5px 20px;
+    margin: 10px auto;
+    width: 80%;
+    padding: 10px 20px;
     font-size: 14px;
+    text-align: center;
+    border: 1px solid #1ABC9C;
+    border-radius: 10px;
   }
   .update-btn {
-    margin-left: 10px;
+    display: inline-block;
+    /*margin-left: 10px;*/
     padding: 6px 0px;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 14px;
+    color: #1ABC9C;
   }
   .order-no {
-    padding: 0px 20px;
-    font-size: 12px;
+    padding: 10px 10px;
+    font-size: 14px;
   }
 </style>

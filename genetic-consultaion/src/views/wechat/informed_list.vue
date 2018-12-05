@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-header height="40" v-if="orderNo !== undefined">
+    <el-header height="40" v-if="orderNo !== null">
       订单编号：{{orderNo}}
     </el-header>
     <el-main>

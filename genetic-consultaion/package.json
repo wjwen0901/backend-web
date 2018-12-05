@@ -10,7 +10,8 @@
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
     "lint": "eslint --ext .js,.vue src test/unit test/e2e/specs",
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "build:dll": "webpack --config build/webpack.dll.conf.js"
   },
   "dependencies": {
     "area-data": "^5.0.6",
@@ -19,6 +20,7 @@
     "element-ui": "^2.4.3",
     "filestack-js": "^1.4.1",
     "jquery": "^3.3.1",
+    "mescroll.js": "^1.3.8",
     "pdfjs-dist": "^2.0.489",
     "vonic": "^1.1.3",
     "vue": "^2.5.2",
