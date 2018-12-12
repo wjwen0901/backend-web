@@ -44,67 +44,62 @@
           </el-menu-item>
           <el-menu-item index="/order" v-if="sec.includes('order')">
             <template slot="title">
-              <i class="el-icon-view"></i>
+              <i class="fas fa-globe"></i>
               <span slot="title">订单管理</span>
             </template>
           </el-menu-item>
-
-          <el-menu-item index="/customer" v-if="sec.includes('customer')">
+          <el-menu-item index="/patient/list" v-if="sec.includes('patient:list')">
             <template slot="title">
-              <i class="el-icon-view"></i>
+              <i class="fas fa-user-cog"></i>
               <span slot="title">客户管理</span>
             </template>
           </el-menu-item>
-          <el-submenu index="upload" v-if="sec.includes('upload:informed') || sec.includes('data-collect:informed')">
-            <template slot="title"><i class="el-icon-upload"></i><span slot="title">知情管理</span></template>
+          <el-submenu index="/informed" v-if="sec.includes('upload:informed') || sec.includes('data-collect:informed')">
+            <template slot="title"><i class="el-icon-document"></i><span slot="title">知情管理</span></template>
             <el-menu-item-group>
               <el-menu-item index="/informed/upload" v-if="sec.includes('upload:informed')">上传文件</el-menu-item>
               <el-menu-item index="/informed/list" v-if="sec.includes('data-collect:informed') && (role === 'manager' || role === 'jk-service')">查看知情</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="upload" v-if="sec.includes('upload:report') || sec.includes('data-collect:report')">
-            <template slot="title"><i class="el-icon-upload"></i><span slot="title">报告管理</span></template>
+            <template slot="title"><i class="fas fa-book-open"></i><span slot="title">报告管理</span></template>
             <el-menu-item-group>
               <el-menu-item index="/report/upload" v-if="sec.includes('upload:report')">上传报告</el-menu-item>
               <el-menu-item index="/report/list" v-if="sec.includes('data-collect:report')">提取报告</el-menu-item>
               <el-menu-item index="/report/info/list" v-if="sec.includes('report:list')">查看报告</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <!--<el-submenu index="upload" v-if="sec.includes('upload')">-->
-            <!--<template slot="title"><i class="el-icon-upload"></i><span slot="title">文件上传</span></template>-->
-            <!--<el-menu-item-group>-->
-              <!--<el-menu-item index="/informed/upload" v-if="sec.includes('upload:informed')">上传知情同意</el-menu-item>-->
-              <!--<el-menu-item index="/report/upload" v-if="sec.includes('upload:report')">上传报告</el-menu-item>-->
-              <!--<el-menu-item index="/medical-records/upload" v-if="sec.includes('upload:medical-records')" disabled>上传病历</el-menu-item>-->
-            <!--</el-menu-item-group>-->
-          <!--</el-submenu>-->
-          <!--<el-submenu index="info" v-if="sec.includes('data-collect')">-->
-            <!--<template slot="title"><i class="el-icon-edit-outline"></i><span slot="title">信息提取</span></template>-->
-            <!--<el-menu-item-group>-->
-              <!--<el-menu-item index="/informed/list" v-if="sec.includes('data-collect:informed')">知情同意</el-menu-item>-->
-              <!--<el-menu-item index="/report/list" v-if="sec.includes('data-collect:report')">报告</el-menu-item>-->
-            <!--</el-menu-item-group>-->
-          <!--</el-submenu>-->
           <el-menu-item index="/review" v-if="sec.includes('data-review')">
-            <i class="el-icon-view"></i>
+            <i class="fas fa-binoculars"></i>
             <span slot="title">信息复核</span>
           </el-menu-item>
           <el-menu-item index="/product" v-if="sec.includes('product')">
-            <i class="el-icon-view"></i>
+            <i class="el-icon-goods"></i>
             <span slot="title">产品管理</span>
           </el-menu-item>
-          <el-menu-item index="/patient/list" v-if="sec.includes('patient:list')">
+          <el-menu-item index="/hospital" v-if="sec.includes('hospital:list')">
             <template slot="title">
-              <i class="el-icon-view"></i>
-              <span slot="title">受检者管理</span>
+              <i class="fas fa-hospital"></i>
+              <span slot="title">医院管理</span>
+            </template>
+          </el-menu-item>
+          <el-menu-item index="/firm" v-if="sec.includes('firm:list')">
+            <template slot="title">
+              <i class="fas fa-flask"></i>
+              <span slot="title">厂商管理</span>
+            </template>
+          </el-menu-item>
+          <el-menu-item index="/channel" v-if="sec.includes('channel:list')">
+            <template slot="title">
+              <i class="fas fa-building"></i>
+              <span slot="title">渠道商管理</span>
             </template>
           </el-menu-item>
           <el-submenu index="system" v-if="sec.includes('system')">
             <template slot="title"><i class="el-icon-setting"></i><span slot="title">系统管理</span></template>
             <el-menu-item-group>
-              <!--<template slot="title">用户信息</template>-->
-              <el-menu-item index="/user" v-if="sec.includes('system:user-sec')">用户管理</el-menu-item>
-              <el-menu-item index="/channel/barcode">生成产品二维码</el-menu-item>
+              <el-menu-item index="/user" v-if="sec.includes('system:user-sec')">账号管理</el-menu-item>
+              <!--<el-menu-item index="/channel/barcode">生成产品二维码</el-menu-item>-->
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
@@ -126,7 +121,9 @@ export default {
       username: window.localStorage.username,
       sec: window.localStorage.sec,
       // username: 'admin',
-      // sec: 'upload,upload:informed,upload:report,upload:medical-records,order,data-collect,data-collect:informed,data-collect:report,data-review,system,system:user-sec,customer,product,report:list,patient:list',
+      // sec: 'upload,upload:informed,upload:report,upload:medical-records,' +
+      //   'order,data-collect,data-collect:informed,data-collect:report,data-review,system,system:user-sec,' +
+      //   'customer,product,report:list,patient:list,hospital:list,firm:list,channel:list',
       role: window.localStorage.role,
       activeIndex: '/dashboard',
       openMenu: ['fly', 'upload', 'info', 'chann', 'system']
@@ -187,5 +184,12 @@ export default {
   .el-submenu .el-menu-item {
     min-width: 100px;
     padding-left: 50px !important;
+  }
+  i {
+    margin-right: 5px;
+    width: 24px;
+    text-align: center;
+    font-size: 18px;
+    vertical-align: middle;
   }
 </style>

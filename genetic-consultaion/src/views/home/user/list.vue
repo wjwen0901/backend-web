@@ -1,6 +1,14 @@
 <template>
   <div>
-    <el-button class="add-user" size="mini" type="primary" @click="toAdd">新增用户</el-button>
+    <!--<el-button class="add-user" size="mini" type="primary" @click="toAdd">新增用户</el-button>-->
+    <div>
+      <el-button class="add-user" size="small" type="primary" @click="toAdd">新增</el-button>
+      <div class="search-box">
+        <el-input placeholder="请输入姓名/手机号" v-model="condition" class="input-with-select">
+          <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
+        </el-input>
+      </div>
+    </div>
     <el-table
       :data="list"
       size="mini"
@@ -9,8 +17,7 @@
       <el-table-column
         fixed
         prop="fullName"
-        label="姓名"
-        width="100">
+        label="姓名">
       </el-table-column>
       <el-table-column
         fixed
@@ -31,9 +38,6 @@
               {{secChild.name}}
             </span>
           </el-tag>
-          <!--<span v-for="s in scope.row.secList" v-bind:key="s.id">-->
-            <!--{{s.name}}-->
-          <!--</span>-->
         </template>
       </el-table-column>
       <el-table-column
@@ -47,8 +51,9 @@
       <el-table-column
         fixed="right"
         label="操作"
-        width="90">
+        width="180">
         <template slot-scope="scope">
+          <el-button @click="selectItem(scope.row.id, scope.row.name)" type="text" size="small" v-if="scope.row.role === 1 || scope.row.role === 8">产品二维码</el-button>
           <el-button @click="toDetail(scope.row.id)" type="text" size="small">编辑</el-button>
           <el-button @click="deleteUser(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
@@ -64,7 +69,7 @@
       :total="totalPage">
     </el-pagination>
 
-    <el-dialog title="编辑" :visible.sync="dialogFormVisible">
+    <el-dialog title="编辑" :visible.sync="dialogEditFormVisible">
       <div>
         <el-form ref="form" :model="userResource" label-width="80px">
           <el-form-item label="姓名">
@@ -99,6 +104,16 @@
               </el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="角色">
+            <el-radio-group v-model="userResource.roleCode" size="small" @change="getSecResource">
+              <el-radio label="business-agent">业务员</el-radio>
+              <el-radio label="channel">渠道商</el-radio>
+              <el-radio label="firm-service" v-if="roleCode === 'manager'">实验室客服</el-radio>
+              <el-radio label="jk-service" v-if="roleCode === 'manager'">“见康”客服</el-radio>
+              <el-radio label="doctor" v-if="roleCode === 'manager'">医生</el-radio>
+              <el-radio label="patient" v-if="roleCode === 'manager'">患者</el-radio>
+            </el-radio-group>
+          </el-form-item>
           <el-form-item label="权限">
             <el-tree
               ref="tree"
@@ -116,6 +131,70 @@
           <el-form-item>
             <el-button v-if="userResource.id === undefined" type="primary" @click="onAddSubmit()">确定</el-button>
             <el-button v-else type="primary" @click="onEditSubmit(userResource.id)">确定</el-button>
+            <el-button @click="dialogEditFormVisible = false">取消</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </el-dialog>
+    <el-dialog title="生成二维码" :visible.sync="dialogCodeFormVisible">
+      <div>
+        <el-form ref="form" label-width="150px">
+          <el-form-item label="选择产品">
+            <el-select v-model="qrCode.selSolution" value-key="id" filterable placeholder="请选择">
+              <el-option
+                v-for="item in solutionList"
+                :key="item.id"
+                :label="item.name"
+                :value="item">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="商品优惠链接">
+            <el-input v-model="qrCode.url" placeholder="http://..."></el-input>
+          </el-form-item>
+          <el-form-item label="单价">
+            <el-input v-model="qrCode.price" placeholder="1300"></el-input>
+          </el-form-item>
+          <el-form-item label="检测周期（工作日）">
+            <el-input-number v-model="qrCode.period" :min="1" :max="100" label="请输入"></el-input-number>
+            <!--<el-input type="" v-model="period" placeholder="7"></el-input>&lt;!&ndash;&ndash;&gt;-->
+          </el-form-item>
+          <el-form-item label="送检医院">
+            <el-autocomplete
+              class="inline-input"
+              v-model="qrCode.hospitalName"
+              :fetch-suggestions="querySearch"
+              placeholder="请输入内容"
+              :trigger-on-focus="false"
+              @select="handleSelect"
+            ></el-autocomplete>
+            <!--<el-select class="width-100-p" v-model="qrCode.hospitalId" filterable placeholder="请选择">-->
+              <!--<el-option-->
+                <!--v-for="item in hospitals"-->
+                <!--:key="item.id"-->
+                <!--:label="item.name"-->
+                <!--:value="item.id">-->
+              <!--</el-option>-->
+            <!--</el-select>-->
+          </el-form-item>
+          <el-form-item label="送检科室">
+            <el-select class="width-100-p" v-model="qrCode.deptId" filterable placeholder="请选择">
+              <el-option
+                v-for="item in depts"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="送检医生">
+            <el-input v-model="qrCode.doctor" placeholder="王大夫"></el-input>
+          </el-form-item>
+          <el-form-item label="识别代码">
+            <el-input v-model="qrCode.code" placeholder="MDHCARE1001"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="downloadCode()">确定</el-button>
             <el-button @click="dialogFormVisible = false">取消</el-button>
           </el-form-item>
         </el-form>
@@ -136,14 +215,28 @@ export default {
       totalPage: 0,
       userResource: {},
       secList: [],
-      dialogFormVisible: false,
+      dialogEditFormVisible: false,
+      dialogCodeFormVisible: false,
       resourceList: [],
       resourceSelet: [],
+      solutionList: [],
+      hospitals: [],
+      depts: [],
       defaultProps: {
         children: 'children',
         label: 'label'
       },
-      companyList: []
+      companyList: [],
+      roleCode: this.$route.params.role,
+      qrCode: {},
+      condition: null,
+      options2: [{
+        text: 'name1',
+        value: 'value1'
+      }, {
+        text: 'name2',
+        value: 'value2'
+      }]
     }
   },
   methods: {
@@ -152,34 +245,36 @@ export default {
     },
     getData () {
       this.resourceList = []
-      // 获取权限列表
-      this.axios.get('user/secs', {
-        params: {
-          role: this.$route.params.role
-        }
-      }).then(res => {
-        for (let sec of res.data) {
-          if (sec.parentId === 0) {
-            let children = []
-            for (let secChild of res.data) {
-              if (secChild.parentId === sec.id) {
-                children.push({
-                  'id': secChild.id,
-                  'label': secChild.name,
-                  'parent': secChild.parentId
-                })
-              }
-            }
-            this.resourceList.push({
-              'id': sec.id,
-              'label': sec.name,
-              'children': children
-            })
+      if (this.roleCode !== 'normal') {
+        // 获取权限列表
+        this.axios.get('user/secs', {
+          params: {
+            role: this.roleCode
           }
-        }
-      }).catch(err => {
-        console.log(err)
-      })
+        }).then(res => {
+          for (let sec of res.data) {
+            if (sec.parentId === 0) {
+              let children = []
+              for (let secChild of res.data) {
+                if (secChild.parentId === sec.id) {
+                  children.push({
+                    'id': secChild.id,
+                    'label': secChild.name,
+                    'parent': secChild.parentId
+                  })
+                }
+              }
+              this.resourceList.push({
+                'id': sec.id,
+                'label': sec.name,
+                'children': children
+              })
+            }
+          }
+        }).catch(err => {
+          console.log(err)
+        })
+      }
       // 获取公司列表
       this.axios.get('company').then(res => {
         this.companyList = res.data
@@ -190,7 +285,7 @@ export default {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          role: this.$route.params.role,
+          role: this.roleCode,
           userId: window.localStorage.userId
         }
       }).then(res => {
@@ -209,7 +304,7 @@ export default {
       this.pageNum = val
     },
     toAdd () {
-      this.dialogFormVisible = true
+      this.dialogEditFormVisible = true
     },
     onAddSubmit () {
       let secArray = []
@@ -223,13 +318,13 @@ export default {
         secArray.push({id: sec.id})
       }
       this.userResource.secList = secArray
-      var instance = this.axios.create({
+      let instance = this.axios.create({
         headers: {
           'Authorization': window.localStorage.token,
           'Content-Type': 'application/json'
         }
       })
-      this.userResource.roleCode = this.$route.params.role
+      this.userResource.roleCode = this.roleCode
       let _this = this
       instance({
         method: 'post',
@@ -245,7 +340,7 @@ export default {
           type: 'success'
         })
         _this._initData()
-        _this.dialogFormVisible = false
+        _this.dialogEditFormVisible = false
       })
     },
     toDetail (id) {
@@ -268,7 +363,7 @@ export default {
       }).catch(err => {
         console.log(err)
       })
-      this.dialogFormVisible = true
+      this.dialogEditFormVisible = true
     },
     onEditSubmit (id) {
       let secArray = []
@@ -303,7 +398,7 @@ export default {
           type: 'success'
         })
         _this._initData()
-        _this.dialogFormVisible = false
+        _this.dialogEditFormVisible = false
       })
     },
     deleteUser (id) {
@@ -327,11 +422,140 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+    getSecResource (val) {
+      console.log(val)
+      // 获取权限列表
+      this.axios.get('user/secs', {
+        params: {
+          role: val
+        }
+      }).then(res => {
+        this.resourceList = []
+        for (let sec of res.data) {
+          if (sec.parentId === 0) {
+            let children = []
+            for (let secChild of res.data) {
+              if (secChild.parentId === sec.id) {
+                children.push({
+                  'id': secChild.id,
+                  'label': secChild.name,
+                  'parent': secChild.parentId
+                })
+              }
+            }
+            this.resourceList.push({
+              'id': sec.id,
+              'label': sec.name,
+              'children': children
+            })
+          }
+        }
+        this.resourceSelet = []
+        for (let sec of this.userResource.secList) {
+          let children = []
+          for (let d of this.$refs.tree.data) {
+            if (d.id === sec.id) {
+              children = d.children
+            }
+          }
+          if (sec.parentId === 0 && children.length !== 0) {
+            continue
+          }
+          this.resourceSelet.push(sec.id)
+        }
+        this.$refs.tree.setCheckedKeys(this.resourceSelet)
+        console.log(this.resourceList)
+        console.log(this.resourceSelet)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    selectItem (id, name) {
+      this.userId = id
+      this.name = name
+      this.axios.get('solution', {
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
+        this.solutionList = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+      this.axios.get('hospital').then(res => {
+        this.hospitals = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+      this.axios.get('hospital-dept').then(res => {
+        this.depts = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+      this.dialogCodeFormVisible = true
+    },
+    querySearch (queryString, cb) {
+      console.log(queryString)
+      this.axios.get('hospital/page', {
+        params: {
+          pageNum: 1, // 页码
+          pageSize: 8, // 每页长度
+          keywords: queryString
+        }
+      }).then(res => {
+        console.log(res.data)
+        let result = []
+        if (res.data.endRow === 0) {
+          cb(result)
+        } else {
+          res.data.list.forEach(function (item) {
+            result.push({
+              'value': item.name,
+              'id': item.id
+            })
+          })
+          console.log(result)
+          cb(result)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    handleSelect (item) {
+      this.qrCode.hospitalId = item.id
+    },
+    downloadCode () {
+      this.dialogFormVisible = true
+      // 获取权限列表
+      this.axios.get('barcode/create/' + this.userId, {
+        params: {
+          solutionId: this.selSolution.id,
+          // solutionId: 149,
+          alias: this.selSolution.yzAlias,
+          // alias: '3evj0vgmgvie1',
+          // name: '结直肠癌化疗套餐—2',
+          name: this.selSolution.name,
+          period: this.qrCode.period,
+          price: this.qrCode.price,
+          code: this.qrCode.code,
+          hospitalId: this.qrCode.hospitalId,
+          hospitalName: this.qrCode.hospitalName,
+          deptId: this.qrCode.deptId,
+          doctor: this.qrCode.doctor,
+          url: this.qrCode.url
+        }
+      }).then(res => {
+        window.open(this.axios.defaults.baseURL + '/barcode/down?filename=' + res.data + '&Authorization=' + window.localStorage.token)
+      }).catch(err => {
+        console.log(err)
+      })
     }
   },
   watch: {
     '$route' (to, from) {
       if (this.$route.params.role) {
+        this.roleCode = this.$route.params.role
         this.getData()
       }
     }
@@ -355,7 +579,7 @@ export default {
   destroyed () {}
 }
 </script>
-<style>
+<style rel="stylesheet/scss" lang="scss" scoped>
   .is-parent {
     margin-bottom: 5px;
     display: block;
@@ -368,6 +592,10 @@ export default {
   }
   .add-user {
     margin-bottom: 10px;
+  }
+  .search-box {
+    width: 400px;
     float: right;
+    margin-bottom: 10px;
   }
 </style>

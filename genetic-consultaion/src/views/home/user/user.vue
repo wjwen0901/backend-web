@@ -6,11 +6,11 @@
     </el-breadcrumb>
     <div class="user-container">
       <el-tabs v-model="activeName" class="tab-list" type="card" @tab-click="handleClick">
-        <el-tab-pane label="普通客户" name="business-agent" v-if="roleCode === 'manager'"></el-tab-pane>
-        <el-tab-pane label="业务代表" name="business-agent"></el-tab-pane>
-        <el-tab-pane label="渠道商" name="channel" v-if="roleCode === 'manager'"></el-tab-pane>
-        <el-tab-pane label="实验室客服" name="firm-service" v-if="roleCode === 'manager'"></el-tab-pane>
-        <el-tab-pane label="“见康”客服" name="jk-service" v-if="roleCode === 'manager'"></el-tab-pane>
+        <el-tab-pane label="普通客户" name="normal" v-if="roleCode === 'manager'"></el-tab-pane>
+        <el-tab-pane label="业务员" name="business-agent"></el-tab-pane>
+        <el-tab-pane label="渠道管理员" name="channel" v-if="roleCode === 'manager' || roleCode === 'firm-service'"></el-tab-pane>
+        <el-tab-pane label="厂商管理员" name="firm-service" v-if="roleCode === 'manager'"></el-tab-pane>
+        <el-tab-pane label="见山会诊管理" name="jk-service" v-if="roleCode === 'manager'"></el-tab-pane>
         <el-tab-pane label="医生" name="doctor" v-if="roleCode === 'manager'"></el-tab-pane>
         <el-tab-pane label="患者" name="patient" v-if="roleCode === 'manager'"></el-tab-pane>
         <el-tab-pane label="系统管理" name="manager" v-if="roleCode === 'manager'"></el-tab-pane>

@@ -1,16 +1,16 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>渠道管理</el-breadcrumb-item>
+      <el-breadcrumb-item>厂商管理</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="company-container">
       <div>
         <el-button class="add-company" size="small" type="primary" @click="toAdd">新增</el-button>
-        <div class="search-box">
-          <el-input placeholder="请输入公司名称" v-model="condition" class="input-with-select">
-            <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
-          </el-input>
-        </div>
+        <!--<div class="search-box">-->
+          <!--<el-input placeholder="请输入公司名称" v-model="condition" class="input-with-select">-->
+            <!--<el-button slot="append" icon="el-icon-search" @click="getData"></el-button>-->
+          <!--</el-input>-->
+        <!--</div>-->
       </div>
       <el-table
         :data="companyList"
@@ -18,7 +18,7 @@
         border
         style="width: 100%">
         <el-table-column
-          prop="companyName"
+          prop="name"
           label="厂商名称">
         </el-table-column>
         <el-table-column
@@ -91,7 +91,7 @@ export default {
       this.getData()
     },
     getData () {
-      this.axios.get('company/channel', {
+      this.axios.get('company/firm', {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
@@ -119,12 +119,12 @@ export default {
     },
     toDetail (id) {
       this.$router.push({
-        path: '/channel/edit/' + id
+        path: '/firm/edit/' + id
       })
     },
     toAdd () {
       this.$router.push({
-        name: 'ChannelAdd'
+        name: 'FirmAdd'
       })
     },
     toDelete (id) {

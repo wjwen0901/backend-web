@@ -1,7 +1,8 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>渠道管理</el-breadcrumb-item>
+      <el-breadcrumb-item v-if="type === 'firm'">厂商管理</el-breadcrumb-item>
+      <el-breadcrumb-item v-if="type === 'channel'">渠道管理</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="company-container">
       <div>
@@ -18,35 +19,36 @@
         border
         style="width: 100%">
         <el-table-column
-          prop="companyName"
-          label="厂商名称">
+          prop="id"
+          label="编号"
+          width="80">
         </el-table-column>
         <el-table-column
-          prop="code"
+          prop="name"
+          label="公司名称">
+        </el-table-column>
+        <el-table-column
+          prop="name"
           label="机构代码">
         </el-table-column>
         <el-table-column
-          prop="address"
+          prop="name"
           label="注册地址">
         </el-table-column>
         <el-table-column
+          prop="name"
           label="开户银行">
-          <template slot-scope="scope" v-if="scope.row.bank_account">
-            {{scope.row.bank}}({{scope.row.bank_account}})
-          </template>
         </el-table-column>
         <el-table-column
+          prop="deptName"
           label="联系人">
-          <template slot-scope="scope">
-            {{scope.row.fullName}}({{scope.row.cellphone}})
-          </template>
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="create_time"
           label="创建日期"
           width="180">
           <template slot-scope="scope">
-            {{scope.row.createTime | formatDate}}
+            {{scope.row.create_time | formatDate}}
           </template>
         </el-table-column>
         <el-table-column
@@ -55,7 +57,7 @@
           width="100">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="toDetail(scope.row.companyId)">编辑</el-button>
-            <!--<el-button type="text" size="small" @click="toDelete(scope.row.id)">删除</el-button>-->
+            <el-button type="text" size="small" @click="toDelete(scope.row.companyId)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -79,11 +81,12 @@ export default {
     return {
       roleCode: window.localStorage.role,
       companyList: [],
-      pageNum: window.sessionStorage.firmPageNum === undefined ? 1 : window.sessionStorage.firmPageNum,
-      pageSize: window.sessionStorage.firmPageSize === undefined ? 20 : window.sessionStorage.firmPageSize,
+      pageNum: window.sessionStorage.companyPageNum === undefined ? 1 : window.sessionStorage.companyPageNum,
+      pageSize: window.sessionStorage.companyPageSize === undefined ? 20 : window.sessionStorage.companyPageSize,
       totalPage: 0,
       paramSelect: '',
-      condition: null
+      condition: null,
+      type: this.$route.params.type
     }
   },
   methods: {
@@ -91,40 +94,43 @@ export default {
       this.getData()
     },
     getData () {
-      this.axios.get('company/channel', {
-        params: {
-          pageNum: this.pageNum,
-          pageSize: this.pageSize,
-          userId: window.localStorage.userId,
-          condition: this.condition
-        }
-      }).then(res => {
-        this.companyList = res.data.list
-        this.pageSize = res.data.pageSize
-        this.pageNum = res.data.pageNum
-        this.totalPage = res.data.total
-      }).catch(err => {
-        console.log(err)
-      })
+      if (this.$route.params.type === 'firm') {
+        this.axios.get('company/channel', {
+          params: {
+            pageNum: this.pageNum,
+            pageSize: this.pageSize,
+            userId: window.localStorage.userId,
+            condition: this.condition
+          }
+        }).then(res => {
+          this.companyList = res.data
+          // this.companyList = res.data.list
+          // this.pageSize = res.data.pageSize
+          // this.pageNum = res.data.pageNum
+          // this.totalPage = res.data.total
+        }).catch(err => {
+          console.log(err)
+        })
+      }
     },
     handleSizeChange (val) {
       this.pageSize = val
-      window.sessionStorage.firmPageSize = val
+      window.sessionStorage.companyPageSize = val
       this.getData()
     },
     handleCurrentChange (val) {
       this.pageNum = val
-      window.sessionStorage.firmPageNum = val
+      window.sessionStorage.companyPageNum = val
       this.getData()
     },
     toDetail (id) {
       this.$router.push({
-        path: '/channel/edit/' + id
+        path: '/company/edit/' + id
       })
     },
     toAdd () {
       this.$router.push({
-        name: 'ChannelAdd'
+        name: 'companyAdd'
       })
     },
     toDelete (id) {
