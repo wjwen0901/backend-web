@@ -559,7 +559,7 @@ export default {
   .mdh-mobile-form {
     margin: 0;
     width: 100%;
-    padding: 10px;
+    padding: 0;
     .form-group-title {
       padding-left: 10px;
       font-size: 14px;
@@ -577,7 +577,7 @@ export default {
       left: 0;
       top: 0;
       width: 80px;
-      padding-left: 10px;
+      padding-left: 16px;
       line-height: 40px;
       font-size: 14px;
     }
@@ -596,7 +596,7 @@ export default {
       top: 0;
       display: inline-block;
       padding: 0px 10px;
-      line-height: 40px;
+      line-height: 42px;
       color: #333333;
     }
     &:after {
@@ -619,13 +619,13 @@ export default {
     padding: 0;
     label {
       width: 80px;
-      padding-left: 10px;
+      padding-left: 16px;
       line-height: 40px;
       font-size: 14px;
     }
     .upload-row {
       position: relative;
-      padding: 0px 10px;
+      padding: 0px 16px;
     }
   }
   .upload-row {
@@ -633,7 +633,7 @@ export default {
     padding: 0px 10px;
   }
   .btn-row {
-    padding: 20px 10px;
+    padding: 20px 16px;
     .el-button {
       width: 100%;
       background-color: #1ABC9C;
@@ -666,7 +666,7 @@ export default {
   }
 
   .title-info {
-    margin: 10px auto;
+    margin: 20px auto;
     width: 80%;
     padding: 10px 20px;
     font-size: 14px;

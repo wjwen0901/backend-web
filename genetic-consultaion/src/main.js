@@ -6,6 +6,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import App from './App'
 import router from './router'
+import vSelect from 'vue-select2'
 
 router.beforeEach((to, from, next) => {
   /* 路由发生变化修改页面title */
@@ -19,6 +20,7 @@ Vue.use(ElementUI)
 Vue.config.productionTip = false
 // 将axios挂载到prototype上，在组件中可以直接使用this.axios访问
 Vue.prototype.axios = axios
+Vue.component('v-select', vSelect)
 
 Vue.filter('formatDate', function (time) {
   if (!time) return ''

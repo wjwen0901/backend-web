@@ -112,6 +112,51 @@ export default new Router({
           path: '/patient/list',
           name: 'PatientList',
           component: resolve => require(['@/views/home/patient/list'], resolve)
+        },
+        {
+          path: '/hospital',
+          name: 'HospitalList',
+          component: resolve => require(['@/views/home/hospital/list'], resolve)
+        },
+        {
+          path: '/hospital/edit/:id',
+          name: 'HospitalEdit',
+          component: resolve => require(['@/views/home/hospital/edit'], resolve)
+        },
+        {
+          path: '/hospital/add',
+          name: 'HospitalAdd',
+          component: resolve => require(['@/views/home/hospital/edit'], resolve)
+        },
+        {
+          path: '/firm',
+          name: 'FirmList',
+          component: resolve => require(['@/views/home/firm/list'], resolve)
+        },
+        {
+          path: '/firm/add',
+          name: 'FirmAdd',
+          component: resolve => require(['@/views/home/firm/edit'], resolve)
+        },
+        {
+          path: '/firm/edit/:id',
+          name: 'FirmEdit',
+          component: resolve => require(['@/views/home/firm/edit'], resolve)
+        },
+        {
+          path: '/channel',
+          name: 'ChannelList',
+          component: resolve => require(['@/views/home/channel/list'], resolve)
+        },
+        {
+          path: '/channel/add',
+          name: 'ChannelAdd',
+          component: resolve => require(['@/views/home/channel/edit'], resolve)
+        },
+        {
+          path: '/channel/edit/:id',
+          name: 'ChannelEdit',
+          component: resolve => require(['@/views/home/channel/edit'], resolve)
         }
       ]
     },
@@ -218,14 +263,14 @@ export default new Router({
       meta: {
         title: '健康检测报告'
       }
+    },
+    {
+      path: '/wechat/salesman/add',
+      name: 'AddUser',
+      component: resolve => require(['@/views/wechat/add_user'], resolve),
+      meta: {
+        title: '业务员绑定'
+      }
     }
-    // {
-    //   path: '/wechat/salesman/add',
-    //   name: 'RU6C',
-    //   component: RU6C,
-    //   meta: {
-    //     title: '业务员绑定'
-    //   }
-    // }
   ]
 })

@@ -2,7 +2,8 @@
   <el-container>
     <div class="mdh-mobile-form">
       <div class="title-info" v-if="hasUserInfo">
-        欢迎您，{{readyName}}({{readyCellphone}})
+        亲爱的{{readyName}}({{readyCellphone}})，您好
+        <br>
         <el-button class="update-btn" type="text" @click="updateUserInfo">更正信息</el-button>
       </div>
       <div v-else>
@@ -18,26 +19,28 @@
           <span class="error-tip" v-if="cellphoneError">手机号不可为空</span>
         </div>
       </div>
-      <p class="form-group-title">选择文件</p>
-      <div class="upload-row">
-        <div tabindex="0" class="el-upload el-upload--picture-card" id="selectfiles">
-          <i class="el-icon-plus"></i>
-          <input type="file" name="file" multiple="multiple" class="el-upload__input">
+      <div class="mdh-upload-row">
+        <label>选择文件</label>
+        <div class="upload-row">
+          <div tabindex="0" class="el-upload el-upload--picture-card" id="selectfiles">
+            <i class="el-icon-plus"></i>
+            <input type="file" name="file" multiple="multiple" class="el-upload__input">
+          </div>
+          <div class="el-upload__tip">只能上传jpg/gif/png/bmp/pdf文件，且不超过5G</div>
+          <span class="error-tip" v-if="fileError">请选择文件</span>
+          <ul class="el-upload-list el-upload-list--text" id="ossfile">
+            <li tabindex="0" class="el-upload-list__item is-ready" :id="file.id" v-for="file in fileList" v-bind:key="file.id" ref="file.id">
+              <a class="el-upload-list__item-name"><i class="el-icon-document"></i>{{file.name}} ({{file.size | formatSize}})</a>
+              <label class="el-upload-list__item-status-label">
+                <i class="el-icon-upload-success el-icon-circle-check"></i>
+              </label>
+              <i class="el-icon-close" @click="deleteUploadFile(file.id)"></i>
+              <i class="el-icon-close-tip">按 delete 键可删除</i>
+              <el-progress :percentage="file.percent" v-if="file.percent !== 100"></el-progress>
+            </li>
+          </ul>
+          <div id="container"></div>
         </div>
-        <div class="el-upload__tip">只能上传jpg/gif/png/bmp/pdf文件，且不超过5G</div>
-        <span class="error-tip" v-if="fileError">请选择文件</span>
-        <ul class="el-upload-list el-upload-list--text" id="ossfile">
-          <li tabindex="0" class="el-upload-list__item is-ready" :id="file.id" v-for="file in fileList" v-bind:key="file.id" ref="file.id">
-            <a class="el-upload-list__item-name"><i class="el-icon-document"></i>{{file.name}} ({{file.size | formatSize}})</a>
-            <label class="el-upload-list__item-status-label">
-              <i class="el-icon-upload-success el-icon-circle-check"></i>
-            </label>
-            <i class="el-icon-close" @click="deleteUploadFile(file.id)"></i>
-            <i class="el-icon-close-tip">按 delete 键可删除</i>
-            <el-progress :percentage="file.percent" v-if="file.percent !== 100"></el-progress>
-          </li>
-        </ul>
-        <div id="container"></div>
       </div>
       <div class="btn-row">
         <el-button type="primary" @click="toUpload">开始上传</el-button>
@@ -355,11 +358,16 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+  .my-message {
+    width: 80%;
+    min-width: auto;
+    background-color: rgba(0, 0, 0, .6);
+    border-color: rgba(0, 0, 0, .6);
+  }
   .el-container {
-    background: #f2f2f2;
+    min-height: 100%;
   }
   .upload-main {
-    background: #f2f2f2;
     overflow: hidden;
   }
   .el-header {
@@ -370,24 +378,49 @@ export default {
   .float-l {
     float: left;
   }
-  .upload-content {
-    position: relative;
-    float: left;
+  .width-100-p {
+    width: 100%
   }
-  .upload-btn {
-    width: 150px;
+  .el-select-dropdown {
+    width: 70% !important;
+    left: 100px !important;
+  }
+  .el-popper[x-placement^=bottom] {
+    width: 70% !important;
+    left: 100px !important;
+  }
+  .el-scrollbar__wrap {
+    width: 100%;
+  }
+  .el-select-dropdown__list {
+    width: 100%;
+  }
+  .el-select-dropdown__item {
+    width: 100%;
+    height: auto;
+  }
+  .mui-table-view:after {
+    left: 15px;
+  }
+  .select-option {
+    margin: 8px 0px;
+    width: 100%;
+    height: auto;
+    line-height: 18px;
+    word-wrap: break-word !important;
+    white-space: normal;
   }
   .mdh-mobile-form {
-    width: 100%;
     margin: 0;
+    width: 100%;
     padding: 0;
     .form-group-title {
-      padding-left: 20px;
-      font-size: 12px;
+      padding-left: 10px;
+      font-size: 14px;
       color: #333333;
     }
   }
-  .mdh-input-row {
+  .mdh-input-row{
     position: relative;
     width: 100%;
     background: #fff;
@@ -398,16 +431,18 @@ export default {
       left: 0;
       top: 0;
       width: 80px;
-      padding-left: 20px;
+      padding-left: 16px;
       line-height: 40px;
       font-size: 14px;
     }
     input {
       height: 40px;
-      width: calc(100%);
-      padding: 0px 0px 0px 80px;
+      width: calc(100% - 90px);
+      padding: 0px 0px 0px 90px;
       border: 0;
       line-height: 40px;
+      font-size: 14px;
+      color: #333333;
     }
     .next-step {
       position: absolute;
@@ -415,7 +450,7 @@ export default {
       top: 0;
       display: inline-block;
       padding: 0px 10px;
-      line-height: 40px;
+      line-height: 42px;
       color: #333333;
     }
     &:after {
@@ -431,14 +466,32 @@ export default {
       background-color: #c8c7cc;
     }
   }
+  .mdh-upload-row {
+    position: relative;
+    width: 100%;
+    background: #fff;
+    padding: 0;
+    label {
+      width: 80px;
+      padding-left: 16px;
+      line-height: 40px;
+      font-size: 14px;
+    }
+    .upload-row {
+      position: relative;
+      padding: 0px 16px;
+    }
+  }
   .upload-row {
     position: relative;
-    padding: 0px 20px;
+    padding: 0px 10px;
   }
   .btn-row {
-    padding: 20px 20px;
+    padding: 20px 16px;
     .el-button {
       width: 100%;
+      background-color: #1ABC9C;
+      border-color: #1ABC9C;
     }
   }
   input::-webkit-input-placeholder{
@@ -467,12 +520,25 @@ export default {
   }
 
   .title-info {
-    padding: 5px 20px;
+    margin: 20px auto;
+    width: 80%;
+    padding: 10px 20px;
     font-size: 14px;
+    text-align: center;
+    border: 1px solid #1ABC9C;
+    border-radius: 10px;
   }
   .update-btn {
-    margin-left: 10px;
-    font-size: 12px;
+    display: inline-block;
+    /*margin-left: 10px;*/
+    padding: 6px 0px;
+    font-size: 14px;
+    line-height: 14px;
+    color: #1ABC9C;
+  }
+  .order-no {
+    padding: 10px 10px;
+    font-size: 14px;
   }
   .my-message {
     width: 80%;
