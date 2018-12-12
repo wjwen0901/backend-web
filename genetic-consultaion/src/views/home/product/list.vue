@@ -171,14 +171,6 @@ export default {
   destroyed () {}
 }
 </script>
-<style>
-  .el-select .el-input {
-    width: 110px;
-  }
-  .input-with-select .el-input-group__prepend {
-    background-color: #fff;
-  }
-</style>
 <style rel="stylesheet/scss" lang="scss" scoped>
   .product-container {
     margin: 20px 0px;

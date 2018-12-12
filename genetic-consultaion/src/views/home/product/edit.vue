@@ -3,17 +3,17 @@
     <el-row>
       <el-col :span="24">
         <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item :to="{ path: '/product' }">产品管理</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: '/solution' }">产品管理</el-breadcrumb-item>
           <el-breadcrumb-item>{{menuInfo}}</el-breadcrumb-item>
         </el-breadcrumb>
       </el-col>
     </el-row>
     <el-row>
       <el-col :span="24">
-        <div class="product-container">
-          <el-form ref="productForm" :model="product" label-width="80px" size="mini" class="edit-form">
+        <div class="solution-container">
+          <el-form ref="solutionForm" :model="solution" label-width="80px" size="mini" class="edit-form">
             <el-form-item label="产品名称">
-              <el-input v-model="product.name"></el-input>
+              <el-input v-model="solution.name"></el-input>
             </el-form-item>
             <el-form-item label="适用科室">
               <el-select class="width-100-p" v-model="proDepts" multiple filterable placeholder="请选择">
@@ -26,14 +26,14 @@
               </el-select>
             </el-form-item>
             <el-form-item label="检测周期">
-              <el-input-number v-model="product.period" :min="1" :max="100" label="请输入"></el-input-number>个工作日
+              <el-input-number v-model="solution.period" :min="1" :max="100" label="请输入"></el-input-number>个工作日
             </el-form-item>
             <el-form-item label="适用人群">
               <el-input
                 type="textarea"
                 :autosize="{ minRows: 2, maxRows: 4}"
                 placeholder="请输入内容"
-                v-model="product.crowd">
+                v-model="solution.crowd">
               </el-input>
             </el-form-item>
             <el-form-item label="样本类型">
@@ -47,14 +47,14 @@
               </el-select>
             </el-form-item>
             <el-form-item label="知情同意">
-              <el-radio-group v-model="product.informed">
+              <el-radio-group v-model="solution.informed">
                 <el-radio :label="0">必须_可通用</el-radio>
                 <el-radio :label="1">必须_专有模板</el-radio>
                 <el-radio :label="2">不需要</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="既往病历">
-              <el-radio-group v-model="product.anamnesis">
+              <el-radio-group v-model="solution.anamnesis">
                 <el-radio :label="0">必须_可通用</el-radio>
                 <el-radio :label="1">必须_专有模板</el-radio>
                 <el-radio :label="2">不需要</el-radio>
@@ -84,7 +84,7 @@
                 type="textarea"
                 :autosize="{ minRows: 2, maxRows: 4}"
                 placeholder="请输入内容"
-                v-model="product.detail">
+                v-model="solution.detail">
               </el-input>
             </el-form-item>
             <el-form-item>
@@ -103,7 +103,7 @@ export default {
   data () {
     return {
       menuInfo: this.$route.params.id === undefined ? '新增' : '编辑',
-      product: {},
+      solution: {},
       sampleMeta: [],
       proDepts: [],
       reportType: [],
@@ -122,7 +122,7 @@ export default {
     _initData () {
       if (this.$route.params.id !== undefined) {
         this.axios.get('solution/' + this.$route.params.id).then(res => {
-          this.product = res.data
+          this.solution = res.data
           this.sampleMeta = res.data.sampleMeta
           this.proDepts = res.data.deptName
           if (res.data.expand !== undefined) {
@@ -147,7 +147,7 @@ export default {
           console.log(err)
         })
       }
-      this.axios.get('hospital-dept').then(res => {
+      this.axios.get('solution-dept').then(res => {
         this.deptList = res.data
       }).catch(err => {
         console.log(err)
@@ -166,7 +166,7 @@ export default {
           method: 'post',
           url: 'solution',
           data: {
-            solution: this.product,
+            solution: this.solution,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
             userId: window.localStorage.userId
@@ -175,12 +175,19 @@ export default {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json'
           }
-        }).then(function () {
-          _this.$message({
-            message: '新增成功',
-            type: 'success'
-          })
-          _this.$router.push('/product')
+        }).then(function (res) {
+          if (res.data.state === 'exist alreay!') {
+            _this.$message({
+              message: '产品名称重复',
+              type: 'error'
+            })
+          } else {
+            _this.$message({
+              message: '新增成功',
+              type: 'success'
+            })
+            _this.$router.push('/solution')
+          }
         }).catch(function () {
           _this.$message({
             message: '新增失败',
@@ -199,7 +206,7 @@ export default {
           method: 'put',
           url: 'solution/' + this.$route.params.id,
           data: {
-            solution: this.product,
+            solution: this.solution,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
             solutionExpands: this.expandParams,
@@ -214,7 +221,7 @@ export default {
             message: '修改成功',
             type: 'success'
           })
-          _this.$router.push('/product')
+          _this.$router.push('/solution')
         }).catch(function () {
           _this.$message({
             message: '修改失败',
@@ -224,7 +231,7 @@ export default {
       }
     },
     cancel () {
-      this.$router.push('/product')
+      this.$router.push('/solution')
     }
   },
   filters: {},
@@ -275,7 +282,7 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
-  .product-container {
+  .solution-container {
     margin: 20px 0px;
     padding: 20px;
     background: #ffffff;
@@ -283,7 +290,7 @@ export default {
       width: 100%;
     }
   }
-  .product-container .header {
+  .solution-container .header {
     margin-bottom: 20px;
     font-size: 18px;
   }
