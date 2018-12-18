@@ -147,7 +147,7 @@ export default {
           console.log(err)
         })
       }
-      this.axios.get('solution-dept').then(res => {
+      this.axios.get('hospital-dept').then(res => {
         this.deptList = res.data
       }).catch(err => {
         console.log(err)

@@ -530,12 +530,12 @@ export default {
       // 获取权限列表
       this.axios.get('barcode/create/' + this.userId, {
         params: {
-          solutionId: this.selSolution.id,
+          solutionId: this.qrCode.selSolution.id,
           // solutionId: 149,
-          alias: this.selSolution.yzAlias,
+          alias: this.qrCode.selSolution.yzAlias,
           // alias: '3evj0vgmgvie1',
           // name: '结直肠癌化疗套餐—2',
-          name: this.selSolution.name,
+          name: this.qrCode.selSolution.name,
           period: this.qrCode.period,
           price: this.qrCode.price,
           code: this.qrCode.code,

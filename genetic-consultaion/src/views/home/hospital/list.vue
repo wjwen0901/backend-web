@@ -7,7 +7,7 @@
       <div>
         <el-button class="add-hospital" size="small" type="primary" @click="toAdd" v-if="roleCode === 'manager' || roleCode === 'jk-service'">新增</el-button>
         <div class="search-box">
-          <el-input placeholder="请输入医院名称" v-model="condition" class="input-with-select">
+          <el-input placeholder="请输入医院名称" v-model="keywords" class="input-with-select">
             <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
           </el-input>
         </div>
@@ -84,7 +84,7 @@ export default {
       pageSize: window.sessionStorage.hospitalPageSize === undefined ? 20 : parseInt(window.sessionStorage.hospitalPageSize),
       totalPage: 0,
       paramSelect: '',
-      condition: null,
+      keywords: null,
       roleCode: window.localStorage.role
     }
   },
@@ -98,7 +98,7 @@ export default {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           userId: window.localStorage.userId,
-          condition: this.condition
+          keywords: this.keywords
         }
       }).then(res => {
         this.hospitalList = res.data.list
