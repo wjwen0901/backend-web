@@ -8,12 +8,12 @@
       <div>
         <div class="mdh-input-row">
           <label>真实姓名</label>
-          <input type="text" v-model="name" placeholder="请输入姓名">
+          <input type="text" v-model="user.name" placeholder="请输入姓名">
           <span class="error-tip" v-if="nameError">姓名不可为空</span>
         </div>
         <div class="mdh-input-row cellphone-row">
           <label>手机号码</label>
-          <input type="text" v-model="cellphone" placeholder="请输入手机号">
+          <input type="text" v-model="user.cellphone" placeholder="请输入手机号">
           <el-button type="success" size="mini" plain class="send-code" v-if="!hasCode" @click="getVerification">发送验证码</el-button>
           <el-button type="success" size="mini" plain class="send-code" disabled v-if="hasCode">重发验证码{{resetSendCode}}s</el-button>
           <span class="error-tip" v-if="cellphoneError">手机号不可为空</span>
@@ -21,12 +21,12 @@
         </div>
         <div class="mdh-input-row">
           <label>验证码</label>
-          <input type="text" v-model="verificationCode" placeholder="请输入验证码">
+          <input type="text" v-model="user.code" placeholder="请输入验证码">
           <span class="error-tip" v-if="verificationCodeError">验证码不可为空</span>
         </div>
       </div>
       <div class="btn-row">
-        <el-button type="primary" @click="toAdd">确定</el-button>
+        <el-button type="primary" @click="addSalesman">确定</el-button>
       </div>
     </div>
   </div>
@@ -36,42 +36,27 @@ export default {
   name: 'new_user',
   data () {
     return {
-      userId: this.$route.query.userId,
-      name: this.$route.query.truename !== undefined ? this.$route.query.truename : '',
-      cellphone: this.$route.query.cellphone !== undefined ? this.$route.query.cellphone : '',
-      verificationCode: '',
+      user: {
+        openId: this.$route.query.openId,
+        createBy: this.$route.query.createById
+      },
       nameError: false,
       cellphoneError: false,
       cellphoneTypeError: false,
       verificationCodeError: false,
-      createdByUserId: this.$route.query.createdBy,
       hasCode: false,
       resetSendCode: 60
     }
   },
   methods: {
-    toAdd () {
-      if (this.name.trim() === '') {
-        this.nameError = true
-        return false
-      }
-      if (this.cellphone.trim() === '') {
-        this.cellphoneError = true
-        return false
-      }
-      if (this.verificationCode.trim() === '') {
-        this.verificationCodeError = true
-        return false
-      }
-    },
     getVerification () {
-      if (!this.cellphone.match(/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/)) {
+      if (!this.user.cellphone.match(/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/)) {
         this.cellphoneTypeError = true
         return false
       }
       this.axios.get('verification', {
         params: {
-          cellphone: this.cellphone
+          cellphone: this.user.cellphone
         }
       }).then(res => {
         if (res.data === 'success') {
@@ -92,26 +77,39 @@ export default {
       })
     },
     addSalesman () {
+      if (this.user.name.trim() === '') {
+        this.nameError = true
+        return false
+      }
+      if (this.user.cellphone.trim() === '') {
+        this.cellphoneError = true
+        return false
+      }
+      if (this.user.code.trim() === '') {
+        this.verificationCodeError = true
+        return false
+      }
       let instance = this.axios.create({
         headers: {
           'Authorization': window.localStorage.token,
           'Content-Type': 'application/json'
         }
       })
-      this.userResource.roleCode = this.roleCode
       let _this = this
       instance({
         method: 'post',
-        url: 'user',
-        data: this.userResource,
+        url: 'user/qrcode',
+        params: _this.user,
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
         }
       }).then(function (response) {
+        _this.$router.push('/wechat/success')
+      }).catch(function (err) {
         _this.$message({
-          message: '新增成功',
-          type: 'success'
+          message: err.data.error,
+          type: 'error'
         })
       })
     }

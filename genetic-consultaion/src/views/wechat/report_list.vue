@@ -1,30 +1,42 @@
 <template>
   <el-container>
-
-    <el-table
-      :data="reportList"
-      style="width: 100%"
-      size="mini">
-      <el-table-column
-        prop="tid">
-        <template slot-scope="scope">
-          <div class="order-title">
-            <div>
-              受检者姓名：{{scope.row.patientName}}({{scope.row.patientCellphone}})
+    <el-header>
+      <el-input size="mini" placeholder="请输入内容" v-model="condition" class="input-with-select">
+        <el-button slot="append" icon="el-icon-search" @click="getList"></el-button>
+      </el-input>
+      <el-menu :default-active="activeIndex" class="mdh-el-menu" mode="horizontal" @select="handleSelect">
+        <el-menu-item index="0">全部</el-menu-item>
+        <el-menu-item index="1">知情关联</el-menu-item>
+        <el-menu-item index="2">我的报告</el-menu-item>
+      </el-menu>
+    </el-header>
+    <el-main>
+      <el-table
+        :data="reportList"
+        style="width: 100%"
+        size="mini">
+        <el-table-column
+          prop="tid"
+          show-header=false>
+          <template slot-scope="scope">
+            <div class="item-title">
+              {{scope.row.solutionName}}
             </div>
-            <div>
-              创建时间：{{scope.row.createTime | formatDate}}
+            <div class="order-title">
+              <div>
+                受检者：{{scope.row.patientName}}({{scope.row.patientCellphone}})
+              </div>
+              <div>
+                生成时间：{{scope.row.createTime | formatDate}}
+              </div>
             </div>
-          </div>
-          <div class="item-title">
-            {{scope.row.solutionName}}
-          </div>
-          <div class="right-btn">
-            <el-button type="primary" size="mini" plain @click="toReportDetail(scope.row.id)">查看报告</el-button>
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
+            <div class="right-btn">
+              <el-button type="primary" size="mini" plain @click="toReportDetail(scope.row.id)">查看报告</el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-main>
   </el-container>
 </template>
 <script>
@@ -36,7 +48,9 @@ export default {
       pageNum: 1,
       pageSize: 100,
       totalPage: 0,
-      orderNo: this.$route.query.orderNo
+      orderNo: this.$route.query.orderNo,
+      condition: null,
+      activeIndex: '0'
     }
   },
   methods: {
@@ -44,7 +58,9 @@ export default {
       this.axios.get('report/wechat', {
         params: {
           openid: this.$route.query.openid,
-          orderId: this.$route.query.orderId
+          orderId: this.$route.query.orderId,
+          condition: this.condition,
+          resource: parseInt(this.activeIndex)
         }
       }).then(res => {
         this.reportList = res.data.list
@@ -70,6 +86,10 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    handleSelect (key) {
+      this.activeIndex = key
+      this.getList()
     }
   },
   watch: {},
@@ -87,8 +107,35 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-  .search-input {
-    margin-top: 10px;
+  .el-container {
+    background: #F7F7F7;
+    min-height: 100%;
+  }
+  .el-header {
+    padding: 0;
+    height: auto!important;
+    z-index: 999;
+    .input-with-select {
+      padding: 10px 20px;
+    }
+    .el-menu {
+      width: 100%;
+    }
+    .mdh-el-menu>.el-menu-item {
+      height: 40px;
+      line-height: 40px;
+      width: 33.33%;
+      text-align: center;
+      border-top: solid 1px #e6e6e6;
+      border-right: solid 1px #e6e6e6;
+    }
+    .el-input-group {
+      width: calc(100% - 40px);
+    }
+  }
+  .el-main {
+    margin-top: -28px;
+    padding: 0;
   }
   .order-title {
     position: relative;
@@ -103,9 +150,9 @@ export default {
   }
   .item-title {
     position: relative;
-    padding: 8px 0px;
+    padding: 4px 0px;
     font-size: 14px;
-    font-weight: bold;
+    font-weight: 500;
     .money {
       position: absolute;
       right: 0;
@@ -116,6 +163,9 @@ export default {
     }
   }
   .right-btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
     .el-button {
       margin-left: 10px;
       float: right;
