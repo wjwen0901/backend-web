@@ -17,14 +17,22 @@
               <el-input v-model="informedContent.orderNo"></el-input>
             </el-form-item>
             <el-form-item label="送检医院">
-              <el-select class="width-100-p" v-model="informedContent.hospitalId" filterable placeholder="请选择">
-                <el-option
-                  v-for="item in hospitals"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
+              <el-autocomplete
+                class="inline-input"
+                v-model="informedContent.hospitalName"
+                :fetch-suggestions="hospitalQuerySearch"
+                placeholder="请输入内容"
+                :trigger-on-focus="false"
+                @select="hospitalHandleSelect"
+              ></el-autocomplete>
+              <!--<el-select class="width-100-p" v-model="informedContent.hospitalId" filterable placeholder="请选择">-->
+                <!--<el-option-->
+                  <!--v-for="item in hospitals"-->
+                  <!--:key="item.id"-->
+                  <!--:label="item.name"-->
+                  <!--:value="item.id">-->
+                <!--</el-option>-->
+              <!--</el-select>-->
             </el-form-item>
             <el-form-item label="送检科室">
               <el-select class="width-100-p" v-model="informedContent.deptId" filterable placeholder="请选择">
@@ -174,11 +182,6 @@ export default {
       }).catch(err => {
         console.log(err)
       })
-      this.axios.get('hospital').then(res => {
-        this.hospitals = res.data
-      }).catch(err => {
-        console.log(err)
-      })
       this.axios.get('hospital-dept').then(res => {
         this.depts = res.data
       }).catch(err => {
@@ -218,6 +221,34 @@ export default {
       this.informedContent.province = this.CodeToText[value[0]]
       this.informedContent.city = this.CodeToText[value[1]]
       this.informedContent.county = this.CodeToText[value[2]]
+    },
+    hospitalQuerySearch (queryString, cb) {
+      console.log(queryString)
+      this.axios.get('hospital/page', {
+        params: {
+          pageNum: 1, // 页码
+          pageSize: 8, // 每页长度
+          keywords: queryString
+        }
+      }).then(res => {
+        let result = []
+        if (res.data.endRow === 0) {
+          cb(result)
+        } else {
+          res.data.list.forEach(function (item) {
+            result.push({
+              'value': item.name,
+              'id': item.id
+            })
+          })
+          cb(result)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    hospitalHandleSelect (item) {
+      this.informedContent.hospitalId = item.id
     }
   },
   filters: {},
@@ -248,6 +279,9 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
+  .el-autocomplete {
+    width: 100%;
+  }
   .user-container {
     margin: 20px 0px;
     padding: 20px;

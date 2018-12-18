@@ -271,6 +271,14 @@ export default new Router({
       meta: {
         title: '业务员绑定'
       }
+    },
+    {
+      path: '/wechat/success',
+      name: 'Success',
+      component: resolve => require(['@/views/wechat/add_user_success'], resolve),
+      meta: {
+        title: '操作成功'
+      }
     }
   ]
 })
