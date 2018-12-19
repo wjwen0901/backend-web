@@ -261,18 +261,8 @@ export default {
       this.pageNum = val
       this.getData()
     },
-    toRecheck (reportId, informedId) {
-      this.axios.get('report/recheck/' + reportId, {
-        params: {
-          informedId: informedId
-        }
-      }).then(res => {
-        this.informed = res.data.informed
-        this.report = res.data.report
-        this.dialogFormVisible = true
-      }).catch(err => {
-        console.log(err)
-      })
+    toRecheck (id) {
+      this.$router.push('/review/detail/' + id)
     },
     toEditReport (id) {
       this.$router.push('/report/edit/' + id)

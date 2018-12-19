@@ -79,6 +79,11 @@ export default new Router({
           component: resolve => require(['@/views/home/data_review/data_review'], resolve)
         },
         {
+          path: '/review/detail/:reportId',
+          name: 'DataReviewDetail',
+          component: resolve => require(['@/views/home/data_review/detail'], resolve)
+        },
+        {
           path: '/order',
           name: 'Order',
           component: resolve => require(['@/views/home/order/order'], resolve)

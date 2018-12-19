@@ -120,11 +120,12 @@ export default {
     return {
       username: window.localStorage.username,
       sec: window.localStorage.sec,
+      role: window.localStorage.role,
       // username: 'admin',
       // sec: 'upload,upload:informed,upload:report,upload:medical-records,' +
       //   'order,data-collect,data-collect:informed,data-collect:report,data-review,system,system:user-sec,' +
       //   'customer,product,report:list,patient:list,hospital:list,firm:list,channel:list',
-      role: window.localStorage.role,
+      // role: 'manager',
       activeIndex: '/dashboard',
       openMenu: ['fly', 'upload', 'info', 'chann', 'system']
     }
