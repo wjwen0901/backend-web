@@ -54,7 +54,7 @@
           label="操作"
           width="100">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="toDetail(scope.row.companyId)">编辑</el-button>
+            <el-button type="text" size="small" @click="toDetail(scope.row.id)">编辑</el-button>
             <!--<el-button type="text" size="small" @click="toDelete(scope.row.id)">删除</el-button>-->
           </template>
         </el-table-column>

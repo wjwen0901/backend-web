@@ -284,6 +284,16 @@ export default new Router({
       meta: {
         title: '操作成功'
       }
+    },
+    {
+      path: '/register',
+      name: 'Register',
+      component: resolve => require(['@/views/register'], resolve)
+    },
+    {
+      path: '/loading',
+      name: 'Loading',
+      component: resolve => require(['@/views/loading'], resolve)
     }
   ]
 })

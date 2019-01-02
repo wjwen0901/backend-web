@@ -10,7 +10,7 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="12">
+      <el-col :span="12" v-if="role === 'manager' || role === 'jk-service'">
         <div class="user-container">
           <el-form ref="informedForm" :model="informedContent" label-width="80px" size="mini" class="edit-form">
             <el-form-item label="订单编号">
@@ -148,7 +148,8 @@ export default {
       imagePath: '',
       regionData: regionData,
       CodeToText: CodeToText,
-      TextToCode: TextToCode
+      TextToCode: TextToCode,
+      role: window.localStorage.role
     }
   },
   props: {},

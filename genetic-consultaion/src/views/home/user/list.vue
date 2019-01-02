@@ -108,10 +108,10 @@
             <el-radio-group v-model="userResource.roleCode" size="small" @change="getSecResource">
               <el-radio label="business-agent">业务员</el-radio>
               <el-radio label="channel">渠道商</el-radio>
-              <el-radio label="firm-service" v-if="roleCode === 'manager'">实验室客服</el-radio>
-              <el-radio label="jk-service" v-if="roleCode === 'manager'">“见康”客服</el-radio>
-              <el-radio label="doctor" v-if="roleCode === 'manager'">医生</el-radio>
-              <el-radio label="patient" v-if="roleCode === 'manager'">患者</el-radio>
+              <el-radio label="firm-service" v-if="currentUserRole === 'manager'">实验室客服</el-radio>
+              <el-radio label="jk-service" v-if="currentUserRole === 'manager'">“见康”客服</el-radio>
+              <el-radio label="doctor" v-if="currentUserRole === 'manager'">医生</el-radio>
+              <el-radio label="patient" v-if="currentUserRole === 'manager'">患者</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="权限">
@@ -228,6 +228,7 @@ export default {
       },
       companyList: [],
       roleCode: this.$route.params.role,
+      currentUserRole: window.localStorage.role,
       qrCode: {},
       condition: null,
       options2: [{
@@ -286,7 +287,8 @@ export default {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           role: this.roleCode,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId,
+          condition: this.condition
         }
       }).then(res => {
         this.list = res.data.list
@@ -299,9 +301,11 @@ export default {
     },
     handleSizeChange (val) {
       this.pageSize = val
+      this.getData()
     },
     handleCurrentChange (val) {
       this.pageNum = val
+      this.getData()
     },
     toAdd () {
       this.dialogEditFormVisible = true

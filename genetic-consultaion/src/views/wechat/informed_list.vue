@@ -14,11 +14,11 @@
           <template slot-scope="scope">
             <div class="order-title">
               <div>
-                受检者姓名：
                 <span v-if="scope.row.patientName !== undefined">{{scope.row.patientName}}
+                  受检者姓名：
                   <span v-if="scope.row.cellphone!== undefined && scope.row.cellphone!== ''">({{scope.row.cellphone}})</span>
                 </span>
-                <span v-else>信息识别中</span>
+                <!--<span v-else>信息识别中</span>-->
                 <el-tag type="info" class="status" size="mini">{{scope.row.state | stateFilter}}</el-tag>
               </div>
               <div>
@@ -33,6 +33,9 @@
               <div>
                 检测产品：
                 <el-button type="text" class="text-btn" @click="toProDetail(scope.row.yzDetailUrl)">{{scope.row.solutionName}}</el-button>
+              </div>
+              <div>
+                备注：{{scope.row.remark}}
               </div>
               <div>
                 创建时间：{{scope.row.createTime | formatDate}}
