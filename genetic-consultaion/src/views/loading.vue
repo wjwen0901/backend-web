@@ -47,6 +47,7 @@ export default {
   created () {
     this.initData()
     let cookie = JSON.parse(decodeURIComponent(getCookie('cookiepass')))
+    console.log(cookie)
     window.localStorage.token = cookie.token
     window.localStorage.username = cookie.user.username
     window.localStorage.userId = cookie.user.id
@@ -54,6 +55,8 @@ export default {
     window.localStorage.cellphone = cookie.user.cellphone
     window.localStorage.role = cookie.role
     window.localStorage.sec = cookie.sec
+    console.log(window.localStorage.token)
+    console.log(window.localStorage)
     this.$router.push({path: '/'})
   }
 }

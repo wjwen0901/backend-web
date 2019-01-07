@@ -119,7 +119,7 @@ export default {
   data () {
     return {
       username: window.localStorage.username,
-      sec: window.localStorage.sec,
+      sec: window.localStorage.sec === undefined ? 'upload,upload:informed,upload:report,upload:medical-records,informed:list,report:list' : window.localStorage.sec,
       role: window.localStorage.role,
       // username: 'admin',
       // sec: 'upload,upload:informed,upload:report,upload:medical-records,' +

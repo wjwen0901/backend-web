@@ -58,6 +58,7 @@
                     <span>{{scope.row.sampleCode}}</span>
                   </el-row>
                   <el-button type="text" @click="toEditInformed(scope.row.id)">修改信息</el-button>
+                  <el-button type="text" @click="toDelInformedRelat(scope.row.id)">删除此关系</el-button>
                 </template>
               </el-table-column>
               <el-table-column
@@ -141,6 +142,38 @@ export default {
     },
     toEditInformed (id) {
       this.$router.push('/informed/edit/' + id)
+    },
+    toDelInformedRelat (id) {
+      this.$alert('删除之后将无法回复！！！', '确认删除？', {
+        confirmButtonText: '确定',
+        callback: action => {
+          let instance = this.axios.create({
+            headers: {
+              'Authorization': window.localStorage.token,
+              'Content-Type': 'application/json'
+            }
+          })
+          let _this = this
+          instance({
+            method: 'post',
+            url: 'report/relieve',
+            params: {
+              reportId: _this.report.id,
+              informedId: id
+            },
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'Content-Type': 'application/json'
+            }
+          }).then(function (response) {
+            _this.$message({
+              message: '删除成功',
+              type: 'success'
+            })
+            _this.getData()
+          })
+        }
+      })
     },
     reviewPass () {
       let _this = this

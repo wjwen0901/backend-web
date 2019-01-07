@@ -88,10 +88,17 @@ export default {
         ],
         cellphone: [
           { required: true, message: '请输入手机号', trigger: 'blur' },
-          { type: 'tel', message: '请输入正确的手机号', trigger: ['blur', 'change'] }
+          { validator: function (rule, value, callback) {
+            if (/^1[34578]\d{9}$/.test(value) === false) {
+              callback(new Error('请输入正确的手机号'))
+            } else {
+              callback()
+            }
+          },
+          trigger: 'blur'}
         ],
         code: [
-          { type: 'number', required: true, message: '请输入验证码', trigger: 'blur' }
+          { required: true, message: '请输入验证码', trigger: 'blur' }
         ],
         email: [
           { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
@@ -160,19 +167,18 @@ export default {
       })
     },
     onSubmit () {
-      if (this.user === {}) {
+      if (this.user.id === undefined) {
         let instance = this.axios.create({
           headers: {
             'Authorization': window.localStorage.token,
             'Content-Type': 'application/json'
           }
         })
-        this.userResource.roleCode = this.roleCode
         let _this = this
         instance({
           method: 'post',
           url: 'user/wechat',
-          data: this.user,
+          params: this.user,
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json'
@@ -200,7 +206,7 @@ export default {
         instance({
           method: 'put',
           url: 'user/wechat/' + this.user.id,
-          data: this.user,
+          params: this.user,
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json'
@@ -236,7 +242,7 @@ export default {
     let cookie = JSON.parse(decodeURIComponent(getCookie('cookiepass')))
     console.log(cookie)
     this.user = cookie.user === undefined ? {} : cookie.user
-    this.unionId = cookie.unionId
+    this.user.unionId = cookie.unionId
   }
 }
 </script>

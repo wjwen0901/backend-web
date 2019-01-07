@@ -6,16 +6,21 @@
         <div class="c-header">
           <p>个人健康报告</p>
         </div>
-        <el-form :rules="rules" :model="informedConsent" ref="informedConsent" label-width="0px" label-position="left">
+        <el-form :rules="rules" :model="patient" ref="patient" label-width="0px" label-position="left">
           <el-form-item prop="name">
-            <input type="text" class="nick-input" v-model="informedConsent.name" placeholder="请输入姓名"/>
+            <input type="text" class="nick-input" v-model="patient.name" placeholder="请输入姓名"/>
           </el-form-item>
           <el-form-item prop="cellphone">
-            <input type="text" class="nick-input" v-model="informedConsent.cellphone" placeholder="请输入手机号"/>
+            <input type="text" class="nick-input" v-model="patient.cellphone" placeholder="请输入手机号"/>
+          </el-form-item>
+          <el-form-item prop="idCode">
+            <input type="text" class="nick-input" v-model="patient.code" placeholder="请输入验证码"/>
+            <el-button class="send-code" v-if="!hasCode" @click="getVerification">获取验证码</el-button>
+            <el-button class="send-code" v-else>重发验证码{{resetSendCode}}s</el-button>
           </el-form-item>
           <!--<el-form-item prop="idCode">-->
-            <!--<input type="text" class="nick-input" v-model="informedConsent.idCode" placeholder="请输入身份证后4位"/>-->
-            <!--&lt;!&ndash;<el-input class="nick-input" v-model="informedConsent.idCode" placeholder="请输入身份证后四位"></el-input>&ndash;&gt;-->
+            <!--<input type="text" class="nick-input" v-model="patient.idCode" placeholder="请输入身份证后4位"/>-->
+            <!--&lt;!&ndash;<el-input class="nick-input" v-model="patient.idCode" placeholder="请输入身份证后四位"></el-input>&ndash;&gt;-->
           <!--</el-form-item>-->
           <el-form-item class="nick-button">
             <el-button @click="toViewReport">查看报告</el-button>
@@ -23,60 +28,86 @@
         </el-form>
       </div>
     </div>
-    <div v-else>
-      <el-header>个人健康报告下载</el-header>
-      <el-main>
-        <el-form :rules="rules" :model="informedConsent" ref="informedConsent" label-width="110px" label-position="left" size="mini">
-          <el-form-item label="您的姓名" prop="name">
-            <el-input class="width-100-p" v-model="informedConsent.name"></el-input>
-          </el-form-item>
-          <el-form-item label="手机号码" prop="cellphone">
-            <el-input class="width-100-p" v-model="informedConsent.cellphone"></el-input>
-          </el-form-item>
-          <el-form-item label="身份证后四位" prop="idCode">
-            <el-input class="width-100-p" v-model="informedConsent.idCode"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button class="float-l" type="primary" @click="toViewReport">查看报告</el-button>
-          </el-form-item>
-        </el-form>
-      </el-main>
+    <div class="mdh-default" v-else>
+      <div class="header">
+
+      </div>
+      <div class="content">
+        <img :src="gensultationLogo"/>
+        <p>个人健康报告下载</p>
+        <el-main>
+          <el-form :rules="rules" :model="patient" ref="patient" label-width="0px" label-position="left">
+            <el-form-item prop="name">
+              <el-input class="width-100-p"
+                        v-model="patient.name"
+                        placeholder="请输入姓名">
+              </el-input>
+            </el-form-item>
+            <el-form-item prop="cellphone">
+              <el-input class="width-100-p"
+                        v-model="patient.cellphone"
+                        placeholder="请输入手机号">
+              </el-input>
+            </el-form-item>
+            <el-form-item prop="idCode">
+              <el-input class="width-100-p"
+                        v-model="patient.code"
+                        placeholder="请输入验证码">
+                <!--获取验证码-->
+                <el-button slot="append" class="send-code" v-if="!hasCode" @click="getVerification">获取验证码</el-button>
+                <el-button slot="append" class="send-code" v-else>重发验证码{{resetSendCode}}s</el-button>
+                <!--<template slot="append">-->
+                  <!--&lt;!&ndash;获取验证码&ndash;&gt;-->
+                  <!--<el-button class="send-code" v-if="!hasCode" @click="getVerification">获取验证码</el-button>-->
+                  <!--<el-button class="send-code" disabled v-if="hasCode">重发验证码{{resetSendCode}}s</el-button>-->
+                <!--</template>-->
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button class="submit-btn" @click="toViewReport">查看报告</el-button>
+            </el-form-item>
+          </el-form>
+        </el-main>
+      </div>
+      <div class="footer-info">
+        &copy; 2019 MDHcare.cn 版权所有  丨  ICP证：京ICP备17067248号
+      </div>
     </div>
   </el-container>
 </template>
 
 <script>
+import logoSrc from '../../assets/gensultation-logo.png'
 export default {
   name: 'report-download',
   data () {
     const checkName = (rule, value, callback) => {
-      if (!this.informedConsent.name) {
+      if (!this.patient.name) {
         return callback(new Error('请输入姓名'))
       } else {
         callback()
       }
     }
     const checkCellphone = (rule, value, callback) => {
-      if (!this.informedConsent.cellphone) {
+      if (!this.patient.cellphone) {
         callback(new Error('请输入手机号码'))
-      } else if (!(/^1\d{10}$/.test(parseInt(this.informedConsent.cellphone)))) {
+      } else if (!(/^1\d{10}$/.test(parseInt(this.patient.cellphone)))) {
         callback(new Error('请输入11位数字'))
       } else {
         callback()
       }
     }
     const checkIdcode = (rule, value, callback) => {
-      if (!this.informedConsent.idCode) {
-        callback(new Error('请输入身份证后四位'))
+      if (!this.patient.code) {
+        callback(new Error('请输入验证码'))
       } else {
         callback()
       }
     }
     return {
-      informedConsent: {
+      patient: {
         name: window.localStorage.fullName === undefined ? '' : window.localStorage.fullName,
-        cellphone: window.localStorage.cellphone === undefined ? '' : window.localStorage.cellphone,
-        idCode: window.localStorage.idCode === undefined ? '' : window.localStorage.idCode
+        cellphone: window.localStorage.cellphone === undefined ? '' : window.localStorage.cellphone
       },
       rules: {
         name: [
@@ -94,40 +125,77 @@ export default {
       pageNum: 1,
       pageSize: 20,
       totalPage: 0,
-      CustomizedKey: this.$route.query.k
+      CustomizedKey: this.$route.query.k,
+      gensultationLogo: logoSrc,
+      hasCode: false,
+      resetSendCode: 60
     }
   },
   methods: {
     toViewReport () {
-      if (this.$route.query.k === '11d67f337e411b48e6d8cd0d0ad67a35') {
-        this.axios.get('report/list', {
-          params: this.informedConsent
-        }).then(res => {
-          this.$router.push({path: '/report/personal', query: {name: this.informedConsent.name, cellphone: this.informedConsent.cellphone}})
-        }).catch(err => {
-          console.log(err)
-          this.$message({
-            message: '暂未查询到您的检测报告',
-            center: true,
-            duration: 30000,
-            showClose: true
-          })
-        })
-      } else {
-        this.axios.get('report/patient', {
-          params: this.informedConsent
-        }).then(res => {
-          this.$router.push({path: '/report/view/', query: {path: res.data}})
-        }).catch(err => {
-          console.log(err)
-          this.$message({
-            message: '暂未查询到您的检测报告',
-            center: true,
-            duration: 30000,
-            showClose: true
-          })
-        })
+      this.$refs.patient.validate((valid) => {
+        if (valid) {
+          if (this.$route.query.k === '11d67f337e411b48e6d8cd0d0ad67a35') {
+            this.axios.get('report/list', {
+              params: this.patient
+            }).then(res => {
+              this.$router.push({path: '/report/personal', query: {name: this.patient.name, cellphone: this.patient.cellphone}})
+            }).catch(err => {
+              console.log(err)
+              this.$message({
+                message: '暂未查询到您的检测报告',
+                center: true,
+                duration: 30000,
+                showClose: true
+              })
+            })
+          } else {
+            this.axios.get('report/patient', {
+              params: this.patient
+            }).then(res => {
+              this.$router.push({path: '/report/view/', query: {path: res.data}})
+            }).catch(err => {
+              console.log(err)
+              this.$message({
+                message: err.message,
+                center: true,
+                duration: 30000,
+                showClose: true
+              })
+            })
+          }
+        } else {
+          console.log('信息不完整')
+          return false
+        }
+      })
+    },
+    getVerification () {
+      if (!this.patient.cellphone.match(/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/)) {
+        this.cellphoneTypeError = true
+        return false
       }
+      this.axios.get('verification', {
+        params: {
+          cellphone: this.patient.cellphone
+        }
+      }).then(res => {
+        if (res.data === 'success') {
+          this.hasCode = true
+          this.resetSendCode = 60
+          let timeStop = setInterval(() => {
+            this.resetSendCode--
+            if (this.resetSendCode > 0) {
+              this.hasCode = true
+            } else {
+              this.hasCode = false
+              clearInterval(timeStop)
+            }
+          }, 1000)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 }
@@ -142,9 +210,6 @@ export default {
   .el-container {
     background: #fff;
     min-height: 100%;
-  }
-  .el-main {
-    background: #f2f2f2;
   }
   .el-header {
     margin-top: 20px;
@@ -180,6 +245,16 @@ export default {
     font-weight: 400;
     .el-form-item {
       margin-bottom: 16px;
+      .send-code {
+        position: absolute;
+        right: 10%;
+        top: 0;
+        padding: 12px;
+        border: 1px solid rgb(101, 194, 196);
+        border-radius: 0px 4px 4px 0px;
+        background: rgb(101, 194, 196);
+        color: #fff;
+      }
     }
     .nick-input {
       width: 80%!important;
@@ -232,6 +307,64 @@ export default {
       color: #fff;
       /*border: 1px solid rgba(255, 255, 255, .8);*/
       width: 100%;
+    }
+  }
+  .mdh-default {
+    position: relative;
+    width: 100%;
+    padding: 60px 20px 20px 20px;
+    text-align: center;
+    z-index: 1;
+    &:before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background:  url("../../assets/download-bg.jpg") repeat-y;
+      background-size: cover;
+      opacity: .2;
+      content: "";
+      z-index: -1;
+    }
+    .content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: calc(100% - 100px);
+      max-width: 600px;
+      padding: 40px 20px;
+      background: #fff;
+      border-radius: 10px;
+      border-shadow: 20px 5px 5px rgba(0, 0, 0, 1);
+      p {
+        margin: 0;
+        padding: 0;
+        font-size: 18px;
+        color: #464444;
+      }
+    }
+    img {
+      width: 160px;
+    }
+    .el-main {
+      background: none;
+    }
+    .send-code {
+      padding: 12px 10px;
+    }
+    .submit-btn {
+      width: 100%;
+      background: #65c2c4;
+      color: #fff;
+    }
+    .footer-info {
+      position: absolute;
+      bottom: 10px;
+      text-align: center;
+      font-size: 12px;
+      color: #999999;
     }
   }
 
