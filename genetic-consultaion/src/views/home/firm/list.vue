@@ -32,7 +32,7 @@
         <el-table-column
           label="开户银行">
           <template slot-scope="scope" v-if="scope.row.bank_account">
-            {{scope.row.bank}}({{scope.row.bank_account}})
+            {{scope.row.bank}}({{scope.row.bankAccount}})
           </template>
         </el-table-column>
         <el-table-column

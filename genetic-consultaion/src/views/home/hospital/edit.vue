@@ -104,8 +104,8 @@ export default {
         instance({
           method: 'post',
           url: 'hospital',
-          data: {
-            hospital: this.hospital,
+          data: this.hospital,
+          params: {
             userId: window.localStorage.userId
           },
           headers: {

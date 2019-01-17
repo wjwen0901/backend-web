@@ -125,7 +125,7 @@ export default {
       }
     },
     cancel () {
-      this.$router.push('/company')
+      this.$router.push('/firm')
     },
     addressHandleChange (value) {
       this.company.province = this.CodeToText[value[0]]

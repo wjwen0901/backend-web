@@ -115,7 +115,7 @@ export default {
             message: '修改成功',
             type: 'success'
           })
-          _this.$router.push('/firm')
+          _this.$router.push('/channel')
         }).catch(function () {
           _this.$message({
             message: '修改失败',
@@ -125,7 +125,7 @@ export default {
       }
     },
     cancel () {
-      this.$router.push('/company')
+      this.$router.push('/channel')
     },
     addressHandleChange (value) {
       this.company.province = this.CodeToText[value[0]]

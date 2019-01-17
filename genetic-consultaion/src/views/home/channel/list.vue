@@ -18,8 +18,8 @@
         border
         style="width: 100%">
         <el-table-column
-          prop="companyName"
-          label="厂商名称">
+          prop="name"
+          label="渠道公司名称">
         </el-table-column>
         <el-table-column
           prop="code"
@@ -32,7 +32,7 @@
         <el-table-column
           label="开户银行">
           <template slot-scope="scope" v-if="scope.row.bank_account">
-            {{scope.row.bank}}({{scope.row.bank_account}})
+            {{scope.row.bank}}({{scope.row.bankAccount}})
           </template>
         </el-table-column>
         <el-table-column
