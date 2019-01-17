@@ -33,7 +33,7 @@
 
       </div>
       <div class="content">
-        <img :src="gensultationLogo"/>
+        <img src="../../assets/gensultation-logo.png"/>
         <p>个人健康报告下载</p>
         <el-main>
           <el-form :rules="rules" :model="patient" ref="patient" label-width="0px" label-position="left">
@@ -77,7 +77,6 @@
 </template>
 
 <script>
-import logoSrc from '../../assets/gensultation-logo.png'
 export default {
   name: 'report-download',
   data () {
@@ -126,7 +125,6 @@ export default {
       pageSize: 20,
       totalPage: 0,
       CustomizedKey: this.$route.query.k,
-      gensultationLogo: logoSrc,
       hasCode: false,
       resetSendCode: 60
     }

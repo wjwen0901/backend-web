@@ -7,6 +7,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 import App from './App'
 import router from './router'
 import vSelect from 'vue-select2'
+import htmlToPdf from './utils/htmlToPdf'
+Vue.use(htmlToPdf)
 
 router.beforeEach((to, from, next) => {
   /* 路由发生变化修改页面title */

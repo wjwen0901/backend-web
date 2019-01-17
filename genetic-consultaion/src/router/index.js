@@ -294,6 +294,11 @@ export default new Router({
       path: '/loading',
       name: 'Loading',
       component: resolve => require(['@/views/loading'], resolve)
+    },
+    {
+      path: '/customize/genessential/pdf-report',
+      name: 'GenessentialPDFReport',
+      component: resolve => require(['@/views/customize/genessential/pdf_report'], resolve)
     }
   ]
 })

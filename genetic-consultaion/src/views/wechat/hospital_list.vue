@@ -116,9 +116,28 @@ export default {
     },
     chooseHospital (id, name) {
       if (parseInt(id) === 0) {
-        this.axios.post('hospital', {name: name}).then(res => {
-          this.$router.push({path: '/wechat/informed/upload', query: {hid: res.data.id, hname: name, openid: this.$route.query.openid}})
-        }).catch(err => {
+        let instance = this.axios.create({
+          headers: {
+            'Authorization': window.localStorage.token,
+            'Content-Type': 'application/json'
+          }
+        })
+        let hospitalInfo = {name: name}
+        let that = this
+        instance({
+          method: 'post',
+          url: 'hospital',
+          data: hospitalInfo,
+          params: {
+            userId: window.localStorage.userId
+          },
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json'
+          }
+        }).then(function (res) {
+          that.$router.push({path: '/wechat/informed/upload', query: {hid: res.data.id, hname: name, openid: that.$route.query.openid}})
+        }).catch(function (err) {
           console.log(err)
         })
       } else {
