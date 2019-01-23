@@ -12,6 +12,11 @@ export default {
       isRouterAlive: true
     }
   },
+  provide () {
+    return {
+      reload: this.reload
+    }
+  },
   methods: {
     reload () {
       this.isRouterAlive = false

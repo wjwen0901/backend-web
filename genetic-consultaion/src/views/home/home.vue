@@ -61,9 +61,10 @@
               <el-menu-item index="/informed/list" v-if="sec.includes('data-collect:informed')">查看知情</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="upload" v-if="sec.includes('upload:report') || sec.includes('data-collect:report')">
+          <el-submenu index="upload" v-if="sec.includes('upload:report') || sec.includes('data-collect:report') || sec.includes('report:list')">
             <template slot="title"><i class="fas fa-book-open"></i><span slot="title">报告管理</span></template>
             <el-menu-item-group>
+              <el-menu-item index="/report/customize/genessential" v-if="sec.includes('custome-report:genessential')">定制报告</el-menu-item>
               <el-menu-item index="/report/upload" v-if="sec.includes('upload:report')">上传报告</el-menu-item>
               <el-menu-item index="/report/list" v-if="sec.includes('data-collect:report')">提取报告</el-menu-item>
               <el-menu-item index="/report/info/list" v-if="sec.includes('report:list')">查看报告</el-menu-item>
@@ -99,7 +100,8 @@
             <template slot="title"><i class="el-icon-setting"></i><span slot="title">系统管理</span></template>
             <el-menu-item-group>
               <el-menu-item index="/user" v-if="sec.includes('system:user-sec')">账号管理</el-menu-item>
-              <!--<el-menu-item index="/channel/barcode">生成产品二维码</el-menu-item>-->
+              <el-menu-item index="/disease" v-if="role === 'manager'">疾病数据维护</el-menu-item>
+              <el-menu-item index="/gene" v-if="role === 'manager'">基因数据维护</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>

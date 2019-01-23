@@ -27,6 +27,29 @@
                 </el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="送检医院">
+              <el-autocomplete
+                class="inline-input width-100-p"
+                v-model="report.hospitalName"
+                :fetch-suggestions="hospitalQuerySearch"
+                placeholder="请输入内容"
+                :trigger-on-focus="false"
+                @select="hospitalHandleSelect"
+              ></el-autocomplete>
+            </el-form-item>
+            <el-form-item label="送检科室">
+              <el-select class="width-100-p" v-model="report.deptId" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in depts"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="送检医生">
+              <el-input v-model="report.doctor"></el-input>
+            </el-form-item>
             <el-form-item label="受检者电话">
               <el-input v-model="report.cellphone"></el-input>
             </el-form-item>
@@ -37,6 +60,7 @@
               <el-button @click="cancel">取消</el-button>
               <el-button @click="unread">文件不可读</el-button>
               <el-button type="primary" @click="edit">保存信息</el-button>
+              <el-button type="primary" @click="toCustomizeReport">下载定制报告</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -66,7 +90,8 @@ export default {
         {'id': 2, 'name': '通行证'},
         {'id': 3, 'name': '社保卡'}
       ],
-      imagePath: ''
+      imagePath: '',
+      depts: []
     }
   },
   props: {},
@@ -96,6 +121,11 @@ export default {
         }
       }).then(res => {
         this.projects = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+      this.axios.get('hospital-dept').then(res => {
+        this.depts = res.data
       }).catch(err => {
         console.log(err)
       })
@@ -135,6 +165,48 @@ export default {
         this.$message.error('修改失败')
         console.log(err)
       })
+    },
+    hospitalQuerySearch (queryString, cb) {
+      console.log(queryString)
+      this.axios.get('hospital/page', {
+        params: {
+          pageNum: 1, // 页码
+          pageSize: 8, // 每页长度
+          keywords: queryString
+        }
+      }).then(res => {
+        let result = []
+        if (res.data.endRow === 0) {
+          cb(result)
+        } else {
+          res.data.list.forEach(function (item) {
+            result.push({
+              'value': item.name,
+              'id': item.id
+            })
+          })
+          cb(result)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    hospitalHandleSelect (item) {
+      this.report.hospitalId = item.id
+    },
+    toCustomizeReport () {
+      this.axios.get('report/combine/' + this.$route.params.reportId, {
+        params: {
+          hospitalId: this.report.hospitalId,
+          solutionId: this.report.solutionId
+        }
+      }).then(res => {
+        let result = this.axios.defaults.baseURL.includes('https://')
+          ? res.data.replace('http://', 'https://') : res.data
+        window.open(result)
+      }).catch(err => {
+        console.log(err)
+      })
     }
   },
   filters: {},
@@ -171,7 +243,7 @@ export default {
   }
   .img-content {
     margin: 20px 0px 20px 20px;
-    height: 500px;
+    height: 706px;
     background: #ffffff;
     overflow: auto;
   }

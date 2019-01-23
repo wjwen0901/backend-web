@@ -162,6 +162,11 @@ export default new Router({
           path: '/channel/edit/:id',
           name: 'ChannelEdit',
           component: resolve => require(['@/views/home/channel/edit'], resolve)
+        },
+        {
+          path: '/report/customize/genessential',
+          name: 'ReportCustomize',
+          component: resolve => require(['@/views/customize/genessential/customize_report'], resolve)
         }
       ]
     },
@@ -296,7 +301,7 @@ export default new Router({
       component: resolve => require(['@/views/loading'], resolve)
     },
     {
-      path: '/customize/genessential/pdf-report',
+      path: '/customize/genessential/pdf-report/:sampleNo',
       name: 'GenessentialPDFReport',
       component: resolve => require(['@/views/customize/genessential/pdf_report'], resolve)
     }

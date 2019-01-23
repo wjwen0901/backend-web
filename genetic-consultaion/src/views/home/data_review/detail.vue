@@ -77,7 +77,7 @@
         </el-col>
       </el-row>
       <div class="footer-btn">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button @click="cancel">取 消</el-button>
         <el-button type="primary" @click="reviewPass">确定匹配</el-button>
       </div>
     </div>
@@ -170,7 +170,7 @@ export default {
               message: '删除成功',
               type: 'success'
             })
-            _this.getData()
+            _this.reload()
           })
         }
       })
@@ -195,6 +195,9 @@ export default {
           console.log(err)
         })
       })
+    },
+    cancel () {
+      this.$router.push('/review')
     }
   },
   filters: {
