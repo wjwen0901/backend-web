@@ -4,14 +4,15 @@ const args = process.argv.splice(2)
 console.log(args);
 
 (async () => {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
   const page = await browser.newPage();
-  await page.goto('http://localhost:3100/#/customize/genessential/pdf-report/' + args[0],
+  await page.goto('https://z.mdhcare.cn/#/customize/genessential/pdf-report/' + args[0],
     {
-      waitUntil: 'networkidle2'
+      waitUntil: 'networkidle0',
+      timeout: 0
     });
   await page.pdf({
-    path: '/Users/leamoliu/Documents/example2.pdf',
+    path: '/data/mdh/pdf/genessential/' + args[0] + '.pdf',
     format: 'A4',
     printBackground: true
   });
