@@ -2,12 +2,12 @@
   <el-container>
     <el-header>定制报告</el-header>
     <el-main class="upload-main">
-      <el-form :rules="rules" :model="report" ref="report" label-width="100px" label-position="left">
+      <el-form :rules="rules" ref="report" label-width="100px" label-position="left">
         <el-form-item label="检测产品">
           焕彩基因美肤方案
         </el-form-item>
         <el-form-item label="样本编号" prop="sampleNo">
-          <el-input class="width-100-p" v-model="sampleNo"></el-input>
+          <el-input class="width-100-px" v-model="sampleNo"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button class="float-l" type="primary" @click="createReport">生成报告</el-button>
@@ -25,7 +25,7 @@ export default {
       sampleNo: '',
       rules: {
         sampleNo: [
-          {required: true, message: '请填写样本编号', trigger: 'blur'}
+          {required: true, message: '请填写样本编号', trigger: ''}
         ]
       }
     }
@@ -34,27 +34,41 @@ export default {
     createReport () {
       let loading = this.$loading({
         lock: true,
-        text: 'Loading',
+        text: '正在生成报告，请稍等',
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      loading.close()
+      let instance = this.axios.create({
+        headers: {
+          'Authorization': window.localStorage.token,
+          'Content-Type': 'application/json'
+        }
+      })
+      let _this = this
+      instance({
+        method: 'post',
+        url: 'customize/genessential',
+        params: {
+          solution: _this.solution,
+          userId: window.localStorage.userId,
+          sampleNo: _this.sampleNo
+        },
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Content-Type': 'application/json'
+        }
+      }).then(function (res) {
+        window.open(res.data)
+        loading.close()
+      }).catch(function () {
+        _this.$message({
+          message: '未获取到此样本结果',
+          type: 'error'
+        })
+      })
     }
   },
   created () {
-    this.axios.get('customize/genessential', {
-      params: {
-        userId: window.localStorage.userId,
-        sampleNo: this.sampleNo
-      }
-    }).then(res => {
-      this.reportList = res.data.list
-      this.pageSize = res.data.pageSize
-      this.pageNum = res.data.pageNum
-      this.totalPage = res.data.total
-    }).catch(err => {
-      console.log(err)
-    })
   },
   filters: {
   }
@@ -77,7 +91,7 @@ export default {
   .float-l {
     float: left;
   }
-  .width-100-p {
-    width: 100%
+  .width-100-px{
+    width: 200px;
   }
 </style>

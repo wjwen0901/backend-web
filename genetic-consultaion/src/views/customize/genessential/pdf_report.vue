@@ -38,7 +38,7 @@
               <td>报告日期</td>
               <td>{{new Date() | formatDate}}</td>
               <td>样本接收日期</td>
-              <td>{{data.UpdateTime | formatDate}}</td>
+              <td>{{parseInt(data.UpdateTime.replace('/Date(', '').replace(')/', '')) | formatDate}}</td>
             </tr>
           </tbody>
         </table>
@@ -234,7 +234,7 @@
             </div>
           </div>
         </section>
-        <div v-if="item.detail.KnowledgeData.Value.length <= 2">
+        <div>
           <section class="page-info-item-detail" v-for="(knowledge, index) in item.detail.KnowledgeData.Value" v-bind:key="knowledge.Id">
             <div class="test-result">
               <div class="title" v-if="index===0">
@@ -249,61 +249,33 @@
                   <div class="info" v-html="content.Details"></div>
                 </div>
               </div>
+              <div class="title">
+                <img class="icon" src="../../../assets/genssential/chengfen.png">
+                <h5>专属护肤成分</h5>
+              </div>
+              <div class="info">
+                {{item.detail.SuggestSkin.replace('{BusinessName}','Genessential')}}
+              </div>
+              <div class="chengfen-labels">
+                <h4 class="sub-title">专属为您匹配的活性成分 ：</h4>
+                <span v-for="(chenfen, chengfenIndex) in item.detail.SuggestSkinData.split(',')" v-bind:key="chengfenIndex">{{chenfen}}  </span>
+              </div>
             </div>
           </section>
-        </div>
-        <div v-else>
-          <div v-for="(knowledge, index) in item.detail.KnowledgeData.Value" v-bind:key="knowledge.Id" v-if="(index ==0 || index % 2 == 0)">
-            <section class="page-info-item-detail">
-              <div class="test-result">
-                <div class="title" v-if="index===0">
-                  <img class="icon" src="../../../assets/genssential/zhishi.png">
-                  <h5>相关知识</h5>
-                </div>
-                <div class="info-list">
-                  <h4 class="title">{{knowledge.Title}}</h4>
-                  <img :src="imgSrc(knowledge.ImageName)" v-if="knowledge.ImageName != ''">
-                  <div v-for="(content, index1) in knowledge.Content" v-bind:key="index1">
-                    <h5 v-if="content.SubTitle !==''">{{content.SubTitle}}</h5>
-                    <div class="info" v-html="content.Details"></div>
-                  </div>
-                </div>
-                <div class="info-list" v-if="item.detail.KnowledgeData.Value[index+1] !== undefined && item.detail.KnowledgeData.Value[index+1].Content.length <= 2">
-                  <h4 class="title">{{item.detail.KnowledgeData.Value[index+1].Title}}</h4>
-                  <img :src="imgSrc(item.detail.KnowledgeData.Value[index+1].ImageName)" v-if="item.detail.KnowledgeData.Value[index+1].ImageName != ''">
-                  <div v-for="(content, index1) in item.detail.KnowledgeData.Value[index+1].Content" v-bind:key="index1">
-                    <h5 v-if="content.SubTitle !==''">{{content.SubTitle}}</h5>
-                    <div class="info" v-html="content.Details"></div>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
         </div>
         <section class="page-info-item-detail">
           <div class="test-result">
             <div class="title">
-              <img class="icon" src="../../../assets/genssential/chengfen.png">
-              <h5>专属护肤成分</h5>
-            </div>
-            <div class="info">
-              {{item.detail.SuggestSkin.replace('{BusinessName}','Genessential')}}
-            </div>
-            <div class="chengfen-labels">
-              <h4>专属为您匹配的活性成分 ：</h4>
-              <span v-for="(chenfen, chengfenIndex) in item.detail.SuggestSkinData.split(',')" v-bind:key="chengfenIndex">{{chenfen}}  </span>
-            </div>
-            <div class="title">
               <img class="icon" src="../../../assets/genssential/jianyi.png">
               <h5>个性护肤建议</h5>
             </div>
-            <h4>日常护肤 :</h4>
-            <div v-html="item.detail.SuggestHome.replace('\r\n', '<br/>')"></div>
-            <h4>美肤饮食 :</h4>
+            <h4 class="sub-title">日常护肤 :</h4>
+            <div v-html="item.detail.SuggestHome.replace(new RegExp('\n', 'gm'), '<br/>')"></div>
+            <h4 class="sub-title">美肤饮食 :</h4>
             <div v-html="item.detail.SuggestFoods"></div>
-            <h4>推荐运动 :</h4>
+            <h4 class="sub-title">推荐运动 :</h4>
             <div v-html="item.detail.SuggestSport"></div>
-            <h4>营养素的补充 :</h4>
+            <h4 class="sub-title">营养素的补充 :</h4>
             <div v-html="item.detail.SuggestNutrient"></div>
           </div>
         </section>
@@ -331,10 +303,10 @@
                 </tr>
                 </tbody>
               </table>
-              <h4>基因功能</h4>
+              <h4 class="sub-title">基因功能</h4>
               <p>{{gene.GeneDesc}}</p>
               <div class="gene-imgs">
-                <div class="img-content" v-for="imgNo in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]" v-bind:key="imgNo">
+                <div class="gene-img-content" v-for="imgNo in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]" v-bind:key="imgNo">
                   <img :src="imgSrc(imgNo + (gene.ChromosomeNo == imgNo ? '-q':'-g'), '.png')">
                   <span>{{imgNo}}</span>
                 </div>
@@ -425,151 +397,302 @@
           </div>
         </section>
         <div v-if="item.detail.KnowledgeData.Value.length <= 2">
-          <section class="page-info-item-detail" v-for="(knowledge, index) in item.detail.KnowledgeData.Value" v-bind:key="knowledge.Id">
+          <section class="page-info-item-detail">
             <div class="test-result">
-              <div class="title" v-if="index===0">
+              <div class="title">
                 <img class="icon" src="../../../assets/genssential/zhishi.png">
                 <h5>相关知识</h5>
               </div>
-              <div class="info-list">
-                <h4 class="title">{{knowledge.Title}}</h4>
-                <img :src="imgSrc(knowledge.ImageName)" v-if="knowledge.ImageName != ''">
-                <div v-for="(content, index) in knowledge.Content" v-bind:key="index">
-                  <h5 v-if="content.SubTitle !==''">{{content.SubTitle}}</h5>
+              <div class="info-list" v-if="item.detail.KnowledgeData.Value.length == 1">
+                <h4 class="title">{{item.detail.KnowledgeData.Value[0].Title}}</h4>
+                <img :src="imgSrc(item.detail.KnowledgeData.Value[0].ImageName)" v-if="item.detail.KnowledgeData.Value[0].ImageName != ''">
+                <div v-for="(content, index) in item.detail.KnowledgeData.Value[0].Content" v-bind:key="index">
+                  <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
                   <div class="info" v-html="content.Details"></div>
                 </div>
+              </div>
+              <div class="info-list" v-if="item.detail.KnowledgeData.Value.length == 2">
+                <h4 class="title">{{item.detail.KnowledgeData.Value[1].Title}}</h4>
+                <img :src="imgSrc(item.detail.KnowledgeData.Value[1].ImageName)" v-if="item.detail.KnowledgeData.Value[1].ImageName != ''">
+                <div v-for="(content, index) in item.detail.KnowledgeData.Value[1].Content" v-bind:key="index">
+                  <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                  <div class="info" v-html="content.Details"></div>
+                </div>
+              </div>
+            </div>
+            <div class="test-result" v-if="item.detail.FoodContentData != '' && item.detail.FoodContentData.Details.length <= 2">
+              <div class="title">
+                <img class="icon" src="../../../assets/genssential/jianyi.png">
+                <h5>给您的建议</h5>
+              </div>
+              <div class="info">{{item.detail.Suggest}}</div>
+              <div  v-if="item.detail.FoodContentData != ''">
+                <h4 class="sub-title">饮食 :</h4>
+                <div class="info" v-html="item.detail.SuggestFoods"></div>
+                <h4 class="sub-title" v-if="item.detail.FoodContentData != ''">{{item.detail.FoodContentData.Title}}<span v-if="item.detail.FoodContentData.Unit != ''">({{item.detail.FoodContentData.Unit}})</span></h4>
+                <table v-if="item.detail.FoodContentData != '' && item.detail.FoodContentData.Details.length > 1 && item.detail.FoodContentData.Details[0].FoodName != ''">
+                  <thead>
+                  <tr>
+                    <th>{{item.detail.FoodContentData.Details[0].FoodName}}</th>
+                    <th>{{item.detail.FoodContentData.Details[0].Content}}</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr v-for="(food, foodIndex) in item.detail.FoodContentData.Details" v-bind:key="food.FoodName" v-if="foodIndex > 0">
+                    <td>{{food.FoodName}}</td>
+                    <td>{{food.Content}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+                <div class="info" v-if="item.detail.FoodContentData != '' && item.detail.FoodContentData.Details.length == 1 && item.detail.FoodContentData.Details[0].FoodName == ''">{{item.detail.FoodContentData.Details[0].Content}}</div>
+              </div>
+            </div>
+          </section>
+          <section class="page-info-item-detail" v-if="item.detail.FoodContentData != '' && item.detail.FoodContentData.Details.length > 2">
+            <div class="test-result">
+              <div class="title">
+                <img class="icon" src="../../../assets/genssential/jianyi.png">
+                <h5>给您的建议</h5>
+              </div>
+              <div class="info">{{item.detail.Suggest}}</div>
+              <div  v-if="item.detail.FoodContentData != ''">
+                <h4 class="sub-title">饮食 :</h4>
+                <div class="info" v-html="item.detail.SuggestFoods"></div>
+                <h4 class="sub-title" v-if="item.detail.FoodContentData != ''">{{item.detail.FoodContentData.Title}}<span v-if="item.detail.FoodContentData.Unit != ''">({{item.detail.FoodContentData.Unit}})</span></h4>
+                <table v-if="item.detail.FoodContentData != '' && item.detail.FoodContentData.Details.length > 1 && item.detail.FoodContentData.Details[0].FoodName != ''">
+                  <thead>
+                  <tr>
+                    <th>{{item.detail.FoodContentData.Details[0].FoodName}}</th>
+                    <th>{{item.detail.FoodContentData.Details[0].Content}}</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr v-for="(food, foodIndex) in item.detail.FoodContentData.Details" v-bind:key="food.FoodName" v-if="foodIndex > 0">
+                    <td>{{food.FoodName}}</td>
+                    <td>{{food.Content}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+                <div class="info" v-if="item.detail.FoodContentData != '' && item.detail.FoodContentData.Details.length == 1 && item.detail.FoodContentData.Details[0].FoodName == ''">{{item.detail.FoodContentData.Details[0].Content}}</div>
               </div>
             </div>
           </section>
         </div>
         <div v-else>
-          <div v-for="(knowledge, index) in item.detail.KnowledgeData.Value" v-bind:key="knowledge.Id" v-if="(index ==0 || index % 2 == 0)">
-            <div v-if="knowledge.Content.length > 3 && (knowledge.Content[0].Details.length + knowledge.Content[1].Details.length + knowledge.Content[2].Details.length) > 180">
+          <section class="page-info-item-detail">
+            <div class="test-result">
+              <div class="title">
+                <img class="icon" src="../../../assets/genssential/zhishi.png">
+                <h5>相关知识</h5>
+              </div>
+              <div class="info-list">
+                <h4 class="title">{{item.detail.KnowledgeData.Value[0].Title}}</h4>
+                <img :src="imgSrc(item.detail.KnowledgeData.Value[0].ImageName)" v-if="item.detail.KnowledgeData.Value[0].ImageName != ''">
+                <div class="info" v-if="item.detail.KnowledgeData.Value[0].Desc != ''">{{item.detail.KnowledgeData.Value[0].Desc}}</div>
+                <div v-for="(content, index1) in item.detail.KnowledgeData.Value[0].Content" v-bind:key="index1" v-if="index1 < 2">
+                  <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                  <div class="info" v-html="content.Details"></div>
+                </div>
+              </div>
+              <div class="info-list">
+                <h4 class="title">{{item.detail.KnowledgeData.Value[1].Title}}</h4>
+                <img :src="imgSrc(item.detail.KnowledgeData.Value[1].ImageName)" v-if="item.detail.KnowledgeData.Value[1].ImageName != ''">
+                <div class="info" v-if="item.detail.KnowledgeData.Value[1].Desc != ''">{{item.detail.KnowledgeData.Value[1].Desc}}</div>
+                <div v-for="(content, index1) in item.detail.KnowledgeData.Value[1].Content" v-bind:key="index1" v-if="index1 < 2">
+                  <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                  <div class="info" v-html="content.Details"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="page-info-item-detail" v-if="item.detail.KnowledgeData.Value.length >= 3">
+            <div class="test-result">
+              <div class="info-list">
+                <h4 class="title">{{item.detail.KnowledgeData.Value[2].Title}}</h4>
+                <img :src="imgSrc(item.detail.KnowledgeData.Value[2].ImageName)" v-if="item.detail.KnowledgeData.Value[2].ImageName != ''">
+                <div class="info" v-if="item.detail.KnowledgeData.Value[2].Desc != ''">{{item.detail.KnowledgeData.Value[2].Desc}}</div>
+                <div v-for="(content, index1) in item.detail.KnowledgeData.Value[2].Content" v-bind:key="index1">
+                  <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                  <div class="info" v-html="content.Details"></div>
+                </div>
+              </div>
+            </div>
+            <div class="test-result" v-if="item.detail.KnowledgeData.Value.length >= 4">
+              <div class="info-list">
+                <h4 class="title">{{item.detail.KnowledgeData.Value[3].Title}}</h4>
+                <img :src="imgSrc(item.detail.KnowledgeData.Value[3].ImageName)" v-if="item.detail.KnowledgeData.Value[3].ImageName != ''">
+                <div class="info" v-if="item.detail.KnowledgeData.Value[3].Desc != ''">{{item.detail.KnowledgeData.Value[3].Desc}}</div>
+                <div v-for="(content, index1) in item.detail.KnowledgeData.Value[3].Content" v-bind:key="index1">
+                  <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                  <div class="info" v-html="content.Details"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <div v-if="item.detail.KnowledgeData.Value.length >= 5">
+            <div v-if="JSON.stringify(item.detail.KnowledgeData.Value[4]).length < 430">
               <section class="page-info-item-detail">
                 <div class="test-result">
-                  <div class="title" v-if="index===0">
-                    <img class="icon" src="../../../assets/genssential/zhishi.png">
-                    <h5>相关知识</h5>
-                  </div>
                   <div class="info-list">
-                    <h4 class="title">{{knowledge.Title}}</h4>
-                    <img :src="imgSrc(knowledge.ImageName)" v-if="knowledge.ImageName != ''">
-                    <div v-for="(content, index1) in knowledge.Content" v-bind:key="index1" v-if="index1 <= 2">
-                      <h5 v-if="content.SubTitle !==''">{{content.SubTitle}}</h5>
+                    <h4 class="title">{{item.detail.KnowledgeData.Value[4].Title}}</h4>
+                    <img :src="imgSrc(item.detail.KnowledgeData.Value[4].ImageName)" v-if="item.detail.KnowledgeData.Value[4].ImageName != ''">
+                    <div class="info" v-if="item.detail.KnowledgeData.Value[4].Desc != ''">{{item.detail.KnowledgeData.Value[4].Desc}}</div>
+                    <div v-for="(content, index1) in item.detail.KnowledgeData.Value[4].Content" v-bind:key="index1">
+                      <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
                       <div class="info" v-html="content.Details"></div>
                     </div>
                   </div>
                 </div>
               </section>
-              <section class="page-info-item-detail">
+              <section class="page-info-item-detail" v-if="item.detail.KnowledgeData.Value.length >= 6">
                 <div class="test-result">
                   <div class="info-list">
-                    <div v-for="(content, index1) in knowledge.Content" v-bind:key="index1" v-if="index1 > 2">
-                      <h5 v-if="content.SubTitle !==''">{{content.SubTitle}}</h5>
+                    <h4 class="title">{{item.detail.KnowledgeData.Value[5].Title}}</h4>
+                    <img :src="imgSrc(item.detail.KnowledgeData.Value[5].ImageName)" v-if="item.detail.KnowledgeData.Value[5].ImageName != ''">
+                    <div class="info" v-if="item.detail.KnowledgeData.Value[5].Desc != ''">{{item.detail.KnowledgeData.Value[5].Desc}}</div>
+                    <div v-for="(content, index1) in item.detail.KnowledgeData.Value[5].Content" v-bind:key="index1">
+                      <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
                       <div class="info" v-html="content.Details"></div>
                     </div>
                   </div>
                 </div>
-                <div class="info-list" v-if="item.detail.KnowledgeData.Value[index+1] !== undefined && item.detail.KnowledgeData.Value[index+1].Content.length <= 3">
-                  <h4 class="title">{{item.detail.KnowledgeData.Value[index+1].Title}}</h4>
-                  <img :src="imgSrc(item.detail.KnowledgeData.Value[index+1].ImageName)" v-if="item.detail.KnowledgeData.Value[index+1].ImageName != ''">
-                  <div v-for="(content, index1) in item.detail.KnowledgeData.Value[index+1].Content" v-bind:key="index1">
-                    <h5 v-if="content.SubTitle !==''">{{content.SubTitle}}</h5>
-                    <div class="info" v-html="content.Details"></div>
+                <div class="test-result" v-if="item.detail.KnowledgeData.Value.length >= 7">
+                  <div class="info-list">
+                    <h4 class="title">{{item.detail.KnowledgeData.Value[6].Title}}</h4>
+                    <img :src="imgSrc(item.detail.KnowledgeData.Value[6].ImageName)" v-if="item.detail.KnowledgeData.Value[6].ImageName != ''">
+                    <div class="info" v-if="item.detail.KnowledgeData.Value[6].Desc != ''">{{item.detail.KnowledgeData.Value[6].Desc}}</div>
+                    <div v-for="(content, index1) in item.detail.KnowledgeData.Value[6].Content" v-bind:key="index1">
+                      <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                      <div class="info" v-html="content.Details"></div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section class="page-info-item-detail" v-if="item.detail.KnowledgeData.Value.length >= 8">
+                <div class="test-result">
+                  <div class="info-list">
+                    <h4 class="title">{{item.detail.KnowledgeData.Value[7].Title}}</h4>
+                    <img :src="imgSrc(item.detail.KnowledgeData.Value[7].ImageName)" v-if="item.detail.KnowledgeData.Value[7].ImageName != ''">
+                    <div class="info" v-if="item.detail.KnowledgeData.Value[7].Desc != ''">{{item.detail.KnowledgeData.Value[7].Desc}}</div>
+                    <div v-for="(content, index1) in item.detail.KnowledgeData.Value[7].Content" v-bind:key="index1">
+                      <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                      <div class="info" v-html="content.Details"></div>
+                    </div>
                   </div>
                 </div>
               </section>
             </div>
-            <section class="page-info-item-detail" v-else>
-              <div class="test-result">
-                <div class="title" v-if="index===0">
-                  <img class="icon" src="../../../assets/genssential/zhishi.png">
-                  <h5>相关知识</h5>
-                </div>
-                <div class="info-list">
-                  <h4 class="title">{{knowledge.Title}}</h4>
-                  <img :src="imgSrc(knowledge.ImageName)" v-if="knowledge.ImageName != ''">
-                  <div v-for="(content, index1) in knowledge.Content" v-bind:key="index1">
-                    <h5 v-if="content.SubTitle !==''">{{content.SubTitle}}</h5>
-                    <div class="info" v-html="content.Details"></div>
+            <div v-else>
+              <section class="page-info-item-detail">
+                <div class="test-result">
+                  <div class="info-list">
+                    <h4 class="title">{{item.detail.KnowledgeData.Value[4].Title}}</h4>
+                    <img :src="imgSrc(item.detail.KnowledgeData.Value[4].ImageName)" v-if="item.detail.KnowledgeData.Value[4].ImageName != ''">
+                    <div class="info" v-if="item.detail.KnowledgeData.Value[4].Desc != ''">{{item.detail.KnowledgeData.Value[4].Desc}}</div>
+                    <div v-for="(content, index1) in item.detail.KnowledgeData.Value[4].Content" v-bind:key="index1" v-if="item.detail.KnowledgeData.Value[4].Desc != '' && index1 <= 2">
+                      <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                      <div class="info" v-html="content.Details"></div>
+                    </div>
+                    <div v-for="(content, index1) in item.detail.KnowledgeData.Value[4].Content" v-bind:key="index1" v-if="item.detail.KnowledgeData.Value[4].Desc == '' && index1 <= 3">
+                      <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                      <div class="info" v-html="content.Details"></div>
+                    </div>
                   </div>
                 </div>
-                <div class="info-list" v-if="item.detail.KnowledgeData.Value[index+1] !== undefined && item.detail.KnowledgeData.Value[index+1].Content.length <= 3">
-                  <h4 class="title">{{item.detail.KnowledgeData.Value[index+1].Title}}</h4>
-                  <img :src="imgSrc(item.detail.KnowledgeData.Value[index+1].ImageName)" v-if="item.detail.KnowledgeData.Value[index+1].ImageName != ''">
-                  <div v-for="(content, index1) in item.detail.KnowledgeData.Value[index+1].Content" v-bind:key="index1">
-                    <h5 v-if="content.SubTitle !==''">{{content.SubTitle}}</h5>
-                    <div class="info" v-html="content.Details"></div>
+              </section>
+              <section class="page-info-item-detail">
+                <div class="test-result">
+                  <div class="info-list">
+                    <h4 class="title">{{item.detail.KnowledgeData.Value[4].Title}}</h4>
+                    <div v-for="(content, index1) in item.detail.KnowledgeData.Value[4].Content" v-bind:key="index1" v-if="item.detail.KnowledgeData.Value[4].Desc != '' && index1 > 2">
+                      <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                      <div class="info" v-html="content.Details"></div>
+                    </div>
+                    <div v-for="(content, index1) in item.detail.KnowledgeData.Value[4].Content" v-bind:key="index1" v-if="item.detail.KnowledgeData.Value[4].Desc == '' && index1 > 3">
+                      <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                      <div class="info" v-html="content.Details"></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </section>
-            <section class="page-info-item-detail" v-if="item.detail.KnowledgeData.Value[index+1] !== undefined && item.detail.KnowledgeData.Value[index+1].Content.length > 4 && (item.detail.KnowledgeData.Value[index+1].Content[0].Details.length + item.detail.KnowledgeData.Value[index+1].Content[1].Details.length + item.detail.KnowledgeData.Value[index+1].Content[2].Details.length < 180)">
-              <div class="test-result">
-                <div class="info-list">
-                  <h4 class="title">{{item.detail.KnowledgeData.Value[index+1].Title}}</h4>
-                  <img :src="imgSrc(item.detail.KnowledgeData.Value[index+1].ImageName)" v-if="item.detail.KnowledgeData.Value[index+1].ImageName != ''">
-                  <div v-for="(content, index1) in item.detail.KnowledgeData.Value[index+1].Content" v-bind:key="index1">
-                    <h5 v-if="content.SubTitle !==''">{{content.SubTitle}}</h5>
-                    <div class="info" v-html="content.Details"></div>
+                <div class="test-result" v-if="item.detail.KnowledgeData.Value.length >= 6">
+                  <div class="info-list">
+                    <h4 class="title">{{item.detail.KnowledgeData.Value[5].Title}}</h4>
+                    <img :src="imgSrc(item.detail.KnowledgeData.Value[5].ImageName)" v-if="item.detail.KnowledgeData.Value[5].ImageName != ''">
+                    <div class="info" v-if="item.detail.KnowledgeData.Value[5].Desc != ''">{{item.detail.KnowledgeData.Value[5].Desc}}</div>
+                    <div v-for="(content, index1) in item.detail.KnowledgeData.Value[5].Content" v-bind:key="index1">
+                      <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                      <div class="info" v-html="content.Details"></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </section>
-            <section class="page-info-item-detail" v-if="item.detail.KnowledgeData.Value[index+1] !== undefined && item.detail.KnowledgeData.Value[index+1].Content.length > 4 && (item.detail.KnowledgeData.Value[index+1].Content[0].Details.length + item.detail.KnowledgeData.Value[index+1].Content[1].Details.length + item.detail.KnowledgeData.Value[index+1].Content[2].Details.length > 180)">
-              <div class="test-result">
-                <div class="info-list">
-                  <h4 class="title">{{item.detail.KnowledgeData.Value[index+1].Title}}</h4>
-                  <img :src="imgSrc(item.detail.KnowledgeData.Value[index+1].ImageName)" v-if="item.detail.KnowledgeData.Value[index+1].ImageName != ''">
-                  <div v-for="(content, index1) in item.detail.KnowledgeData.Value[index+1].Content" v-bind:key="index1" v-if="index1 <= 3">
-                    <h5 v-if="content.SubTitle !==''">{{content.SubTitle}}</h5>
-                    <div class="info" v-html="content.Details"></div>
+                <div class="test-result" v-if="item.detail.KnowledgeData.Value.length >= 7 && item.detail.KnowledgeData.Value[4].Content.length < 7 && JSON.stringify(item.detail.KnowledgeData.Value[5].Content).length <= 300">
+                  <div class="info-list">
+                    <h4 class="title">{{item.detail.KnowledgeData.Value[6].Title}}</h4>
+                    <img :src="imgSrc(item.detail.KnowledgeData.Value[6].ImageName)" v-if="item.detail.KnowledgeData.Value[6].ImageName != ''">
+                    <div class="info" v-if="item.detail.KnowledgeData.Value[6].Desc != ''">{{item.detail.KnowledgeData.Value[6].Desc}}</div>
+                    <div v-for="(content, index1) in item.detail.KnowledgeData.Value[6].Content" v-bind:key="index1">
+                      <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                      <div class="info" v-html="content.Details"></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </section>
-            <section class="page-info-item-detail" v-if="item.detail.KnowledgeData.Value[index+1] !== undefined && item.detail.KnowledgeData.Value[index+1].Content.length > 4 && (item.detail.KnowledgeData.Value[index+1].Content[0].Details.length + item.detail.KnowledgeData.Value[index+1].Content[1].Details.length + item.detail.KnowledgeData.Value[index+1].Content[2].Details.length > 180)">
-              <div class="test-result">
-                <div class="info-list">
-                  <h4 class="title">{{item.detail.KnowledgeData.Value[index+1].Title}}</h4>
-                  <img :src="imgSrc(item.detail.KnowledgeData.Value[index+1].ImageName)" v-if="item.detail.KnowledgeData.Value[index+1].ImageName != ''">
-                  <div v-for="(content, index1) in item.detail.KnowledgeData.Value[index+1].Content" v-bind:key="index1" v-if="index1 > 3">
-                    <h5 v-if="content.SubTitle !==''">{{content.SubTitle}}</h5>
-                    <div class="info" v-html="content.Details"></div>
+              </section>
+              <section class="page-info-item-detail" v-if="item.detail.KnowledgeData.Value.length >= 8">
+                <div class="test-result" v-if="item.detail.KnowledgeData.Value[4].Content.length >= 7 || JSON.stringify(item.detail.KnowledgeData.Value[5].Content).length > 300">
+                  <div class="info-list">
+                    <h4 class="title">{{item.detail.KnowledgeData.Value[6].Title}}</h4>
+                    <img :src="imgSrc(item.detail.KnowledgeData.Value[6].ImageName)" v-if="item.detail.KnowledgeData.Value[6].ImageName != ''">
+                    <div class="info" v-if="item.detail.KnowledgeData.Value[6].Desc != ''">{{item.detail.KnowledgeData.Value[6].Desc}}</div>
+                    <div v-for="(content, index1) in item.detail.KnowledgeData.Value[6].Content" v-bind:key="index1">
+                      <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                      <div class="info" v-html="content.Details"></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </section>
+                <div class="test-result">
+                  <div class="info-list">
+                    <h4 class="title">{{item.detail.KnowledgeData.Value[7].Title}}</h4>
+                    <img :src="imgSrc(item.detail.KnowledgeData.Value[7].ImageName)" v-if="item.detail.KnowledgeData.Value[7].ImageName != ''">
+                    <div class="info" v-if="item.detail.KnowledgeData.Value[7].Desc != ''">{{item.detail.KnowledgeData.Value[7].Desc}}</div>
+                    <div v-for="(content, index1) in item.detail.KnowledgeData.Value[7].Content" v-bind:key="index1">
+                      <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                      <div class="info" v-html="content.Details"></div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
           </div>
+          <section class="page-info-item-detail">
+            <div class="test-result">
+              <div class="title">
+                <img class="icon" src="../../../assets/genssential/jianyi.png">
+                <h5>给您的建议</h5>
+              </div>
+              <div class="info">{{item.detail.Suggest}}</div>
+              <div  v-if="item.detail.FoodContentData != ''">
+                <h4 class="sub-title">饮食 :</h4>
+                <div class="info" v-html="item.detail.SuggestFoods"></div>
+                <h4 class="sub-title" v-if="item.detail.FoodContentData != ''">{{item.detail.FoodContentData.Title}}<span v-if="item.detail.FoodContentData.Unit != ''">({{item.detail.FoodContentData.Unit}})</span></h4>
+                <table v-if="item.detail.FoodContentData != '' && item.detail.FoodContentData.Details.length > 1 && item.detail.FoodContentData.Details[0].FoodName != ''">
+                  <thead>
+                  <tr>
+                    <th>{{item.detail.FoodContentData.Details[0].FoodName}}</th>
+                    <th>{{item.detail.FoodContentData.Details[0].Content}}</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr v-for="(food, foodIndex) in item.detail.FoodContentData.Details" v-bind:key="food.FoodName" v-if="foodIndex > 0">
+                    <td>{{food.FoodName}}</td>
+                    <td>{{food.Content}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+                <div class="info" v-if="item.detail.FoodContentData != '' && item.detail.FoodContentData.Details.length == 1 && item.detail.FoodContentData.Details[0].FoodName == ''">{{item.detail.FoodContentData.Details[0].Content}}</div>
+              </div>
+            </div>
+          </section>
         </div>
-        <section class="page-info-item-detail">
-          <div class="test-result">
-            <div class="title">
-              <img class="icon" src="../../../assets/genssential/jianyi.png">
-              <h5>给您的建议</h5>
-            </div>
-            <div class="info">{{item.detail.Suggest}}</div>
-            <div  v-if="item.detail.FoodContentData != ''">
-              <h4>饮食 :</h4>
-              <div class="info" v-html="item.detail.SuggestFoods"></div>
-              <h4 v-if="item.detail.FoodContentData != ''">{{item.detail.FoodContentData.Title}}({{item.detail.FoodContentData.Unit}})</h4>
-              <table>
-                <thead>
-                <tr>
-                  <th>{{item.detail.FoodContentData.Details[0].FoodName}}</th>
-                  <th>{{item.detail.FoodContentData.Details[0].Content}}</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="(food, foodIndex) in item.detail.FoodContentData.Details" v-bind:key="food.FoodName" v-if="foodIndex > 0">
-                  <td>{{food.FoodName}}</td>
-                  <td>{{food.Content}}</td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
         <section class="page-info-item-detail page-info-gene" v-for="gene in item.detail.Sites" v-bind:key="gene.Guid">
           <div class="test-result">
             <div class="title">
@@ -594,10 +717,10 @@
                 </tr>
                 </tbody>
               </table>
-              <h4>基因功能</h4>
+              <h4 class="sub-title">基因功能</h4>
               <p>{{gene.GeneDesc}}</p>
               <div class="gene-imgs">
-                <div class="img-content" v-for="imgNo in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]" v-bind:key="imgNo">
+                <div class="gene-img-content" v-for="imgNo in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]" v-bind:key="imgNo">
                   <img :src="imgSrc(imgNo + (gene.ChromosomeNo == imgNo ? '-q':'-g'), '.png')">
                   <span>{{imgNo}}</span>
                 </div>
@@ -680,69 +803,47 @@ export default {
     }
     return {
       htmlTitle: '营养健康',
-      data: {}
+      data: {},
+      KnowledgeDataIndex: 0
     }
   },
   methods: {
     getInfo: function () {
-      let instance = this.axios.create({
-        baseURL: ''
-      })
-      let that = this
-      instance({
-        method: 'get',
-        url: 'http://serviceapi.qynode.com/api/report/getresult',
+      this.axios.get('customize/genessential', {
         params: {
-          // barcode: this.$route.params.sampleNo + '70267817_G0H',
-          barcode: that.$route.params.sampleNo + '_G0H',
-          userid: 'd786a2b0'
+          sampleNo: this.$route.params.sampleNo
         }
-      }).then(function (res) {
-        res.data.Data.UpdateTime = parseInt(res.data.Data.UpdateTime.slice(6, res.data.Data.UpdateTime.length - 2))
-        let datas = res.data.Data
-        res.data.Data.ReportResult.map(function (items, indexs, lists) {
+      }).then(res => {
+        let datas = res.data
+        let that = this
+        res.data.ReportResult.map(function (items, indexs, lists) {
           items.Items.map(function (item, index, list) {
-            instance({
-              method: 'get',
-              url: 'http://serviceapi.qynode.com/api/report/getitem',
-              params: {
-                barcode: '70267817_G0H',
-                userid: 'd786a2b0',
-                itemname: item.ItemNameKey,
-                groupid: items.GroupId
+            let chartData = {}
+            chartData.columns = ['key', 'value']
+            chartData.rows = []
+            let percents = item.detail.LevelPercentages.split(',')
+            let names = item.detail.LevelNames.split(',')
+            for (let i = 0; i < percents.length; i++) {
+              chartData.rows.push({
+                'key': names[i],
+                'value': percents[i]
+              })
+            }
+            item.chartData = chartData
+            if (index === list.length - 1) {
+              if (items.GroupName.indexOf('肤质') >= 0) {
+                datas.fuzhi = items
+              } else if (items.GroupName.indexOf('美肤营养') >= 0) {
+                datas.yingyang = items
               }
-            }).then(function (res1) {
-              let chartData = {}
-              chartData.columns = ['key', 'value']
-              chartData.rows = []
-              let percents = res1.data.Data.LevelPercentages.split(',')
-              let names = res1.data.Data.LevelNames.split(',')
-              for (let i = 0; i < percents.length; i++) {
-                chartData.rows.push({
-                  'key': names[i],
-                  'value': percents[i]
-                })
+              if (indexs === lists.length - 1) {
+                that.data = datas
               }
-
-              item.detail = res1.data.Data
-              item.chartData = chartData
-              if (index === list.length - 1) {
-                if (items.GroupName.indexOf('肤质') >= 0) {
-                  datas.fuzhi = items
-                } else if (items.GroupName.indexOf('美肤营养') >= 0) {
-                  datas.yingyang = items
-                }
-                if (indexs === lists.length - 1) {
-                  that.data = datas
-                }
-                console.log(that.data)
-              }
-            }).catch(function (err) {
-              console.log(err)
-            })
+              console.log(that.data)
+            }
           })
         })
-      }).catch(function (err) {
+      }).catch(err => {
         console.log(err)
       })
     },
@@ -772,6 +873,7 @@ export default {
   .container {
     background: #f1f1f1;
     color: #7F7F7F;
+    font-family: "Helvetica Neue", Helvetica, "Source Han Sans CN", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
     .expend-pdf {
       position: absolute;
       top: 40px;
@@ -1012,6 +1114,7 @@ export default {
       p {
         font-size: 18px;
         line-height: 32px;
+        text-align: justify;
       }
     }
   }
@@ -1050,7 +1153,7 @@ export default {
       position: relative;
       margin-top: 240px;
       .title {
-        margin-top: 40px;
+        margin-top: 20px;
         position: relative;
         img {
           position: absolute;
@@ -1060,7 +1163,7 @@ export default {
         h4 {
           margin: 10px 0px;
           padding-left: 50px;
-          font-size: 22px;
+          font-size: 20px;
           font-weight: 400;
           line-height: 44px;
           color: #333333;
@@ -1073,6 +1176,12 @@ export default {
           line-height: 28px;
           color: #333333;
         }
+      }
+      .sub-title {
+        font-size: 16px;
+        margin: 15px 0px;
+        font-weight: 400;
+        color: #333333;
       }
       p {
         padding-left: 50px;
@@ -1098,9 +1207,11 @@ export default {
           padding: 6px 20px;
           border: 1px solid #efefef;
           text-align: center;
+          font-size: 14px;
+          color: #535353;
         }
         thead>tr>th {
-          font-size: 18px;
+          font-size: 16px;
         }
         tbody>tr>td {
           color: #535353;
@@ -1165,9 +1276,11 @@ export default {
         width: 100%;
       }
       h4 {
-        margin: 20px 0px;
-        font-size: 20px;
+        margin: 15px 0px;
+        font-size: 18px;
         line-height: 30px;
+        font-weight: 400;
+        color: #333333;
       }
       h5 {
         display: inline-block;
@@ -1182,10 +1295,11 @@ export default {
       span {
         display: inline-block;
         line-height: 40px;
-        padding: 0 40px;
+        padding: 0 20px;
         background: #ec9b92;
         border-radius: 48px;
         color: #fff;
+        font-size: 14px;
         margin-right: 10px;
         margin-bottom: 10px;
       }
@@ -1194,7 +1308,7 @@ export default {
   .page-info-gene {
     .gene-info {
       position: relative;
-      margin-top: 30px;
+      margin-top: 60px;
       box-sizing: border-box;
       border: 2px solid #efefef;
       border-radius: 26px;
@@ -1207,6 +1321,7 @@ export default {
       }
       p {
         padding-left: 10px;
+        font-size: 16px;
       }
     }
     .gene-name {
@@ -1231,7 +1346,7 @@ export default {
       height: 180px;
       margin-left: 20px;
       margin-bottom: 10px;
-      .img-content {
+      .gene-img-content {
         position: relative;
         margin-right: 14px;
         display: inline-block;
@@ -1247,7 +1362,9 @@ export default {
       margin-top: 20px;
       p {
         padding-left: 0;
+        font-size: 14px;
         &.title {
+          font-size: 16px;
         }
       }
     }
