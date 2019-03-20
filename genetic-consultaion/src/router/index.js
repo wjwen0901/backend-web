@@ -167,6 +167,66 @@ export default new Router({
           path: '/report/customize/genessential',
           name: 'ReportCustomize',
           component: resolve => require(['@/views/customize/genessential/customize_report'], resolve)
+        },
+        {
+          path: '/disease',
+          name: 'Disease',
+          component: resolve => require(['@/views/home/disease/disease/list'], resolve)
+        },
+        {
+          path: '/disease/add',
+          name: 'DiseaseEdit',
+          component: resolve => require(['@/views/home/disease/disease/edit'], resolve)
+        },
+        {
+          path: '/disease/edit/:id',
+          name: 'DiseaseEdit',
+          component: resolve => require(['@/views/home/disease/disease/edit'], resolve)
+        },
+        {
+          path: '/gene',
+          name: 'Gene',
+          component: resolve => require(['@/views/home/disease/gene/list'], resolve)
+        },
+        {
+          path: '/gene/add',
+          name: 'GeneEdit',
+          component: resolve => require(['@/views/home/disease/gene/edit'], resolve)
+        },
+        {
+          path: '/gene/edit/:id',
+          name: 'GeneEdit',
+          component: resolve => require(['@/views/home/disease/gene/edit'], resolve)
+        },
+        {
+          path: '/drug',
+          name: 'Drug',
+          component: resolve => require(['@/views/home/disease/drug/list'], resolve)
+        },
+        {
+          path: '/drug/add',
+          name: 'DrugEdit',
+          component: resolve => require(['@/views/home/disease/drug/edit'], resolve)
+        },
+        {
+          path: '/drug/edit/:id',
+          name: 'DrugEdit',
+          component: resolve => require(['@/views/home/disease/drug/edit'], resolve)
+        },
+        {
+          path: '/test',
+          name: 'Test',
+          component: resolve => require(['@/views/home/disease/test/list'], resolve)
+        },
+        {
+          path: '/test/add',
+          name: 'TestEdit',
+          component: resolve => require(['@/views/home/disease/test/edit'], resolve)
+        },
+        {
+          path: '/test/edit/:id',
+          name: 'TestEdit',
+          component: resolve => require(['@/views/home/disease/test/edit'], resolve)
         }
       ]
     },

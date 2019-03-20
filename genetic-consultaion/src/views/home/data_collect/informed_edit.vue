@@ -63,6 +63,17 @@
             <el-form-item label="联系电话">
               <el-input v-model="informedContent.cellphone"></el-input>
             </el-form-item>
+            <el-form-item label="发送短信">
+              <el-switch
+                v-model="informedContent.smsStatus"
+                active-color="#00c2a9"
+                inactive-color="#ccc"
+                active-value="0"
+                inactive-value="1"
+                active-text="是"
+                inactive-text="否">
+              </el-switch>
+            </el-form-item>
             <el-form-item label="证件类型">
               <el-col :span="9">
                 <el-select v-model="informedContent.idType" filterable placeholder="请选择">
@@ -157,6 +168,9 @@ export default {
     _initData () {
       this.axios.get('informed/' + this.$route.params.informedId).then(res => {
         this.informedContent = res.data
+        if (this.informedContent.smsStatus === undefined) {
+          this.informedContent.smsStatus = '0'
+        }
         if (res.data.tid !== undefined) {
           this.informedContent.orderNo = res.data.tid
         }

@@ -28,12 +28,59 @@
         </el-form>
       </div>
     </div>
+    <div class="mdh-default luhe" v-else-if="CustomizedKey === '0415144e2cf30ef54365aa82bdaea535'">
+      <div class="header">
+
+      </div>
+      <div class="content">
+        <h4 class="c-logo">北京市通州区潞河医院</h4>
+        <h4 class="c-phone">联系方式：010-53359495</h4>
+        <p>药物性耳聋基因筛查</p>
+        <p class="sub-title">报告查询</p>
+        <el-main>
+          <el-form :rules="rules" :model="patient" ref="patient" label-width="0px" label-position="left">
+            <el-form-item prop="name">
+              <el-input class="width-100-p"
+                        v-model="patient.name"
+                        placeholder="请输入姓名">
+              </el-input>
+            </el-form-item>
+            <el-form-item prop="cellphone">
+              <el-input class="width-100-p"
+                        v-model="patient.cellphone"
+                        placeholder="请输入手机号">
+              </el-input>
+            </el-form-item>
+            <el-form-item prop="idCode">
+              <el-input class="width-100-p"
+                        v-model="patient.code"
+                        placeholder="请输入验证码">
+                <!--获取验证码-->
+                <el-button slot="append" class="send-code" v-if="!hasCode" @click="getVerification">获取验证码</el-button>
+                <el-button slot="append" class="send-code" v-else>重发验证码{{resetSendCode}}s</el-button>
+                <!--<template slot="append">-->
+                <!--&lt;!&ndash;获取验证码&ndash;&gt;-->
+                <!--<el-button class="send-code" v-if="!hasCode" @click="getVerification">获取验证码</el-button>-->
+                <!--<el-button class="send-code" disabled v-if="hasCode">重发验证码{{resetSendCode}}s</el-button>-->
+                <!--</template>-->
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button class="submit-btn" @click="toViewReport">查看报告</el-button>
+            </el-form-item>
+          </el-form>
+        </el-main>
+      </div>
+      <div class="footer-info">
+        &copy; 2019 MDHcare.cn 版权所有  丨  ICP证：京ICP备17067248号
+      </div>
+    </div>
     <div class="mdh-default" v-else>
       <div class="header">
 
       </div>
       <div class="content">
-        <img src="../../assets/gensultation-logo.png"/>
+        <img src="../../assets/ru6c-logo.png"/>
         <p>个人健康报告下载</p>
         <el-main>
           <el-form :rules="rules" :model="patient" ref="patient" label-width="0px" label-position="left">
@@ -359,11 +406,41 @@ export default {
     }
     .footer-info {
       position: absolute;
+      width: calc(100% - 40px);
       bottom: 10px;
       text-align: center;
       font-size: 12px;
       color: #999999;
     }
   }
-
+  .luhe {
+    .content {
+      padding: 40px 20px 60px 20px;
+      .sub-title {
+        font-size: 16px;
+      }
+    }
+    .c-logo {
+      position: absolute;
+      width: 100%;
+      bottom: 30px;
+      left: 50%;
+      margin: 10px 0px;
+      transform: translate(-50%, 0%);
+      font-size: 16px;
+      font-weight: 400;
+      color: #65c2c4;
+    }
+    .c-phone {
+      position: absolute;
+      width: 100%;
+      bottom: 10px;
+      left: 50%;
+      margin: 10px 0px;
+      transform: translate(-50%, 0%);
+      font-size: 14px;
+      font-weight: 400;
+      color: #65c2c4;
+    }
+  }
 </style>

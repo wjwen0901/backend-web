@@ -45,4 +45,12 @@ body {
   height: 40px;
   line-height: 40px;
 }
+.clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+}
 </style>

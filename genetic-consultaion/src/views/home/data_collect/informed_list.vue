@@ -70,8 +70,8 @@ export default {
   data () {
     return {
       informedList: [],
-      pageNum: 1,
-      pageSize: 20,
+      pageNum: window.sessionStorage.informedPageNum === undefined ? 1 : window.sessionStorage.informedPageNum,
+      pageSize: window.sessionStorage.informedPageSize === undefined ? 20 : window.sessionStorage.informedPageSize,
       totalPage: 0
     }
   },
@@ -91,6 +91,8 @@ export default {
         this.pageSize = res.data.pageSize
         this.pageNum = res.data.pageNum
         this.totalPage = res.data.total
+        window.sessionStorage.informedPageNum = this.pageNum
+        window.sessionStorage.informedPageSize = this.pageSize
       }).catch(err => {
         console.log(err)
       })

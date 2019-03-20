@@ -74,8 +74,8 @@ export default {
   data () {
     return {
       reportList: [],
-      pageNum: 1,
-      pageSize: 20,
+      pageNum: window.sessionStorage.reportPageNum === undefined ? 1 : window.sessionStorage.reportPageNum,
+      pageSize: window.sessionStorage.reportPageSize === undefined ? 20 : window.sessionStorage.reportPageSize,
       totalPage: 0
     }
   },
@@ -95,6 +95,8 @@ export default {
         this.pageSize = res.data.pageSize
         this.pageNum = res.data.pageNum
         this.totalPage = res.data.total
+        window.sessionStorage.reportPageNum = this.pageNum
+        window.sessionStorage.reportPageSize = this.pageSize
       }).catch(err => {
         console.log(err)
       })
