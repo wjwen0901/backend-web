@@ -203,8 +203,8 @@ export default {
   data () {
     return {
       reportList: [],
-      pageNum: 1,
-      pageSize: 20,
+      pageNum: window.sessionStorage.reviewDataPageNum === undefined ? 1 : parseInt(window.sessionStorage.reviewDataPageNum),
+      pageSize: window.sessionStorage.reviewDataPageSize === undefined ? 20 : parseInt(window.sessionStorage.reviewDataPageSize),
       totalPage: 0,
       dialogFormVisible: false,
       report: {},
@@ -237,6 +237,8 @@ export default {
         this.pageSize = res.data.pageSize
         this.pageNum = res.data.pageNum
         this.totalPage = res.data.total
+        window.sessionStorage.reviewDataPageNum = this.pageNum
+        window.sessionStorage.reviewDataPageSize = this.pageSize
       }).catch(err => {
         console.log(err)
       })
@@ -249,7 +251,11 @@ export default {
       }).then(res => {
         this.companyList = res.data
       }).catch(err => {
-        this.$message.error(err.data.message)
+        this.$message({
+          showClose: true,
+          message: err.data.message,
+          type: 'error'
+        })
         console.log(err)
       })
     },
@@ -279,8 +285,7 @@ export default {
           message: '审核成功',
           type: 'success'
         })
-        this.dialogFormVisible = false
-        this.getData()
+        this.$router.push('/review')
       }).catch(err => {
         this.$message({
           message: '审核失败',

@@ -182,13 +182,13 @@ export default {
           reportId: _this.report.id,
           informedId: item.id
         }).then(res => {
-          this.$message({
+          _this.$message({
             message: '审核成功',
             type: 'success'
           })
-          this.$router.push('/review')
+          _this.$router.push('/review')
         }).catch(err => {
-          this.$message({
+          _this.$message({
             message: '审核失败',
             type: 'error'
           })
