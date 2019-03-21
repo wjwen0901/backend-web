@@ -321,7 +321,8 @@ export default {
                 filePath: up.settings.multipart_params.key,
                 objectKey: up.settings.multipart_params.key,
                 hospitalId: this.hospitalId,
-                deptId: this.deptId
+                deptId: this.deptId,
+                companyId: this.$route.query.companyId
               }
               if (this.userId > 0) {
                 param.userId = this.userId
