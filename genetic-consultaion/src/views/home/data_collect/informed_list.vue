@@ -70,13 +70,15 @@ export default {
   data () {
     return {
       informedList: [],
-      pageNum: window.sessionStorage.informedPageNum === undefined ? 1 : window.sessionStorage.informedPageNum,
-      pageSize: window.sessionStorage.informedPageSize === undefined ? 20 : window.sessionStorage.informedPageSize,
+      pageNum: 1,
+      pageSize: 20,
       totalPage: 0
     }
   },
   methods: {
     _initData () {
+      this.pageNum = window.sessionStorage.informedPageNum === undefined ? 1 : parseInt(window.sessionStorage.informedPageNum)
+      this.pageSize = window.sessionStorage.informedPageSize === undefined ? 20 : parseInt(window.sessionStorage.informedPageSize)
       this.getData()
     },
     getData () {

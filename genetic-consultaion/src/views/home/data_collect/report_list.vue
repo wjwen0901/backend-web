@@ -74,13 +74,15 @@ export default {
   data () {
     return {
       reportList: [],
-      pageNum: window.sessionStorage.reportPageNum === undefined ? 1 : window.sessionStorage.reportPageNum,
-      pageSize: window.sessionStorage.reportPageSize === undefined ? 20 : window.sessionStorage.reportPageSize,
+      pageNum: 1,
+      pageSize: 20,
       totalPage: 0
     }
   },
   methods: {
     _initData () {
+      this.pageNum = window.sessionStorage.reportPageNum === undefined ? 1 : parseInt(window.sessionStorage.reportPageNum)
+      this.pageSize = window.sessionStorage.reportPageSize === undefined ? 20 : parseInt(window.sessionStorage.reportPageSize)
       this.getData()
     },
     getData () {
