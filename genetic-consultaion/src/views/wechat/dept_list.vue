@@ -49,12 +49,12 @@ export default {
     chooseDept (id, name) {
       if (parseInt(id) === 0) {
         this.axios.post('hospital-dept', {name: name}).then(res => {
-          this.$router.push({path: '/wechat/informed/upload', query: {did: res.data.id, dname: name, openid: this.$route.query.openid}})
+          this.$router.push({path: '/wechat/informed/upload', query: {did: res.data.id, dname: name, openid: this.$route.query.openid, orderId: this.$route.query.orderId, orderNo: this.$route.query.orderNo, companyId: this.$route.query.companyId}})
         }).catch(err => {
           console.log(err)
         })
       } else {
-        this.$router.push({path: '/wechat/informed/upload', query: {did: id, dname: name, openid: this.$route.query.openid}})
+        this.$router.push({path: '/wechat/informed/upload', query: {did: id, dname: name, openid: this.$route.query.openid, orderId: this.$route.query.orderId, orderNo: this.$route.query.orderNo, companyId: this.$route.query.companyId}})
       }
     }
   },

@@ -134,7 +134,11 @@
       </el-col>
       <el-col :span="12">
         <div class="img-content">
-          <img :src="imagePath">
+          <!--<img :src="imagePath">-->
+          <img :src="imagePath" v-if="informedContent.mimeType != 'application/pdf'">
+          <object :data="imagePath" type="application/pdf" width="100%" height="700px" v-else>
+            <embed :src="imagePath">
+          </object>
         </div>
       </el-col>
     </el-row>
@@ -146,7 +150,9 @@ export default {
   name: 'EditInformed',
   data () {
     return {
-      informedContent: {},
+      informedContent: {
+        smsStatus: 0
+      },
       projects: [],
       hospitals: [],
       depts: [],
@@ -168,9 +174,6 @@ export default {
     _initData () {
       this.axios.get('informed/' + this.$route.params.informedId).then(res => {
         this.informedContent = res.data
-        if (this.informedContent.smsStatus === undefined) {
-          this.informedContent.smsStatus = '0'
-        }
         if (res.data.tid !== undefined) {
           this.informedContent.orderNo = res.data.tid
         }

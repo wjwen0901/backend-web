@@ -136,12 +136,12 @@ export default {
             'Content-Type': 'application/json'
           }
         }).then(function (res) {
-          that.$router.push({path: '/wechat/informed/upload', query: {hid: res.data.id, hname: name, openid: that.$route.query.openid}})
+          that.$router.push({path: '/wechat/informed/upload', query: {hid: res.data.id, hname: name, openid: that.$route.query.openid, orderId: this.$route.query.orderId, orderNo: this.$route.query.orderNo, companyId: this.$route.query.companyId}})
         }).catch(function (err) {
           console.log(err)
         })
       } else {
-        this.$router.push({path: '/wechat/informed/upload', query: {hid: id, hname: name, openid: this.$route.query.openid}})
+        this.$router.push({path: '/wechat/informed/upload', query: {hid: id, hname: name, openid: this.$route.query.openid, orderId: this.$route.query.orderId, orderNo: this.$route.query.orderNo, companyId: this.$route.query.companyId}})
       }
     }
   },

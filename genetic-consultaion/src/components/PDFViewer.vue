@@ -50,7 +50,7 @@
         @scale-change="updateScale"
         />
     </PDFData>
-    <div class="wechat-download-tips" v-show="isWechat">
+    <div class="wechat-download-tips" v-show="isWechat" @click="isWechat = false">
       <!--<WechatArrowPng/>-->
       <img src="../assets/wechat-arrow.png" class="tips-arrow">
       <div>
@@ -139,10 +139,10 @@ export default {
     },
 
     toggleDownload () {
-      let ua = navigator.userAgent.toLowerCase()
-      if (ua.match(/MicroMessenger/i) === 'micromessenger') {
-        this.isWechat = true
-      }
+      // let ua = navigator.userAgent.toLowerCase()
+      // if (ua.match(/MicroMessenger/i) === 'micromessenger') {
+      this.isWechat = true
+      // }
     }
   },
 

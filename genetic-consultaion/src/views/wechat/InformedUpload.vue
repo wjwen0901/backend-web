@@ -130,11 +130,11 @@ export default {
     },
     toSelectHospital () {
       this.rememberInfo()
-      this.$router.push({path: '/wechat/hospital', query: {openid: this.$route.query.openid}})
+      this.$router.push({path: '/wechat/hospital', query: {openid: this.$route.query.openid, orderId: this.$route.query.orderId, orderNo: this.orderNo, companyId: this.$route.query.companyId}})
     },
     toSelectDept () {
       this.rememberInfo()
-      this.$router.push({path: '/wechat/dept', query: {openid: this.$route.query.openid}})
+      this.$router.push({path: '/wechat/dept', query: {openid: this.$route.query.openid, orderId: this.$route.query.orderId, orderNo: this.orderNo, companyId: this.$route.query.companyId}})
     },
     toUpload () {
       if (this.name.trim() === '') {

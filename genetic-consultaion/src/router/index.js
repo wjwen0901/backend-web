@@ -364,6 +364,14 @@ export default new Router({
       path: '/customize/genessential/pdf-report/:sampleNo',
       name: 'GenessentialPDFReport',
       component: resolve => require(['@/views/customize/genessential/pdf_report'], resolve)
+    },
+    {
+      path: '/market/items',
+      name: 'MarketItems',
+      component: resolve => require(['@/views/wechat/item_list'], resolve),
+      meta: {
+        title: '基因检测产品目录'
+      }
     }
   ]
 })

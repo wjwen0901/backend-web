@@ -46,35 +46,38 @@ export default {
       orderList: [],
       pageNum: 1,
       pageSize: 100,
-      totalPage: 0
+      totalPage: 0,
+      companyId: 0
     }
   },
   methods: {
     getList () {
       this.axios.get('order/page', {
         params: {
-          openId: this.$route.query.openid
+          openId: this.$route.query.openid,
+          companyId: 0
         }
       }).then(res => {
-        this.orderList = res.data.list
-        this.pageSize = res.data.pageSize
-        this.pageNum = res.data.pageNum
-        this.totalPage = res.data.total
+        this.companyId = res.data.companyId
+        this.orderList = res.data.pageList.list
+        this.pageSize = res.data.pageList.pageSize
+        this.pageNum = res.data.pageList.pageNum
+        this.totalPage = res.data.pageList.total
       }).catch(err => {
         console.log(err)
       })
     },
     toUploadInformed (orderId, orderNo) {
-      this.$router.push({path: '/wechat/informed/upload', query: {openid: this.$route.query.openid, orderId: orderId, orderNo: orderNo}})
+      this.$router.push({path: '/wechat/informed/upload', query: {openid: this.$route.query.openid, orderId: orderId, orderNo: orderNo, companyId: this.companyId}})
     },
     toUploadReport (orderId, orderNo) {
-      this.$router.push({path: '/wechat/report/upload', query: {openid: this.$route.query.openid, orderId: orderId, orderNo: orderNo}})
+      this.$router.push({path: '/wechat/report/upload', query: {openid: this.$route.query.openid, orderId: orderId, orderNo: orderNo, companyId: this.companyId}})
     },
     toShowReport (orderId, orderNo) {
-      this.$router.push({path: '/wechat/report/list', query: {openid: this.$route.query.openid, orderId: orderId, orderNo: orderNo}})
+      this.$router.push({path: '/wechat/report/list', query: {openid: this.$route.query.openid, orderId: orderId, orderNo: orderNo, companyId: this.companyId}})
     },
     toShowInformed (orderId, orderNo) {
-      this.$router.push({path: '/wechat/informed/list', query: {openid: this.$route.query.openid, orderId: orderId, orderNo: orderNo}})
+      this.$router.push({path: '/wechat/informed/list', query: {openid: this.$route.query.openid, orderId: orderId, orderNo: orderNo, companyId: this.companyId}})
     }
   },
   watch: {},
