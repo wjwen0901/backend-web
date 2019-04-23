@@ -4,7 +4,14 @@
     <el-main class="upload-main">
       <el-form :rules="rules" ref="report" label-width="100px" label-position="left">
         <el-form-item label="检测产品">
-          焕彩基因美肤方案
+          <el-select class="width-100-p" v-model="solutionId" filterable placeholder="请选择">
+            <el-option
+              v-for="item in projects"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="样本编号" prop="sampleNo">
           <el-input class="width-100-px" v-model="sampleNo"></el-input>
@@ -22,7 +29,9 @@ export default {
   name: 'customize_repport',
   data () {
     return {
+      solutionId: 0,
       sampleNo: '',
+      projects: {},
       rules: {
         sampleNo: [
           {required: true, message: '请填写样本编号', trigger: ''}
@@ -49,7 +58,7 @@ export default {
         method: 'post',
         url: 'customize/genessential',
         params: {
-          solution: _this.solution,
+          solutionId: _this.solutionId,
           userId: window.localStorage.userId,
           sampleNo: _this.sampleNo
         },
@@ -66,9 +75,24 @@ export default {
           type: 'error'
         })
       })
+    },
+    initData () {
+      this.axios.get('solution', {
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
+        this.projects = res.data
+        if (res.data.length > 0) {
+          this.solutionId = res.data[0].id
+        }
+      }).catch(err => {
+        console.log(err)
+      })
     }
   },
   created () {
+    this.initData()
   },
   filters: {
   }

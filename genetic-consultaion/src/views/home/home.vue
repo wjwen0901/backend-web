@@ -59,6 +59,7 @@
             <el-menu-item-group>
               <el-menu-item index="/informed/upload" v-if="sec.includes('upload:informed')">上传文件</el-menu-item>
               <el-menu-item index="/informed/list" v-if="sec.includes('data-collect:informed')">查看知情</el-menu-item>
+              <el-menu-item index="/informed/info/list" v-if="sec.includes('informed:list')">查看知情</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="upload" v-if="sec.includes('upload:report') || sec.includes('data-collect:report') || sec.includes('report:list')">

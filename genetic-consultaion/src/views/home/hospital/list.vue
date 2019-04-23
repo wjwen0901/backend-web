@@ -48,7 +48,7 @@
           label="创建日期"
           width="180">
           <template slot-scope="scope">
-            {{scope.row.create_time | formatDate}}
+            {{scope.row.createTime | formatDate}}
           </template>
         </el-table-column>
         <el-table-column

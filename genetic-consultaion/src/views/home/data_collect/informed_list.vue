@@ -5,6 +5,14 @@
       <el-breadcrumb-item>知情列表</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="user-container">
+      <div>
+        <!--<el-button class="add-solution" size="small" type="primary" @click="toAdd">新增</el-button>-->
+        <div class="search-box">
+          <el-input placeholder="请输入条码编号/受检者姓名/手机号" v-model="condition" class="input-with-select">
+            <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
+          </el-input>
+        </div>
+      </div>
       <el-table
         :data="informedList"
         size="mini"
@@ -13,6 +21,11 @@
         <el-table-column
           prop="sampleCode"
           label="条码编号"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="truename"
+          label="受检者姓名"
           width="180">
         </el-table-column>
         <el-table-column
@@ -25,11 +38,11 @@
         </el-table-column>
         <el-table-column
           prop="fullName"
-          label="上传人">
+          label="上传人姓名">
         </el-table-column>
         <el-table-column
           prop="cellphone"
-          label="联系电话">
+          label="上传人联系电话">
         </el-table-column>
         <el-table-column
           prop="state"
@@ -70,15 +83,14 @@ export default {
   data () {
     return {
       informedList: [],
-      pageNum: 1,
-      pageSize: 20,
-      totalPage: 0
+      pageNum: window.sessionStorage.informedPageNum === undefined ? 1 : window.sessionStorage.informedPageNum,
+      pageSize: window.sessionStorage.informedPageSize === undefined ? 20 : parseInt(window.sessionStorage.informedPageSize),
+      totalPage: 0,
+      condition: ''
     }
   },
   methods: {
     _initData () {
-      this.pageNum = window.sessionStorage.informedPageNum === undefined ? 1 : parseInt(window.sessionStorage.informedPageNum)
-      this.pageSize = window.sessionStorage.informedPageSize === undefined ? 20 : parseInt(window.sessionStorage.informedPageSize)
       this.getData()
     },
     getData () {
@@ -86,25 +98,26 @@ export default {
         params: {
           userId: window.localStorage.userId,
           pageNum: this.pageNum,
-          pageSize: this.pageSize
+          pageSize: this.pageSize,
+          searchCondition: this.condition
         }
       }).then(res => {
         this.informedList = res.data.list
         this.pageSize = res.data.pageSize
         this.pageNum = res.data.pageNum
         this.totalPage = res.data.total
-        window.sessionStorage.informedPageNum = this.pageNum
-        window.sessionStorage.informedPageSize = this.pageSize
       }).catch(err => {
         console.log(err)
       })
     },
     handleSizeChange (val) {
       this.pageSize = val
+      window.sessionStorage.informedPageSize = val
       this.getData()
     },
     handleCurrentChange (val) {
       this.pageNum = val
+      window.sessionStorage.informedPageNum = val
       this.getData()
     },
     toDetail (id) {
@@ -142,10 +155,10 @@ export default {
     margin: 20px 0px;
     padding: 20px;
     background: #ffffff;
+    .search-box {
+      width: 400px;
+      float: right;
+      margin-bottom: 10px;
+    }
   }
-  .user-container .header {
-    margin-bottom: 20px;
-    font-size: 18px;
-  }
-
 </style>

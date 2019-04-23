@@ -362,16 +362,16 @@ export default {
             if (this.$route.query.orderId !== undefined) {
               param.orderId = this.$route.query.orderId
             }
-            this.axios.post('informed/message', param).then(res => {
-              console.log(res.data)
-            }).catch(err => {
-              this.$message({
-                message: err.data.message,
-                type: 'error',
-                customClass: 'my-message'
-              })
-              console.log(err)
-            })
+            // this.axios.post('informed/message', param).then(res => {
+            //   console.log(res.data)
+            // }).catch(err => {
+            //   this.$message({
+            //     message: err.data.message,
+            //     type: 'error',
+            //     customClass: 'my-message'
+            //   })
+            //   console.log(err)
+            // })
             up.refresh()
           },
           Error: (up, err) => {

@@ -103,11 +103,8 @@ export default {
         let _this = this
         instance({
           method: 'post',
-          url: 'hospital',
+          url: 'hospital?userId=' + window.localStorage.userId,
           data: this.hospital,
-          params: {
-            userId: window.localStorage.userId
-          },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json'

@@ -16,6 +16,11 @@
           width="180">
         </el-table-column>
         <el-table-column
+          prop="truename"
+          label="受检者姓名"
+          width="180">
+        </el-table-column>
+        <el-table-column
           prop="createTime"
           label="上传时间"
           width="180">

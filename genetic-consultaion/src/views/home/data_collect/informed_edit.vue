@@ -64,15 +64,10 @@
               <el-input v-model="informedContent.cellphone"></el-input>
             </el-form-item>
             <el-form-item label="发送短信">
-              <el-switch
-                v-model="informedContent.smsStatus"
-                active-color="#00c2a9"
-                inactive-color="#ccc"
-                active-value="0"
-                inactive-value="1"
-                active-text="是"
-                inactive-text="否">
-              </el-switch>
+              <el-radio-group v-model="smsStatus">
+                <el-radio @click.native.prevent="updateSmsStatus(0)" :label="0">发送</el-radio>
+                <el-radio @click.native.prevent="updateSmsStatus(1)" :label="1">不发送</el-radio>
+              </el-radio-group>
             </el-form-item>
             <el-form-item label="证件类型">
               <el-col :span="9">
@@ -150,6 +145,7 @@ export default {
   name: 'EditInformed',
   data () {
     return {
+      smsStatus: 0,
       informedContent: {
         smsStatus: 0
       },
@@ -176,6 +172,12 @@ export default {
         this.informedContent = res.data
         if (res.data.tid !== undefined) {
           this.informedContent.orderNo = res.data.tid
+        }
+        if (this.informedContent.smsStatus === undefined) {
+          this.informedContent.smsStatus = 0
+          this.smsStatus = 0
+        } else {
+          this.smsStatus = 1
         }
         this.axios.get('oss/upload/show', {
           params: {
@@ -267,6 +269,10 @@ export default {
     },
     hospitalHandleSelect (item) {
       this.informedContent.hospitalId = item.id
+    },
+    updateSmsStatus (status) {
+      this.smsStatus = status
+      this.informedContent.smsStatus = status
     }
   },
   filters: {},

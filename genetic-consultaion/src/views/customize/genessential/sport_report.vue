@@ -4,132 +4,143 @@
     <!--<el-button type="success" class="expend-pdf" @click="pdf()">导出PDF</el-button>-->
     <div class="pdf-content" id="pdf-doc">
       <section class="page-1">
+        <img src="../../../assets/genssential/logo.png"/>
         <div class="title">
-          <h3>焕彩基因</h3>
-          <h3>美肤方案</h3>
+          <h3>运动营养基因检测</h3>
         </div>
         <div class="footer">
-          <p>北京凯能婷干细胞科技研究院</p>
           <p>中科院专家支持</p>
         </div>
       </section>
       <section class="page-2">
         <table>
           <thead>
-            <tr>
-              <th colspan="2" width="50%">用户资料</th>
-              <th colspan="2">实验室资料</th>
-            </tr>
+          <tr>
+            <th colspan="2" width="50%">用户资料</th>
+            <th colspan="2">实验室资料</th>
+          </tr>
           </thead>
           <tbody>
-            <tr>
-              <td width="96">姓名</td>
-              <td>{{data.UserName}}</td>
-              <td width="96">样本类型</td>
-              <td>口腔拭子</td>
-            </tr>
-            <tr>
-              <td>性别</td>
-              <td>{{data.Sex}}</td>
-              <td>样本编号</td>
-              <td>{{data.Barcode}}</td>
-            </tr>
-            <tr>
-              <td>报告日期</td>
-              <td>{{new Date() | formatDate}}</td>
-              <td>样本接收日期</td>
-              <td>{{parseInt(data.UpdateTime.replace('/Date(', '').replace(')/', '')) | formatDate}}</td>
-            </tr>
+          <tr>
+            <td width="96">姓名</td>
+            <td>{{data.UserName}}</td>
+            <td width="96">样本类型</td>
+            <td>口腔拭子</td>
+          </tr>
+          <tr>
+            <td>性别</td>
+            <td>{{data.Sex}}</td>
+            <td>样本编号</td>
+            <td>{{data.Barcode}}</td>
+          </tr>
+          <tr>
+            <td>报告日期</td>
+            <td>{{new Date() | formatDate}}</td>
+            <td>样本接收日期</td>
+            <td>{{parseInt(data.UpdateTime.replace('/Date(', '').replace(')/', '')) | formatDate}}</td>
+          </tr>
           </tbody>
         </table>
         <div class="hello-people">
-          <p class="dear">亲爱的用户：</p>
-          <p>非常感谢您使用我们研发的{{data.Category === 'G0G' ? "焕彩基因美肤方案" : "运动营养健康方案"}}
-            检测服务。我们采用了您提供的唾液样本，运用高科技手段全面分析了您的肤质基因信息，
-            在这里呈现的是从几百页的报告中萃取的精华，给您全面的报告。</p>
-          <p v-if="data.Category === 'G0H'">我们的报告涵盖肤质特性和肤质相关营养代谢能力。在近百敏感基因位点中，深度解析您的基因如何影响您的皮肤肤质，皮肤营养和防病能力。</p>
-          <p v-else-if="data.Category === 'G0G'">{{data.Desc}}</p>
-          <p>我们诚挚地感谢您对我们的信任，希望您对我们的服务满意。如果对报告的内容有任何的问题和不解，请随时和我们联系：或者在我们的微信公众号随时与营养顾问进行沟通。</p>
-          <p>再次感谢您选择我们的服务，愿您更美丽更健康！祝您和您的家人快乐！</p>
-          <p class="thanks-all">凯能婷全体员工</p>
+          <p class="dear">亲爱的：</p>
+          <p>非常感谢您使用我们Genessential研发的运动营养基因检测服务。Genessential倡导以分子营养基因学为基础的个体化保健计划。我们采用了您提供的口腔拭子样本，运用高科技手段全面分析了您的运动营养基因信息，在这里呈现的是从近百页的报告中萃取的精华，给您全面的报告。让您一目了然。
+          </p>
+          <p>我们的报告涵盖30项，上千余敏感基因位点。深度解析您的基因如何影响您的营养素需求，运动潜质和个体体征。</p>
+          <p>Genessential 的宗旨是以最新科学为依据，提供精准膳食，营养及运动规划方案。为帮助国人健康快乐生活，奉献我们微薄之力。我们诚挚地感谢您对我们的信任，希望您对我们的服务满意。如果对报告的内容有任何的问题和不解，请随时和我们联系；或者在我们的微信公众号随时与营养顾问进行沟通。也可以加微信ID: gene2nutrition为好友，进行一对一的咨询。
+          </p>
+          <p>再次深深感谢您选择与我们同行，探索基因和健康的奥秘，祝您和您的家人健康快乐！
+          </p>
+          <p class="thanks-all">Genessential全体员工</p>
         </div>
       </section>
       <section class="page-3">
         <div class="header">
-          <h3><i class="el-icon-question"></i>如何影响我们的健康和皮肤?</h3>
+          <h3><i class="el-icon-question"></i>什么是分子营养学</h3>
         </div>
         <div class="content">
           <p>DNA是基因的物质基础，从遗传学上讲, 正是基因的细微差别造就了不同的你和我，这些微小的差别也决定了营养在每个人体内的不同效应,并影响身体如何代谢所吃的食物，以及对皮肤的影响。
           </p>
           <p></p>
+          <p></p>
           <p>
-          分子营养学揭示了身体的基因，细胞和蛋白质的关系，帮助我们：
+            分子营养学研究分两个方向：
           </p>
+          <p></p>
           <p>
-          －预测每个人身体和皮肤对营养素的不同反应
+            一是营养基因体学—研究营养如何影响基因
           </p>
+          <p></p>
           <p>
-          －判断哪一些人无法吸收某一些营养素
+            二是营养遗传学—研究基因如何影响营养的代谢和吸收
           </p>
-          <p>
-          －判断如何通过膳食调整来避免遗传高风险的疾病
-          </p>
-          <p>
-          －发现有治疗功能的营养素
-          </p>
+          <img src="../../../assets/genssential/sports-bg3.jpg"/>
         </div>
       </section>
       <section class="page-4">
         <div class="header">
-          <h3><i class="el-icon-question"></i>您该做些什么？</h3>
+          <h3><i class="el-icon-question"></i>如何影响我们的健康？</h3>
         </div>
         <div class="content">
-          <p>个性化的营养取决于食物与基因的双向关系。一 方面,我们吃的食物可以影响基因的表达; 另一方面,我们的基因可以影响身体对食物作出的反应。</p>
-          <p>基因也影响着每个人对于慢性病不同的患病风险，和后天的环境及生活方式一起决定我们的健康状况。可以说，人的基因组就像继承于父母的一手牌，而每个人的生活方式就代表了你如何出牌（包括吃什么，睡了多少，运动多少，是否补充足够营养），最终的高下决定了你离疾病有多远。</p>
+          <p>DNA是基因的物质基础。从遗传学上讲, 正是基因的细微差别造就了不同的你和我，这些微小的差别也决定了营养在每个人体内的不同效应,并影响身体如何代谢所吃的食物。 </p>
+          <p></p>
+          <p></p>
           <p>
-            我们根据您的基因检测结果为您定制的运动饮食和营养方案，正是基于对您摄取营养成分时在分子层级的反应，结合您的肤质特征和个体特征，为您量身定制的个性化方案。
+            分子营养学揭示了身体的基因、细胞和蛋白质的关系，帮助我们：
           </p>
+          <p></p>
           <p>
-            我们无法改变我们的基因，但是适合的饮食，合理的运动和充分的营养，改变不当的习惯，可以让我们更好的拥抱健康。
+            －预测每个人对营养素的不同反应
           </p>
-          <img src="../../../assets/genssential/bg-page4.jpg"/>
+          <p></p>
+          <p>
+            －判断哪一些人无法吸收某一些营养素
+          </p>
+          <p></p>
+          <p>
+            －判断如何通过膳食调整来避免遗传高风险的疾病
+          </p>
+          <p></p>
+          <p>
+            －发现有治疗功能的营养素
+          </p>
         </div>
       </section>
       <section class="page-5">
         <div class="header">
-          <img src="../../../assets/genssential/page5-1.png"/>
+          <h3><i class="el-icon-question"></i>您该做些什么？</h3>
         </div>
         <div class="content">
+          <p>个性化的营养取决于食物与基因的双向关系。一方面,我们吃的食物可以影响基因的表达; 另一方面,我们的基因可以影响身体对食物作出的反应。 </p>
+          <p></p>
           <p>
-            <span class="title">皮肤( Skin )</span>
-            是人体最大的器官，主要承担着保护身体、排汗、感觉冷热和压力的功能。皮肤覆盖全身，具有两个方面的屏障作用：一方面防止体内水分，电解质和其他物质的丢失；另一方面阻止外界有害物质的侵入。保持着人体内环境的稳定上，在生理上起着重要的保护功能，同时皮肤也参与人体的代谢过程。
+            基因也影响着每个人对于慢性病不同的患病风险，和后天的环境及生活方式一起决定我们的健康状况。可以说，人的基因组就像继承于父母的一手牌，而每个人的生活方式就代表了你如何出牌（包括吃什么，睡了多少，运动多少，是否补充足够营养），最终的高下决定了你离疾病有多远。
           </p>
+          <p></p>
           <p>
-            由于皮肤直接暴露在外界环境中，随着环境的污染和岁月的流逝，肌肤会出现各种各样的问题，失去弹性，皱纹生成，易晒黑，皮肤干燥，色素沉积等。护肤已成为一门<span class="key-point">科学</span>，而科学性护肤的奥秘隐藏在您的DNA中。
+            我们根据您的基因检测结果为您定制的运动饮食营养的纤体瘦身方案，正是基于对您摄取营养成分时在分子层级的反应，为您量身定制的个性化方案。
           </p>
+          <p></p>
           <p>
-            <span class="key-point">每个人都是独特的！</span>
-            您的肤质基因检测结果为定制您专属的护肤运动饮食和营养方案提供了最可信赖最科学的依据。我们倡导由内而外，内外兼修的科学靓肤美白理念。探寻皮肤本质需求，及早呵护您的肌肤，让您神采奕奕。
+            我们无法改变我们的基因，但是适合的饮食，合理的运动和充分的营养，改变不当的习惯，可以让我们更好的拥抱健康。
           </p>
+          <img src="../../../assets/genssential/sports-bg5.jpg"/>
         </div>
       </section>
       <section class="page-6">
-        <h3>您的美肤基因报告综合摘要</h3>
+        <h3>您的运动营养基因报告综合摘要</h3>
         <h4>Your DNA Test Highlights</h4>
       </section>
       <section class="page-7">
-        <h3>您的美肤潜质概览：</h3>
+        <h3>运动营养需求：</h3>
         <table>
           <thead>
           <tr>
-            <th>检测类别</th>
             <th>检测项目</th>
             <th>检测结果</th>
           </tr>
           </thead>
           <tbody>
-          <tr v-for="(item, index) in data.fuzhi.Items" v-bind:key="item.id">
-            <td width="96" ><span v-if="index === 0">肤质类</span></td>
+          <tr v-for="item in data.yingyang.Items" v-bind:key="item.id">
             <td>{{item.ItemName}}</td>
             <td>{{item.LevelNames.split(',')[item.Level-1]}}</td>
           </tr>
@@ -137,18 +148,16 @@
         </table>
       </section>
       <section class="page-8">
-        <h3>美肤营养素需求：</h3>
+        <h3>运动潜质概览：</h3>
         <table>
           <thead>
           <tr>
-            <th>检测类别</th>
             <th>检测项目</th>
             <th>检测结果</th>
           </tr>
           </thead>
           <tbody>
-          <tr v-for="(item, index) in data.yingyang.Items" v-bind:key="item.id">
-            <td width="96" ><span v-if="index === 0">美肤营养类</span></td>
+          <tr v-for="item in data.yundong.Items" v-bind:key="item.id">
             <td>{{item.ItemName}}</td>
             <td>{{item.LevelNames.split(',')[item.Level-1]}}</td>
           </tr>
@@ -156,171 +165,9 @@
         </table>
       </section>
       <section class="page-9">
-        <h3>您的美肤基因报告分析解读</h3>
+        <h3>您的运动营养基因报告分析解读</h3>
         <h4>Your DNA Test Summary</h4>
       </section>
-      <section class="page-info-total">
-        <img src="../../../assets/genssential/G003-banner.jpg">
-        <div class="content">
-          <h3>综合评价和建议</h3>
-          <p>
-            {{data.fuzhi.GroupDesc.replace('{BusinessName}','Genessential')}}
-          </p>
-        </div>
-      </section>
-      <div v-for="(item, itemIndex) in data.fuzhi.Items" v-bind:key="item.ItemId" v-if="itemIndex >= 0">
-        <section class="page-info-item">
-          <div class="header">
-            <img :src="imgSrc((item.ItemId + '-1'))" v-if="item.ItemId !== undefined && item.ItemId !== ''">
-            <div class="title-info">
-              <h3 class="title">{{item.ItemName}}</h3>
-              <h4 class="sub-title">{{item.ItemNameEng}}</h4>
-            </div>
-          </div>
-          <div class="test-result">
-            <div class="title">
-              <img class="icon" src="../../../assets/genssential/jieguo.png">
-              <h4>我的检测结果</h4>
-            </div>
-            <p>{{item.detail.LevelDesc}}</p>
-            <div class="result-label">{{item.detail.NameKey}}{{item.detail.LevelNames.split(',')[item.detail.Level-1]}}</div>
-            <table>
-              <thead>
-              <tr>
-                <th>基因</th>
-                <th>位点</th>
-                <th>基因型</th>
-                <th>结果</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr v-for="gene in item.detail.Sites" v-bind:key="gene.Guid">
-                <td>{{gene.GeneName}}</td>
-                <td>{{gene.RSID}}</td>
-                <td>{{gene.GeneType}}</td>
-                <td>{{gene.Result}}</td>
-              </tr>
-              </tbody>
-            </table>
-            <div class="title" v-if="item.detail.Sites == '' || item.detail.Sites.length <= 6">
-              <img class="icon" src="../../../assets/genssential/renqun.png">
-              <h5>人群分布</h5>
-            </div>
-            <div class="population-dis" v-if="item.detail.Sites == '' || item.detail.Sites.length <= 6">
-              <h5>Genessential基钥数据库和您一样的人:<span class="percent">{{item.detail.LevelPercentages.split(',')[item.detail.Level-1]}}%</span></h5>
-              <ve-ring ref="chart"
-                       width="320px"
-                       height="240px"
-                       :data-select="item.detail.LevelName"
-                       :data="item.chartData"
-                       :settings="chartSettings"
-                       :extend="chartExtend"></ve-ring>
-            </div>
-          </div>
-        </section>
-        <section class="page-info-item" v-if="item.detail.Sites != '' && item.detail.Sites.length > 6">
-          <div class="test-result">
-            <div class="title">
-              <img class="icon" src="../../../assets/genssential/renqun.png">
-              <h5>人群分布</h5>
-            </div>
-            <div class="population-dis">
-              <h5>Genessential基钥数据库和您一样的人:<span class="percent">{{item.detail.LevelPercentages.split(',')[item.detail.Level-1]}}%</span></h5>
-              <ve-ring ref="chart"
-                       width="320px"
-                       height="240px"
-                       :data-select="item.detail.LevelName"
-                       :data="item.chartData"
-                       :settings="chartSettings"
-                       :extend="chartExtend"></ve-ring>
-            </div>
-          </div>
-        </section>
-        <div>
-          <section class="page-info-item-detail" v-for="(knowledge, index) in item.detail.KnowledgeData.Value" v-bind:key="knowledge.Id">
-            <div class="test-result">
-              <div class="title" v-if="index===0">
-                <img class="icon" src="../../../assets/genssential/zhishi.png">
-                <h5>相关知识</h5>
-              </div>
-              <div class="info-list">
-                <h4 class="title">{{knowledge.Title}}</h4>
-                <img :src="imgSrc(knowledge.ImageName)" v-if="knowledge.ImageName != ''">
-                <div v-for="(content, index) in knowledge.Content" v-bind:key="index">
-                  <h5 v-if="content.SubTitle !==''">{{content.SubTitle}}</h5>
-                  <div class="info" v-html="content.Details"></div>
-                </div>
-              </div>
-              <div class="title">
-                <img class="icon" src="../../../assets/genssential/chengfen.png">
-                <h5>专属护肤成分</h5>
-              </div>
-              <div class="info">
-                {{item.detail.SuggestSkin.replace('{BusinessName}','Genessential')}}
-              </div>
-              <div class="chengfen-labels">
-                <h4 class="sub-title">专属为您匹配的活性成分 ：</h4>
-                <span v-for="(chenfen, chengfenIndex) in item.detail.SuggestSkinData.split(',')" v-bind:key="chengfenIndex">{{chenfen}}  </span>
-              </div>
-            </div>
-          </section>
-        </div>
-        <section class="page-info-item-detail">
-          <div class="test-result">
-            <div class="title">
-              <img class="icon" src="../../../assets/genssential/jianyi.png">
-              <h5>个性护肤建议</h5>
-            </div>
-            <h4 class="sub-title">日常护肤 :</h4>
-            <div v-html="item.detail.SuggestHome.replace(new RegExp('\n', 'gm'), '<br/>')"></div>
-            <h4 class="sub-title">美肤饮食 :</h4>
-            <div v-html="item.detail.SuggestFoods"></div>
-            <h4 class="sub-title">推荐运动 :</h4>
-            <div v-html="item.detail.SuggestSport"></div>
-            <h4 class="sub-title">营养素的补充 :</h4>
-            <div v-html="item.detail.SuggestNutrient"></div>
-          </div>
-        </section>
-        <section class="page-info-item-detail page-info-gene" v-for="gene in item.detail.Sites" v-bind:key="gene.Guid">
-          <div class="test-result">
-            <div class="title">
-              <img class="icon" src="../../../assets/genssential/jieguo.png">
-              <h4>我的基因位点</h4>
-            </div>
-            <div class="gene-info">
-              <span class="gene-name">{{gene.ChromosomeNo}}号染色体&nbsp;&nbsp;基因:{{gene.GeneName}}</span>
-              <table>
-                <thead>
-                <tr>
-                  <th>位点</th>
-                  <th>基因型</th>
-                  <th>结果</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                  <td>{{gene.RSID}}</td>
-                  <td>{{gene.GeneType}}</td>
-                  <td>{{gene.Result}}</td>
-                </tr>
-                </tbody>
-              </table>
-              <h4 class="sub-title">基因功能</h4>
-              <p>{{gene.GeneDesc}}</p>
-              <div class="gene-imgs">
-                <div class="gene-img-content" v-for="imgNo in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]" v-bind:key="imgNo">
-                  <img :src="imgSrc(imgNo + (gene.ChromosomeNo == imgNo ? '-q':'-g'), '.png')">
-                  <span>{{imgNo}}</span>
-                </div>
-              </div>
-            </div>
-            <div class="references">
-              <p class="title">参考文献</p>
-              <p>{{gene.References}}</p>
-            </div>
-          </div>
-        </section>
-      </div>
       <section class="page-info-total">
         <img src="../../../assets/genssential/G001-banner.jpg">
         <div class="content">
@@ -602,43 +449,86 @@
                   </div>
                 </div>
               </section>
-              <section class="page-info-item-detail">
-                <div class="test-result">
-                  <div class="info-list">
-                    <h4 class="title">{{item.detail.KnowledgeData.Value[4].Title}}</h4>
-                    <div v-for="(content, index1) in item.detail.KnowledgeData.Value[4].Content" v-bind:key="index1" v-if="item.detail.KnowledgeData.Value[4].Desc != '' && index1 > 2">
-                      <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
-                      <div class="info" v-html="content.Details"></div>
-                    </div>
-                    <div v-for="(content, index1) in item.detail.KnowledgeData.Value[4].Content" v-bind:key="index1" v-if="item.detail.KnowledgeData.Value[4].Desc == '' && index1 > 3">
-                      <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
-                      <div class="info" v-html="content.Details"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="test-result" v-if="item.detail.KnowledgeData.Value.length >= 6">
-                  <div class="info-list">
-                    <h4 class="title">{{item.detail.KnowledgeData.Value[5].Title}}</h4>
-                    <img :src="imgSrc(item.detail.KnowledgeData.Value[5].ImageName)" v-if="item.detail.KnowledgeData.Value[5].ImageName != ''">
-                    <div class="info" v-if="item.detail.KnowledgeData.Value[5].Desc != ''">{{item.detail.KnowledgeData.Value[5].Desc}}</div>
-                    <div v-for="(content, index1) in item.detail.KnowledgeData.Value[5].Content" v-bind:key="index1">
-                      <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
-                      <div class="info" v-html="content.Details"></div>
+              <div v-if="JSON.stringify(item.detail.KnowledgeData.Value[4]).length < 800">
+                <section class="page-info-item-detail">
+                  <div class="test-result">
+                    <div class="info-list">
+                      <h4 class="title">{{item.detail.KnowledgeData.Value[4].Title}}</h4>
+                      <div v-for="(content, index1) in item.detail.KnowledgeData.Value[4].Content" v-bind:key="index1" v-if="item.detail.KnowledgeData.Value[4].Desc != '' && index1 > 2">
+                        <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                        <div class="info" v-html="content.Details"></div>
+                      </div>
+                      <div v-for="(content, index1) in item.detail.KnowledgeData.Value[4].Content" v-bind:key="index1" v-if="item.detail.KnowledgeData.Value[4].Desc == '' && index1 > 3">
+                        <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                        <div class="info" v-html="content.Details"></div>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="test-result" v-if="item.detail.KnowledgeData.Value.length >= 7 && item.detail.KnowledgeData.Value[4].Content.length < 7 && JSON.stringify(item.detail.KnowledgeData.Value[5].Content).length <= 300">
-                  <div class="info-list">
-                    <h4 class="title">{{item.detail.KnowledgeData.Value[6].Title}}</h4>
-                    <img :src="imgSrc(item.detail.KnowledgeData.Value[6].ImageName)" v-if="item.detail.KnowledgeData.Value[6].ImageName != ''">
-                    <div class="info" v-if="item.detail.KnowledgeData.Value[6].Desc != ''">{{item.detail.KnowledgeData.Value[6].Desc}}</div>
-                    <div v-for="(content, index1) in item.detail.KnowledgeData.Value[6].Content" v-bind:key="index1">
-                      <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
-                      <div class="info" v-html="content.Details"></div>
+                  <div class="test-result" v-if="item.detail.KnowledgeData.Value.length >= 6">
+                    <div class="info-list">
+                      <h4 class="title">{{item.detail.KnowledgeData.Value[5].Title}}</h4>
+                      <img :src="imgSrc(item.detail.KnowledgeData.Value[5].ImageName)" v-if="item.detail.KnowledgeData.Value[5].ImageName != ''">
+                      <div class="info" v-if="item.detail.KnowledgeData.Value[5].Desc != ''">{{item.detail.KnowledgeData.Value[5].Desc}}</div>
+                      <div v-for="(content, index1) in item.detail.KnowledgeData.Value[5].Content" v-bind:key="index1">
+                        <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                        <div class="info" v-html="content.Details"></div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </section>
+                  <div class="test-result" v-if="item.detail.KnowledgeData.Value.length >= 7 && item.detail.KnowledgeData.Value[4].Content.length < 7 && JSON.stringify(item.detail.KnowledgeData.Value[5].Content).length <= 300">
+                    <div class="info-list">
+                      <h4 class="title">{{item.detail.KnowledgeData.Value[6].Title}}</h4>
+                      <img :src="imgSrc(item.detail.KnowledgeData.Value[6].ImageName)" v-if="item.detail.KnowledgeData.Value[6].ImageName != ''">
+                      <div class="info" v-if="item.detail.KnowledgeData.Value[6].Desc != ''">{{item.detail.KnowledgeData.Value[6].Desc}}</div>
+                      <div v-for="(content, index1) in item.detail.KnowledgeData.Value[6].Content" v-bind:key="index1">
+                        <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                        <div class="info" v-html="content.Details"></div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div v-else>
+                <section class="page-info-item-detail">
+                  <div class="test-result">
+                    <div class="info-list">
+                      <h4 class="title">{{item.detail.KnowledgeData.Value[4].Title}}</h4>
+                      <div v-for="(content, index1) in item.detail.KnowledgeData.Value[4].Content" v-bind:key="index1" v-if="item.detail.KnowledgeData.Value[4].Desc != '' && index1 > 2">
+                        <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                        <div class="info" v-html="content.Details"></div>
+                      </div>
+                      <div v-for="(content, index1) in item.detail.KnowledgeData.Value[4].Content" v-bind:key="index1" v-if="item.detail.KnowledgeData.Value[4].Desc == '' && index1 > 3">
+                        <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                        <div class="info" v-html="content.Details"></div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+                <section class="page-info-item-detail">
+                  <div class="test-result" v-if="item.detail.KnowledgeData.Value.length >= 6">
+                    <div class="info-list">
+                      <h4 class="title">{{item.detail.KnowledgeData.Value[5].Title}}</h4>
+                      <img :src="imgSrc(item.detail.KnowledgeData.Value[5].ImageName)" v-if="item.detail.KnowledgeData.Value[5].ImageName != ''">
+                      <div class="info" v-if="item.detail.KnowledgeData.Value[5].Desc != ''">{{item.detail.KnowledgeData.Value[5].Desc}}</div>
+                      <div v-for="(content, index1) in item.detail.KnowledgeData.Value[5].Content" v-bind:key="index1">
+                        <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                        <div class="info" v-html="content.Details"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="test-result" v-if="item.detail.KnowledgeData.Value.length >= 7 && item.detail.KnowledgeData.Value[4].Content.length < 7 && JSON.stringify(item.detail.KnowledgeData.Value[5].Content).length <= 300">
+                    <div class="info-list">
+                      <h4 class="title">{{item.detail.KnowledgeData.Value[6].Title}}</h4>
+                      <img :src="imgSrc(item.detail.KnowledgeData.Value[6].ImageName)" v-if="item.detail.KnowledgeData.Value[6].ImageName != ''">
+                      <div class="info" v-if="item.detail.KnowledgeData.Value[6].Desc != ''">{{item.detail.KnowledgeData.Value[6].Desc}}</div>
+                      <div v-for="(content, index1) in item.detail.KnowledgeData.Value[6].Content" v-bind:key="index1">
+                        <h5 v-if="content.SubTitle !==''" class="sub-title">{{content.SubTitle}}</h5>
+                        <div class="info" v-html="content.Details"></div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
               <section class="page-info-item-detail" v-if="item.detail.KnowledgeData.Value.length >= 8">
                 <div class="test-result" v-if="item.detail.KnowledgeData.Value[4].Content.length >= 7 || JSON.stringify(item.detail.KnowledgeData.Value[5].Content).length > 300">
                   <div class="info-list">
@@ -735,6 +625,157 @@
           </div>
         </section>
       </div>
+      <section class="page-info-total">
+        <img src="../../../assets/genssential/G003-banner.jpg">
+        <div class="content">
+          <h3>综合评价和建议</h3>
+          <p>
+            {{data.yundong.GroupDesc.replace('{BusinessName}','Genessential')}}
+          </p>
+        </div>
+      </section>
+      <div v-for="(item, itemIndex) in data.yundong.Items" v-bind:key="item.ItemId" v-if="itemIndex >= 0">
+        <section class="page-info-item">
+          <div class="header">
+            <img :src="imgSrc((item.ItemId + '-1'))" v-if="item.ItemId !== undefined && item.ItemId !== ''">
+            <div class="title-info">
+              <h3 class="title">{{item.ItemName}}</h3>
+              <h4 class="sub-title">{{item.ItemNameEng}}</h4>
+            </div>
+          </div>
+          <div class="test-result">
+            <div class="title">
+              <img class="icon" src="../../../assets/genssential/jieguo.png">
+              <h4>我的检测结果</h4>
+            </div>
+            <p>{{item.detail.LevelDesc}}</p>
+            <div class="result-label">{{item.detail.NameKey}}{{item.detail.LevelNames.split(',')[item.detail.Level-1]}}</div>
+            <table>
+              <thead>
+              <tr>
+                <th>基因</th>
+                <th>位点</th>
+                <th>基因型</th>
+                <th>结果</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="gene in item.detail.Sites" v-bind:key="gene.Guid">
+                <td>{{gene.GeneName}}</td>
+                <td>{{gene.RSID}}</td>
+                <td>{{gene.GeneType}}</td>
+                <td>{{gene.Result}}</td>
+              </tr>
+              </tbody>
+            </table>
+            <div class="title" v-if="item.detail.Sites == '' || item.detail.Sites.length <= 6">
+              <img class="icon" src="../../../assets/genssential/renqun.png">
+              <h5>人群分布</h5>
+            </div>
+            <div class="population-dis" v-if="item.detail.Sites == '' || item.detail.Sites.length <= 6">
+              <h5>Genessential基钥数据库和您一样的人:<span class="percent">{{item.detail.LevelPercentages.split(',')[item.detail.Level-1]}}%</span></h5>
+              <ve-ring ref="chart"
+                       width="320px"
+                       height="240px"
+                       :data-select="item.detail.LevelName"
+                       :data="item.chartData"
+                       :settings="chartSettings"
+                       :extend="chartExtend"></ve-ring>
+            </div>
+          </div>
+        </section>
+        <section class="page-info-item" v-if="item.detail.Sites != '' && item.detail.Sites.length > 6">
+          <div class="test-result">
+            <div class="title">
+              <img class="icon" src="../../../assets/genssential/renqun.png">
+              <h5>人群分布</h5>
+            </div>
+            <div class="population-dis">
+              <h5>Genessential基钥数据库和您一样的人:<span class="percent">{{item.detail.LevelPercentages.split(',')[item.detail.Level-1]}}%</span></h5>
+              <ve-ring ref="chart"
+                       width="320px"
+                       height="240px"
+                       :data-select="item.detail.LevelName"
+                       :data="item.chartData"
+                       :settings="chartSettings"
+                       :extend="chartExtend"></ve-ring>
+            </div>
+          </div>
+        </section>
+        <div>
+          <section class="page-info-item-detail" v-for="(knowledge, index) in item.detail.KnowledgeData.Value" v-bind:key="knowledge.Id">
+            <div class="test-result">
+              <div class="title" v-if="index===0">
+                <img class="icon" src="../../../assets/genssential/zhishi.png">
+                <h5>相关知识</h5>
+              </div>
+              <div class="info-list">
+                <h4 class="title">{{knowledge.Title}}</h4>
+                <img :src="imgSrc(knowledge.ImageName)" v-if="knowledge.ImageName != ''">
+                <div v-for="(content, index) in knowledge.Content" v-bind:key="index">
+                  <h5 v-if="content.SubTitle !==''">{{content.SubTitle}}</h5>
+                  <div class="info" v-html="content.Details"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <section class="page-info-item-detail">
+          <div class="test-result">
+            <div class="title">
+              <img class="icon" src="../../../assets/genssential/jianyi.png">
+              <h5>给您的建议</h5>
+            </div>
+            <h4 class="sub-title">日常生活 :</h4>
+            <div v-html="item.detail.SuggestHome.replace(new RegExp('\n', 'gm'), '<br/>')"></div>
+            <h4 class="sub-title">饮食 :</h4>
+            <div v-html="item.detail.SuggestFoods"></div>
+            <h4 class="sub-title">推荐运动 :</h4>
+            <div v-html="item.detail.SuggestSport"></div>
+            <h4 class="sub-title">营养品 :</h4>
+            <div v-html="item.detail.SuggestNutrient"></div>
+          </div>
+        </section>
+        <section class="page-info-item-detail page-info-gene" v-for="gene in item.detail.Sites" v-bind:key="gene.Guid">
+          <div class="test-result">
+            <div class="title">
+              <img class="icon" src="../../../assets/genssential/jieguo.png">
+              <h4>我的基因位点</h4>
+            </div>
+            <div class="gene-info">
+              <span class="gene-name">{{gene.ChromosomeNo}}号染色体&nbsp;&nbsp;基因:{{gene.GeneName}}</span>
+              <table>
+                <thead>
+                <tr>
+                  <th>位点</th>
+                  <th>基因型</th>
+                  <th>结果</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td>{{gene.RSID}}</td>
+                  <td>{{gene.GeneType}}</td>
+                  <td>{{gene.Result}}</td>
+                </tr>
+                </tbody>
+              </table>
+              <h4 class="sub-title">基因功能</h4>
+              <p>{{gene.GeneDesc}}</p>
+              <div class="gene-imgs">
+                <div class="gene-img-content" v-for="imgNo in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]" v-bind:key="imgNo">
+                  <img :src="imgSrc(imgNo + (gene.ChromosomeNo == imgNo ? '-q':'-g'), '.png')">
+                  <span>{{imgNo}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="references">
+              <p class="title">参考文献</p>
+              <p>{{gene.References}}</p>
+            </div>
+          </div>
+        </section>
+      </div>
       <section class="page-service-title">
         <h3>服务条款</h3>
         <h4>Service Terms</h4>
@@ -743,7 +784,7 @@
         <h3>服务条款</h3>
         <p>
           <span class="service-no">1.</span>
-          本产品是一项美肤基因检测服务，通过基因检测来评估您患皮肤类疾病的相关风险，对不同营养素的需求反应，以揭示遗传对疾病和营养的影响。
+          本产品是一项运动营养基因检测服务，通过基因检测来评估您患皮肤类疾病的相关风险，对不同营养素的需求反应，以揭示遗传对疾病和营养的影响。
         </p>
         <p>
           <span class="service-no">2.</span>
@@ -816,7 +857,6 @@ export default {
           sampleNo: this.$route.params.sampleNo
         }
       }).then(res => {
-        console.log(res.data)
         let datas = res.data
         let that = this
         res.data.ReportResult.map(function (items, indexs, lists) {
@@ -836,13 +876,10 @@ export default {
             if (index === list.length - 1) {
               if (items.GroupName.indexOf('肤质') >= 0) {
                 datas.fuzhi = items
-              } else if (items.GroupName.indexOf('美肤营养') >= 0) {
+              } else if (items.GroupName.indexOf('营养') >= 0) {
                 datas.yingyang = items
-              }
-              if (items.GroupName.indexOf('减脂营养') >= 0) {
-                datas.fuzhi = items
-              } else if (items.GroupName.indexOf('运动减脂') >= 0) {
-                datas.yingyang = items
+              } else if (items.GroupName.indexOf('运动') >= 0) {
+                datas.yundong = items
               }
               if (indexs === lists.length - 1) {
                 that.data = datas
@@ -904,14 +941,21 @@ export default {
     background: url("../../../assets/genssential/bg-page1.jpg") no-repeat;
     background-size: 100% auto;
     background-position: bottom;
+    img {
+      position: absolute;
+      width: 140px;
+      top: 30px;
+      right: 30px;
+    }
     .title {
       padding-top: 300px;
       text-align: center;
       font-weight: 500;
-      color: #E8B2AE;
+      color: #6DBB8F;
       h3 {
         font-size: 70px;
-        margin: 0 0 30px 0;
+        margin: 0 auto 30px;
+        width: 300px;
       }
     }
     .footer {
@@ -967,13 +1011,19 @@ export default {
     }
   }
   .page-3 {
-    background: url("../../../assets/genssential/bg-page3.jpg") no-repeat;
-    background-size: cover;
-    background-position: bottom;
-  }
-  .page-3,.page-4 {
+    background: #fff;
+    img {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      bottom: 0;
+    }
     .header {
-      color: #E6CEED;
+      color: #94C275;
+    }
+  }
+  .page-3,.page-4,.page-5 {
+    .header {
       font-size: 30px;
       h3 {
         margin: 0;
@@ -990,9 +1040,11 @@ export default {
     }
   }
   .page-4 {
-    background: #fff;
+    background: url("../../../assets/genssential/sports-bg4.png") no-repeat;
+    background-size: cover;
+    background-position: bottom;
     .header {
-      color: #F5B59A;
+      color: #ADCDEA;
       font-size: 30px;
       h3 {
         margin: 0;
@@ -1001,22 +1053,11 @@ export default {
         }
       }
     }
-    img {
-      position: absolute;
-      width: 100%;
-      left: 0;
-      bottom: 0;
-    }
   }
   .page-5 {
-    background: url("../../../assets/genssential/bg-page5.jpg") no-repeat;
-    background-size: cover;
-    background-position: bottom;
+    background: #fff;
     .header {
-      img {
-        width: 33px;
-        margin-bottom: -10px;
-      }
+      color: #F6C79D;
     }
     .content {
       p {
@@ -1030,12 +1071,18 @@ export default {
         color: #FBD280;
       }
     }
+    img {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      bottom: 0;
+    }
   }
   .page-6,.page-9,.page-service-title {
     background: url("../../../assets/genssential/bg-page6.jpg") no-repeat;
     background-size: cover;
     background-position: bottom;
-    color: #DA8E9F;
+    color: #6DBB8F;
     text-align: center;
     h3 {
       margin-top: 300px;

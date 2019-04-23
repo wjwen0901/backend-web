@@ -28,6 +28,51 @@
         </el-form>
       </div>
     </div>
+    <div class="mdh-default" v-if="CustomizedKey === 'd9edd1f365c990ad260d80015136f25e'">
+      <div class="header">
+
+      </div>
+      <div class="content">
+        <h4 class="c-logo">禄和健康</h4>
+        <p>个人健康报告下载</p>
+        <el-main>
+          <el-form :rules="rules" :model="patient" ref="patient" label-width="0px" label-position="left">
+            <el-form-item prop="name">
+              <el-input class="width-100-p"
+                        v-model="patient.name"
+                        placeholder="请输入姓名">
+              </el-input>
+            </el-form-item>
+            <el-form-item prop="cellphone">
+              <el-input class="width-100-p"
+                        v-model="patient.cellphone"
+                        placeholder="请输入手机号">
+              </el-input>
+            </el-form-item>
+            <el-form-item prop="idCode">
+              <el-input class="width-100-p"
+                        v-model="patient.code"
+                        placeholder="请输入验证码">
+                <!--获取验证码-->
+                <el-button slot="append" class="send-code" v-if="!hasCode" @click="getVerification">获取验证码</el-button>
+                <el-button slot="append" class="send-code" v-else>重发验证码{{resetSendCode}}s</el-button>
+                <!--<template slot="append">-->
+                <!--&lt;!&ndash;获取验证码&ndash;&gt;-->
+                <!--<el-button class="send-code" v-if="!hasCode" @click="getVerification">获取验证码</el-button>-->
+                <!--<el-button class="send-code" disabled v-if="hasCode">重发验证码{{resetSendCode}}s</el-button>-->
+                <!--</template>-->
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button class="submit-btn" @click="toViewReport">查看报告</el-button>
+            </el-form-item>
+          </el-form>
+        </el-main>
+      </div>
+      <div class="footer-info">
+        <!--&copy; 2019 MDHcare.cn 版权所有  丨  ICP证：京ICP备17067248号-->
+      </div>
+    </div>
     <div class="mdh-default luhe" v-else-if="CustomizedKey === '0415144e2cf30ef54365aa82bdaea535'">
       <div class="header">
 
@@ -80,7 +125,8 @@
 
       </div>
       <div class="content">
-        <img src="../../assets/ru6c-logo.png"/>
+        <img src="../../assets/genssential/logo.png" v-if="CustomizedKey === 'ccee2e12c11657274ce6756275466f05'"/>
+        <img src="../../assets/ru6c-logo.png" v-else/>
         <p>个人健康报告下载</p>
         <el-main>
           <el-form :rules="rules" :model="patient" ref="patient" label-width="0px" label-position="left">
@@ -360,6 +406,18 @@ export default {
     padding: 60px 20px 20px 20px;
     text-align: center;
     z-index: 1;
+    .c-logo {
+      position: absolute;
+      width: 100%;
+      bottom: 0;
+      left: 50%;
+      margin: 10px 0px;
+      transform: translate(-50%, 0%);
+      font-size: 16px;
+      letter-spacing: 2px;
+      font-weight: 400;
+
+    }
     &:before {
       position: absolute;
       top: 0;

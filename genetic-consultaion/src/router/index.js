@@ -366,11 +366,32 @@ export default new Router({
       component: resolve => require(['@/views/customize/genessential/pdf_report'], resolve)
     },
     {
+      path: '/customize/genessential/sport-report/:sampleNo',
+      name: 'GenessentialSportPDFReport',
+      component: resolve => require(['@/views/customize/genessential/sport_report'], resolve)
+    },
+    {
       path: '/market/items',
       name: 'MarketItems',
       component: resolve => require(['@/views/wechat/item_list'], resolve),
       meta: {
         title: '基因检测产品目录'
+      }
+    },
+    {
+      path: '/qrcode/pay',
+      name: 'QrcodePay',
+      component: resolve => require(['@/views/wechat/qrcode/pay_code'], resolve),
+      meta: {
+        title: '基因检测产品付款'
+      }
+    },
+    {
+      path: '/qrcode/pay/temp',
+      name: 'QrcodePayTemp',
+      component: resolve => require(['@/views/wechat/qrcode/pay_temp'], resolve),
+      meta: {
+        title: '基因检测产品付款'
       }
     }
   ]

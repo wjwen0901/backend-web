@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="24">
         <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item :to="{ path: '/solution' }">产品管理</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: '/product' }">产品管理</el-breadcrumb-item>
           <el-breadcrumb-item>{{menuInfo}}</el-breadcrumb-item>
         </el-breadcrumb>
       </el-col>
