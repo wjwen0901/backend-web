@@ -55,7 +55,8 @@ export default {
       this.axios.get('order/page', {
         params: {
           openId: this.$route.query.openid,
-          companyId: this.$route.query.companyId
+          companyId: this.$route.query.companyId,
+
         }
       }).then(res => {
         this.companyId = res.data.companyId

@@ -12,7 +12,7 @@ export default {
   },
   methods: {
     initData () {
-      window.location = 'https://cashier.youzan.com/pay/confirmQr?kdt_id=41017705&qr_id=11855958&sf=wx_sm&from=singlemessage&isappinstalled=0'
+      window.location = this.$route.query.url
     }
   },
   created () {

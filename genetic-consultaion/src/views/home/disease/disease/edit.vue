@@ -29,9 +29,19 @@
                 <el-input v-model="disease.distype"></el-input>
               </el-form-item>
               <el-form-item label="检测产品">
-                <el-select class="width-100-p" v-model="disease.solutionIds" value-key="id" filterable multiple placeholder="请选择">
+                <el-select class="width-100-p" v-model="disease.solutionIds" filterable multiple placeholder="请选择">
                   <el-option
                     v-for="item in solutionList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="相关科室">
+                <el-select class="width-100-p" v-model="disease.deptId" multiple filterable placeholder="请选择">
+                  <el-option
+                    v-for="item in deptList"
                     :key="item.id"
                     :label="item.name"
                     :value="item.id">
@@ -53,7 +63,7 @@
                 <el-input v-model="disease.morbidity"></el-input>
               </el-form-item>
               <el-form-item label="致病基因">
-                <el-select class="width-100-p"  v-model="disease.geneDetails" multiple filterable placeholder="请选择">
+                <el-select class="width-100-p"  v-model="disease.genes" multiple filterable placeholder="请选择">
                   <el-option
                     v-for="item in geneList"
                     :key="item.id"
@@ -62,27 +72,78 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="靶向药物">
-                <el-select class="width-100-p" v-model="disease.drugIds" multiple filterable placeholder="请选择">
-                  <el-option
-                    v-for="item in deptList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
-                </el-select>
-              </el-form-item>
+              <!--<el-form-item label="靶向药物">-->
+                <!--<el-select class="width-100-p" v-model="disease.drugIds" multiple filterable placeholder="请选择">-->
+                  <!--<el-option-->
+                    <!--v-for="item in deptList"-->
+                    <!--:key="item.id"-->
+                    <!--:label="item.name"-->
+                    <!--:value="item.id">-->
+                  <!--</el-option>-->
+                <!--</el-select>-->
+              <!--</el-form-item>-->
             </div>
             <div class="form-line">
               <el-form-item label="疾病介绍">
                 <el-input type="textarea" v-model="disease.content"></el-input>
               </el-form-item>
+              <el-form-item label="详细信息">
+                <el-table
+                  ref="multipleTable"
+                  tooltip-effect="dark"
+                  :data="disease.catalog"
+                  size="mini"
+                  border
+                  style="width: 100%">
+                  <el-table-column
+                    prop="name"
+                    label="目录标题">
+                    <template slot-scope="scope">
+                      <el-input v-model="scope.row.name"></el-input>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="content"
+                    label="内容">
+                    <template slot-scope="scope">
+                      <el-input type="textarea" v-model="scope.row.content"></el-input>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    fixed="right"
+                    label="操作"
+                    width="200">
+                    <template slot-scope="scope">
+                      <el-button type="text" size="small" @click="deleteCatelog(scope.$index)">删除</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+                <el-button type="primary" @click="toAddCatelog()">添加一行</el-button>
+
+              </el-form-item>
               <el-form-item label="临床指南">
+                <el-select class="width-100-p"
+                           v-model="guides"
+                           value-key="title"
+                           multiple
+                           filterable
+                           remote
+                           reserve-keyword
+                           :remote-method="remoteMethod"
+                           :loading="loading"
+                           placeholder="请选择">
+                  <el-option
+                    v-for="(item, index) in guideList"
+                    :key="item.id + index"
+                    :label="item.title"
+                    :value="item">
+                  </el-option>
+                </el-select>
               </el-form-item>
-              <el-form-item label="数据来源">
-                <el-input placeholder="请输入网站名称" v-model="disease.source.sourceName" class="url-name"></el-input>
-                <el-input placeholder="请输入访问链接" v-model="disease.source.sourceUrl" class="url"></el-input>
-              </el-form-item>
+              <!--<el-form-item label="数据来源">-->
+                <!--<el-input placeholder="请输入网站名称" v-model="disease.source.sourceName" class="url-name"></el-input>-->
+                <!--<el-input placeholder="请输入访问链接" v-model="disease.source.sourceUrl" class="url"></el-input>-->
+              <!--</el-form-item>-->
               <el-form-item class="btns">
                 <el-button @click="cancel">取消</el-button>
                 <el-button type="primary" @click="edit">保存</el-button>
@@ -102,32 +163,26 @@ export default {
       data: [],
       addRowData: ['add'],
       menuInfo: this.$route.params.id === undefined ? '新增' : '编辑',
-      disease: {
-        source: {
-          sourceName: '',
-          sourceUrl: ''
-        }
-      },
+      disease: {},
       sampleMeta: [],
       proDepts: [],
       reportType: [],
       consultancy: [],
       deptList: [],
       solutionList: [],
+      hospitalIds: [],
       geneList: [],
-      sampleTypes: [
-        {'id': 0, 'name': '血液'},
-        {'id': 1, 'name': '唾液'}
-      ],
-      reportTypeOtherRemark: '',
-      consultancyOtherRemark: ''
+      guideList: [],
+      guides: [],
+      cateLogs: [],
+      loading: false
     }
   },
   props: {},
   methods: {
     _initData () {
       let instance = this.axios.create({
-        baseURL: process.env.DISEASE_API,
+        baseURL: process.env.DISEASE_PC_API,
         headers: {
           'Content-Type': 'application/json'
         }
@@ -136,29 +191,33 @@ export default {
       if (this.$route.params.id !== undefined) {
         instance({
           method: 'get',
-          url: 'disease/' + this.$route.params.id,
+          url: 'diseaseData/getDisease',
+          params: {
+            id: this.$route.params.id
+          },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json'
           }
         }).then(function (res) {
-          _this.disease = res.data
-          _this.disease.source = {}
-          console.log(_this.disease)
+          _this.disease = res.data.disease
+          if (_this.disease.deptId === undefined) {
+            _this.disease.deptId = []
+          } else {
+            _this.disease.deptId = _this.disease.deptId.map(Number)
+          }
+          _this.guides = []
+          if (_this.disease.guides !== undefined) {
+            _this.guides = _this.disease.guides
+          }
+          if (_this.disease.catalog === undefined) {
+            _this.disease.catalog = []
+          }
         })
       }
-      this.axios.get('solution', {
-        params: {
-          userId: window.localStorage.userId
-        }
-      }).then(res => {
-        this.solutionList = res.data
-      }).catch(err => {
-        console.log(err)
-      })
       instance({
         method: 'get',
-        url: 'gene/page',
+        url: 'guide/getGuides',
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
@@ -166,13 +225,21 @@ export default {
         params: {
           pageNum: 1,
           pageSize: 10,
-          content: ''
+          param: ''
         }
       }).then(function (res) {
-        _this.geneList = res.data
+        _this.guideList = res.data
+      })
+
+      this.axios.get('hospital-dept').then(res => {
+        this.deptList = res.data
+      }).catch(err => {
+        console.log(err)
       })
     },
     edit () {
+      this.disease.deptId = this.disease.deptId.map(String)
+      this.disease.guides = this.guides
       if (this.$route.params.id === undefined) {
         let instance = this.axios.create({
           headers: {
@@ -183,11 +250,9 @@ export default {
         let _this = this
         instance({
           method: 'post',
-          url: 'disease',
+          url: 'disease/eidtDisease',
           data: {
             disease: this.disease,
-            deptId: this.proDepts,
-            sampleMetaId: this.sampleMeta,
             userId: window.localStorage.userId
           },
           headers: {
@@ -195,18 +260,11 @@ export default {
             'Content-Type': 'application/json'
           }
         }).then(function (res) {
-          if (res.data.state === 'exist alreay!') {
-            _this.$message({
-              message: '产品名称重复',
-              type: 'error'
-            })
-          } else {
-            _this.$message({
-              message: '新增成功',
-              type: 'success'
-            })
-            _this.$router.push('/disease')
-          }
+          _this.$message({
+            message: '新增成功',
+            type: 'success'
+          })
+          _this.$router.push('/disease')
         }).catch(function () {
           _this.$message({
             message: '新增失败',
@@ -223,11 +281,8 @@ export default {
         let _this = this
         instance({
           method: 'put',
-          url: 'disease/' + this.$route.params.id,
-          data: {
-            disease: this.disease,
-            userId: window.localStorage.userId
-          },
+          url: 'disease/eidtDisease',
+          data: this.disease,
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json'
@@ -248,40 +303,47 @@ export default {
     },
     cancel () {
       this.$router.push('/disease')
+    },
+    remoteMethod (query) {
+      this.loading = true
+      setTimeout(() => {
+        this.loading = false
+        let instance = this.axios.create({
+          baseURL: process.env.DISEASE_PC_API,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        let _this = this
+        instance({
+          method: 'get',
+          url: 'guide/getGuides',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json'
+          },
+          params: {
+            pageNum: 1,
+            pageSize: 10,
+            param: query
+          }
+        }).then(function (res) {
+          _this.guideList = res.data
+          console.log(_this.guideList)
+        })
+      }, 200)
+    },
+    toAddCatelog () {
+      this.disease.catalog.push({'name': '', 'content': ''})
+    },
+    deleteCatelog (index) {
+      this.disease.catalog.splice(index, 1)
     }
+  },
+  mounted () {
   },
   filters: {},
   computed: {
-    // expandParams: function () {
-    //   let result = []
-    //   let _this = this
-    //   if (this.reportType !== null) {
-    //     _this.reportType.forEach(function (item) {
-    //       let expandParams = {
-    //         'name': item,
-    //         'type': 0
-    //       }
-    //       if (_this.reportTypeOtherRemark !== '' && item === 3) {
-    //         expandParams.remark = _this.reportTypeOtherRemark
-    //       }
-    //       result.push(expandParams)
-    //     })
-    //   }
-    //   if (this.consultancy !== null) {
-    //     this.consultancy.forEach(function (item) {
-    //       let expandParams = {
-    //         'name': item,
-    //         'type': 1
-    //       }
-    //       if (_this.consultancyOtherRemark !== '' && item === 4) {
-    //         expandParams.remark = _this.consultancyOtherRemark
-    //       }
-    //       result.push(expandParams)
-    //     })
-    //   }
-    //   console.log(result)
-    //   return result
-    // }
   },
   created () {
     let loading = this.$loading({
@@ -293,7 +355,6 @@ export default {
     this._initData()
     loading.close()
   },
-  mounted () {},
   destroyed () {}
 }
 </script>

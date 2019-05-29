@@ -11,7 +11,7 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="10">
+      <el-col :span="10" v-if="role === 'manager' || role === 'jk-service'">
         <div class="user-container">
           <el-form ref="reportForm" :model="report" label-width="100px" size="mini" class="edit-form">
             <el-form-item label="样本编号">

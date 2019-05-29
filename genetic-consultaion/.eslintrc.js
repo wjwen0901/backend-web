@@ -1,5 +1,5 @@
 // https://eslint.org/docs/user-guide/configuring
-
+/* global getzhiSDKInstance */
 module.exports ={
   root: true,
   parserOptions: {

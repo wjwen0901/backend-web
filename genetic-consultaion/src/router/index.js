@@ -227,6 +227,56 @@ export default new Router({
           path: '/test/edit/:id',
           name: 'TestEdit',
           component: resolve => require(['@/views/home/disease/test/edit'], resolve)
+        },
+        {
+          path: '/guide',
+          name: 'Guide',
+          component: resolve => require(['@/views/home/disease/guide/list'], resolve)
+        },
+        {
+          path: '/guide/add',
+          name: 'GuideAdd',
+          component: resolve => require(['@/views/home/disease/guide/edit'], resolve)
+        },
+        {
+          path: '/guide/edit/:id',
+          name: 'GuideEdit',
+          component: resolve => require(['@/views/home/disease/guide/edit'], resolve)
+        },
+        {
+          path: '/product-cl',
+          name: 'ProductCl',
+          component: resolve => require(['@/views/home/disease/product/list'], resolve)
+        },
+        {
+          path: '/product-cl/add',
+          name: 'ProductClAdd',
+          component: resolve => require(['@/views/home/disease/product/edit'], resolve)
+        },
+        {
+          path: '/product-cl/edit/:id',
+          name: 'ProductClEdit',
+          component: resolve => require(['@/views/home/disease/product/edit'], resolve)
+        },
+        {
+          path: '/rank/list',
+          name: 'RankList',
+          component: resolve => require(['@/views/home/rank/rank_list'], resolve)
+        },
+        {
+          path: '/rank/edit/:id',
+          name: 'RankEdit',
+          component: resolve => require(['@/views/home/rank/company_rank'], resolve)
+        },
+        {
+          path: '/rank/add',
+          name: 'RankEdit',
+          component: resolve => require(['@/views/home/rank/company_rank'], resolve)
+        },
+        {
+          path: '/standard/list',
+          name: 'StandardList',
+          component: resolve => require(['@/views/home/rank/standard_list'], resolve)
         }
       ]
     },

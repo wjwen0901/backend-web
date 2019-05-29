@@ -19,19 +19,19 @@
         </div>
       </div>
       <p class="order-no" v-if="orderNo !== undefined">订单编号：{{orderNo}}</p>
-      <div class="mdh-input-row" @click="toSelectHospital">
+      <div class="mdh-input-row" @click="toSelectHospital" v-if="companyId != 9">
         <label>送检医院</label>
         <input type="text" v-model="hospitalName" readonly placeholder="请选择医院">
         <a class="next-step"><i class="el-icon-arrow-right"></i></a>
         <span class="error-tip" v-if="hospitalError">医院不可为空</span>
       </div>
-      <div class="mdh-input-row" @click="toSelectDept">
+      <div class="mdh-input-row" @click="toSelectDept" v-if="companyId != 9">
         <label>送检科室</label>
         <input type="text" v-model="deptName" readonly placeholder="请选择科室">
         <a class="next-step"><i class="el-icon-arrow-right"></i></a>
         <span class="error-tip" v-if="deptError">科室不可为空</span>
       </div>
-      <div class="mdh-input-row">
+      <div class="mdh-input-row" v-if="companyId != 9">
         <label>送检医生</label>
         <input type="text" v-model="doctor" placeholder="请输入医生姓名">
         <span class="error-tip" v-if="doctorError">医生姓名不可为空</span>
@@ -107,7 +107,10 @@ export default {
       uploader: {},
 
       hasUserInfo: false,
-      orderNo: this.$route.query.orderNo
+      orderNo: this.$route.query.orderNo,
+      loading: null,
+
+      companyId: parseInt(this.$route.query.companyId)
     }
   },
   props: {
@@ -137,31 +140,40 @@ export default {
       this.$router.push({path: '/wechat/dept', query: {openid: this.$route.query.openid, orderId: this.$route.query.orderId, orderNo: this.orderNo, companyId: this.$route.query.companyId}})
     },
     toUpload () {
-      if (this.name.trim() === '') {
-        this.nameError = true
-        return false
+      if (this.companyId === 9) {
+        this.hospitalId = 18983
+        this.hospitalName = '禄和健康'
+        this.deptId = 2
+        this.deptName = '全科医疗科'
+        this.doctor = '禄和健康'
+        this.setUploadParam(this.uploader, '', false)
+      } else {
+        if (this.name.trim() === '') {
+          this.nameError = true
+          return false
+        }
+        if (this.cellphone.trim() === '') {
+          this.cellphoneError = true
+          return false
+        }
+        if (this.hospitalId.trim() === '') {
+          this.hospitalError = true
+          return false
+        }
+        if (this.deptId.trim() === '') {
+          this.deptError = true
+          return false
+        }
+        if (this.doctor.trim() === '') {
+          this.doctorError = true
+          return false
+        }
+        if (this.fileNum === 0) {
+          this.fileError = true
+          return false
+        }
+        this.setUploadParam(this.uploader, '', false)
       }
-      if (this.cellphone.trim() === '') {
-        this.cellphoneError = true
-        return false
-      }
-      if (this.hospitalId.trim() === '') {
-        this.hospitalError = true
-        return false
-      }
-      if (this.deptId.trim() === '') {
-        this.deptError = true
-        return false
-      }
-      if (this.doctor.trim() === '') {
-        this.doctorError = true
-        return false
-      }
-      if (this.fileNum === 0) {
-        this.fileError = true
-        return false
-      }
-      this.setUploadParam(this.uploader, '', false)
     },
     handleUploadError (err) {
       if (err.status === 403) {
@@ -302,6 +314,12 @@ export default {
             that.fileNum = up.files.length
           },
           BeforeUpload: (up, file) => {
+            that.loading = that.$loading({
+              lock: true,
+              text: 'Loading',
+              spinner: 'el-icon-loading',
+              background: 'rgba(0, 0, 0, 0.7)'
+            })
             that.setUploadParam(up, file.name, true)
           },
           UploadProgress: (up, file) => {
@@ -310,39 +328,46 @@ export default {
             const d = document.getElementById(file.id)
             if (info.status === 200) {
               d.setAttribute('class', 'el-upload-list__item is-success')
+              if (that.companyId === 9) {
+                that.hospitalId = 18983
+                that.hospitalName = '禄和健康'
+                that.deptId = 2
+                that.deptName = '全科医疗科'
+                that.doctor = '禄和健康'
+              }
               const param = {
-                name: this.name,
-                cellphone: this.cellphone,
-                doctor: this.doctor,
+                name: that.name,
+                cellphone: that.cellphone,
+                doctor: that.doctor,
                 fileName: file.name,
                 size: file.size,
                 mimeType: file.type,
                 uniqueKey: up.settings.multipart_params.uniqueKey,
                 filePath: up.settings.multipart_params.key,
                 objectKey: up.settings.multipart_params.key,
-                hospitalId: this.hospitalId,
-                deptId: this.deptId,
-                companyId: this.$route.query.companyId
+                hospitalId: that.hospitalId,
+                deptId: that.deptId,
+                companyId: that.$route.query.companyId
               }
-              if (this.userId > 0) {
-                param.userId = this.userId
+              if (that.userId > 0) {
+                param.userId = that.userId
               }
-              if (this.$route.query.openid !== undefined) {
-                param.openId = this.$route.query.openid
+              if (that.$route.query.openid !== undefined) {
+                param.openId = that.$route.query.openid
               }
-              if (this.$route.query.orderId !== undefined) {
-                param.orderId = this.$route.query.orderId
+              if (that.$route.query.orderId !== undefined) {
+                param.orderId = that.$route.query.orderId
               }
-              window.localStorage.doctor = this.doctor
-              this.axios.post('informed/upload', param).then(res => {
-                this.$message({
+              window.localStorage.doctor = that.doctor
+              that.axios.post('informed/upload', param).then(res => {
+                that.$notify({
                   message: '上传成功',
                   type: 'success',
                   center: true,
                   customClass: 'my-message'
                 })
               }).catch(err => {
-                this.$message({
+                that.$notify({
                   message: err.data.message,
                   type: 'error',
                   customClass: 'my-message'
@@ -373,6 +398,7 @@ export default {
             //   console.log(err)
             // })
             up.refresh()
+            that.loading.close()
           },
           Error: (up, err) => {
             console.log('上传失败：', err, that.onError, up)
@@ -447,11 +473,19 @@ export default {
           console.log(err)
         })
       }
-      this.hospitalId = window.localStorage.hospital
-      this.hospitalName = window.localStorage.hospitalName
-      this.deptId = window.localStorage.dept
-      this.deptName = window.localStorage.deptName
-      this.doctor = window.localStorage.doctor ? '' : window.localStorage.doctor
+      if (this.companyId === 9) {
+        this.hospitalId = 18983
+        this.hospitalName = '禄和健康'
+        this.deptId = 2
+        this.deptName = '全科医疗科'
+        this.doctor = '禄和健康'
+      } else {
+        this.hospitalId = window.localStorage.hospital
+        this.hospitalName = window.localStorage.hospitalName
+        this.deptId = window.localStorage.dept
+        this.deptName = window.localStorage.deptName
+        this.doctor = window.localStorage.doctor ? '' : window.localStorage.doctor
+      }
     }
   },
   watch: {
@@ -487,14 +521,14 @@ export default {
     }
   },
   created () {
-    let loading = this.$loading({
+    this.loading = this.$loading({
       lock: true,
       text: 'Loading',
       spinner: 'el-icon-loading',
       background: 'rgba(0, 0, 0, 0.7)'
     })
     this.initData()
-    loading.close()
+    this.loading.close()
   },
   filters: {
     formatSize (fileSize) {
@@ -507,6 +541,7 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
   .my-message {
     width: 80%;
+    height: 100px;
     min-width: auto;
     background-color: rgba(0, 0, 0, .6);
     border-color: rgba(0, 0, 0, .6);

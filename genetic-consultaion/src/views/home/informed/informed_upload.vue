@@ -223,7 +223,7 @@ export default {
     handleUploadError (err) {
       console.log(err)
       if (err.status === 403) {
-        this.$message({
+        this.$notify({
           message: '您的号码未注册，请微信联系我们注册',
           type: 'warning'
         })
@@ -403,9 +403,10 @@ export default {
               }
               window.localStorage.doctor = this.informedConsent.doctor
               this.axios.post('informed/upload', param).then(res => {
-                this.$message({
+                this.$notify({
                   message: '上传成功',
-                  type: 'success'
+                  type: 'success',
+                  customClass: 'my-message'
                 })
                 if (isNaN(parseInt(this.informedConsent.hospital))) {
                   this.axios.get('hospital/name', {
@@ -489,6 +490,13 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+  .my-message {
+    width: 80%;
+    height: 200px;
+    min-width: auto;
+    background-color: rgba(0, 0, 0, .6);
+    border-color: rgba(0, 0, 0, .6);
+  }
   .el-container {
     background: #fff;
   }

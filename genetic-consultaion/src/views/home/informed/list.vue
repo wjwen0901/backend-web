@@ -75,7 +75,8 @@ export default {
       informedList: [],
       pageNum: 1,
       pageSize: 20,
-      totalPage: 0
+      totalPage: 0,
+      condition: ''
     }
   },
   methods: {
@@ -87,7 +88,8 @@ export default {
         params: {
           userId: window.localStorage.userId,
           pageNum: this.pageNum,
-          pageSize: this.pageSize
+          pageSize: this.pageSize,
+          searchCondition: this.condition
         }
       }).then(res => {
         this.informedList = res.data.list
@@ -142,10 +144,14 @@ export default {
     margin: 20px 0px;
     padding: 20px;
     background: #ffffff;
+    .search-box {
+      width: 400px;
+      float: right;
+      margin-bottom: 10px;
+    }
   }
   .user-container .header {
     margin-bottom: 20px;
     font-size: 18px;
   }
-
 </style>

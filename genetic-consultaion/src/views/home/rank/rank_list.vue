@@ -1,55 +1,49 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>疾病管理</el-breadcrumb-item>
+      <el-breadcrumb-item>实验室排名列表</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="product-container">
       <div>
         <el-button class="add-solution" size="small" type="primary" @click="toAdd">新增</el-button>
         <div class="search-box">
-          <el-input placeholder="请输入疾病名称/英文名/OMIM" v-model="condition" class="input-with-select">
+          <el-input placeholder="请输入产品名称/适用科室" v-model="condition" class="input-with-select">
             <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
           </el-input>
         </div>
       </div>
       <el-table
-        :data="diseaseList"
+        :data="rankList"
         size="mini"
         border
         style="width: 100%">
         <el-table-column
-          prop="name"
-          label="中文名称">
+          prop="companyId"
+          label="实验室编号"
+          width="100">
         </el-table-column>
         <el-table-column
-          prop="nameen"
-          label="英文名称">
+          prop="companyName"
+          label="实验室名称">
         </el-table-column>
         <el-table-column
-          prop="gene"
-          label="相关基因">
+          prop="totalScore"
+          label="总评分">
         </el-table-column>
         <el-table-column
-          prop="omim"
-          label="OMIM"
-          width="80">
-        </el-table-column>
-        <el-table-column
-          prop="create_time"
+          prop="createTime"
           label="创建日期"
           width="180">
           <template slot-scope="scope">
-            {{scope.row.create_time | formatDate}}
+            {{scope.row.createTime | formatDate}}
           </template>
         </el-table-column>
         <el-table-column
           fixed="right"
           label="操作"
-          width="200">
+          width="100">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="toDetail(scope.row.id)">查看详情</el-button>
-            <el-button type="text" size="small" @click="toDetail(scope.row.id)">编辑</el-button>
-            <el-button type="text" size="small" @click="toDelete(scope.row.id)">删除</el-button>
+            <el-button type="text" size="small" @click="toDetail(scope.row.companyId, scope.row.companyName)">编辑</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -68,12 +62,12 @@
 <script>
 export default {
   components: {},
-  name: 'DiseaseList',
+  name: 'RankList',
   data () {
     return {
-      diseaseList: [],
-      pageNum: window.sessionStorage.diseasePageNum === undefined ? 1 : window.sessionStorage.diseasePageNum,
-      pageSize: window.sessionStorage.diseasePageSize === undefined ? 20 : window.sessionStorage.diseasePageSize,
+      rankList: [],
+      pageNum: 1,
+      pageSize: 20,
       totalPage: 0,
       paramSelect: '',
       condition: null
@@ -84,59 +78,45 @@ export default {
       this.getData()
     },
     getData () {
-      console.log(process.env.DISEASE_API)
-      console.log(process.env)
-      let instance = this.axios.create({
-        baseURL: process.env.DISEASE_PC_API,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      let _this = this
-      instance({
-        method: 'get',
-        url: 'diseaseData/getDiseasesByPage',
+      this.axios.get('assess/total', {
         params: {
-          pageNum: _this.pageNum,
-          pageSize: _this.pageSize,
-          userId: window.localStorage.userId,
-          param: _this.condition
-        },
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json'
+          pageNum: this.pageNum,
+          pageSize: this.pageSize,
+          userId: window.localStorage.userId
         }
-      }).then(function (res) {
-        _this.diseaseList = res.data
-        _this.totalPage = res.data.length
+      }).then(res => {
+        this.rankList = res.data
+        this.pageSize = res.data.pageSize
+        this.pageNum = res.data.pageNum
+        this.totalPage = res.data.length
+      }).catch(err => {
+        console.log(err)
       })
     },
     handleSizeChange (val) {
       this.pageSize = val
-      window.sessionStorage.diseasePageSize = val
+      window.sessionStorage.productPageSize = val
       this.getData()
     },
     handleCurrentChange (val) {
       this.pageNum = val
-      window.sessionStorage.diseasePageNum = val
+      window.sessionStorage.productPageNum = val
       this.getData()
     },
-    toEdit (id) {
-    },
-    toDetail (id) {
+    toDetail (id, name) {
       this.$router.push({
-        path: '/disease/edit/' + id
+        path: '/rank/edit/' + id + '?name=' + name
       })
     },
     toAdd () {
       this.$router.push({
-        name: 'ProductAdd'
+        path: '/rank/add'
       })
     },
     toDelete (id) {
       this.$confirm('确认删除？')
         .then(_ => {
-          this.axios.delete('disease/' + id).then(res => {
+          this.axios.delete('solution/' + id).then(res => {
             this.getData()
             this.$message({
               message: '删除成功',

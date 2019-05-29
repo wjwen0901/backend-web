@@ -32,6 +32,7 @@
             </div>
             <div class="right-btn">
               <el-button type="primary" size="mini" plain @click="toReportDetail(scope.row.id)">查看报告</el-button>
+              <el-button type="primary" size="mini" plain @click="toPrintDetail(scope.row.id)">打印报告</el-button>
             </div>
           </template>
         </el-table-column>
@@ -90,6 +91,22 @@ export default {
     handleSelect (key) {
       this.activeIndex = key
       this.getList()
+    },
+    toPrintDetail () {
+      let loading = this.$loading({
+        lock: true,
+        text: '正在链接打印机',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      setTimeout(() => {
+        this.$notify({
+          message: '您附近未发现可用打印机',
+          type: 'error',
+          customClass: 'my-message'
+        })
+        loading.close()
+      }, 300)
     }
   },
   watch: {},

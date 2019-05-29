@@ -101,8 +101,22 @@
             <template slot="title"><i class="el-icon-setting"></i><span slot="title">系统管理</span></template>
             <el-menu-item-group>
               <el-menu-item index="/user" v-if="sec.includes('system:user-sec')">账号管理</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+          <el-submenu index="disease" v-if="sec.includes('system')">
+            <template slot="title"><i class="el-icon-setting"></i><span slot="title">疾病数据库</span></template>
+            <el-menu-item-group>
+              <el-menu-item index="/guide" v-if="role === 'manager'">指南管理</el-menu-item>
               <el-menu-item index="/disease" v-if="role === 'manager'">疾病数据维护</el-menu-item>
               <el-menu-item index="/gene" v-if="role === 'manager'">基因数据维护</el-menu-item>
+              <el-menu-item index="/product-cl" v-if="role === 'manager'">产品数据维护</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+          <el-submenu index="rank" v-if="sec.includes('system')">
+            <template slot="title"><i class="el-icon-setting"></i><span slot="title">实验室排名</span></template>
+            <el-menu-item-group>
+              <el-menu-item index="/rank/list">总排名</el-menu-item>
+              <el-menu-item index="/standard/list" v-if="role === 'manager'">打分项维护</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>

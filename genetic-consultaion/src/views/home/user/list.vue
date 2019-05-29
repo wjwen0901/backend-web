@@ -55,6 +55,7 @@
         <template slot-scope="scope">
           <el-button @click="selectItem(scope.row.id, scope.row.name)" type="text" size="small" v-if="scope.row.role === 1 || scope.row.role === 8">产品二维码</el-button>
           <el-button @click="selectPayItem(scope.row.id, scope.row.name)" type="text" size="small" v-if="scope.row.role === 1 || scope.row.role === 8">收款二维码</el-button>
+          <el-button @click="selectOnlineInformed(scope.row.id, scope.row.name)" type="text" size="small" v-if="scope.row.role === 1 || scope.row.role === 8">在线知情码</el-button>
           <el-button @click="toDetail(scope.row.id)" type="text" size="small">编辑</el-button>
           <el-button @click="deleteUser(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
@@ -258,6 +259,38 @@
         </el-form>
       </div>
     </el-dialog>
+    <el-dialog title="生成个人下单二维码" :visible.sync="dialogOnlineInformedFormVisible">
+      <div>
+        <el-form ref="form" label-width="150px">
+          <el-form-item label="选择产品">
+            <el-select v-model="informedQrCode.selSolution" value-key="id" filterable placeholder="请选择">
+              <el-option
+                v-for="item in solutionList"
+                :key="item.id"
+                :label="item.name"
+                :value="item">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="样本类型">
+            <el-input v-model="informedQrCode.sampleType" placeholder="口腔拭子"></el-input>
+          </el-form-item>
+          <el-form-item label="检测费用">
+            <el-input v-model="informedQrCode.price" placeholder="688"></el-input>
+          </el-form-item>
+          <el-form-item label="采样盒编号">
+            <el-input v-model="informedQrCode.sampCode" placeholder="180314276"></el-input>
+          </el-form-item>
+          <el-form-item label="有效期">
+            <el-input v-model="informedQrCode.time" placeholder=""></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="downloadOnlineInformedCode()">确定</el-button>
+            <el-button @click="dialogOnlineInformedFormVisible = false">取消</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -276,6 +309,7 @@ export default {
       dialogEditFormVisible: false,
       dialogCodeFormVisible: false,
       dialogPayCodeFormVisible: false,
+      dialogOnlineInformedFormVisible: false,
       resourceList: [],
       resourceSelet: [],
       solutionList: [],
@@ -290,6 +324,11 @@ export default {
       currentUserRole: window.localStorage.role,
       condition: null,
       qrCode: {},
+      informedQrCode: {
+        sampleType: '口腔拭子',
+        price: 688,
+        time: '2020.03'
+      },
       options2: [{
         text: 'name1',
         value: 'value1'
@@ -582,6 +621,30 @@ export default {
       })
       this.dialogPayCodeFormVisible = true
     },
+    selectOnlineInformed (id, name) {
+      this.userId = id
+      this.name = name
+      this.axios.get('solution', {
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
+        this.solutionList = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+      this.axios.get('hospital').then(res => {
+        this.hospitals = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+      this.axios.get('hospital-dept').then(res => {
+        this.depts = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+      this.dialogOnlineInformedFormVisible = true
+    },
     querySearch (queryString, cb) {
       console.log(queryString)
       this.axios.get('hospital/page', {
@@ -634,7 +697,7 @@ export default {
           doctor: this.qrCode.doctor
         }
       }).then(res => {
-        window.open(this.axios.defaults.baseURL + '/barcode/down?filename=' + res.data + '&Authorization=' + window.localStorage.token)
+        window.open(this.axios.defaults.baseURL + '/barcode/down?isPatientCode=false&filename=' + res.data + '&Authorization=' + window.localStorage.token)
       }).catch(err => {
         console.log(err)
       })
@@ -670,7 +733,35 @@ export default {
           'Content-Type': 'application/json'
         }
       }).then(function (res) {
-        window.open(_this.axios.defaults.baseURL + '/barcode/down?filename=' + res.data + '&Authorization=' + window.localStorage.token)
+        window.open(_this.axios.defaults.baseURL + '/barcode/down?isPatientCode=false&filename=' + res.data + '&Authorization=' + window.localStorage.token)
+        _this.dialogPayCodeFormVisible = false
+      })
+    },
+    downloadOnlineInformedCode () {
+      let instance = this.axios.create({
+        headers: {
+          'Authorization': window.localStorage.token,
+          'Content-Type': 'application/json'
+        }
+      })
+      let _this = this
+      instance({
+        method: 'post',
+        url: 'barcode/createPatient',
+        params: {
+          solutionId: this.informedQrCode.selSolution.id,
+          sampleType: this.informedQrCode.sampleType,
+          sampCode: this.informedQrCode.sampCode,
+          solutionName: this.informedQrCode.selSolution.name,
+          validityDate: this.informedQrCode.time,
+          unitPrice: this.informedQrCode.price
+        },
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Content-Type': 'application/json'
+        }
+      }).then(function (res) {
+        window.open(_this.axios.defaults.baseURL + '/barcode/down?isPatientCode=true&filename=' + res.data + '&Authorization=' + window.localStorage.token)
         _this.dialogPayCodeFormVisible = false
       })
     }

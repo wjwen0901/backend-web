@@ -3,33 +3,30 @@
     <el-row>
       <el-col :span="24">
         <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item :to="{ path: '/guide' }">指南管理</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: '/product-cli' }">产品分类管理</el-breadcrumb-item>
           <el-breadcrumb-item>{{menuInfo}}</el-breadcrumb-item>
         </el-breadcrumb>
       </el-col>
     </el-row>
     <el-row>
       <el-col :span="24">
-        <div class="guide-container">
-          <el-form ref="solutionForm" :model="guide" label-width="80px" size="mini" class="edit-form clearfix">
-            <div class="form-left">
-              <el-form-item label="中文标题">
-                <el-input v-model="guide.name"></el-input>
+        <div class="product-container">
+          <el-form ref="solutionForm" :model="product" label-width="80px" size="mini" class="edit-form clearfix">
+            <div class="form-line">
+              <el-form-item label="中文名称">
+                <el-input v-model="product.name"></el-input>
               </el-form-item>
-              <el-form-item label="英文标题">
-                <el-input v-model="guide.nameen"></el-input>
+              <el-form-item label="英文名称">
+                <el-input v-model="product.nameEn"></el-input>
               </el-form-item>
-              <el-form-item label="制定者">
-                <el-input v-model="guide.alias"></el-input>
+              <el-form-item label="产品用途">
+                <el-input type="textarea" v-model="product.purpose"></el-input>
               </el-form-item>
-              <el-form-item label="OMIM">
-                <el-input v-model="guide.omim"></el-input>
+              <el-form-item label="产品简介">
+                <el-input type="textarea" v-model="product.brief"></el-input>
               </el-form-item>
-              <el-form-item label="疾病类型">
-                <el-input v-model="guide.distype"></el-input>
-              </el-form-item>
-              <el-form-item label="检测产品">
-                <el-select class="width-100-p" v-model="guide.solutionIds" value-key="id" filterable multiple placeholder="请选择">
+              <el-form-item label="厂商产品">
+                <el-select class="width-100-p"  v-model="product.geneDetails" multiple filterable placeholder="请选择">
                   <el-option
                     v-for="item in solutionList"
                     :key="item.id"
@@ -37,55 +34,6 @@
                     :value="item.id">
                   </el-option>
                 </el-select>
-              </el-form-item>
-            </div>
-            <div class="form-right">
-              <el-form-item label="遗传方式">
-                <el-input v-model="guide.mode"></el-input>
-              </el-form-item>
-              <el-form-item label="突变类型">
-                <el-input v-model="guide.muttype"></el-input>
-              </el-form-item>
-              <el-form-item label="发病年龄">
-                <el-input v-model="guide.age"></el-input>
-              </el-form-item>
-              <el-form-item label="发病概率">
-                <el-input v-model="guide.morbidity"></el-input>
-              </el-form-item>
-              <el-form-item label="致病基因">
-                <el-select class="width-100-p"  v-model="guide.geneDetails" multiple filterable placeholder="请选择">
-                  <el-option
-                    v-for="item in geneList"
-                    :key="item.id"
-                    :label="item.gene"
-                    :value="item.id">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="靶向药物">
-                <el-select class="width-100-p" v-model="guide.drugIds" multiple filterable placeholder="请选择">
-                  <el-option
-                    v-for="item in deptList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </div>
-            <div class="form-line">
-              <el-form-item label="疾病介绍">
-                <el-input type="textarea" v-model="guide.content"></el-input>
-              </el-form-item>
-              <el-form-item label="临床指南">
-              </el-form-item>
-              <el-form-item label="数据来源">
-                <el-input placeholder="请输入网站名称" v-model="guide.source.sourceName" class="url-name"></el-input>
-                <el-input placeholder="请输入访问链接" v-model="guide.source.sourceUrl" class="url"></el-input>
-              </el-form-item>
-              <el-form-item class="btns">
-                <el-button @click="cancel">取消</el-button>
-                <el-button type="primary" @click="edit">保存</el-button>
               </el-form-item>
             </div>
           </el-form>
@@ -102,12 +50,7 @@ export default {
       data: [],
       addRowData: ['add'],
       menuInfo: this.$route.params.id === undefined ? '新增' : '编辑',
-      guide: {
-        source: {
-          sourceName: '',
-          sourceUrl: ''
-        }
-      },
+      product: {},
       sampleMeta: [],
       proDepts: [],
       reportType: [],
@@ -126,26 +69,11 @@ export default {
   props: {},
   methods: {
     _initData () {
-      let instance = this.axios.create({
-        baseURL: process.env.DISEASE_PC_API,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      let _this = this
       if (this.$route.params.id !== undefined) {
-        instance({
-          method: 'get',
-          url: 'guide/findGuideDetail',
-          params: {id: this.$route.params.id},
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Content-Type': 'application/json'
-          }
-        }).then(function (res) {
-          _this.guide = res.data.guide
-          _this.guide.source = {}
-          console.log(_this.guide)
+        this.axios.get('product/' + this.$route.params.id).then(res => {
+          this.product = res.data.product
+        }).catch(err => {
+          console.log(err)
         })
       }
       this.axios.get('solution', {
@@ -169,9 +97,9 @@ export default {
         let _this = this
         instance({
           method: 'post',
-          url: 'guide',
+          url: 'product',
           data: {
-            guide: this.guide,
+            product: this.product,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
             userId: window.localStorage.userId
@@ -191,7 +119,7 @@ export default {
               message: '新增成功',
               type: 'success'
             })
-            _this.$router.push('/guide')
+            _this.$router.push('/product')
           }
         }).catch(function () {
           _this.$message({
@@ -209,9 +137,9 @@ export default {
         let _this = this
         instance({
           method: 'put',
-          url: 'guide/' + this.$route.params.id,
+          url: 'product/' + this.$route.params.id,
           data: {
-            guide: this.guide,
+            product: this.product,
             userId: window.localStorage.userId
           },
           headers: {
@@ -223,7 +151,7 @@ export default {
             message: '修改成功',
             type: 'success'
           })
-          _this.$router.push('/guide')
+          _this.$router.push('/product')
         }).catch(function () {
           _this.$message({
             message: '修改失败',
@@ -233,7 +161,7 @@ export default {
       }
     },
     cancel () {
-      this.$router.push('/guide')
+      this.$router.push('/product')
     }
   },
   filters: {},
@@ -287,7 +215,7 @@ export default {
   .float-l {
     float: left;
   }
-  .guide-container {
+  .product-container {
     margin: 20px 0px;
     padding: 20px;
     background: #ffffff;
@@ -324,7 +252,7 @@ export default {
       }
     }
   }
-  .guide-container .header {
+  .product-container .header {
     margin-bottom: 20px;
     font-size: 18px;
   }

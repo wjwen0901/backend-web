@@ -5,6 +5,14 @@
       <el-breadcrumb-item>报告列表</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="user-container">
+      <div>
+        <!--<el-button class="add-solution" size="small" type="primary" @click="toAdd">新增</el-button>-->
+        <div class="search-box">
+          <el-input placeholder="请输入条码编号/受检者姓名/手机号" v-model="condition" class="input-with-select">
+            <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
+          </el-input>
+        </div>
+      </div>
       <el-table
         :data="reportList"
         size="mini"
@@ -46,7 +54,7 @@
           width="200">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="toDetail(scope.row.id)">查看文件</el-button>
-            <el-button type="text" size="small" @click="toDetail(scope.row.id)">编辑</el-button>
+            <!--<el-button type="text" size="small" @click="toDetail(scope.row.id)">编辑</el-button>-->
             <!--<el-button type="text" size="small" @click="toDetail(scope.row.id)">删除</el-button>-->
           </template>
         </el-table-column>
@@ -72,7 +80,8 @@ export default {
       reportList: [],
       pageNum: 1,
       pageSize: 20,
-      totalPage: 0
+      totalPage: 0,
+      condition: ''
     }
   },
   methods: {
@@ -84,7 +93,8 @@ export default {
         params: {
           userId: window.localStorage.userId,
           pageNum: this.pageNum,
-          pageSize: this.pageSize
+          pageSize: this.pageSize,
+          searchCondition: this.condition
         }
       }).then(res => {
         this.reportList = res.data.list
@@ -138,6 +148,11 @@ export default {
     margin: 20px 0px;
     padding: 20px;
     background: #ffffff;
+    .search-box {
+      width: 400px;
+      float: right;
+      margin-bottom: 10px;
+    }
   }
   .user-container .header {
     margin-bottom: 20px;

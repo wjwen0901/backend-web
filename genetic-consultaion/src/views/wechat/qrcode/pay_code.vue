@@ -27,10 +27,10 @@ export default {
   },
   methods: {
     initData () {
-      window.location.href = this.$route.query.url
+      window.location = this.$route.query.url
     },
     toPay () {
-      window.location.href = this.$route.query.url
+      window.location = this.$route.query.url
     }
   },
   created () {

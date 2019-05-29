@@ -1,42 +1,37 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>疾病管理</el-breadcrumb-item>
+      <el-breadcrumb-item>指南管理</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="product-container">
       <div>
         <el-button class="add-solution" size="small" type="primary" @click="toAdd">新增</el-button>
         <div class="search-box">
-          <el-input placeholder="请输入疾病名称/英文名/OMIM" v-model="condition" class="input-with-select">
+          <el-input placeholder="请输入指南标题" v-model="condition" class="input-with-select">
             <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
           </el-input>
         </div>
       </div>
       <el-table
-        :data="diseaseList"
+        :data="proList"
         size="mini"
         border
         style="width: 100%">
         <el-table-column
           prop="name"
-          label="中文名称">
+          label="产品名称">
         </el-table-column>
         <el-table-column
-          prop="nameen"
-          label="英文名称">
+          prop="nameEn"
+          label="英文标题">
         </el-table-column>
         <el-table-column
-          prop="gene"
-          label="相关基因">
-        </el-table-column>
-        <el-table-column
-          prop="omim"
-          label="OMIM"
-          width="80">
+          prop="brief"
+          label="简介">
         </el-table-column>
         <el-table-column
           prop="create_time"
-          label="创建日期"
+          label="创建时间"
           width="180">
           <template slot-scope="scope">
             {{scope.row.create_time | formatDate}}
@@ -71,12 +66,12 @@ export default {
   name: 'DiseaseList',
   data () {
     return {
-      diseaseList: [],
-      pageNum: window.sessionStorage.diseasePageNum === undefined ? 1 : window.sessionStorage.diseasePageNum,
-      pageSize: window.sessionStorage.diseasePageSize === undefined ? 20 : window.sessionStorage.diseasePageSize,
+      proList: [],
+      pageNum: 1,
+      pageSize: 20,
       totalPage: 0,
       paramSelect: '',
-      condition: null
+      condition: ''
     }
   },
   methods: {
@@ -95,7 +90,7 @@ export default {
       let _this = this
       instance({
         method: 'get',
-        url: 'diseaseData/getDiseasesByPage',
+        url: 'product/getProductByName',
         params: {
           pageNum: _this.pageNum,
           pageSize: _this.pageSize,
@@ -107,8 +102,8 @@ export default {
           'Content-Type': 'application/json'
         }
       }).then(function (res) {
-        _this.diseaseList = res.data
-        _this.totalPage = res.data.length
+        _this.proList = res.data.products.list
+        _this.totalPage = res.data.products.count
       })
     },
     handleSizeChange (val) {
@@ -125,12 +120,12 @@ export default {
     },
     toDetail (id) {
       this.$router.push({
-        path: '/disease/edit/' + id
+        path: '/product-cl/edit/' + id
       })
     },
     toAdd () {
       this.$router.push({
-        name: 'ProductAdd'
+        name: 'ProductClAdd'
       })
     },
     toDelete (id) {

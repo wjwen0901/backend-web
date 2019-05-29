@@ -28,12 +28,12 @@
         </el-form>
       </div>
     </div>
-    <div class="mdh-default" v-if="CustomizedKey === 'd9edd1f365c990ad260d80015136f25e'">
+    <div class="mdh-default" v-else-if="CustomizedKey === 'd9edd1f365c990ad260d80015136f25e'">
       <div class="header">
 
       </div>
       <div class="content">
-        <h4 class="c-logo">禄和健康</h4>
+        <h4 class="title">禄和健康</h4>
         <p>个人健康报告下载</p>
         <el-main>
           <el-form :rules="rules" :model="patient" ref="patient" label-width="0px" label-position="left">
@@ -70,7 +70,7 @@
         </el-main>
       </div>
       <div class="footer-info">
-        <!--&copy; 2019 MDHcare.cn 版权所有  丨  ICP证：京ICP备17067248号-->
+        &copy; 2019 lh-health.com 版权所有
       </div>
     </div>
     <div class="mdh-default luhe" v-else-if="CustomizedKey === '0415144e2cf30ef54365aa82bdaea535'">
@@ -226,6 +226,7 @@ export default {
     toViewReport () {
       this.$refs.patient.validate((valid) => {
         if (valid) {
+          this.patient.name = this.patient.name.trim()
           if (this.$route.query.k === '11d67f337e411b48e6d8cd0d0ad67a35') {
             this.axios.get('report/list', {
               params: this.patient
@@ -406,6 +407,10 @@ export default {
     padding: 60px 20px 20px 20px;
     text-align: center;
     z-index: 1;
+    .title {
+      margin: 0;
+      font-size: 32px;
+    }
     .c-logo {
       position: absolute;
       width: 100%;

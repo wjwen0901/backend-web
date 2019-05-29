@@ -1,46 +1,46 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>疾病管理</el-breadcrumb-item>
+      <el-breadcrumb-item>指南管理</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="product-container">
       <div>
         <el-button class="add-solution" size="small" type="primary" @click="toAdd">新增</el-button>
         <div class="search-box">
-          <el-input placeholder="请输入疾病名称/英文名/OMIM" v-model="condition" class="input-with-select">
+          <el-input placeholder="请输入指南标题" v-model="condition" class="input-with-select">
             <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
           </el-input>
         </div>
       </div>
       <el-table
-        :data="diseaseList"
+        :data="guideList"
         size="mini"
         border
         style="width: 100%">
         <el-table-column
-          prop="name"
-          label="中文名称">
+          prop="title"
+          label="中文标题">
         </el-table-column>
         <el-table-column
-          prop="nameen"
-          label="英文名称">
+          prop="titleEn"
+          label="英文标题">
         </el-table-column>
         <el-table-column
-          prop="alias"
-          label="其他名称">
-        </el-table-column>
-        <el-table-column
-          prop="omim"
-          label="OMIM"
-          width="80">
-        </el-table-column>
-        <el-table-column
-          prop="create_time"
-          label="创建日期"
-          width="180">
+          prop="framers"
+          label="制定者">
           <template slot-scope="scope">
-            {{scope.row.create_time | formatDate}}
+            <span v-for="(f, index) in scope.row.framers" v-bind:key="'f' + index">{{f}} </span>
           </template>
+        </el-table-column>
+        <el-table-column
+          prop="provenance"
+          label="出处"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="publishDate"
+          label="发布日期"
+          width="88">
         </el-table-column>
         <el-table-column
           fixed="right"
@@ -71,12 +71,12 @@ export default {
   name: 'DiseaseList',
   data () {
     return {
-      diseaseList: [],
+      guideList: [],
       pageNum: window.sessionStorage.diseasePageNum === undefined ? 1 : window.sessionStorage.diseasePageNum,
       pageSize: window.sessionStorage.diseasePageSize === undefined ? 20 : window.sessionStorage.diseasePageSize,
       totalPage: 0,
       paramSelect: '',
-      condition: null
+      condition: ''
     }
   },
   methods: {
@@ -87,7 +87,7 @@ export default {
       console.log(process.env.DISEASE_API)
       console.log(process.env)
       let instance = this.axios.create({
-        baseURL: process.env.DISEASE_API,
+        baseURL: process.env.DISEASE_PC_API,
         headers: {
           'Content-Type': 'application/json'
         }
@@ -95,20 +95,20 @@ export default {
       let _this = this
       instance({
         method: 'get',
-        url: 'disease/page',
+        url: 'guide/getGuides',
         params: {
           pageNum: _this.pageNum,
           pageSize: _this.pageSize,
           userId: window.localStorage.userId,
-          content: _this.condition
+          param: _this.condition
         },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
         }
       }).then(function (res) {
-        _this.diseaseList = res.data.list
-        _this.totalPage = res.data.count
+        _this.guideList = res.data.guides
+        _this.totalPage = res.data.total
       })
     },
     handleSizeChange (val) {
@@ -125,12 +125,12 @@ export default {
     },
     toDetail (id) {
       this.$router.push({
-        path: '/disease/edit/' + id
+        path: '/guide/edit/' + id
       })
     },
     toAdd () {
       this.$router.push({
-        name: 'ProductAdd'
+        name: 'GuideAdd'
       })
     },
     toDelete (id) {

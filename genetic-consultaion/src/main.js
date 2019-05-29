@@ -8,6 +8,9 @@ import App from './App'
 import router from './router'
 import vSelect from 'vue-select2'
 import VCharts from 'v-charts'
+import VueJsonp from 'vue-jsonp'
+
+Vue.use(VueJsonp)
 Vue.use(VCharts)
 
 router.beforeEach((to, from, next) => {
@@ -46,6 +49,33 @@ Vue.filter('formatDate', function (time) {
   }
   return fmt
 })
+
+// 初始化智齿咨询组件实例
+/* global getzhiSDKInstance */
+let zhiManager = (getzhiSDKInstance())
+// 再调用load方法
+zhiManager.on('load', function () {
+  zhiManager.initBtnDOM()
+})
+// zhiManager.set('color','09aeb0'); //API示例，格式为 0-9 a-f 之间的六位有效字符 不用加#
+
+zhiManager.set('color', 'E9AE47') // 格式为 0-9 a-f 之间的六位有效字符 不用加#
+zhiManager.set('title', '联系我') // 建议长度为 8 个字符之内，文案仅对 PC组件有效，移动端没有文案
+// 若传入 1 ，按钮将显示在右下角 默认显示在右下角
+// 若传入 2 ，按钮将显示在左下角
+zhiManager.set('location', 1)// 设置入口方位
+
+zhiManager.set('horizontal', 0) // 设置水平边距，默认水平为 20 像素
+zhiManager.set('vertical', 10) // 设置垂直边距，默认垂直为 40 像素
+// 最小宽度360像素，最大宽度640像素，默认360像素
+// 最小高度430像素，最大高度720像素，默认540像素
+zhiManager.set('size', {
+  'width': 260,
+  'height': 440
+})
+// 设置为true ||不设置 则显示
+// 设置为 false 则不显示
+zhiManager.set('powered', false)
 
 /* eslint-disable no-new */
 new Vue({
