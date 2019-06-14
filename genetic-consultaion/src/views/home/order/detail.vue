@@ -1,7 +1,6 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>元鹊管理</el-breadcrumb-item>
       <el-breadcrumb-item :to="{ path: '/order' }">订单管理</el-breadcrumb-item>
       <el-breadcrumb-item>{{order.tid}}</el-breadcrumb-item>
     </el-breadcrumb>
@@ -35,7 +34,14 @@
             <span class="order-detail-title">支付金额:</span>
             <span>{{order.payment}}¥</span>
           </el-row>
+          <el-row class="order-detail" v-if="order.payTime !== null">
+            <span class="order-detail-title">快递单号:</span>
+            <span>{{order.expressCode}}</span>
+            <el-button type="text" @click="imgPath(order.expressPath)">查看源文件</el-button>
+          </el-row>
         </el-col>
+      </el-row>
+      <el-row :gutter="20">
         <el-col :span="16">
           <el-row class="order-detail">
             <span class="order-detail-title">知情同意:</span>
@@ -45,16 +51,26 @@
               border
               style="width: 100%">
               <el-table-column
+                label="操作"
+                width="180">
+                <template slot-scope="scope">
+                  <div class="img-info">
+                    <el-button type="text" @click="imgPath(scope.row.path)">查看源文件</el-button>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column
                 prop="sampleCode"
                 label="条码编号"
-                width="180">
+                width="180"
+              >
               </el-table-column>
               <el-table-column
                 prop="sampleCode"
                 label="受检者"
                 width="180">
                 <template slot-scope="scope">
-                    {{scope.row.truename}}({{scope.row.cellphone}})
+                  {{scope.row.truename}}<span v-if="scope.row.cellphone != null">({{scope.row.cellphone}})</span>
                 </template>
               </el-table-column>
               <el-table-column
@@ -97,7 +113,16 @@ export default {
     getData () {
       this.axios.get('order/' + this.$route.params.id).then(res => {
         this.order = res.data
+        this.order.expressCode = this.$route.query.expressCode
         this.skuPropertiesName = JSON.parse(this.order.skuPropertiesName)
+        if (this.$route.query.expressId !== undefined) {
+          this.axios.get('express/' + this.$route.query.expressId).then(resExp => {
+            this.order.expressCode = resExp.data.expressOrder.expressCode
+            this.order.expressPath = resExp.data.expressOrder.path
+          }).catch(err => {
+            console.log(err)
+          })
+        }
       }).catch(err => {
         console.log(err)
       })
@@ -107,6 +132,17 @@ export default {
         }
       }).then(res => {
         this.informedList = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    imgPath (path) {
+      this.axios.get('oss/upload/show', {
+        params: {
+          objectKey: path
+        }
+      }).then(res1 => {
+        window.open(res1.data)
       }).catch(err => {
         console.log(err)
       })
@@ -157,5 +193,10 @@ export default {
   }
   .fl-right {
     float: right;
+  }
+  .img-info {
+    img {
+      width: 100%;
+    }
   }
 </style>

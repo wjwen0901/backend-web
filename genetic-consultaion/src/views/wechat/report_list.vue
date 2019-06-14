@@ -32,7 +32,7 @@
             </div>
             <div class="right-btn">
               <el-button type="primary" size="mini" plain @click="toReportDetail(scope.row.id)">查看报告</el-button>
-              <el-button type="primary" size="mini" plain @click="toPrintDetail(scope.row.id)">打印报告</el-button>
+              <el-button type="primary" size="mini" plain @click="toPrintDetail(scope.row.id)" v-if="printId !== undefined">打印报告</el-button>
             </div>
           </template>
         </el-table-column>
@@ -51,7 +51,8 @@ export default {
       totalPage: 0,
       orderNo: this.$route.query.orderNo,
       condition: null,
-      activeIndex: '0'
+      activeIndex: '0',
+      printId: this.$route.query.printId
     }
   },
   methods: {
@@ -92,21 +93,50 @@ export default {
       this.activeIndex = key
       this.getList()
     },
-    toPrintDetail () {
+    toPrintDetail (reportId) {
       let loading = this.$loading({
         lock: true,
         text: '正在链接打印机',
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      setTimeout(() => {
+      this.axios.get('wechatPrt', {
+        params: {
+          printId: this.$route.query.printId,
+          openId: this.$route.query.openid,
+          reportId: reportId
+        }
+      }).then(res => {
+        if (res.data === 'no report') {
+          this.$notify({
+            message: '选择报告异常，请再试一次',
+            type: 'error',
+            customClass: 'my-message'
+          })
+        } else if (res.data === 'over limit') {
+          this.$notify({
+            message: '此报告已打印3次，请联系我们增加打印次数',
+            type: 'error',
+            customClass: 'my-message'
+          })
+        } else {
+          this.$notify({
+            message: '打印成功，请在打印口取走您的报告',
+            type: 'success',
+            center: true,
+            customClass: 'my-message'
+          })
+        }
+        loading.close()
+      }).catch(err => {
+        console.log(err)
         this.$notify({
-          message: '您附近未发现可用打印机',
+          message: '此打印机不可用，请回到"我的->咨询服务"联系我们',
           type: 'error',
           customClass: 'my-message'
         })
         loading.close()
-      }, 300)
+      })
     }
   },
   watch: {},

@@ -277,6 +277,11 @@ export default new Router({
           path: '/standard/list',
           name: 'StandardList',
           component: resolve => require(['@/views/home/rank/standard_list'], resolve)
+        },
+        {
+          path: '/printer/list',
+          name: 'PrinterList',
+          component: resolve => require(['@/views/home/printer/list'], resolve)
         }
       ]
     },
@@ -431,9 +436,17 @@ export default new Router({
     {
       path: '/qrcode/pay',
       name: 'QrcodePay',
-      component: resolve => require(['@/views/wechat/qrcode/pay_code'], resolve),
+      component: resolve => require(['@/views/wechat/qrcode/pay_temp'], resolve),
       meta: {
-        title: '基因检测产品付款'
+        title: '见山会诊正在向你收款'
+      }
+    },
+    {
+      path: '/qrcode/pay/info/:id',
+      name: 'QrcodePayInfo',
+      component: resolve => require(['@/views/wechat/qrcode/pay_info'], resolve),
+      meta: {
+        title: '见山会诊正在向你收款'
       }
     },
     {
@@ -442,6 +455,22 @@ export default new Router({
       component: resolve => require(['@/views/wechat/qrcode/pay_temp'], resolve),
       meta: {
         title: '基因检测产品付款'
+      }
+    },
+    {
+      path: '/wechat/express/upload',
+      name: 'ExpressUpload',
+      component: resolve => require(['@/views/wechat/express_upload'], resolve),
+      meta: {
+        title: '快递单上传'
+      }
+    },
+    {
+      path: '/wechat/express/show',
+      name: 'ExpressShow',
+      component: resolve => require(['@/views/wechat/express_show'], resolve),
+      meta: {
+        title: '查看快递单'
       }
     }
   ]

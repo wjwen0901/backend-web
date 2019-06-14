@@ -1,6 +1,5 @@
 <template>
   <el-container>
-    <!--<el-header>上传知情同意</el-header>-->
     <div class="mdh-mobile-form">
       <div class="title-info" v-if="hasUserInfo">
         {{readyName}}({{readyCellphone}})，您好 <br>
@@ -19,35 +18,19 @@
         </div>
       </div>
       <p class="order-no" v-if="orderNo !== undefined">订单编号：{{orderNo}}</p>
-      <div class="mdh-input-row" @click="toSelectHospital" v-if="companyId != 9">
-        <label>送检医院</label>
-        <input type="text" v-model="hospitalName" readonly placeholder="请选择医院">
-        <a class="next-step"><i class="el-icon-arrow-right"></i></a>
-        <span class="error-tip" v-if="hospitalError">医院不可为空</span>
-      </div>
-      <div class="mdh-input-row" @click="toSelectHospital" v-if="companyId == 9">
-        <label>送检单位</label>
-        <input type="text" readonly value="禄和健康">
-      </div>
-      <div class="mdh-input-row" @click="toSelectDept" v-if="companyId != 9">
-        <label>送检科室</label>
-        <input type="text" v-model="deptName" readonly placeholder="请选择科室">
-        <a class="next-step"><i class="el-icon-arrow-right"></i></a>
-        <span class="error-tip" v-if="deptError">科室不可为空</span>
-      </div>
-      <div class="mdh-input-row" v-if="companyId != 9">
-        <label>送检医生</label>
-        <input type="text" v-model="doctor" placeholder="请输入医生姓名">
-        <span class="error-tip" v-if="doctorError">医生姓名不可为空</span>
+      <div class="mdh-input-row">
+        <label>快递单号</label>
+        <input type="text" v-model="expressCode" placeholder="请输入快递单号">
+        <span class="error-tip" v-if="expressCodeError">快递单号不可为空</span>
       </div>
       <div class="mdh-upload-row">
-        <label>选择文件</label>
+        <label>选择快递单照片</label>
         <div class="upload-row">
           <div tabindex="0" class="el-upload el-upload--picture-card" id="selectfiles">
             <i class="el-icon-plus"></i>
             <input type="file" name="file" multiple="multiple" class="el-upload__input">
           </div>
-          <div class="el-upload__tip">只能上传jpg/gif/png/bmp/pdf文件，且不超过5G</div>
+          <div class="el-upload__tip">只能上传jpg/gif/png/bmp/pdf文件</div>
           <span class="error-tip" v-if="fileError">请选择文件</span>
           <ul class="el-upload-list el-upload-list--text" id="ossfile">
             <li tabindex="0" class="el-upload-list__item is-ready" :id="file.id" v-for="file in fileList" v-bind:key="file.id" ref="file.id">
@@ -64,7 +47,7 @@
         </div>
       </div>
       <div class="btn-row">
-        <el-button type="primary" @click="toUpload">开始上传</el-button>
+        <el-button type="primary" @click="toUpload">提交</el-button>
       </div>
     </div>
   </el-container>
@@ -81,16 +64,11 @@ export default {
       readyCellphone: '',
       name: '',
       cellphone: '',
-      hospitalId: 0,
-      hospitalName: '',
-      deptName: '',
-      deptId: '',
-      doctor: '',
+      expressCode: '',
+      expressId: '',
       nameError: false,
       cellphoneError: false,
-      hospitalError: false,
-      deptError: false,
-      doctorError: false,
+      expressCodeError: false,
       fileError: false,
       fileNum: 0,
 
@@ -114,7 +92,9 @@ export default {
       orderNo: this.$route.query.orderNo,
       loading: null,
 
-      companyId: parseInt(this.$route.query.companyId)
+      companyId: parseInt(this.$route.query.companyId),
+      imagePath: null,
+      reUpload: null
     }
   },
   props: {
@@ -135,49 +115,28 @@ export default {
     updateUserInfo () {
       this.hasUserInfo = false
     },
-    toSelectHospital () {
-      this.rememberInfo()
-      this.$router.push({path: '/wechat/hospital', query: {openid: this.$route.query.openid, orderId: this.$route.query.orderId, orderNo: this.orderNo, companyId: this.$route.query.companyId}})
-    },
-    toSelectDept () {
-      this.rememberInfo()
-      this.$router.push({path: '/wechat/dept', query: {openid: this.$route.query.openid, orderId: this.$route.query.orderId, orderNo: this.orderNo, companyId: this.$route.query.companyId}})
-    },
     toUpload () {
-      if (this.companyId === 9) {
-        this.hospitalId = 18983
-        this.hospitalName = '禄和健康'
-        this.deptId = 2
-        this.deptName = '全科医疗科'
-        this.doctor = '禄和健康'
-        this.setUploadParam(this.uploader, '', false)
-      } else {
-        if (this.name.trim() === '') {
-          this.nameError = true
-          return false
-        }
-        if (this.cellphone.trim() === '') {
-          this.cellphoneError = true
-          return false
-        }
-        if (this.hospitalId.trim() === '') {
-          this.hospitalError = true
-          return false
-        }
-        if (this.deptId.trim() === '') {
-          this.deptError = true
-          return false
-        }
-        if (this.doctor.trim() === '') {
-          this.doctorError = true
-          return false
-        }
-        if (this.fileNum === 0) {
-          this.fileError = true
-          return false
-        }
-        this.setUploadParam(this.uploader, '', false)
+      console.log('---0---')
+      console.log(this.name)
+      console.log(this.cellphone)
+      console.log(this.expressCode)
+      if (this.name.trim() === '') {
+        this.nameError = true
+        return false
       }
+      if (this.cellphone.trim() === '') {
+        this.cellphoneError = true
+        return false
+      }
+      if (this.expressCode.trim() === '') {
+        this.expressCodeError = true
+        return false
+      }
+      if (this.fileNum === 0) {
+        this.fileError = true
+        return false
+      }
+      this.setUploadParam(this.uploader, '', false)
     },
     handleUploadError (err) {
       if (err.status === 403) {
@@ -192,7 +151,7 @@ export default {
     sendRequest () {
       const xmlhttp = new XMLHttpRequest()
       const param = this.userId > 0 ? ('&userId=' + this.userId) : ''
-      const serverUrl = this.axios.defaults.baseURL + '/oss/upload/policy/informed' +
+      const serverUrl = this.axios.defaults.baseURL + '/oss/upload/policy/express' +
         '?name=' + this.name + '&cellphone=' + this.cellphone + param
       xmlhttp.open('GET', serverUrl, false)
       xmlhttp.setRequestHeader('Authorization', window.localStorage.token)
@@ -291,7 +250,7 @@ export default {
       const uploader = new plupload.Uploader({
         runtimes: 'html5,flash,silverlight,html4',
         browse_button: 'selectfiles',
-        multi_selection: true,
+        multi_selection: false,
         container: 'container',
         flash_swf_url: '../../static/plupload-2.3.6/js/Moxie.swf',
         silverlight_xap_url: '../../static/plupload-2.3.6/js/Moxie.xap',
@@ -332,26 +291,16 @@ export default {
             const d = document.getElementById(file.id)
             if (info.status === 200) {
               d.setAttribute('class', 'el-upload-list__item is-success')
-              if (that.companyId === 9) {
-                that.hospitalId = 18983
-                that.hospitalName = '禄和健康'
-                that.deptId = 2
-                that.deptName = '全科医疗科'
-                that.doctor = '禄和健康'
-              }
               const param = {
                 name: that.name,
                 cellphone: that.cellphone,
-                doctor: that.doctor,
+                expressCode: that.expressCode,
                 fileName: file.name,
                 size: file.size,
                 mimeType: file.type,
                 uniqueKey: up.settings.multipart_params.uniqueKey,
-                filePath: up.settings.multipart_params.key,
-                objectKey: up.settings.multipart_params.key,
-                hospitalId: that.hospitalId,
-                deptId: that.deptId,
-                companyId: that.$route.query.companyId
+                path: up.settings.multipart_params.key,
+                objectKey: up.settings.multipart_params.key
               }
               if (that.userId > 0) {
                 param.userId = that.userId
@@ -363,20 +312,23 @@ export default {
                 param.orderId = that.$route.query.orderId
               }
               window.localStorage.doctor = that.doctor
-              that.axios.post('informed/upload', param).then(res => {
+              let instance = that.axios.create({
+                headers: {
+                  'Authorization': window.localStorage.token,
+                  'Content-Type': 'application/json'
+                }
+              })
+              instance({
+                method: 'post',
+                url: 'order/addExpressOrder',
+                data: param
+              }).then(function (res) {
                 that.$notify({
                   message: '上传成功',
                   type: 'success',
                   center: true,
                   customClass: 'my-message'
                 })
-              }).catch(err => {
-                that.$notify({
-                  message: err.data.message,
-                  type: 'error',
-                  customClass: 'my-message'
-                })
-                console.log(err)
               })
             } else {
               d.setAttribute('class', 'el-upload-list__item is-warning')
@@ -435,29 +387,8 @@ export default {
       that.uploader = uploader
     },
     rememberInfo () {
-      if (this.$route.query.hid !== undefined) {
-        window.localStorage.hospital = this.$route.query.hid
-        window.localStorage.hospitalName = this.$route.query.hname
-      }
-      if (this.$route.query.did !== undefined) {
-        window.localStorage.dept = this.$route.query.did
-        window.localStorage.deptName = this.$route.query.dname
-      }
-      window.localStorage.userId = this.userId
-      window.localStorage.fullName = this.name
-      window.localStorage.cellphone = this.cellphone
-      window.localStorage.doctor = this.doctor
     },
     initData () {
-      if (this.$route.query.hid !== undefined) {
-        window.localStorage.hospital = this.$route.query.hid
-        window.localStorage.hospitalName = this.$route.query.hname
-      }
-      if (this.$route.query.did !== undefined) {
-        window.localStorage.dept = this.$route.query.did
-        window.localStorage.deptName = this.$route.query.dname
-      }
-
       if (this.$route.query.openid !== undefined) {
         this.axios.get('user/openid', {
           params: {
@@ -477,18 +408,24 @@ export default {
           console.log(err)
         })
       }
-      if (this.companyId === 9) {
-        this.hospitalId = 18983
-        this.hospitalName = '禄和健康'
-        this.deptId = 2
-        this.deptName = '全科医疗科'
-        this.doctor = '禄和健康'
-      } else {
-        this.hospitalId = window.localStorage.hospital
-        this.hospitalName = window.localStorage.hospitalName
-        this.deptId = window.localStorage.dept
-        this.deptName = window.localStorage.deptName
-        this.doctor = window.localStorage.doctor ? '' : window.localStorage.doctor
+      if (this.$route.query.expressId !== undefined) {
+        this.axios.get('express/' + this.$route.query.expressId).then(res => {
+          this.expressCode = res.data.expressOrder.expressCode
+          this.expressId = res.data.expressOrder.id
+          this.axios.get('oss/upload/show', {
+            params: {
+              objectKey: res.data.expressOrder.path
+            }
+          }).then(res1 => {
+            this.imagePath = this.axios.defaults.baseURL.includes('https://')
+              ? res1.data.replace('http://', 'https://') : res1.data
+            this.reUpload = false
+          }).catch(err => {
+            console.log(err)
+          })
+        }).catch(err => {
+          console.log(err)
+        })
       }
     }
   },
@@ -503,19 +440,9 @@ export default {
         this.cellphoneError = false
       }
     },
-    doctor: function (val, oldVal) {
+    expressCode: function (val, oldVal) {
       if (oldVal !== undefined && oldVal !== 'null' && oldVal !== '') {
-        this.doctorError = false
-      }
-    },
-    hospital: function (val, oldVal) {
-      if (oldVal !== undefined && oldVal !== 'null' && oldVal !== '') {
-        this.hospitalError = false
-      }
-    },
-    dept: function (val, oldVal) {
-      if (oldVal !== undefined && oldVal.length > 0) {
-        this.deptError = false
+        this.expressCodeError = false
       }
     },
     fileNum: function (val, oldVal) {
@@ -725,5 +652,8 @@ export default {
   .order-no {
     padding: 10px 15px;
     font-size: 14px;
+  }
+  .show {
+    padding-left: 5px;
   }
 </style>

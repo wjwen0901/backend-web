@@ -104,7 +104,34 @@ export default {
       })
     },
     toPay () {
-      window.location = this.$route.query.url
+      let instance = this.axios.create({
+        headers: {
+          'Authorization': window.localStorage.token,
+          'Content-Type': 'application/json'
+        }
+      })
+      let _this = this
+      instance({
+        method: 'post',
+        url: 'user/pay/patient',
+        params: {
+          userId: this.$route.query.userId === 'null' ? null : this.$route.query.userId,
+          openId: this.$route.query.openId,
+          unionId: this.$route.query.unionId,
+          name: this.patient.name,
+          cellphone: this.patient.cellphone,
+          payCodeId: parseInt(this.$route.params.id)
+        },
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Content-Type': 'application/json'
+        }
+      }).then(function (res) {
+        window.location = _this.$route.query.url
+      }).catch(function (err) {
+        console.log(err)
+        this.$message.error('网络异常请重新提交')
+      })
     },
     getVerification () {
       if (!this.patient.cellphone.match(/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/)) {

@@ -778,7 +778,7 @@ export default {
   },
   computed: {
     qrCodeDescription: function () {
-      return (this.qrCode.hospitalName !== '' && this.qrCode.selSolution !== undefined) ? (this.qrCode.hospitalName + '(' + this.qrCode.selSolution.name + ')收费码') : ''
+      return (this.qrCode.hospitalName !== '' && this.qrCode.selSolution !== undefined) ? (this.qrCode.hospitalName + '(' + this.qrCode.selSolution.name + ')收费码-[M' + this.userId + ']') : ''
     }
   },
   created () {

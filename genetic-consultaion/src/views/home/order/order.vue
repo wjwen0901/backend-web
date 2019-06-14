@@ -1,7 +1,6 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>元鹊管理</el-breadcrumb-item>
       <el-breadcrumb-item>订单管理</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="user-container">
@@ -38,6 +37,13 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="受检者"
+          width="180">
+          <template slot-scope="scope">
+            <span v-if="scope.row.pName != undefined">{{scope.row.pName}}({{scope.row.pCellphone}})</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="下单人"
           width="180">
           <template slot-scope="scope">
@@ -65,7 +71,7 @@
             <el-button type="text" size="medium" @click="toUploadInformed(scope.row.id)">上传知情</el-button>
             <el-button type="text" size="medium" @click="toUploadReport(scope.row.id)"
                        v-if="scope.row.reportNum === 0 && roleCode === 'manager'">上传报告</el-button>
-            <el-button type="text" size="medium" @click="toInformedDetail(scope.row.id)">查看</el-button>
+            <el-button type="text" size="medium" @click="toInformedDetail(scope.row.id,scope.row.expressCode,scope.row.expressId)">查看</el-button>
             <!--<el-button type="text" size="medium" @click="toEdit">编辑</el-button>-->
             <!--<el-button type="text" size="medium" @click="toUploadInformed(scope.id)" v-if="ro">删除</el-button>-->
           </template>
@@ -169,8 +175,8 @@ export default {
     toUploadReport (id) {
       this.$router.push({path: '/report/upload', query: {orderId: id}})
     },
-    toInformedDetail (id) {
-      this.$router.push('/order/' + id)
+    toInformedDetail (id, expressCode, expressId) {
+      this.$router.push({path: '/order/' + id, query: {expressCode: expressCode, expressId: expressId}})
     }
   },
   filters: {},

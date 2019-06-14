@@ -112,6 +112,12 @@
               <el-menu-item index="/product-cl" v-if="role === 'manager'">产品数据维护</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
+          <el-submenu index="printer" v-if="sec.includes('system')">
+            <template slot="title"><i class="el-icon-setting"></i><span slot="title">一体机管理</span></template>
+            <el-menu-item-group>
+              <el-menu-item index="/printer/list" v-if="role === 'manager'">一体机列表</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
           <el-submenu index="rank" v-if="sec.includes('system')">
             <template slot="title"><i class="el-icon-setting"></i><span slot="title">实验室排名</span></template>
             <el-menu-item-group>
