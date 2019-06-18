@@ -37,9 +37,9 @@
           <el-button class="submit-btn" @click="toPay()">确认信息，去支付</el-button>
         </el-main>
       </div>
-      <div class="footer-info">
-        &copy; 2019 MDHcare.cn 版权所有  丨  ICP证：京ICP备17067248号
-      </div>
+<!--      <div class="footer-info">-->
+<!--        &copy; 2019 MDHcare.cn 版权所有  丨  ICP证：京ICP备17067248号-->
+<!--      </div>-->
     </div>
   </el-container>
 </template>
