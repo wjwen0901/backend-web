@@ -55,7 +55,8 @@
         <template slot-scope="scope">
           <el-button @click="selectItem(scope.row.id, scope.row.name)" type="text" size="small" v-if="scope.row.role === 1 || scope.row.role === 8">产品二维码</el-button>
           <el-button @click="selectPayItem(scope.row.id, scope.row.name)" type="text" size="small" v-if="scope.row.role === 1 || scope.row.role === 8">收款二维码</el-button>
-          <el-button @click="selectOnlineInformed(scope.row.id, scope.row.name)" type="text" size="small" v-if="scope.row.role === 1 || scope.row.role === 8">在线知情码</el-button>
+          <el-button @click="selectOnlineInformed(scope.row.id, scope.row.name)" type="text" size="small" v-if="scope.row.role === 1 || scope.row.role === 8">易见康在线知情码</el-button>
+          <el-button @click="selectElecInformed(scope.row.id, scope.row.name)" type="text" size="small">在线知情二维码</el-button>
           <el-button @click="toDetail(scope.row.id)" type="text" size="small">编辑</el-button>
           <el-button @click="deleteUser(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
@@ -259,7 +260,7 @@
         </el-form>
       </div>
     </el-dialog>
-    <el-dialog title="生成个人下单二维码" :visible.sync="dialogOnlineInformedFormVisible">
+    <el-dialog title="生成易见康下单二维码" :visible.sync="dialogOnlineInformedFormVisible">
       <div>
         <el-form ref="form" label-width="150px">
           <el-form-item label="选择产品">
@@ -291,6 +292,29 @@
         </el-form>
       </div>
     </el-dialog>
+    <el-dialog title="生成在线知情码" :visible.sync="dialogElecInformedFormVisible">
+      <div>
+        <el-form ref="form" label-width="150px">
+          <el-form-item label="选择产品">
+            <el-select v-model="eleInformed.selSolution" value-key="id" filterable placeholder="请选择">
+              <el-option
+                v-for="item in solutionList"
+                :key="item.id"
+                :label="item.name"
+                :value="item">
+              </el-option>
+            </el-select>
+          </el-form-item>
+<!--          <el-form-item label="样本编号">-->
+<!--            <el-input v-model="eleInformed.sampleCode" placeholder="口腔拭子"></el-input>-->
+<!--          </el-form-item>-->
+          <el-form-item>
+            <el-button type="primary" @click="downloadElecInformedCode()">确定</el-button>
+            <el-button @click="dialogOnlineInformedFormVisible = false">取消</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -310,6 +334,7 @@ export default {
       dialogCodeFormVisible: false,
       dialogPayCodeFormVisible: false,
       dialogOnlineInformedFormVisible: false,
+      dialogElecInformedFormVisible: false,
       resourceList: [],
       resourceSelet: [],
       solutionList: [],
@@ -324,6 +349,7 @@ export default {
       currentUserRole: window.localStorage.role,
       condition: null,
       qrCode: {},
+      eleInformed: {},
       informedQrCode: {
         sampleType: '口腔拭子',
         price: 688,
@@ -393,6 +419,25 @@ export default {
         this.pageSize = res.data.pageSize
         this.pageNum = res.data.pageNum
         this.totalPage = res.data.total
+      }).catch(err => {
+        console.log(err)
+      })
+      this.axios.get('solution', {
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
+        this.solutionList = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+      this.axios.get('hospital').then(res => {
+        this.hospitals = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+      this.axios.get('hospital-dept').then(res => {
+        this.depts = res.data
       }).catch(err => {
         console.log(err)
       })
@@ -585,65 +630,22 @@ export default {
       }).catch(err => {
         console.log(err)
       })
-      this.axios.get('hospital').then(res => {
-        this.hospitals = res.data
-      }).catch(err => {
-        console.log(err)
-      })
-      this.axios.get('hospital-dept').then(res => {
-        this.depts = res.data
-      }).catch(err => {
-        console.log(err)
-      })
       this.dialogCodeFormVisible = true
     },
     selectPayItem (id, name) {
       this.userId = id
       this.name = name
-      this.axios.get('solution', {
-        params: {
-          userId: window.localStorage.userId
-        }
-      }).then(res => {
-        this.solutionList = res.data
-      }).catch(err => {
-        console.log(err)
-      })
-      this.axios.get('hospital').then(res => {
-        this.hospitals = res.data
-      }).catch(err => {
-        console.log(err)
-      })
-      this.axios.get('hospital-dept').then(res => {
-        this.depts = res.data
-      }).catch(err => {
-        console.log(err)
-      })
       this.dialogPayCodeFormVisible = true
     },
     selectOnlineInformed (id, name) {
       this.userId = id
       this.name = name
-      this.axios.get('solution', {
-        params: {
-          userId: window.localStorage.userId
-        }
-      }).then(res => {
-        this.solutionList = res.data
-      }).catch(err => {
-        console.log(err)
-      })
-      this.axios.get('hospital').then(res => {
-        this.hospitals = res.data
-      }).catch(err => {
-        console.log(err)
-      })
-      this.axios.get('hospital-dept').then(res => {
-        this.depts = res.data
-      }).catch(err => {
-        console.log(err)
-      })
       this.dialogOnlineInformedFormVisible = true
+    },
+    selectElecInformed (id, name) {
+      this.userId = id
+      this.name = name
+      this.dialogElecInformedFormVisible = true
     },
     querySearch (queryString, cb) {
       console.log(queryString)
@@ -762,6 +764,33 @@ export default {
         }
       }).then(function (res) {
         window.open(_this.axios.defaults.baseURL + '/barcode/down?isPatientCode=true&filename=' + res.data + '&Authorization=' + window.localStorage.token)
+        _this.dialogPayCodeFormVisible = false
+      })
+    },
+    downloadElecInformedCode () {
+      let instance = this.axios.create({
+        headers: {
+          'Authorization': window.localStorage.token,
+          'Content-Type': 'application/json'
+        }
+      })
+      let _this = this
+      instance({
+        method: 'post',
+        url: 'barcode/elecInformed',
+        params: {
+          salesmanId: this.userId,
+          solutionId: this.eleInformed.selSolution.id,
+          solutionName: this.eleInformed.selSolution.name,
+          fullName: this.name,
+          description: this.qrCodeDescription
+        },
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Content-Type': 'application/json'
+        }
+      }).then(function (res) {
+        window.open(_this.axios.defaults.baseURL + '/barcode/down?isPatientCode=false&filename=' + res.data + '&Authorization=' + window.localStorage.token)
         _this.dialogPayCodeFormVisible = false
       })
     }

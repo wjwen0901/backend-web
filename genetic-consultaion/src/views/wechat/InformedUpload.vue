@@ -324,6 +324,32 @@ export default {
               spinner: 'el-icon-loading',
               background: 'rgba(0, 0, 0, 0.7)'
             })
+            let instance = this.axios.create({
+              headers: {
+                'Authorization': window.localStorage.token,
+                'Content-Type': 'application/json'
+              }
+            })
+            console.log(that.userId)
+            if (that.userId === 0) {
+              instance({
+                method: 'post',
+                url: 'user/wechat/add',
+                params: {
+                  openId: that.$route.query.openid,
+                  name: that.name,
+                  cellphone: that.cellphone,
+                  companyId: that.$route.query.companyId
+                },
+                headers: {
+                  'X-Requested-With': 'XMLHttpRequest',
+                  'Content-Type': 'application/json'
+                }
+              }).then(function (res) {
+                console.log(res.data)
+                that.userId = res.data.userId
+              })
+            }
             that.setUploadParam(up, file.name, true)
           },
           UploadProgress: (up, file) => {
@@ -476,6 +502,9 @@ export default {
         }).catch(err => {
           console.log(err)
         })
+      } else {
+        this.name = window.localStorage.fullName !== undefined ? window.localStorage.fullName : ''
+        this.cellphone = window.localStorage.cellphone !== undefined ? window.localStorage.cellphone : ''
       }
       if (this.companyId === 9) {
         this.hospitalId = 18983

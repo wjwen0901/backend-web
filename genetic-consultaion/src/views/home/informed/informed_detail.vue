@@ -5,36 +5,22 @@
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item>信息提取</el-breadcrumb-item>
           <el-breadcrumb-item :to="{ path: '/informed/list' }">知情列表</el-breadcrumb-item>
-          <el-breadcrumb-item>编辑</el-breadcrumb-item>
+          <el-breadcrumb-item>详情</el-breadcrumb-item>
         </el-breadcrumb>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="12" v-if="role === 'manager' || role === 'jk-service'">
+      <el-col :span="12">
         <div class="user-container">
           <el-form ref="informedForm" :model="informedContent" label-width="80px" size="mini" class="edit-form">
             <el-form-item label="订单编号">
-              <el-input v-model="informedContent.orderNo"></el-input>
+              {{informedContent.orderNo}}
             </el-form-item>
             <el-form-item label="送检医院">
-              <el-autocomplete
-                class="inline-input"
-                v-model="informedContent.hospitalName"
-                :fetch-suggestions="hospitalQuerySearch"
-                placeholder="请输入内容"
-                :trigger-on-focus="false"
-                @select="hospitalHandleSelect"
-              ></el-autocomplete>
-              <!--<el-select class="width-100-p" v-model="informedContent.hospitalId" filterable placeholder="请选择">-->
-                <!--<el-option-->
-                  <!--v-for="item in hospitals"-->
-                  <!--:key="item.id"-->
-                  <!--:label="item.name"-->
-                  <!--:value="item.id">-->
-                <!--</el-option>-->
-              <!--</el-select>-->
+              {{informedContent.hospitalName}}
             </el-form-item>
             <el-form-item label="送检科室">
+              {{informedContent.deptName}}
               <el-select class="width-100-p" v-model="informedContent.deptId" filterable placeholder="请选择">
                 <el-option
                   v-for="item in depts"
@@ -45,10 +31,10 @@
               </el-select>
             </el-form-item>
             <el-form-item label="送检医生">
-              <el-input v-model="informedContent.doctor"></el-input>
+              {{informedContent.doctor}}
             </el-form-item>
             <el-form-item label="条码编号">
-              <el-input v-model="informedContent.sampleCode"></el-input>
+              {{informedContent.sampleCode}}
             </el-form-item>
             <el-form-item label="送检项目">
               <el-select class="width-100-p" v-model="informedContent.solutionId" filterable placeholder="请选择">
@@ -61,49 +47,27 @@
               </el-select>
             </el-form-item>
             <el-form-item label="联系电话">
-              <el-input v-model="informedContent.cellphone"></el-input>
+              {{informedContent.cellphone}}
             </el-form-item>
-            <el-form-item label="发送短信">
-              <el-radio-group v-model="smsStatus">
-                <el-radio @click.native.prevent="updateSmsStatus(0)" :label="0">发送</el-radio>
-                <el-radio @click.native.prevent="updateSmsStatus(1)" :label="1">不发送</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="证件类型">
-              <el-col :span="9">
-                <el-select v-model="informedContent.idType" filterable placeholder="请选择">
-                  <el-option
-                    v-for="item in idType"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
-                </el-select>
-              </el-col>
-              <el-col class="line" :span="3" style="padding-left:10px;">号码</el-col>
-              <el-col :span="12">
-                <el-input v-model="informedContent.idCode"></el-input>
-              </el-col>
+            <el-form-item label="证件">
+              {{informedContent.idCode}}
             </el-form-item>
             <el-form-item label="姓名">
               <el-col :span="9">
-                <el-input v-model="informedContent.truename"></el-input>
+                {{informedContent.truename}}
               </el-col>
               <el-col class="line" :span="3" style="padding-left:10px;">性别</el-col>
               <el-col :span="12">
-                <el-radio-group v-model="informedContent.sex">
-                  <el-radio label="男">男</el-radio>
-                  <el-radio label="女">女</el-radio>
-                </el-radio-group>
+                {{informedContent.sex}}
               </el-col>
             </el-form-item>
             <el-form-item label="年龄">
               <el-col :span="9">
-                <el-input v-model="informedContent.age"></el-input>
+                {{informedContent.age}}
               </el-col>
               <el-col class="line" :span="3" style="padding-left:10px;">邮箱</el-col>
               <el-col :span="12">
-                <el-input v-model="informedContent.email"></el-input>
+                {{informedContent.email}}
               </el-col>
             </el-form-item>
             <el-form-item label="地址">
@@ -114,15 +78,10 @@
               </el-cascader>
             </el-form-item>
             <el-form-item label="详细地址">
-              <el-input v-model="informedContent.address"></el-input>
+              {{informedContent.address}}
             </el-form-item>
             <el-form-item label="备注">
-              <el-input type="textarea" v-model="informedContent.remark"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="cancel">取消</el-button>
-              <el-button @click="unread">图形不可读</el-button>
-              <el-button type="primary" @click="edit">保存信息</el-button>
+              {{informedContent.remark}}
             </el-form-item>
           </el-form>
         </div>
@@ -282,11 +241,7 @@ export default {
         if (this.informedContent.county === undefined || this.informedContent.county === '' || this.informedContent.county === null) {
           return []
         }
-        let province = this.TextToCode[this.informedContent.province].code
-        let cityTemp = this.informedContent.city === this.informedContent.province ? '市辖区' : this.informedContent.city
-        let city = this.TextToCode[this.informedContent.province][cityTemp].code
-        let county = this.TextToCode[this.informedContent.province][cityTemp][this.informedContent.county].code
-        return [province, city, county]
+        return [this.TextToCode[this.informedContent.province].code, this.TextToCode[this.informedContent.province][this.informedContent.city].code, this.TextToCode[this.informedContent.province][this.informedContent.city][this.informedContent.county].code]
       },
       set: function () {
       }

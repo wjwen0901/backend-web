@@ -295,7 +295,7 @@ export default {
         filters: {
           mime_types: [{
             title: '允许上传文件类型',
-            extensions: 'jpg,jpeg,gif,png,bmp,pdf,doc,docx'
+            extensions: 'jpg,jpeg,gif,png,bmp,pdf,doc,docx,xls,xlsx,csv'
           }],
           // 最大只能上传10GB的文件
           max_file_size: '10gb',

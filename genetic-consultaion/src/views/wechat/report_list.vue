@@ -4,11 +4,11 @@
       <el-input size="mini" placeholder="请输入内容" v-model="condition" class="input-with-select">
         <el-button slot="append" icon="el-icon-search" @click="getList"></el-button>
       </el-input>
-      <el-menu :default-active="activeIndex" class="mdh-el-menu" mode="horizontal" @select="handleSelect">
-        <el-menu-item index="0">全部</el-menu-item>
-        <el-menu-item index="1">知情关联</el-menu-item>
-        <el-menu-item index="2">我的报告</el-menu-item>
-      </el-menu>
+<!--      <el-menu :default-active="activeIndex" class="mdh-el-menu" mode="horizontal" @select="handleSelect">-->
+<!--        <el-menu-item index="0">全部</el-menu-item>-->
+<!--        <el-menu-item index="1">知情关联</el-menu-item>-->
+<!--        <el-menu-item index="2">我的报告</el-menu-item>-->
+<!--      </el-menu>-->
     </el-header>
     <el-main>
       <el-table
@@ -24,7 +24,10 @@
             </div>
             <div class="order-title">
               <div>
-                受检者：{{scope.row.patientName}}({{scope.row.patientCellphone}})
+                受检者：{{scope.row.truename}}({{scope.row.cellphone}})
+              </div>
+              <div>
+                送检单位：{{scope.row.hospitalName}}
               </div>
               <div>
                 生成时间：{{scope.row.createTime | formatDate}}
@@ -81,7 +84,7 @@ export default {
             objectKey: res.data.path
           }
         }).then(res1 => {
-          this.$router.push({path: '/report/view/', query: {path: res1.data}})
+          this.$router.push({path: '/report/view/', query: {path: res1.data, printId: this.$route.query.printId}})
         }).catch(err => {
           console.log(err)
         })

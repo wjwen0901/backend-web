@@ -7,6 +7,7 @@
       <!--<embed :src="imagePath">-->
     <!--</object>-->
     <!--<img :src="imagePath" class="img-report" v-else>-->
+    <el-button v-if="printId !== undefined"></el-button>
     <PDFViewer
       v-bind="{url}"
       @document-errored="onDocumentErrored"
@@ -42,7 +43,8 @@ export default {
       // url: 'http://localhost:3100/static/%E5%8C%BB%E5%AD%A6%E6%A3%80%E6%B5%8B%E4%BA%A7%E5%93%81-%E5%AE%A3%E4%BC%A0%E5%86%8C-%E5%8D%95%E9%A1%B5-%E5%8D%B0%E5%88%B7.pdf',
       url: '',
       documentError: undefined,
-      enableUploader: 'true'
+      enableUploader: 'true',
+      printId: this.$route.query.printId
     }
   },
   methods: {
