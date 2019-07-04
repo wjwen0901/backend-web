@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "html2canvas": "^1.0.0-alpha.12",
-    "puppeteer": "^1.11.0"
+    "puppeteer": "^1.11.0",
+    "axios": "^0.19.0",
+    "plupload": "^2.3.6"
   }
 }
