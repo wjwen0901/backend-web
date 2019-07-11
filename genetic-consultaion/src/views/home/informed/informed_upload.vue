@@ -401,6 +401,9 @@ export default {
                 window.localStorage.dept = this.informedConsent.dept
                 param.deptId = this.informedConsent.dept
               }
+              if (window.localStorage.companyId !== undefined) {
+                param.companyId = window.localStorage.companyId
+              }
               window.localStorage.doctor = this.informedConsent.doctor
               this.axios.post('informed/upload', param).then(res => {
                 this.$notify({
