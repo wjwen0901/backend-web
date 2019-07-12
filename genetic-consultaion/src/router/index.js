@@ -175,13 +175,23 @@ export default new Router({
         },
         {
           path: '/disease/add',
+          name: 'DiseaseAdd',
+          component: resolve => require(['@/views/home/disease/disease/add'], resolve)
+        },
+        {
+          path: '/disease/edit',
           name: 'DiseaseEdit',
           component: resolve => require(['@/views/home/disease/disease/edit'], resolve)
         },
         {
-          path: '/disease/edit/:id',
-          name: 'DiseaseEdit',
-          component: resolve => require(['@/views/home/disease/disease/edit'], resolve)
+          path: '/disease/preview',
+          name: 'DiseasePreview',
+          component: resolve => require(['@/views/home/disease/disease/preview'], resolve)
+        },
+        {
+          path: '/disease/view',
+          name: 'DiseaseView',
+          component: resolve => require(['@/views/home/disease/disease/view'], resolve)
         },
         {
           path: '/gene',
@@ -189,12 +199,22 @@ export default new Router({
           component: resolve => require(['@/views/home/disease/gene/list'], resolve)
         },
         {
-          path: '/gene/add',
-          name: 'GeneEdit',
-          component: resolve => require(['@/views/home/disease/gene/edit'], resolve)
+          path: '/gene/preview',
+          name: 'GenePreview',
+          component: resolve => require(['@/views/home/disease/gene/preview'], resolve)
         },
         {
-          path: '/gene/edit/:id',
+          path: '/gene/view',
+          name: 'GeneView',
+          component: resolve => require(['@/views/home/disease/gene/view'], resolve)
+        },
+        {
+          path: '/gene/add',
+          name: 'GeneAdd',
+          component: resolve => require(['@/views/home/disease/gene/add'], resolve)
+        },
+        {
+          path: '/gene/edit',
           name: 'GeneEdit',
           component: resolve => require(['@/views/home/disease/gene/edit'], resolve)
         },
@@ -204,9 +224,25 @@ export default new Router({
           component: resolve => require(['@/views/home/disease/drug/list'], resolve)
         },
         {
+          path: '/drug/preview',
+          name: 'DrugPreview',
+          component: resolve => require(['@/views/home/disease/drug/preview'], resolve)
+        },
+        {
           path: '/drug/add',
+          name: 'DrugAdd',
+          component: resolve => require(['@/views/home/disease/drug/add'], resolve)
+        },
+        {
+          path: '/drug/edit',
           name: 'DrugEdit',
           component: resolve => require(['@/views/home/disease/drug/edit'], resolve)
+        },
+        {
+          path: '/drug/view',
+          name: 'DrugView',
+          component: resolve => require(['@/views/home/disease/drug/view'], resolve)
+
         },
         {
           path: '/drug/edit/:id',
@@ -251,12 +287,22 @@ export default new Router({
         {
           path: '/product-cl/add',
           name: 'ProductClAdd',
+          component: resolve => require(['@/views/home/disease/product/add'], resolve)
+        },
+        {
+          path: '/product-cl/edit',
+          name: 'ProductClEdit',
           component: resolve => require(['@/views/home/disease/product/edit'], resolve)
         },
         {
-          path: '/product-cl/edit/:id',
-          name: 'ProductClEdit',
-          component: resolve => require(['@/views/home/disease/product/edit'], resolve)
+          path: '/product-cl/preview',
+          name: 'ProductClPreview',
+          component: resolve => require(['@/views/home/disease/product/preview'], resolve)
+        },
+        {
+          path: '/product-cl/view',
+          name: 'ProductClView',
+          component: resolve => require(['@/views/home/disease/product/view'], resolve)
         },
         {
           path: '/rank/list',

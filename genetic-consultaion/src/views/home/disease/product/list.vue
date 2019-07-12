@@ -19,16 +19,12 @@
         style="width: 100%">
         <el-table-column
           prop="name"
-          label="产品名称">
+          label="检测产品">
         </el-table-column>
         <el-table-column
           prop="nameEn"
-          label="英文标题">
-        </el-table-column>
-        <el-table-column
-          prop="brief"
-          label="简介">
-        </el-table-column>
+          label="英文名称">
+        </el-table-column> 
         <el-table-column
           prop="create_time"
           label="创建时间"
@@ -38,12 +34,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          prop="brief"
+          label="状态">
+        </el-table-column>
+        <el-table-column
           fixed="right"
           label="操作"
           width="200">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="toDetail(scope.row.id)">查看详情</el-button>
-            <el-button type="text" size="small" @click="toDetail(scope.row.id)">编辑</el-button>
+            <el-button type="text" size="small" @click="toDetail(scope.row.id,scope.row.state)">查看详情</el-button>
+            <el-button type="text" size="small" @click="toEdit(scope.row.id,scope.row.state)">编辑</el-button>
             <el-button type="text" size="small" @click="toDelete(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
@@ -51,9 +51,7 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="pageNum"
-        :page-sizes="[20, 50, 100, 150]"
-        :page-size="pageSize"
+        :current-page="pageNum"  
         layout="total, sizes, prev, pager, next, jumper"
         :total="totalPage">
       </el-pagination>
@@ -68,8 +66,7 @@ export default {
     return {
       proList: [],
       pageNum: 1,
-      pageSize: 20,
-      totalPage: 0,
+      pageSize: 10, 
       paramSelect: '',
       condition: ''
     }
@@ -82,7 +79,7 @@ export default {
       console.log(process.env.DISEASE_API)
       console.log(process.env)
       let instance = this.axios.create({
-        baseURL: process.env.DISEASE_PC_API,
+        baseURL: process.env.BASE_URL,
         headers: {
           'Content-Type': 'application/json'
         }
@@ -90,37 +87,46 @@ export default {
       let _this = this
       instance({
         method: 'get',
-        url: 'product/getProductByName',
-        params: {
-          pageNum: _this.pageNum,
-          pageSize: _this.pageSize,
-          userId: window.localStorage.userId,
-          param: _this.condition
+        url: 'product/page',
+        params: { 
+          keyWord: _this.condition,
+          pageSize:_this.pageSize,
+          pageNum:_this.pageNum
         },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
         }
-      }).then(function (res) {
-        _this.proList = res.data.products.list
-        _this.totalPage = res.data.products.count
+      }).then(function (res) { 
+        _this.proList = res.data.products
+        _this.totalPage = res.data.totalNum
       })
     },
-    handleSizeChange (val) {
-      this.pageSize = val
-      window.sessionStorage.diseasePageSize = val
+    handleSizeChange (val) { 
+      this.pageSize = val 
       this.getData()
     },
     handleCurrentChange (val) {
-      this.pageNum = val
-      window.sessionStorage.diseasePageNum = val
+      this.pageNum = val 
       this.getData()
     },
-    toEdit (id) {
-    },
-    toDetail (id) {
+    toEdit (id,state) {
       this.$router.push({
-        path: '/product-cl/edit/' + id
+        name: 'ProductClEdit',
+        query:{
+          id,
+          state
+        }
+      })
+    },
+    toDetail (id,state) {
+      console.log(id,state)
+      this.$router.push({
+        name: 'ProductClView',
+        query:{
+          id,
+          state
+        }
       })
     },
     toAdd () {

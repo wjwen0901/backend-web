@@ -4,7 +4,7 @@
       <el-col :span="24">
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/gene' }">产品介绍</el-breadcrumb-item>
-          <el-breadcrumb-item>编辑</el-breadcrumb-item>
+          <el-breadcrumb-item>新增</el-breadcrumb-item>
         </el-breadcrumb>
       </el-col>
     </el-row>
@@ -14,7 +14,7 @@
           <el-form ref="solutionForm" label-width="80px" size="mini" class="edit-form clearfix">
             <div class="left">
             <el-form-item label="产品名称*">
-              <el-input v-model="name" :disabled='names' :placeholder="datas.name"></el-input>
+              <el-input v-model="name" :disabled='names' placeholder="请输入产品名称"></el-input>
             </el-form-item>
             <el-form-item label="适用阶段">
               <Input  v-on:ipt="ipt" v-for="(item,index) in sum" :key="index" /><span class="add" @click="add">+</span> 
@@ -35,7 +35,7 @@
                 type="textarea"
                 :rows="2"
                 v-model="brief"
-                :placeholder="datas.brief">
+                placeholder="请输入检测的内容">
               </el-input>
             </el-form-item> 
             <el-form-item  label="临床意义">
@@ -44,7 +44,7 @@
                 :disabled='purposes'
                 v-model="purpose"
                 :rows="2"
-                :placeholder="datas.purpose">
+                placeholder="请输入临床意义">
               </el-input>
             </el-form-item> 
           </div>  
@@ -107,38 +107,16 @@ export default {
       depart:[],
       proDepts:"",
       proDepts1:false,
-      deptList:[], 
-      datas:{},
-      departs:[],
-      screening:[],
-      productId:''
+      deptList:[],
+      id:'',
+      
     }
   },
   components:{
     Input
   }, 
   methods: {
-    //获取信息
-    getData(){
-      this.axios({
-        url:'product/productById',
-        params:{
-          id:this.$route.query.id,
-          state:this.$route.query.state
-        }
-      }).then(res=>{
-        console.log(res.data)
-        this.productId = res.data.product.id
-        this.datas = res.data.product; 
-        this.departs = res.data.depts.map((item,index)=>{
-          return  item.name 
-        })  
-        this.screening = res.data.screenings.map((item,index)=>{
-          return item.screeningName
-        }) 
-      })
-    },
-    //暂存
+    
     disableds(){
       this.openIsDisabled = !this.openIsDisabled;
       this.names = !this.names
@@ -147,7 +125,7 @@ export default {
       this.departments = !this.departments;
       this.products1 = !this.products1;
       this.proDepts1 = !this.proDepts1
-      if(this.state==0){
+      if(this.id==''){
          let instance = this.axios.create({
           headers: {
             'Authorization': window.localStorage.token,
@@ -174,37 +152,33 @@ export default {
         this.$message('暂存成功')
         this.id = res.id
       })
-      }else if(this.state==1){ 
-        if(this.productId==''){
-            let instance = this.axios.create({
-                headers: {
-                  'Authorization': window.localStorage.token,
-                  'Content-Type': 'application/json'
-                }
-              })
-              let _this = this
-            instance({
-              url:'product/addTem',
-              method:'put',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-              },
-              data:{
-                  id:_this.id,
-                  name:_this.name, 
-                  brief:_this.brief,
-                  purpose:_this.purpose,
-                  deptIds:_this.department,
-                  screenings:_this.list,
-                  solutionIds:_this.products
-              }
-            }).then(res=>{
-              this.$message('修改成功') 
-            })
-        }else{
-
-        } 
+      }else{ 
+        let instance = this.axios.create({
+          headers: {
+            'Authorization': window.localStorage.token,
+            'Content-Type': 'application/json'
+          }
+        })
+        let _this = this
+      instance({
+        url:'product/addTem',
+        method:'put',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        data:{
+            id:_this.id,
+            name:_this.name, 
+            brief:_this.brief,
+            purpose : _this.purpose,
+            deptIds:this.department,
+            screenings:this.list,
+            solutionIds:this.products
+        }
+      }).then(res=>{
+        this.$message('修改成功') 
+      })
       }  
     },   
     add(){
@@ -214,38 +188,34 @@ export default {
       this.list.push(data);   
     },
     addData(){
-      if(this.state==0){
-        let instance = this.axios.create({
-            headers: {
-              'Authorization': window.localStorage.token,
-              'Content-Type': 'application/json'
-            }
-          })
-        let _this = this;
-        instance({
-          url:'product',
-          method:'post',
+     let instance = this.axios.create({
           headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-          },
-          data:{ 
-              id:_this.$route.query.id,
-              name:_this.name, 
-              brief:_this.brief,
-              purpose : _this.purpose,
-              deptIds:_this.department,
-              screenings:_this.list,
-              solutionIds:_this.products
+            'Authorization': window.localStorage.token,
+            'Content-Type': 'application/json'
           }
-        }).then(res=>{
-          this.$message('发布成功')
         })
-      }else if(this.state==1){
-        
-      } 
+      let _this = this
+      instance({
+        url:'product',
+        method:'post',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        data:{
+
+            name:_this.name, 
+            brief:_this.brief,
+            purpose : _this.purpose,
+            deptIds:this.department,
+            screenings:this.list,
+            solutionIds:this.products
+        }
+      }).then(res=>{
+        this.$message('发布成功') 
+      })
     },
-    preview(){
+     preview(){
       this.$router.push({
         name:'ProductClPreview',
         query:{
@@ -296,9 +266,7 @@ export default {
      this.getCompany()
      this.companyIds()
      this.getKe()
-     this.getData()
-     this.state = this.$route.query.state
-   }
+   },
   // created () {
   //   let loading = this.$loading({
   //     lock: true,

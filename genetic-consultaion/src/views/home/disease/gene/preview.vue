@@ -4,7 +4,7 @@
       <el-col :span="24">
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/gene' }">基因信息管理</el-breadcrumb-item>
-          <el-breadcrumb-item>编辑</el-breadcrumb-item>
+          <el-breadcrumb-item>添加</el-breadcrumb-item>
         </el-breadcrumb>
       </el-col>
     </el-row>
@@ -14,25 +14,24 @@
           <el-form ref="solutionForm" :model="gene" label-width="80px" size="mini" class="edit-form clearfix">
             <div class="left">
             <el-form-item label="基因*">
-              <el-input v-model="gene.gene" :disabled="genes" :placeholder="datas.gene"></el-input>
+              <el-input v-model="gene.gene" placeholder="请输入名称"></el-input>
             </el-form-item>
             <el-form-item label="其他名称">
-              <el-input v-model="gene.alias" :disabled="alia" :placeholder="datas.alias"></el-input>
+              <el-input v-model="gene.alias" placeholder="请输入名称"></el-input>
             </el-form-item>
             <el-form-item label="外显子数">
-              <el-input v-model="gene.exon" :disabled="exons" :placeholder="datas.exon"></el-input>
+              <el-input v-model="gene.exon" placeholder="请输入名称"></el-input>
             </el-form-item>
             <el-form-item label="内含子数">
-              <el-input v-model="gene.intron" :disabled="introns" :placeholder="datas.intron"></el-input>
+              <el-input v-model="gene.intron" placeholder="请输入名称"></el-input>
             </el-form-item> 
           </div>
           <div class="right">
             <el-form-item label="NM号">
-              <el-input v-model="gene.nm" :disabled="nms" :placeholder="datas.nm"></el-input>
+              <el-input v-model="gene.nm" placeholder="请输入名称"></el-input>
             </el-form-item> 
             <el-form-item label="相关基因">
                <el-select
-               :disabled="relatedgenes"
                 v-model="relatedgene"
                 multiple
                 filterable
@@ -52,7 +51,6 @@
               <el-form-item label="靶向用药">
                 <el-select
                 v-model="medicaId"
-                :disabled="medicaIds"
                 multiple
                 filterable
                 remote
@@ -71,12 +69,11 @@
               <el-form-item label="检测产品">
                 <el-select
                 v-model="productId"
-                :disabled="productIds"
                 multiple
                 filterable
                 remote
                 reserve-keyword
-                :placeholder="productNames"
+                placeholder="请输入关键词"
                 :remote-method="product"
                 :loading="productLoading">
                 <el-option
@@ -93,11 +90,10 @@
             其他
           </ul> 
           <div class="gene-contents"> 
-              <p class="title">标题：<input placeholder="请输入标题" :disabled='titles' v-model="title" type="text"></p>
+              <p class="title">标题：<input placeholder="请输入标题" v-model="title" type="text"></p>
           </div>
           <div class="edit_container">
               <quill-editor 
-              :disabled="content1"
                 v-model="content" 
                 ref="myQuillEditor" 
                 :options="editorOption" 
@@ -108,7 +104,7 @@
           </div>
           <div class="gene-select">
               <p>数据来源</p>
-                <el-select v-model="source" :disabled="sources" placeholder="请选择">
+                <el-select v-model="source" placeholder="请选择">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -116,7 +112,7 @@
                   :value="item.value">
                 </el-option>
               </el-select>
-              <el-select v-model="source1" :disabled="source1s" placeholder="请选择">
+              <el-select v-model="source1" placeholder="请选择">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -127,7 +123,7 @@
               </div>
            <div class="gene-btns">
                 <el-button type="primary" @click="addData" :disabled = "openIsDisabled">发布</el-button>
-                <el-button type="primary" @click="preview" :disabled = "openIsDisabled ">预览</el-button>
+                <el-button type="primary" :disabled = " openIsDisabled ">预览</el-button>
                 <el-button type="primary" @click="disableds">暂存</el-button>
                 <el-button @click="cancel" :disabled = " openIsDisabled ">取消</el-button> 
            </div>
@@ -177,25 +173,8 @@ export default {
       productOption: [],
       productList: [],
       productLoading: false,
-      productState: [],
-      //禁止
-      genes:false,
-      alia:false,
-      exons:false,
-      introns:false,
-      nms:false,
-      relatedgene:false,
-      medicaIds:false,
-      productIds:false,
-      titles:false,
-      sources:false,
-      source1s:false,
-      relatedgenes:false,
-      content1:false,
-      productNames:'',
-      state:'',
-      datas:{},
-      geneId:''
+      productState: [], 
+      sessionData:{}
     }
   }, 
   mounted () {
@@ -211,28 +190,13 @@ export default {
     this.productList = this.productState.map(item => {
       return { value: item, label: item };
     });
-    this.state = this.$route.query.state
-    this.getData()
+    console.log(JSON.parse(window.sessionStorage.getItem("data")))
+     this.sessionData = JSON.parse(window.sessionStorage.getItem("data"))
+     console.log(this.sessionData.name)
   },
   methods: {
-    //获取信息
-    getData(){
-      this.axios({
-        url:'gene/byId',
-        params:{
-          id:this.$route.query.id,
-          state:this.$route.query.state
-        }
-      }).then(res=>{
-        this.datas = res.data.gene
-        this.geneId = res.data.gene.id
-        this.productNames = res.data.productNames
-      })
-    },
-    //发布
-    addData(){
-     if(this.state==0){
-       let instance = this.axios.create({
+     addData(){
+     let instance = this.axios.create({
           headers: {
             'Authorization': window.localStorage.token,
             'Content-Type': 'application/json'
@@ -240,77 +204,26 @@ export default {
         })
       let _this = this
       instance({
-        url:'gene/editGene',
-        method:'put',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        params:{
-          temId:this.$route.query.id
-        },
-        data:{ 
-          "geneTem":{
-            id:this.$route.query.id,
-            gene:this.gene.gene,
-            exon:this.gene.exon,
-            intron:this.gene.intron,
-            nm:this.gene.nm,
-            alias:this.gene.alias,
-            diseaseIds:["5beb9cede7910c2484a8eefb","5beb9ceee7910c2484a8eefc","5beb9cf1e7910c2484a8eefe"],
-            productIds:this.productId,
-            druggeryIds:["5c4feef31c05c43528f9e761","5c4fefa71c05c43528f9e762","5c47dbf7e7910c37fc37cde6"]}
-        }
-      }).then(res=>{
-        this.$message('修改成功') 
-      })
-     }else if(this.state==1){
-       let instance = this.axios.create({
-          headers: {
-            'Authorization': window.localStorage.token,
-            'Content-Type': 'application/json'
-          }
-        })
-      let _this = this
-      instance({
-        url:'gene/editTem',
-        method:'put',
+        url:'gene/addGene',
+        method:'post',
         headers: {
           'Content-Type': 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
         },
         data:{ 
           "geneTem":{
-            id:this.$route.query.id,
-            gene:this.gene.gene,
-            exon:this.gene.exon,
-            intron:this.gene.intron,
-            nm:this.gene.nm,
-            alias:this.gene.alias,
-            diseaseIds:["5beb9cede7910c2484a8eefb","5beb9ceee7910c2484a8eefc","5beb9cf1e7910c2484a8eefe"],
-            productIds:this.productId,
-            druggeryIds:["5c4feef31c05c43528f9e761","5c4fefa71c05c43528f9e762","5c47dbf7e7910c37fc37cde6"]}
+            gene:this.sessionData.gene,
+            exon:this.sessionData.exon,
+            intron:this.sessionData.intron,
+            nm:this.sessionData.nm,
+            alias:this.sessionData.alias,
+            diseaseIds:this.sessionStorage.diseaseIds,
+            productIds:this.sessionData.productId,
+            druggeryIds:this.sessionStorage.druggeryIds}
         }
       }).then(res=>{
-        this.$message('修改成功') 
+        this.$message('发布成功') 
       })
-     }
-    },
-    //预览
-    preview(){
-      this.$router.push({
-        name:'GenePreview'
-      })
-      var obj = {};
-      obj.gene=this.gene.gene,
-      obj.exon=this.gene.exon,
-      obj.intron=this.gene.intron,
-      obj.nm=this.gene.nm,
-      obj.alias=this.gene.alias,
-      obj.diseaseIds=["5beb9cede7910c2484a8eefb","5beb9ceee7910c2484a8eefc","5beb9cf1e7910c2484a8eefe"],
-      obj.productIds=this.productId,
-      obj.druggeryIds=["5c4feef31c05c43528f9e761","5c4fefa71c05c43528f9e762","5c47dbf7e7910c37fc37cde6"]
-      window.sessionStorage.setItem('gene',JSON.stringify(obj))
     },
     //基因
     geneGetdata(gene){
@@ -404,86 +317,8 @@ export default {
     },
     //暂存按钮
     disableds(){
-      // console.log(this.gene.gene,this.gene.alias,this.gene.exon,this.gene.intron,this.gene.nm,this.content) 
+      console.log(this.gene.gene,this.gene.alias,this.gene.exon,this.gene.intron,this.gene.nm,this.content) 
       this.openIsDisabled = !this.openIsDisabled
-      this.genes=!this.genes,
-      this.alia=!this.alia,
-      this.exons=!this.exons,
-      this.introns=!this.introns,
-      this.nms=!this.nms,
-      this.relatedgene=!this.relatedgene,
-      this.medicaIds=!this.medicaIds,
-      this.productIds=!this.productIds,
-      this.titles=!this.titles,
-      this.sources=!this.sources,
-      this.source1s=!this.source1s,
-      this.content1=!this.content1,
-      this.relatedgenes = !this.relatedgenes
-      if(this.state==1){
-        if(this.geneId==''){
-            let instance = this.axios.create({
-          headers: {
-            'Authorization': window.localStorage.token,
-            'Content-Type': 'application/json'
-          }
-        })
-      let _this = this
-      instance({
-        url:'gene/editTem',
-        method:'put',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        data:{ 
-          "geneTem":{
-            id:this.$route.query.id,
-            gene:this.gene.gene,
-            exon:this.gene.exon,
-            intron:this.gene.intron,
-            nm:this.gene.nm,
-            alias:this.gene.alias,
-            diseaseIds:["5beb9cede7910c2484a8eefb","5beb9ceee7910c2484a8eefc","5beb9cf1e7910c2484a8eefe"],
-            productIds:this.productId,
-            druggeryIds:["5c4feef31c05c43528f9e761","5c4fefa71c05c43528f9e762","5c47dbf7e7910c37fc37cde6"]}
-        }
-      }).then(res=>{
-        this.$message('修改成功') 
-      }) 
-        }else{
-
-        } 
-      }else if(this.state==0){ 
-        let instance = this.axios.create({
-          headers: {
-            'Authorization': window.localStorage.token,
-            'Content-Type': 'application/json'
-          }
-        })
-      let _this = this
-      instance({
-        url:'gene/addGeneTem',
-        method:'post',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        data:{ 
-          "geneTem":{
-            geneId:this.$route.query.id,
-            gene:this.gene.gene,
-            exon:this.gene.exon,
-            intron:this.gene.intron,
-            nm:this.gene.nm,
-            alias:this.gene.alias,
-            diseaseIds:["5beb9cede7910c2484a8eefb","5beb9ceee7910c2484a8eefc","5beb9cf1e7910c2484a8eefe"],
-            productIds:this.productId,
-            druggeryIds:["5c4feef31c05c43528f9e761","5c4fefa71c05c43528f9e762","5c47dbf7e7910c37fc37cde6"]}
-        }
-      }).then(res=>{
-        this.$message('修改成功') 
-      })
-      }
     },
     //富文本
     onEditorReady(editor) { }, // 准备编辑器,

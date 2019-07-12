@@ -18,27 +18,35 @@
         border
         style="width: 100%">
         <el-table-column
-          prop="commodityName"
-          label="商品名">
+          prop="title"
+          label="中文标题">
         </el-table-column>
         <el-table-column
           prop="drugName"
-          label="中文药品名">
+          label="英文标题">
         </el-table-column>
         <el-table-column
           prop="drugNameEn"
-          label="英文药品名">
+          label="制定者">
         </el-table-column>
         <el-table-column
           prop="producer"
-          label="生产商">
-        </el-table-column>
+          label="出处">
+        </el-table-column> 
         <el-table-column
           prop="operationTime"
-          label="创建日期"
+          label="发布日期"
           width="180">
           <template slot-scope="scope">
             {{scope.row.operationTime | formatDate}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="producer" 
+          label="状态">
+          <template slot-scope="scope">
+            <span v-if="scope.row.state==1">暂存</span>
+            <span v-if="scope.row.state==0">发布</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -46,8 +54,8 @@
           label="操作"
           width="200">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="toDetail(scope.row.id)">查看详情</el-button>
-            <el-button type="text" size="small" @click="toEdit(scope.row.id)">编辑</el-button>
+            <el-button type="text" size="small" @click="toDetail(scope.row.id,scope.row.state)">查看详情</el-button>
+            <el-button type="text" size="small" @click="toEdit(scope.row.id,scope.row.state)">编辑</el-button>
             <el-button type="text" size="small" @click="toDelete(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
@@ -55,9 +63,7 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="pageNum"
-        :page-sizes="[20, 50, 100, 150]"
-        :page-size="pageSize"
+        :current-page="pageNum"  
         layout="total, sizes, prev, pager, next, jumper"
         :total="totalPage">
       </el-pagination>
@@ -71,9 +77,8 @@ export default {
   data () {
     return {
       drugList: [],
-      pageNum: window.sessionStorage.productPageNum === undefined ? 1 : window.sessionStorage.productPageNum,
-      pageSize: window.sessionStorage.productPageSize === undefined ? 20 : window.sessionStorage.productPageSize,
-      totalPage: 0,
+      pageNum:1,
+      pageSize: 10, 
       paramSelect: '',
       condition: null
     }
@@ -83,42 +88,47 @@ export default {
       this.getData()
     },
     getData () {
-      this.axios.get('solution/page', {
-        params: {
-          pageNum: this.pageNum,
-          pageSize: this.pageSize,
-          userId: window.localStorage.userId,
-          condition: this.condition
+      this.axios.get('guide/page', { 
+        params:{
+          pageSize:this.pageSize,
+          pageNum:this.pageNum,
+          param:this.condition
         }
       }).then(res => {
-        this.drugList = res.data.list
-        this.pageSize = res.data.pageSize
-        this.pageNum = res.data.pageNum
-        this.totalPage = res.data.total
+        console.log(res.data)
+        this.drugList = res.data.guides 
+        this.totalPage = res.data.totalNum
       }).catch(err => {
         console.log(err)
       })
     },
     handleSizeChange (val) {
-      this.pageSize = val
-      window.sessionStorage.productPageSize = val
+      this.pageSize = val 
       this.getData()
     },
     handleCurrentChange (val) {
-      this.pageNum = val
-      window.sessionStorage.productPageNum = val
+      this.pageNum = val 
       this.getData()
     },
-    toEdit (id) {
-    },
-    toDetail (id) {
+    toEdit (id,state) {
       this.$router.push({
-        path: '/product/edit/' + id
+        name:'DrugEdit',
+        query:{
+          id,state
+        }
+      })
+    },
+    toDetail (id,state) {
+      this.$router.push({
+        name:'DrugView',
+        query:{
+          id,state
+        }
       })
     },
     toAdd () {
       this.$router.push({
-        name: 'ProductAdd'
+        name: 'DrugAdd'
       })
     },
     toDelete (id) {
@@ -171,8 +181,6 @@ export default {
       width: 400px;
       float: right;
       margin-bottom: 10px;
-    }
-    .add-solution {
-    }
+    } 
   }
 </style>

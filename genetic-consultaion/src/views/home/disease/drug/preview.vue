@@ -4,7 +4,7 @@
       <el-col :span="24">
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/drug' }">疾病信息管理</el-breadcrumb-item>
-          <el-breadcrumb-item>编辑</el-breadcrumb-item>
+          <el-breadcrumb-item>{{menuInfo}}</el-breadcrumb-item>
         </el-breadcrumb>
       </el-col>
     </el-row>
@@ -14,54 +14,52 @@
           <el-form ref="solutionForm"  label-width="100px" size="mini" class="edit-form clearfix">
             <div class="form-left">
               <el-form-item label="中文标题*"> 
-                <el-input v-model="drug.drugName" :disabled="drugNames" :placeholder="datas.title"></el-input>
+                <el-input v-model="drug.drugName"></el-input>
               </el-form-item>
               <el-form-item label="制定者*">
-                <el-input v-model="drug.customizer" :disabled="customizers" :placeholder="datas.framers[0]"></el-input>
+                <el-input v-model="drug.customizer"></el-input>
               </el-form-item>
               <el-form-item label="发布日期*">
-                <el-input v-model="drug.inaccurate" :disabled="inaccurates" placeholder="请输入名称"></el-input>
+                <el-input v-model="drug.inaccurate"></el-input>
               </el-form-item> 
               <el-form-item label="检测产品">
-               <el-select 
-                  v-model="product"
-                  :disabled="products"
+               <el-select
+                  v-model="drug.product"
                   multiple
                   filterable
                   remote
                   reserve-keyword
                   placeholder="请输入关键词"
                   :remote-method="remoteMethod"
-                  :loading="loadings">
+                  :loading="loading">
                   <el-option
                     v-for="item in options"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
                   </el-option>
                 </el-select>
               </el-form-item>
             </div>
             <div class="form-right">
               <el-form-item label="英文标题*">
-                <el-input v-model="drug.drugNameEn" :disabled="drugNameEns" :placeholder="datas.titleEn[0]"></el-input>
+                <el-input v-model="drug.drugNameEn"></el-input>
               </el-form-item>
               <el-form-item label="出处*">
-                <el-input v-model="drug.producer" :disabled="producers" :placeholder="datas.provenance[0]"></el-input>
+                <el-input v-model="drug.producer"></el-input>
               </el-form-item> 
               <el-form-item label="相关疾病">
                  <el-select
-                  v-model="disease"
-                  :disabled="diseases"
+                  v-model="drug.disease"
                   multiple
                   filterable
                   remote
                   reserve-keyword
                   placeholder="请输入关键词"
-                  :remote-method="diseaseRemote"
-                  :loading="diseaseLoading">
+                  :remote-method="remoteMethod"
+                  :loading="loading">
                   <el-option
-                    v-for="item in diseaseOption"
+                    v-for="item in options"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value">
@@ -70,17 +68,16 @@
               </el-form-item>
               <el-form-item label="相关基因">
                  <el-select
-                  v-model="gene"
-                  :disabled="genes"
+                  v-model="drug.gene"
                   multiple
                   filterable
                   remote
-                  reserve-keyword 
+                  reserve-keyword
                   placeholder="请输入关键词"
-                  :remote-method="geneRemote"
-                  :loading="geneLoading">
+                  :remote-method="remoteMethod"
+                  :loading="loading">
                   <el-option
-                    v-for="item in geneoption"
+                    v-for="item in options"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value">
@@ -102,7 +99,7 @@
                       <i class="el-icon-plus"></i>
                       <input type="file" name="file" multiple="multiple" class="el-upload__input">
                     </div>
-                     <div class="el-upload__tip">只能上传jpg/gif/png/bmp/pdf文件，且不超过5G</div> 
+                    <!-- <div class="el-upload__tip">只能上传jpg/gif/png/bmp/pdf文件，且不超过5G</div> -->
                     <ul class="el-upload-list el-upload-list--text" id="ossfile">
                       <li tabindex="0" class="el-upload-list__item is-ready" :id="file.id" v-for="file in fileList" v-bind:key="file.id" ref="file.id">
                         <a class="el-upload-list__item-name"><i class="el-icon-document"></i>{{file.name}} ({{file.size | formatSize}})</a>
@@ -123,7 +120,6 @@
                 <div class="edit_container">
                     <quill-editor 
                       v-model="content" 
-                      :disabled="countenes"
                       ref="myQuillEditor" 
                       :options="editorOption" 
                       @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
@@ -134,7 +130,7 @@
               </div>
                <div class="from-select">
               <p>数据来源</p>
-                <el-select v-model="value" :disabled="values" placeholder="请选择">
+                <el-select v-model="value" placeholder="请选择">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -142,7 +138,7 @@
                   :value="item.value">
                 </el-option>
               </el-select>
-              <el-select v-model="value1" :disabled="value1s" placeholder="请选择">
+              <el-select v-model="value" placeholder="请选择">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -152,9 +148,9 @@
               </el-select>
               </div>
            <el-form-item class="from-btns">
-                <el-button type="primary" @click="addData" :disabled = "openIsDisabled">发布</el-button>
-                <el-button type="primary" @click="preview" :disabled = " openIsDisabled ">预览</el-button>
-                <el-button type="primary"  @click="disableds">暂存</el-button>
+                <el-button type="primary" @click="edit" :disabled = "openIsDisabled">发布</el-button>
+                <el-button type="primary" :disabled = " openIsDisabled ">预览</el-button>
+                <el-button type="primary" @click="disableds">暂存</el-button>
                 <el-button @click="cancel" :disabled = " openIsDisabled ">取消</el-button> 
             </el-form-item>
             </div>
@@ -177,13 +173,13 @@ export default {
         source: {},
         drugName:'',
         customizer:'',
-        inaccurate:'', 
+        inaccurate:'',
+        product:'',
         drugNameEn:'',
-        producer:'', 
+        producer:'',
+        disease:'',
+        gene:'',  
       },
-      product: [],
-      disease:[],
-      gene:[],  
       content:'',
       sampleMeta: [],
       proDepts: [],
@@ -196,269 +192,30 @@ export default {
       list:[{name:'指南',id:1},{name:'其他',id:2}],
       openIsDisabled:false,
       options: [],
-      diseaseOption: [],
-      geneOption: [],
       value: [],
       lists: [],
-      geneList: [],
-      diseaseList: [],
       loadings: false,
-      geneLoading: false,      
-      diseaseLoading: false,
-      states: [],
-      diseaseState: [],
-      geneState: [],
-      //禁止
-      drugNames:false,
-      customizers:false,
-      inaccurates:false,
-      products:false,
-      drugNameEns:false,
-      producers:false,
-      diseases:false,
-      genes:false,
-      countenes:false,
-      values:false,
-      value1s:false,
-      datas:{},
-      guideId:''
+      states: []
     }
   },
-  mounted () {
-    this.lists = this.states.map(item => { 
-        return { value: item.id, label: item.name };
-      });
-      this.diseaseList = this.diseaseState.map(item => { 
-        return { value: item.id, label: item.name };
-      });
-      this.geneList = this.geneState.map(item => { 
-        return { value: item.id, label: item.name };
-      });
-      this.state = this.$route.query.state
-      this.getDatas()
-  },
+  props: {},
   methods: {
-    //预览
-    preview(){
-      this.$router.push({
-        name:'DrugPreview'
-      })
-      var obj = {};
-      obj.intro=this.content,
-      obj.title=this.drug.drugName,
-      obj.titleEn=this.drug.drugNameEn,
-      obj.framers=this.drug.customizer,
-      obj.provenance=this.drug.producer,
-      obj.publishDate=this.drug.inaccurate,
-      obj.diseaseIds=this.disease,
-      obj.productIds=this.product 
-      obj.geneIds= this.gene
-      window.sessionStorage.setItem('drug',JSON.stringify(obj))
-    },
-    //发布
-    addData(){
-      if(this.state==0){
-          let instance = this.axios.create({
-          headers: {
-            'Authorization': window.localStorage.token,
-            'Content-Type': 'application/json'
-          }
-        })
-      let _this = this
-      instance({
-        url:'guide/editGuide',
-        method:'put',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        params:{
-          temId:this.$route.query.id
-        },
-        data:{ 
-          "guideTem":{ 
-              intro:this.content,
-              title:this.drug.drugName,
-              titleEn:this.drug.drugNameEn,
-              framers:this.drug.customizer,
-              provenance:this.drug.producer,
-              publishDate:this.drug.inaccurate,
-              diseaseIds:this.disease,
-              geneIds: this.gene
-            },
-            productIds:this.product 
+     remoteMethod(query) {
+        if (query !== '') {
+          this.loadings = true;
+          setTimeout(() => {
+            this.loadings = false;
+            this.options = this.list.filter(item => {
+              return item.label.toLowerCase()
+                .indexOf(query.toLowerCase()) > -1;
+            });
+          }, 200);
+        } else {
+          this.options = [];
         }
-      }).then(res=>{
-        this.$message('发布成功') 
-      })
-      }else if(this.state==1){
-        if(this.guideId==''){
-
-        }else{
-          
-        }
-      }
-    },
-    //获取信息
-    getDatas(){
-      this.axios({
-        url:'guide/byId',
-        params:{
-          id:this.$route.query.id,
-          state:this.$route.query.state
-        }
-      }).then(res=>{
-        this.datas = res.data.guide;
-        this.guideId=res.data.guideId
-        console.log(this.datas)
-      })
-      
-    },
-    //检测产品、
-    getData(product){ 
-      this.axios({
-        url:'http://39.106.167.28/mdhcare-pc/product/getProductByName',
-        params:{
-          param:product
-        }
-      }).then(res=>{ 
-        this.options= res.data.products.list.map((item,index)=>{
-         return {
-            "id" : item.id,
-            "name":item.name
-          }
-        })  
-        this.states = res.data.proDepts.list.map((item,index)=>{
-         return item.name
-       })  
-      })
-    }, 
-    remoteMethod(query) {    
-      this.getData(query)
-      if (query !== '') {
-        this.loadings = true;
-        setTimeout(() => {
-          this.loadings = false; 
-        }, 200);
-      } else {
-        this.options = [];
-      }
-    }, 
-    //相关疾病
-     diseaseGetdata(disease){
-      this.axios({
-        url:'http://39.106.167.28/mdhcare-pc/product/getProductByName',
-        params:{
-          param:disease
-        }
-      }).then(res=>{
-        this.diseaseOption= res.data.products.list.map((item,index)=>{
-         return {
-            "id" : item.id,
-            "name":item.name
-          }
-        });
-        this.diseaseState = res.data.proDepts.list.map((item,index)=>{
-         return item.name
-       }) 
-      })
-    },
-    diseaseRemote(query) {  
-      this.diseaseGetdata(query)
-      if (query !== '') {
-        this.diseaseLoading = true;
-        setTimeout(() => {
-          this.diseaseLoading = false; 
-        }, 200);
-      } else {
-        this.diseaseOption = [];
-      }
-    },
-    //相关基因
-    geneGetdata(gene){
-      this.axios({ 
-        url:'gene/all',
-        params:{
-          keyWord:gene
-        }
-      }).then(res=>{
-        this.geneOption= res.data.products.list.map((item,index)=>{
-         return {
-            "id" : item.id,
-            "name":item.name
-          }
-        });
-        this.geneState = res.data.proDepts.list.map((item,index)=>{
-         return item.name
-       }) 
-      })
-    },
-    geneRemote(query) {   
-      this.geneGetdata(query)
-      if (query !== '') {
-        this.geneLoading = true;
-        setTimeout(() => {
-          this.geneLoading = false;
-        }, 200);
-      } else {
-        this.geneOption = [];
-      }
-    },
-    //暂存
-    disableds(){  
+      },
+    disableds(){
       this.openIsDisabled = !this.openIsDisabled;
-      this.drugNames = !this.drugNames
-      this.customizers = !this.customizers
-      this.inaccurates = !this.inaccurates
-      this.products = !this.products
-      this.drugNameEns = !this.drugNameEns
-      this.producers = !this.producers
-      this.diseases = !this.diseases
-      this.genes = !this.genes
-      this.countenes = !this.countenes
-      this.values = !this.values
-      this.value1s = !this.value1s
-       if(this.state==0){
-          let instance = this.axios.create({
-          headers: {
-            'Authorization': window.localStorage.token,
-            'Content-Type': 'application/json'
-          }
-        })
-      let _this = this
-      instance({
-        url:'guide/editGuide',
-        method:'put',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        params:{
-          temId:this.$route.query.id
-        },
-        data:{ 
-          "guideTem":{ 
-              intro:this.content,
-              title:this.drug.drugName,
-              titleEn:this.drug.drugNameEn,
-              framers:this.drug.customizer,
-              provenance:this.drug.producer,
-              publishDate:this.drug.inaccurate,
-              diseaseIds:this.disease,
-              geneIds: this.gene
-            },
-            productIds:this.product 
-        }
-      }).then(res=>{
-        this.$message('发布成功') 
-      })
-      }else if(this.state==1){
-        if(this.guideId==''){
-
-        }else{
-          
-        }
-      }
     },
     onEditorReady(editor) { }, // 准备编辑器,
         onEditorBlur(){}, // 失去焦点事件
@@ -625,7 +382,11 @@ export default {
     this._initData()
     loading.close()
   },
-  
+  mounted () {
+    this.lists = this.states.map(item => {
+        return { value: item, label: item };
+      });
+  },
   destroyed () {}
 }
 </script>

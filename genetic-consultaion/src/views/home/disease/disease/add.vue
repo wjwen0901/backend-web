@@ -4,7 +4,7 @@
       <el-col :span="24">
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/disease' }">疾病信息管理</el-breadcrumb-item>
-          <el-breadcrumb-item>编辑</el-breadcrumb-item>
+          <el-breadcrumb-item>新增</el-breadcrumb-item>
         </el-breadcrumb>
       </el-col>
     </el-row>
@@ -14,19 +14,19 @@
           <el-form ref="solutionForm"  :model="disease" label-width="80px" size="mini" class="edit-form clearfix">
             <div class="form-left">
               <el-form-item label="中文名称*">
-                <el-input v-model="disease.name" :disabled="cname"  :placeholder="datas.name"></el-input>
+                <el-input v-model="disease.name" :disabled="cname"  placeholder="请输入名称"></el-input>
               </el-form-item>
               <el-form-item label="英文名称*">
-                <el-input v-model="disease.nameen" :disabled="ename" :placeholder="datas.nameen"></el-input>
+                <el-input v-model="disease.nameen" :disabled="ename" placeholder="请输入名称"></el-input>
               </el-form-item>
               <el-form-item label="其他名称">
-                <el-input v-model="disease.alias" :disabled="qname" :placeholder="datas.alias"></el-input>
+                <el-input v-model="disease.alias" :disabled="qname" placeholder="请输入名称"></el-input>
               </el-form-item>
               <el-form-item label="OMIM">
-                <el-input v-model="disease.omim" :disabled="omims" :placeholder="datas.omim"></el-input>
+                <el-input v-model="disease.omim" :disabled="omims" placeholder="请输入名称"></el-input>
               </el-form-item>
               <el-form-item label="疾病类型">
-                <el-input v-model="disease.distype" :disabled="jdistype" :placeholder="datas.muttype"></el-input>
+                <el-input v-model="disease.distype" :disabled="jdistype" placeholder="请输入名称"></el-input>
               </el-form-item>
              <el-form-item label="靶向用药">
                 <el-select
@@ -72,13 +72,13 @@
                 <el-input v-model="disease.mode" :disabled="ymode" placeholder="请输入名称"></el-input>
               </el-form-item>
               <el-form-item label="突变类型">
-                <el-input v-model="disease.muttype" :disabled="tmuttype" :placeholder="datas.mode"></el-input> 
+                <el-input v-model="disease.muttype" :disabled="tmuttype" placeholder="请输入名称"></el-input> 
               </el-form-item>
               <el-form-item label="发病年龄">
-                <el-input v-model="disease.age" :disabled="fage" :placeholder="datas.age"></el-input>
+                <el-input v-model="disease.age" :disabled="fage" placeholder="请输入名称"></el-input>
               </el-form-item>
               <el-form-item label="发病概率">
-                <el-input v-model="disease.morbidity" :disabled="fmorbidity" :placeholder="datas.morbidity"></el-input>
+                <el-input v-model="disease.morbidity" :disabled="fmorbidity" placeholder="请输入名称"></el-input>
               </el-form-item>
               <el-form-item label="适用科室">
               <el-select class="width-100-p" v-model="prodepts"  :disabled="sprodepts" multiple filterable placeholder="请选择">
@@ -89,7 +89,7 @@
                   :value="item.id">
                 </el-option>
               </el-select>
-            </el-form-item>  
+            </el-form-item>
               <el-form-item label="检测产品">
                 <el-select
                 v-model="productId"
@@ -117,7 +117,7 @@
                 filterable
                 remote
                 reserve-keyword
-                :placeholder="datas.gene"
+                placeholder="请输入关键词"
                 :remote-method="geneRemote"
                 :loading="geneLoading">
                 <el-option
@@ -426,9 +426,7 @@ export default {
       guideState: [], 
       //科室
       prodepts:[],
-      one:false,
-      datas:{},
-      diseaseState:''
+      one:false
     }
   },
   props: {},
@@ -449,12 +447,10 @@ export default {
     this.guideList = this.guideState.map(item => {
       return { value: item, label: item };
     });
-    this.diseaseState = this.$route.query.state
     //获取科室列表
     this.getList()
-    this.getDatas()
   },
-  methods: {
+  methods: { 
     //预览
     preview(){
       this.$router.push({
@@ -479,92 +475,13 @@ export default {
       obj.productIds= this.productId
       window.sessionStorage.setItem('disease',JSON.stringify(obj))
     },
-    //发布
-    addData(){
-      if(this.state==0){
-        let instance = this.axios.create({
-          headers: {
-            'Authorization': window.localStorage.token,
-            'Content-Type': 'application/json'
-          }
-        })
-      let _this = this
-      instance({
-        url:'disease/addTem',
-        method:'post',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        data:{
-            "disease": { 
-                name: this.disease.name,
-                nameen:this.disease.nameen,
-                muttype: this.disease.muttype,
-                mode: this.disease.mode,
-                alias: this.disease.alias,
-                age: this.disease.age,
-                omim: this.disease.omim,
-                morbidity: this.disease.morbidity,
-                distype:this.disease.distype,
-                content:"Cornelia de Lange综合征是一种临床异质性发育障碍，伴随多系统受累的畸形。主要临床特征包括面部畸形、手脚畸形、生长延迟、认知障碍、多毛症、胃食管功能障碍和心脏、眼科和泌尿生殖系统异常表征。",
-                deptId: [],
-                genes:this.relatedgene,
-                druggeryIds: [],
-                guides: this.guideId,
-                diseaseId:"5beb9d57e7910c2484a8ef54"
-            },
-            productIds: this.productId
-        }
-      }).then(res=>{
-        this.$message('发布成功') 
-      })
-      }else if(this.state==1){
-        let instance = this.axios.create({
-          headers: {
-            'Authorization': window.localStorage.token,
-            'Content-Type': 'application/json'
-          }
-        })
-      let _this = this
-      instance({
-        url:'disease/addTem',
-        method:'post',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        data:{
-            "disease": { 
-                name: this.disease.name,
-                nameen:this.disease.nameen,
-                muttype: this.disease.muttype,
-                mode: this.disease.mode,
-                alias: this.disease.alias,
-                age: this.disease.age,
-                omim: this.disease.omim,
-                morbidity: this.disease.morbidity,
-                distype:this.disease.distype,
-                content:"Cornelia de Lange综合征是一种临床异质性发育障碍，伴随多系统受累的畸形。主要临床特征包括面部畸形、手脚畸形、生长延迟、认知障碍、多毛症、胃食管功能障碍和心脏、眼科和泌尿生殖系统异常表征。",
-                deptId: [],
-                genes:this.relatedgene,
-                druggeryIds: [],
-                guides: this.guideId,
-                diseaseId:"5beb9d57e7910c2484a8ef54"
-            },
-            productIds: this.productId
-        }
-      }).then(res=>{
-        this.$message('发布成功') 
-      })
-      }
-    },
     //科室
     getList(){
       this.axios({
         url:'hospital-dept'
       }).then(res=>{
-        this.deptList=res.data; 
+        this.prodepts=res.data;
+        console.log(res.data)
       })
     },
     //基因
@@ -687,23 +604,48 @@ export default {
           this.productOption = [];
         }
     },
-    getDatas(){
-      this.axios({
-        url:"disease/byId",
-        params:{
-          id:this.$route.query.id,
-          state:this.$route.query.state
+    //发布
+    addData(){
+      let instance = this.axios.create({
+          headers: {
+            'Authorization': window.localStorage.token,
+            'Content-Type': 'application/json'
+          }
+        })
+      let _this = this
+      instance({
+        url:'disease/addDisease',
+        method:'post',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        data:{
+            "disease": { 
+                name: this.disease.name,
+                nameen:this.disease.nameen,
+                muttype: this.disease.muttype,
+                mode: this.disease.mode,
+                alias: this.disease.alias,
+                age: this.disease.age,
+                omim: this.disease.omim,
+                morbidity: this.disease.morbidity,
+                distype:this.disease.distype,
+                content:"Cornelia de Lange综合征是一种临床异质性发育障碍，伴随多系统受累的畸形。主要临床特征包括面部畸形、手脚畸形、生长延迟、认知障碍、多毛症、胃食管功能障碍和心脏、眼科和泌尿生殖系统异常表征。",
+                deptId: [],
+                genes:this.relatedgene,
+                druggeryIds: [],
+                guides: this.guideId,
+                diseaseId:"5beb9d57e7910c2484a8ef54"
+            },
+            productIds: this.productId
         }
-        }).then(res=>{
-          console.log(res.data)
-          this.datas = res.data.disease;
-          this.diseaseId = res.data.disease.id
-        })   
+      }).then(res=>{
+        this.$message('发布成功') 
+      })
     },
     //暂存按钮
-    disabeleds(){ 
-    // console.log(this.content0,this.content1,this.content2,this.content3,this.content4,this.content5,this.content6,this.content7,this.content8,this.content9)
-    // console.log(this.disease.alias,this.title,this.disease.name,this.disease.nameen,this.disease.omim,this.disease.distype,this.disease.mode,this.disease.muttype,this.disease.age,this.disease.morbidity)
+    disabeleds(){
     this.openIsDisabled = !this.openIsDisabled;
       this.cname=!this.cname
       this.ename= !this.ename
@@ -741,8 +683,7 @@ export default {
       this.btitle9= !this.btitle9
       this.values1 = !this.values1;
       this.values = !this.values;
-      if(this.state==0){
-          let instance = this.axios.create({
+      let instance = this.axios.create({
           headers: {
             'Authorization': window.localStorage.token,
             'Content-Type': 'application/json'
@@ -779,13 +720,6 @@ export default {
       }).then(res=>{
         this.$message('发布成功') 
       })
-      }else if(this.state==1){
-        if(this.diseaseId==''){
-          
-        }else{
-
-        }
-      }
     },
      onEditorReady(editor) { }, // 准备编辑器,
         onEditorBlur(){}, // 失去焦点事件
@@ -954,8 +888,7 @@ export default {
     deleteCatelog (index) {
       this.disease.catalog.splice(index, 1)
     }
-  }, 
-  filters: {}, 
+  },  
     computed: {
         editor() {
             return this.$refs.myQuillEditor.quill;

@@ -47,8 +47,8 @@
           label="操作"
           width="200">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="toDetail(scope.row.id)">查看详情</el-button>
-            <el-button type="text" size="small" @click="toDetail(scope.row.id)">编辑</el-button>
+            <el-button type="text" size="small" @click="toDetail(scope.row.id,scope.row.state)">查看详情</el-button>
+            <el-button type="text" size="small" @click="toEdit(scope.row.id,scope.row.state)" >编辑</el-button>
             <el-button type="text" size="small" @click="toDelete(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
@@ -57,7 +57,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="pageNum"
-        :page-sizes="[20, 50, 100, 150]"
+        :page-sizes="[10, 50, 100, 150]"
         :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="totalPage">
@@ -72,8 +72,8 @@ export default {
   data () {
     return {
       diseaseList: [],
-      pageNum: window.sessionStorage.diseasePageNum === undefined ? 1 : window.sessionStorage.diseasePageNum,
-      pageSize: window.sessionStorage.diseasePageSize === undefined ? 20 : window.sessionStorage.diseasePageSize,
+      pageNum: 1,
+      pageSize: 10,
       totalPage: 0,
       paramSelect: '',
       condition: null
@@ -95,42 +95,55 @@ export default {
       let _this = this
       instance({
         method: 'get',
-        url: 'diseaseData/getDiseasesByPage',
-        params: {
-          pageNum: _this.pageNum,
-          pageSize: _this.pageSize,
-          userId: window.localStorage.userId,
-          param: _this.condition
-        },
+        url: 'https://qa.mdhcare.cn/mdhcare-backend/disease/page', 
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
+        },
+        params:{
+          pageSize : this.pageSize,
+          pageNum : this.pageNum,
+          param:this.condition
         }
       }).then(function (res) {
-        _this.diseaseList = res.data
-        _this.totalPage = res.data.length
+        console.log(res.data)
+        _this.diseaseList = res.data.diseases
+        _this.totalPage = res.data.totalNum
       })
     },
     handleSizeChange (val) {
-      this.pageSize = val
-      window.sessionStorage.diseasePageSize = val
+      this.pageSize = val 
       this.getData()
     },
     handleCurrentChange (val) {
-      this.pageNum = val
-      window.sessionStorage.diseasePageNum = val
+      this.pageNum = val 
       this.getData()
     },
-    toEdit (id) {
-    },
-    toDetail (id) {
+    //编辑
+    toEdit (id,state) {
       this.$router.push({
-        path: '/disease/edit/' + id
+         name:'DiseaseEdit',
+         query:{
+           id,
+           state
+         }
       })
     },
+    //查看
+    toDetail (id,state) {
+      console.log(id,state)
+      this.$router.push({
+         name:'DiseaseView',
+         query:{
+           id,
+           state
+         }
+      })
+    },
+    //新增
     toAdd () {
       this.$router.push({
-        name: 'ProductAdd'
+        name: 'DiseaseAdd'
       })
     },
     toDelete (id) {

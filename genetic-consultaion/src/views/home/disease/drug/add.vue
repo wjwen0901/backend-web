@@ -4,7 +4,7 @@
       <el-col :span="24">
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/drug' }">疾病信息管理</el-breadcrumb-item>
-          <el-breadcrumb-item>编辑</el-breadcrumb-item>
+          <el-breadcrumb-item>新增</el-breadcrumb-item>
         </el-breadcrumb>
       </el-col>
     </el-row>
@@ -14,13 +14,18 @@
           <el-form ref="solutionForm"  label-width="100px" size="mini" class="edit-form clearfix">
             <div class="form-left">
               <el-form-item label="中文标题*"> 
-                <el-input v-model="drug.drugName" :disabled="drugNames" :placeholder="datas.title"></el-input>
+                <el-input v-model="drug.drugName" :disabled="drugNames" placeholder="请输入名称"></el-input>
               </el-form-item>
               <el-form-item label="制定者*">
-                <el-input v-model="drug.customizer" :disabled="customizers" :placeholder="datas.framers[0]"></el-input>
+                <el-input v-model="drug.customizer" :disabled="customizers" placeholder="请输入名称"></el-input>
               </el-form-item>
-              <el-form-item label="发布日期*">
-                <el-input v-model="drug.inaccurate" :disabled="inaccurates" placeholder="请输入名称"></el-input>
+              <el-form-item label="发布日期*"> 
+                 <el-date-picker
+                    v-model="drug.inaccurate"
+                    :disabled="inaccurates"
+                    type="date"
+                    placeholder="选择日期">
+                  </el-date-picker>
               </el-form-item> 
               <el-form-item label="检测产品">
                <el-select 
@@ -44,10 +49,10 @@
             </div>
             <div class="form-right">
               <el-form-item label="英文标题*">
-                <el-input v-model="drug.drugNameEn" :disabled="drugNameEns" :placeholder="datas.titleEn[0]"></el-input>
+                <el-input v-model="drug.drugNameEn" :disabled="drugNameEns" placeholder="请输入名称"></el-input>
               </el-form-item>
               <el-form-item label="出处*">
-                <el-input v-model="drug.producer" :disabled="producers" :placeholder="datas.provenance[0]"></el-input>
+                <el-input v-model="drug.producer" :disabled="producers" placeholder="请输入名称"></el-input>
               </el-form-item> 
               <el-form-item label="相关疾病">
                  <el-select
@@ -176,10 +181,10 @@ export default {
       drug: {
         source: {},
         drugName:'',
-        customizer:'',
-        inaccurate:'', 
-        drugNameEn:'',
-        producer:'', 
+        customizer:[],
+        inaccurate:[], 
+        drugNameEn:[],
+        producer:[], 
       },
       product: [],
       disease:[],
@@ -219,11 +224,10 @@ export default {
       genes:false,
       countenes:false,
       values:false,
-      value1s:false,
-      datas:{},
-      guideId:''
+      value1s:false
     }
   },
+  props: {},
   mounted () {
     this.lists = this.states.map(item => { 
         return { value: item.id, label: item.name };
@@ -234,10 +238,8 @@ export default {
       this.geneList = this.geneState.map(item => { 
         return { value: item.id, label: item.name };
       });
-      this.state = this.$route.query.state
-      this.getDatas()
   },
-  methods: {
+  methods: { 
     //预览
     preview(){
       this.$router.push({
@@ -254,65 +256,6 @@ export default {
       obj.productIds=this.product 
       obj.geneIds= this.gene
       window.sessionStorage.setItem('drug',JSON.stringify(obj))
-    },
-    //发布
-    addData(){
-      if(this.state==0){
-          let instance = this.axios.create({
-          headers: {
-            'Authorization': window.localStorage.token,
-            'Content-Type': 'application/json'
-          }
-        })
-      let _this = this
-      instance({
-        url:'guide/editGuide',
-        method:'put',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        params:{
-          temId:this.$route.query.id
-        },
-        data:{ 
-          "guideTem":{ 
-              intro:this.content,
-              title:this.drug.drugName,
-              titleEn:this.drug.drugNameEn,
-              framers:this.drug.customizer,
-              provenance:this.drug.producer,
-              publishDate:this.drug.inaccurate,
-              diseaseIds:this.disease,
-              geneIds: this.gene
-            },
-            productIds:this.product 
-        }
-      }).then(res=>{
-        this.$message('发布成功') 
-      })
-      }else if(this.state==1){
-        if(this.guideId==''){
-
-        }else{
-          
-        }
-      }
-    },
-    //获取信息
-    getDatas(){
-      this.axios({
-        url:'guide/byId',
-        params:{
-          id:this.$route.query.id,
-          state:this.$route.query.state
-        }
-      }).then(res=>{
-        this.datas = res.data.guide;
-        this.guideId=res.data.guideId
-        console.log(this.datas)
-      })
-      
     },
     //检测产品、
     getData(product){ 
@@ -404,22 +347,8 @@ export default {
         this.geneOption = [];
       }
     },
-    //暂存
-    disableds(){  
-      this.openIsDisabled = !this.openIsDisabled;
-      this.drugNames = !this.drugNames
-      this.customizers = !this.customizers
-      this.inaccurates = !this.inaccurates
-      this.products = !this.products
-      this.drugNameEns = !this.drugNameEns
-      this.producers = !this.producers
-      this.diseases = !this.diseases
-      this.genes = !this.genes
-      this.countenes = !this.countenes
-      this.values = !this.values
-      this.value1s = !this.value1s
-       if(this.state==0){
-          let instance = this.axios.create({
+    addData(){
+       let instance = this.axios.create({
           headers: {
             'Authorization': window.localStorage.token,
             'Content-Type': 'application/json'
@@ -427,14 +356,11 @@ export default {
         })
       let _this = this
       instance({
-        url:'guide/editGuide',
-        method:'put',
+        url:'guide/addGuide',
+        method:'post',
         headers: {
           'Content-Type': 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
-        },
-        params:{
-          temId:this.$route.query.id
         },
         data:{ 
           "guideTem":{ 
@@ -452,13 +378,51 @@ export default {
       }).then(res=>{
         this.$message('发布成功') 
       })
-      }else if(this.state==1){
-        if(this.guideId==''){
-
-        }else{
-          
+    },
+    //暂存
+    disableds(){  
+      this.openIsDisabled = !this.openIsDisabled;
+      this.drugNames = !this.drugNames
+      this.customizers = !this.customizers
+      this.inaccurates = !this.inaccurates
+      this.products = !this.products
+      this.drugNameEns = !this.drugNameEns
+      this.producers = !this.producers
+      this.diseases = !this.diseases
+      this.genes = !this.genes
+      this.countenes = !this.countenes
+      this.values = !this.values
+      this.value1s = !this.value1s
+      let instance = this.axios.create({
+          headers: {
+            'Authorization': window.localStorage.token,
+            'Content-Type': 'application/json'
+          }
+        })
+      let _this = this
+      instance({
+        url:'guide/addTem',
+        method:'post',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        data:{ 
+          "guideTem":{ 
+              intro:this.content,
+              title:this.drug.drugName,
+              titleEn:this.drug.drugNameEn,
+              framers:this.drug.customizer,
+              provenance:this.drug.producer,
+              publishDate:this.drug.inaccurate,
+              diseaseIds:this.disease,
+              geneIds: this.gene
+            },
+            productIds:this.product 
         }
-      }
+      }).then(res=>{
+        this.$message('暂存成功') 
+      })
     },
     onEditorReady(editor) { }, // 准备编辑器,
         onEditorBlur(){}, // 失去焦点事件

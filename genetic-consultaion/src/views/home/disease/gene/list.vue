@@ -20,29 +20,28 @@
         <el-table-column
           prop="gene"
           label="基因">
-        </el-table-column>
-        <el-table-column
-          prop="alias"
-          label="其他名称">
-        </el-table-column>
+        </el-table-column> 
         <el-table-column
           prop="pos"
-          label="位置"
-          width="180">
+          label="位置" >
         </el-table-column>
         <el-table-column
           prop="exon"
           label="外显子"
-          width="180">
+          width="130">
         </el-table-column>
         <el-table-column
           prop="intron"
           label="内含子"
-          width="180">
+          width="130">
         </el-table-column>
         <el-table-column
           prop="nm"
           label="NM号">
+        </el-table-column>
+        <el-table-column
+          prop="alias"
+          label="状态">
         </el-table-column>
         <el-table-column
           prop="operationTime"
@@ -57,8 +56,8 @@
           label="操作"
           width="200">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="toDetail(scope.row.id)">查看详情</el-button>
-            <el-button type="text" size="small" @click="toEdit(scope.row.id)">编辑</el-button>
+            <el-button type="text" size="small" @click="toDetail(scope.row)">查看详情</el-button>
+            <el-button type="text" size="small" @click="toEdit(scope.row.id,scope.row.state)">编辑</el-button>
             <el-button type="text" size="small" @click="toDelete(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
@@ -82,9 +81,8 @@ export default {
   data () {
     return {
       geneList: [],
-      pageNum: window.sessionStorage.productPageNum === undefined ? 1 : window.sessionStorage.productPageNum,
-      pageSize: window.sessionStorage.productPageSize === undefined ? 20 : window.sessionStorage.productPageSize,
-      totalPage: 0,
+      pageNum: 1,
+      pageSize: 10, 
       paramSelect: '',
       condition: null
     }
@@ -94,42 +92,51 @@ export default {
       this.getData()
     },
     getData () {
-      this.axios.get('solution/page', {
-        params: {
-          pageNum: this.pageNum,
-          pageSize: this.pageSize,
-          userId: window.localStorage.userId,
-          condition: this.condition
+      this.axios('gene/page',{ 
+        params:{
+          pageSize : this.pageSize,
+          pageNum : this.pageNum,
+          param:this.condition 
         }
       }).then(res => {
-        this.geneList = res.data.list
-        this.pageSize = res.data.pageSize
-        this.pageNum = res.data.pageNum
-        this.totalPage = res.data.total
+        this.geneList = res.data.genes
+        this.totalPage = res.data.totalNum
       }).catch(err => {
         console.log(err)
       })
     },
     handleSizeChange (val) {
-      this.pageSize = val
-      window.sessionStorage.productPageSize = val
+      this.pageSize = val 
       this.getData()
     },
     handleCurrentChange (val) {
-      this.pageNum = val
-      window.sessionStorage.productPageNum = val
+      this.pageNum = val 
       this.getData()
     },
-    toEdit (id) {
-    },
-    toDetail (id) {
+    //编辑
+    toEdit (id,state) {
       this.$router.push({
-        path: '/product/edit/' + id
+        name:'GeneEdit',
+        query:{
+          id,state
+        }
+
       })
     },
+    //查看
+    toDetail (data) { 
+      console.log(data)
+      this.$router.push({
+        name:'GeneView', 
+        query:{
+          data
+        }
+      })
+    },
+    //新增
     toAdd () {
       this.$router.push({
-        name: 'ProductAdd'
+        name: 'GeneAdd'
       })
     },
     toDelete (id) {
@@ -165,8 +172,7 @@ export default {
     this._initData()
     loading.close()
   },
-  mounted () {},
-  destroyed () {}
+  mounted () {}
 }
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>

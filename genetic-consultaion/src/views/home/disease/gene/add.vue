@@ -4,7 +4,7 @@
       <el-col :span="24">
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/gene' }">基因信息管理</el-breadcrumb-item>
-          <el-breadcrumb-item>编辑</el-breadcrumb-item>
+          <el-breadcrumb-item>添加</el-breadcrumb-item>
         </el-breadcrumb>
       </el-col>
     </el-row>
@@ -14,21 +14,21 @@
           <el-form ref="solutionForm" :model="gene" label-width="80px" size="mini" class="edit-form clearfix">
             <div class="left">
             <el-form-item label="基因*">
-              <el-input v-model="gene.gene" :disabled="genes" :placeholder="datas.gene"></el-input>
+              <el-input v-model="gene.gene" :disabled="genes" placeholder="请输入名称"></el-input>
             </el-form-item>
             <el-form-item label="其他名称">
-              <el-input v-model="gene.alias" :disabled="alia" :placeholder="datas.alias"></el-input>
+              <el-input v-model="gene.alias" :disabled="alia" placeholder="请输入名称"></el-input>
             </el-form-item>
             <el-form-item label="外显子数">
-              <el-input v-model="gene.exon" :disabled="exons" :placeholder="datas.exon"></el-input>
+              <el-input v-model="gene.exon" :disabled="exons" placeholder="请输入名称"></el-input>
             </el-form-item>
             <el-form-item label="内含子数">
-              <el-input v-model="gene.intron" :disabled="introns" :placeholder="datas.intron"></el-input>
+              <el-input v-model="gene.intron" :disabled="introns" placeholder="请输入名称"></el-input>
             </el-form-item> 
           </div>
           <div class="right">
             <el-form-item label="NM号">
-              <el-input v-model="gene.nm" :disabled="nms" :placeholder="datas.nm"></el-input>
+              <el-input v-model="gene.nm" :disabled="nms" placeholder="请输入名称"></el-input>
             </el-form-item> 
             <el-form-item label="相关基因">
                <el-select
@@ -76,7 +76,7 @@
                 filterable
                 remote
                 reserve-keyword
-                :placeholder="productNames"
+                placeholder="请输入关键词"
                 :remote-method="product"
                 :loading="productLoading">
                 <el-option
@@ -191,11 +191,7 @@ export default {
       sources:false,
       source1s:false,
       relatedgenes:false,
-      content1:false,
-      productNames:'',
-      state:'',
-      datas:{},
-      geneId:''
+      content1:false
     }
   }, 
   mounted () {
@@ -211,91 +207,8 @@ export default {
     this.productList = this.productState.map(item => {
       return { value: item, label: item };
     });
-    this.state = this.$route.query.state
-    this.getData()
   },
   methods: {
-    //获取信息
-    getData(){
-      this.axios({
-        url:'gene/byId',
-        params:{
-          id:this.$route.query.id,
-          state:this.$route.query.state
-        }
-      }).then(res=>{
-        this.datas = res.data.gene
-        this.geneId = res.data.gene.id
-        this.productNames = res.data.productNames
-      })
-    },
-    //发布
-    addData(){
-     if(this.state==0){
-       let instance = this.axios.create({
-          headers: {
-            'Authorization': window.localStorage.token,
-            'Content-Type': 'application/json'
-          }
-        })
-      let _this = this
-      instance({
-        url:'gene/editGene',
-        method:'put',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        params:{
-          temId:this.$route.query.id
-        },
-        data:{ 
-          "geneTem":{
-            id:this.$route.query.id,
-            gene:this.gene.gene,
-            exon:this.gene.exon,
-            intron:this.gene.intron,
-            nm:this.gene.nm,
-            alias:this.gene.alias,
-            diseaseIds:["5beb9cede7910c2484a8eefb","5beb9ceee7910c2484a8eefc","5beb9cf1e7910c2484a8eefe"],
-            productIds:this.productId,
-            druggeryIds:["5c4feef31c05c43528f9e761","5c4fefa71c05c43528f9e762","5c47dbf7e7910c37fc37cde6"]}
-        }
-      }).then(res=>{
-        this.$message('修改成功') 
-      })
-     }else if(this.state==1){
-       let instance = this.axios.create({
-          headers: {
-            'Authorization': window.localStorage.token,
-            'Content-Type': 'application/json'
-          }
-        })
-      let _this = this
-      instance({
-        url:'gene/editTem',
-        method:'put',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        data:{ 
-          "geneTem":{
-            id:this.$route.query.id,
-            gene:this.gene.gene,
-            exon:this.gene.exon,
-            intron:this.gene.intron,
-            nm:this.gene.nm,
-            alias:this.gene.alias,
-            diseaseIds:["5beb9cede7910c2484a8eefb","5beb9ceee7910c2484a8eefc","5beb9cf1e7910c2484a8eefe"],
-            productIds:this.productId,
-            druggeryIds:["5c4feef31c05c43528f9e761","5c4fefa71c05c43528f9e762","5c47dbf7e7910c37fc37cde6"]}
-        }
-      }).then(res=>{
-        this.$message('修改成功') 
-      })
-     }
-    },
     //预览
     preview(){
       this.$router.push({
@@ -311,6 +224,37 @@ export default {
       obj.productIds=this.productId,
       obj.druggeryIds=["5c4feef31c05c43528f9e761","5c4fefa71c05c43528f9e762","5c47dbf7e7910c37fc37cde6"]
       window.sessionStorage.setItem('gene',JSON.stringify(obj))
+    },
+    //添加数据
+    addData(){
+     let instance = this.axios.create({
+          headers: {
+            'Authorization': window.localStorage.token,
+            'Content-Type': 'application/json'
+          }
+        })
+      let _this = this
+      instance({
+        url:'gene/addGene',
+        method:'post',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        data:{ 
+          "geneTem":{
+            gene:this.gene.gene,
+            exon:this.gene.exon,
+            intron:this.gene.intron,
+            nm:this.gene.nm,
+            alias:this.gene.alias,
+            diseaseIds:["5beb9cede7910c2484a8eefb","5beb9ceee7910c2484a8eefc","5beb9cf1e7910c2484a8eefe"],
+            productIds:this.productId,
+            druggeryIds:["5c4feef31c05c43528f9e761","5c4fefa71c05c43528f9e762","5c47dbf7e7910c37fc37cde6"]}
+        }
+      }).then(res=>{
+        this.$message('发布成功') 
+      })
     },
     //基因
     geneGetdata(gene){
@@ -418,43 +362,8 @@ export default {
       this.sources=!this.sources,
       this.source1s=!this.source1s,
       this.content1=!this.content1,
-      this.relatedgenes = !this.relatedgenes
-      if(this.state==1){
-        if(this.geneId==''){
-            let instance = this.axios.create({
-          headers: {
-            'Authorization': window.localStorage.token,
-            'Content-Type': 'application/json'
-          }
-        })
-      let _this = this
-      instance({
-        url:'gene/editTem',
-        method:'put',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        data:{ 
-          "geneTem":{
-            id:this.$route.query.id,
-            gene:this.gene.gene,
-            exon:this.gene.exon,
-            intron:this.gene.intron,
-            nm:this.gene.nm,
-            alias:this.gene.alias,
-            diseaseIds:["5beb9cede7910c2484a8eefb","5beb9ceee7910c2484a8eefc","5beb9cf1e7910c2484a8eefe"],
-            productIds:this.productId,
-            druggeryIds:["5c4feef31c05c43528f9e761","5c4fefa71c05c43528f9e762","5c47dbf7e7910c37fc37cde6"]}
-        }
-      }).then(res=>{
-        this.$message('修改成功') 
-      }) 
-        }else{
-
-        } 
-      }else if(this.state==0){ 
-        let instance = this.axios.create({
+      this.relatedgenes = !this.relatedgenes;
+      let instance = this.axios.create({
           headers: {
             'Authorization': window.localStorage.token,
             'Content-Type': 'application/json'
@@ -470,7 +379,6 @@ export default {
         },
         data:{ 
           "geneTem":{
-            geneId:this.$route.query.id,
             gene:this.gene.gene,
             exon:this.gene.exon,
             intron:this.gene.intron,
@@ -481,9 +389,8 @@ export default {
             druggeryIds:["5c4feef31c05c43528f9e761","5c4fefa71c05c43528f9e762","5c47dbf7e7910c37fc37cde6"]}
         }
       }).then(res=>{
-        this.$message('修改成功') 
+        this.$message('暂存成功') 
       })
-      }
     },
     //富文本
     onEditorReady(editor) { }, // 准备编辑器,
@@ -514,9 +421,7 @@ export default {
                 }
               }
             })
-          }
-          console.log(this.reportType)
-          console.log(this.consultancy)
+          } 
         }).catch(err => {
           console.log(err)
         })
