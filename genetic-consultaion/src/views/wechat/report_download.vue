@@ -267,10 +267,14 @@ export default {
         this.cellphoneTypeError = true
         return false
       }
+      let param = {
+        cellphone: this.patient.cellphone
+      }
+      if (this.$route.query.k === 'd9edd1f365c990ad260d80015136f25e') {
+        this.param.companyId = 9
+      }
       this.axios.get('verification', {
-        params: {
-          cellphone: this.patient.cellphone
-        }
+        params: param
       }).then(res => {
         if (res.data === 'success') {
           this.hasCode = true
