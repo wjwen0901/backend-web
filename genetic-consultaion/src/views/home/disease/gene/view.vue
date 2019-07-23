@@ -30,23 +30,27 @@
             <el-form-item label="NM号">
               <span>{{datas.nm}}</span>
             </el-form-item> 
-            <el-form-item label="相关基因">
-              <span>{{datas.gene}}</span>
+            <el-form-item label="相关疾病">
+              <span v-for="(item,index) in Name.diseases" :key="index">{{item.diseaseName}} </span>
             </el-form-item>  
-              <el-form-item label="靶向用药">
-              </el-form-item>
-              <el-form-item label="检测产品">
-              </el-form-item>
+            <el-form-item label="靶向用药">
+              <span v-for="(item,index) in Name.druggerys" :key="index">{{item.druggeryName}} </span>
+            </el-form-item>
+            <el-form-item label="检测产品">
+              <span v-for="(item,index) in Name.products" :key="index">{{item.productName}} </span>
+            </el-form-item>
           </div>   
           </el-form>
           <ul class="gene-list" >
             其他
           </ul> 
           <div class="gene-contents"> 
-              <p class="title">标题：<input :placeholder="请输入标题"   type="text"></p>
+              <p class="title">标题：<span>其他</span> </p>
+              <p v-html="datas.other"></p>
+
           </div>
           <div class="gene-select">
-            <p>数据来源</p>
+            
           </div>
         </div> 
       </el-col>
@@ -57,15 +61,7 @@
 export default {
   name: 'GeneEdit',
   data () {
-    return { 
-      gene: {
-        gene:'',
-        alias:'',
-        exon:'',
-        intron:'',
-        nm:'', 
-        source: {}
-      },
+    return {  
       source:'',
       source1:'',
       testproduct:'',
@@ -98,136 +94,23 @@ export default {
       datas:{}
     }
   }, 
-  mounted () {
-    //相关基因
-    this.geneList = this.geneState.map(item => {
-      return { value: item, label: item };
-    });
-    //靶向用药
-    this.medicaList = this.medicaState.map(item => {
-      return { value: item, label: item };
-    });
-    //相关产品
-    this.productList = this.productState.map(item => {
-      return { value: item, label: item };
-    });
+  mounted () { 
     this.getData()
   },
-  methods: {
-    //基因
-    geneGetdata(gene){
+  methods: { 
+    getData(){
       this.axios({
-        url:'http://39.106.167.28/mdhcare-pc/product/getProductByName',
+        url:"gene/byId",
         params:{
-          param:gene
+          id:this.$route.query.data.id,
+          state:this.$route.query.data.state
         }
       }).then(res=>{
-        this.geneOption= res.data.products.list.map((item,index)=>{
-         return {
-            "id" : item.id,
-            "name":item.name
-          }
-        });
-        this.geneState = res.data.proDepts.list.map((item,index)=>{
-         return item.name
-       })
+        this.datas = res.data.gene;
+        this.Name = res.data;
+        console.log(res.data)
       })
     },
-    geneRemote(query) {
-      this.geneGetdata(query)
-        if (query !== '') {
-          this.geneLoading = true;
-          setTimeout(() => {
-            this.geneLoading = false;
-          }, 200);
-        } else {
-          this.geneOption = [];
-        }
-    },
-    //靶向用药
-    medicaGetdata(medica){
-      this.axios({
-        url:'druggery/all',
-        params:{
-          keyWord:medica
-        }
-      }).then(res=>{
-        this.medicaOption= res.data.products.list.map((item,index)=>{
-         return {
-            "id" : item.id,
-            "name":item.name
-          }
-        });
-        this.medicaState = res.data.proDepts.list.map((item,index)=>{
-         return item.name
-       })
-      })
-    },
-    medica(query) {
-      this.medicaGetdata(query)
-        if (query !== '') {
-          this.medicaLoading = true;
-          setTimeout(() => {
-            this.medicaLoading = false;
-          }, 200);
-        } else {
-          this.medicaOption = [];
-        }
-    },
-    //检测产品
-    productGetdata(product){
-      this.axios({
-        url:'http://39.106.167.28/mdhcare-pc/product/getProductByName',
-        params:{
-          param:product
-        }
-      }).then(res=>{
-        this.productOption= res.data.products.list.map((item,index)=>{
-         return {
-            "id" : item.id,
-            "name":item.name
-          }
-        });
-        this.productState = res.data.proDepts.list.map((item,index)=>{
-         return item.name
-       })
-      })
-    },
-    product(query) {
-      this.productGetdata(query)
-        if (query !== '') {
-          this.productLoading = true;
-          setTimeout(() => {
-            this.productLoading = false;
-          }, 200);
-        } else {
-          this.productOption = [];
-        }
-    },
-    //暂存按钮
-    disableds(){
-      console.log(this.gene.gene,this.gene.alias,this.gene.exon,this.gene.intron,this.gene.nm,this.content) 
-      this.openIsDisabled = !this.openIsDisabled
-    },
-    //富文本
-    onEditorReady(editor) { }, // 准备编辑器,
-        onEditorBlur(){}, // 失去焦点事件
-        onEditorFocus(){}, // 获得焦点事件
-        onEditorChange(){}, // 内容改变事件
-        saveHtml:function(event){
-          alert(this.content)
-        },
-        getData(){
-          this.axios({
-            url:"gene/byId",
-            params:{
-              id:this.$route.query.data.id,
-              state:this.$route.query.data.state
-            }
-          }).then(res=>{
-            this.datas = res.data.gene
-          })
-        },
     _initData () {
       if (this.$route.params.id !== undefined) {
         this.axios.get('gene/' + this.$route.params.id).then(res => {
@@ -386,6 +269,12 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
+.active{
+  color:goldenrod;
+}
+.edit-form{
+  max-width: none;
+}
   .float-l {
     float: left;
   }
@@ -418,7 +307,7 @@ export default {
   }
   .gene-contents{
     width: 100%;
-    height: 50px;
+    height: 100px;
     line-height: 50px;
     margin-bottom: 10px;
   }

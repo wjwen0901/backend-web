@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>指南管理</el-breadcrumb-item>
+      <el-breadcrumb-item>检测产品管理</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="product-container">
       <div>
@@ -26,16 +26,19 @@
           label="英文名称">
         </el-table-column> 
         <el-table-column
-          prop="create_time"
-          label="创建时间"
-          width="180">
+          prop="createTime"
+          label="创建时间" 
+          width="180"> 
           <template slot-scope="scope">
-            {{scope.row.create_time | formatDate}}
-          </template>
+        <span>{{timestampToTime(scope.row.createTime)}}</span>
+        </template>
         </el-table-column>
         <el-table-column
-          prop="brief"
           label="状态">
+          <template slot-scope="scope">
+            <span v-if="scope.row.state==1">暂存</span>
+            <span v-if="scope.row.state==0">发布</span>
+          </template>
         </el-table-column>
         <el-table-column
           fixed="right"
@@ -44,7 +47,7 @@
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="toDetail(scope.row.id,scope.row.state)">查看详情</el-button>
             <el-button type="text" size="small" @click="toEdit(scope.row.id,scope.row.state)">编辑</el-button>
-            <el-button type="text" size="small" @click="toDelete(scope.row.id)">删除</el-button>
+            <el-button type="text" size="small" @click="toDelete(scope.row.id,scope.row.state)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -68,10 +71,21 @@ export default {
       pageNum: 1,
       pageSize: 10, 
       paramSelect: '',
-      condition: ''
+      condition: '',
+      totalPage: 0
     }
   },
   methods: {
+     timestampToTime(timestamp) {  
+        var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000 
+        var Y = date.getFullYear() + '-'; 
+        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+        var D = (date.getDate() < 10 ? '0'+date.getDate() : date.getDate()) + ' ';
+        var h = (date.getHours() < 10 ? '0'+date.getHours() : date.getHours()) + ':';
+        var m = (date.getMinutes() < 10 ? '0'+date.getMinutes() : date.getMinutes()) + ':';
+        var s = (date.getSeconds() < 10 ? '0'+date.getSeconds() : date.getSeconds());
+        return Y+M+D+h+m+s;
+    },
     _initData () {
       this.getData()
     },
@@ -97,7 +111,7 @@ export default {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
         }
-      }).then(function (res) { 
+      }).then(function (res) {  
         _this.proList = res.data.products
         _this.totalPage = res.data.totalNum
       })
@@ -113,16 +127,17 @@ export default {
     toEdit (id,state) {
       this.$router.push({
         name: 'ProductClEdit',
+        params: id,
         query:{
           id,
           state
         }
       })
     },
-    toDetail (id,state) {
-      console.log(id,state)
+    toDetail (id,state) { 
       this.$router.push({
         name: 'ProductClView',
+        params: {'id': id},
         query:{
           id,
           state
@@ -134,10 +149,16 @@ export default {
         name: 'ProductClAdd'
       })
     },
-    toDelete (id) {
-      this.$confirm('确认删除？')
+    toDelete (id,state) {
+       this.$confirm('确认删除？')
         .then(_ => {
-          this.axios.delete('disease/' + id).then(res => {
+          this.axios({
+            url:'product',
+            method:"delete",
+            params:{
+              productId:id,state
+            }
+          }).then(res => {
             this.getData()
             this.$message({
               message: '删除成功',
@@ -151,7 +172,7 @@ export default {
             })
           })
         })
-        .catch(_ => {})
+        .catch(_ => {}) 
     }
   },
   filters: {
@@ -184,8 +205,6 @@ export default {
       width: 400px;
       float: right;
       margin-bottom: 10px;
-    }
-    .add-solution {
-    }
+    } 
   }
 </style>

@@ -20,11 +20,7 @@
         <el-table-column
           prop="gene"
           label="基因">
-        </el-table-column> 
-        <el-table-column
-          prop="pos"
-          label="位置" >
-        </el-table-column>
+        </el-table-column>  
         <el-table-column
           prop="exon"
           label="外显子"
@@ -39,17 +35,20 @@
           prop="nm"
           label="NM号">
         </el-table-column>
-        <el-table-column
-          prop="alias"
+        <el-table-column 
           label="状态">
+           <template slot-scope="scope">
+            <span v-if="scope.row.state==1">暂存</span>
+            <span v-if="scope.row.state==0">发布</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="operationTime"
-          label="创建日期"
-          width="180">
-          <template slot-scope="scope">
-            {{scope.row.operationTime | formatDate}}
-          </template>
+          prop="createTime"
+          label="创建时间" 
+          width="180"> 
+           <template slot-scope="scope">
+            <span>{{parseInt(scope.row.createTime) | formatDate}}</span>
+            </template>
         </el-table-column>
         <el-table-column
           fixed="right"
@@ -58,7 +57,7 @@
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="toDetail(scope.row)">查看详情</el-button>
             <el-button type="text" size="small" @click="toEdit(scope.row.id,scope.row.state)">编辑</el-button>
-            <el-button type="text" size="small" @click="toDelete(scope.row.id)">删除</el-button>
+            <el-button type="text" size="small" @click="toDelete(scope.row.id,scope.row.state)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -84,10 +83,21 @@ export default {
       pageNum: 1,
       pageSize: 10, 
       paramSelect: '',
-      condition: null
+      condition: null,
+      totalPage: 0
     }
   },
   methods: {
+     timestampToTime(timestamp) { 
+        var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000 
+        var Y = date.getFullYear() + '-'; 
+       var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+        var D = (date.getDate() < 10 ? '0'+date.getDate() : date.getDate()) + ' ';
+        var h = (date.getHours() < 10 ? '0'+date.getHours() : date.getHours()) + ':';
+        var m = (date.getMinutes() < 10 ? '0'+date.getMinutes() : date.getMinutes()) + ':';
+        var s = (date.getSeconds() < 10 ? '0'+date.getSeconds() : date.getSeconds());
+        return Y+M+D+h+m+s;
+    },
     _initData () {
       this.getData()
     },
@@ -100,7 +110,7 @@ export default {
         }
       }).then(res => {
         this.geneList = res.data.genes
-        this.totalPage = res.data.totalNum
+        this.totalPage = res.data.totalNum 
       }).catch(err => {
         console.log(err)
       })
@@ -117,6 +127,7 @@ export default {
     toEdit (id,state) {
       this.$router.push({
         name:'GeneEdit',
+        params: {'id': id},
         query:{
           id,state
         }
@@ -124,8 +135,7 @@ export default {
       })
     },
     //查看
-    toDetail (data) { 
-      console.log(data)
+    toDetail (data) {  
       this.$router.push({
         name:'GeneView', 
         query:{
@@ -139,10 +149,16 @@ export default {
         name: 'GeneAdd'
       })
     },
-    toDelete (id) {
-      this.$confirm('确认删除？')
+    toDelete (id,state) {
+       this.$confirm('确认删除？')
         .then(_ => {
-          this.axios.delete('solution/' + id).then(res => {
+          this.axios({
+            url:'gene',
+            method:"delete",
+            params:{
+              id,state
+            }
+          }).then(res => {
             this.getData()
             this.$message({
               message: '删除成功',
@@ -156,7 +172,7 @@ export default {
             })
           })
         })
-        .catch(_ => {})
+        .catch(_ => {}) 
     }
   },
   filters: {

@@ -133,7 +133,7 @@ export default {
         }
       })
       let _this = this
-      if (this.$route.params.id !== undefined) {
+      if (this.$route.params.id !== undefined){
         instance({
           method: 'get',
           url: 'guide/findGuideDetail',
@@ -144,8 +144,7 @@ export default {
           }
         }).then(function (res) {
           _this.guide = res.data.guide
-          _this.guide.source = {}
-          console.log(_this.guide)
+          _this.guide.source = {} 
         })
       }
       this.axios.get('solution', {
@@ -283,7 +282,7 @@ export default {
   destroyed () {}
 }
 </script>
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style rel="stylesheet/scss" lang="scss" scoped> 
   .float-l {
     float: left;
   }

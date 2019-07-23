@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>药物信息管理</el-breadcrumb-item>
+      <el-breadcrumb-item>指南管理</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="product-container">
       <div>
@@ -22,24 +22,21 @@
           label="中文标题">
         </el-table-column>
         <el-table-column
-          prop="drugName"
+          prop="titleEn"
           label="英文标题">
         </el-table-column>
         <el-table-column
-          prop="drugNameEn"
+          prop="framers"
           label="制定者">
         </el-table-column>
         <el-table-column
-          prop="producer"
+          prop="provenance"
           label="出处">
         </el-table-column> 
         <el-table-column
-          prop="operationTime"
+          prop="publishDate"
           label="发布日期"
-          width="180">
-          <template slot-scope="scope">
-            {{scope.row.operationTime | formatDate}}
-          </template>
+          width="180"> 
         </el-table-column>
         <el-table-column
           prop="producer" 
@@ -56,7 +53,7 @@
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="toDetail(scope.row.id,scope.row.state)">查看详情</el-button>
             <el-button type="text" size="small" @click="toEdit(scope.row.id,scope.row.state)">编辑</el-button>
-            <el-button type="text" size="small" @click="toDelete(scope.row.id)">删除</el-button>
+            <el-button type="text" size="small" @click="toDelete(scope.row.id,scope.row.state)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -80,7 +77,8 @@ export default {
       pageNum:1,
       pageSize: 10, 
       paramSelect: '',
-      condition: null
+      condition: null,
+      totalPage: 0
     }
   },
   methods: {
@@ -88,18 +86,17 @@ export default {
       this.getData()
     },
     getData () {
-      this.axios.get('guide/page', { 
+      this.axios.get('guideManage/page', { 
         params:{
           pageSize:this.pageSize,
           pageNum:this.pageNum,
           param:this.condition
         }
-      }).then(res => {
+      }).then(res => { 
         console.log(res.data)
         this.drugList = res.data.guides 
         this.totalPage = res.data.totalNum
-      }).catch(err => {
-        console.log(err)
+      }).catch(err => { 
       })
     },
     handleSizeChange (val) {
@@ -113,6 +110,7 @@ export default {
     toEdit (id,state) {
       this.$router.push({
         name:'DrugEdit',
+        params: {'id': id},
         query:{
           id,state
         }
@@ -131,24 +129,29 @@ export default {
         name: 'DrugAdd'
       })
     },
-    toDelete (id) {
+    toDelete (id,state) {
       this.$confirm('确认删除？')
         .then(_ => {
-          this.axios.delete('solution/' + id).then(res => {
+          this.axios({
+            url:'guideManage',
+            method:"delete",
+            params:{
+              id,state
+            }
+          }).then(res => {
             this.getData()
             this.$message({
               message: '删除成功',
               type: 'success'
             })
-          }).catch(err => {
-            console.log(err)
+          }).catch(err => { 
             this.$message({
               message: '删除失败',
               type: 'error'
             })
           })
         })
-        .catch(_ => {})
+        .catch(_ => {}) 
     }
   },
   filters: {

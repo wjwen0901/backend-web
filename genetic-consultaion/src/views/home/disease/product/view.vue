@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="24">
         <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item :to="{ path: '/gene' }">产品介绍</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: '/product-cl' }">检测产品管理</el-breadcrumb-item>
           <el-breadcrumb-item>查看</el-breadcrumb-item>
         </el-breadcrumb>
       </el-col>
@@ -16,27 +16,20 @@
             <el-form-item label="产品名称*">
               <span>{{datas.name}}</span>
             </el-form-item>
+            <el-form-item label="英文名称*">
+              <span>{{datas.nameEn}}</span>
+            </el-form-item>
             <el-form-item label="适用阶段">
-              <span v-for="(item,index) in screening" :key="index">{{item}}</span>
+              <span v-for="(item,index) in screening" :key="index">{{item}}&nbsp;&nbsp;</span>
             </el-form-item>
             <el-form-item label="适用科室"> 
-              <span v-for="(item,index) in departs" :key="index">{{item}}</span>
+              <span v-for="(item,index) in departs" :key="index">{{item}}&nbsp;&nbsp;</span>
             </el-form-item>
             <el-form-item label="检测内容*">
-              <el-input
-                type="textarea"
-                :rows="2"
-                placeholder="请输入检测的内容"
-                v-model="content">
-              </el-input>
+              <span>{{datas.brief}}</span>
             </el-form-item>
             <el-form-item label="临床意义">
-              <el-input
-                type="textarea"
-                :rows="2"
-                placeholder="请输入临床意义"
-                v-model="Significance">
-              </el-input>
+               <span>{{datas.purpose}}</span>
             </el-form-item> 
           </div>  
           <div class="chang">
@@ -44,22 +37,7 @@
           </div>
           </el-form>
           <div class="gene-select"> 
-              <el-select class="width-100-p" style="width:300px" @change="companyIds" v-model="proDepts"  filterable placeholder="请选择">
-                <el-option
-                  v-for="item in deptList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select> 
-          <el-select v-model="products" placeholder="请选择产品">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+            <p v-for="(item,index) in changName" :key="index">{{item}}&nbsp;&nbsp;&nbsp;</p> 
           </div> 
         </div> 
       </el-col>
@@ -87,7 +65,8 @@ export default {
       deptList:[],
       datas:[],
       departs:[],
-      screening:[]
+      screening:[],
+      changName:[]
     }
   },
   components:{
@@ -106,16 +85,17 @@ export default {
           state:this.$route.query.state
         }
       }).then(res=>{
-        this.datas = res.data.product;
-        console.log(res.data)
-        console.log(this.datas)
+        this.datas = res.data.product; 
+        console.log(res.data) 
         this.departs = res.data.depts.map((item,index)=>{
           return  item.name 
         })  
         this.screening = res.data.screenings.map((item,index)=>{
           return item.screeningName
-        })
-        console.log(screening)
+        }) 
+        this.changName = res.data.solutions.map((item,index)=>{
+          return item.name
+        }) 
       })
     } 
   }, 
@@ -135,6 +115,12 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
+.active{
+  color:goldenrod;
+}
+.edit-form{
+  max-width: none;
+}
   .float-l {
     float: left;
   }

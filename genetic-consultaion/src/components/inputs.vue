@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-input  v-model="value"  style="width:200px" @blur="aa"  placeholder="请输入内容"></el-input> 
+        <el-input v-model="value" style="width:720px" @change="changes"  placeholder="请输入内容"></el-input> 
     </div>
 </template>
 
@@ -9,17 +9,16 @@ export default {
     data(){
         return{ 
             obj:{}, 
-            value:''
+            // value:''
         }
     },
     props:{
-        sum:Number
+        value:String,
+        index: Number
     },
     methods:{ 
-        aa(val){
-            this.obj.screeningName = this.value; 
-            console.log(this.value)
-            this.$emit('ipt',this.obj)
+        changes(val){
+            this.$emit('ipt',this.value, this.index)
         }
     }
 }

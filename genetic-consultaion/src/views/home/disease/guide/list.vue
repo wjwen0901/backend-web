@@ -184,7 +184,5 @@ export default {
       float: right;
       margin-bottom: 10px;
     }
-    .add-solution {
-    }
   }
 </style>

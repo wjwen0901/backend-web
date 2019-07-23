@@ -2,10 +2,10 @@
   <div>
     <el-row>
       <el-col :span="24">
-        <!-- <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/disease' }">疾病信息管理</el-breadcrumb-item>
           <el-breadcrumb-item>查看</el-breadcrumb-item>
-        </el-breadcrumb> -->
+        </el-breadcrumb>
       </el-col>
     </el-row>
     <el-row>
@@ -26,18 +26,21 @@
                 <span>{{datas.omim}}</span>
               </el-form-item>
               <el-form-item label="疾病类型">
-                <span>{{datas.muttype}}</span>
+                <span>{{datas.distype}}</span>
               </el-form-item>
              <el-form-item label="靶向用药"> 
+               <span v-for="(item,index) in Name.relationDruggery" :key="index">{{item.druggeryName}}</span>
               </el-form-item>
               <el-form-item label="相关指南"> 
+                <p v-for="(item,index) in titles" :key="index">{{item}}</p>
               </el-form-item>
             </div>
             <div class="form-right">
               <el-form-item label="遗传方式"> 
+                <span>{{datas.mode}}</span>
               </el-form-item>
               <el-form-item label="突变类型"> 
-                <span>{{datas.mode}}</span>
+                <span>{{datas.muttype}}</span>
               </el-form-item>
               <el-form-item label="发病年龄"> 
                 <span>{{datas.age}}</span>
@@ -46,11 +49,13 @@
                 <span>{{datas.morbidity}}</span>
               </el-form-item>
               <el-form-item label="适用科室"> 
-            </el-form-item>
+                <span v-for="(item,index) in Name.depts" :key="index">{{item.deptName}} </span>
+              </el-form-item>
               <el-form-item label="检测产品"> 
+                <span v-for="(item,index) in Name.products" :key="index"> {{item.productName}}</span>
               </el-form-item>
               <el-form-item label="相关基因"> 
-                <span>{{datas.gene}}</span>
+                <span v-for="(item,index) in Name.relationGene" :key="index">{{item.geneName}} &nbsp;&nbsp;&nbsp;</span>
             </el-form-item>  
             </div>
             <div class="form-line">
@@ -59,59 +64,60 @@
                   {{item.id}}.{{item.name}}
                 </li>
               </ul> 
-              <div class="content" v-show="cur==0">
-                <p>12简介</p>
-                <p class="title">标题：<input placeholder="请输入标题"  type="text"></p> 
+             <!-- <div class="content" v-show="cur==0"> 
+                <p class="title">标题：<input placeholder="请输入标题" :disabled='btitle0' v-model="title" type="text"></p> 
+                <div class="edit_container"> 
+                </div>
+              </div>
+              <div class="content" v-show="cur==1"> 
+                <p class="title">标题：<input placeholder="请输入标题"  :disabled='btitle1' type="text"></p> 
                 <div class="edit_container">  
-              </div> 
+                </div>
+              </div>   -->
+               <div class="content" v-show="cur==0"> 
+                <p class="title">标题：<input placeholder="请输入标题" v-model="content2" :disabled='btitle2' type="text"></p> 
+                <div class="edit_container" v-html="datas.catalog[0].症状">   
+                </div>
               </div>
-              <div class="content" v-show="cur==1">
-                <p>简3介</p>
-                <p class="title">标题：<input placeholder="请输入标题" type="text"></p>  
+              <div class="content" v-show="cur==1"> 
+                <p class="title">标题：<input placeholder="请输入标题" v-model="content3" :disabled='btitle3' type="text"></p> 
+                <div class="edit_container" v-html="datas.catalog[1].表现">  
+                </div>
+              </div>  
+              <div class="content" v-show="cur==2"> 
+                <p class="title">标题：<input placeholder="请输入标题" v-model="content4" :disabled='btitle4' type="text"></p> 
+                <div class="edit_container" v-html="datas.catalog[2].诊断方法"> 
+                 
+                </div>
               </div>
-              <div class="content" v-show="cur==2">
-                <p>简介</p>
-                <p class="title">标题：<input placeholder="请输入标题" type="text"></p>  
+              <div class="content" v-show="cur==3"> 
+                <p class="title">标题：<input placeholder="请输入标题"  v-model="content5" :disabled='btitle5' type="text"></p> 
+                <div class="edit_container" v-html="datas.catalog[3].病因及危险因素">  
+                </div>
               </div>
-              <div class="content" v-show="cur==3">
-                <p>简介</p>
-                <p class="title">标题：<input placeholder="请输入标题" type="text"></p>  
+              <div class="content" v-show="cur==4"> 
+                <p class="title">标题：<input placeholder="请输入标题" v-model="content6" :disabled='btitle6' type="text"></p> 
+                <div class="edit_container" v-html="datas.catalog[4].预防"> 
+                 
+                </div>
               </div>
-              <div class="content" v-show="cur==4">
-                <p>简介</p>
-                <p class="title">标题：<input placeholder="请输入标题" type="text"></p>  
+              <div class="content" v-show="cur==5"> 
+                <p class="title">标题：<input placeholder="请输入标题" v-model="content7" :disabled='btitle7' type="text"></p> 
+                <div class="edit_container" v-html="datas.catalog[5].筛查"> 
+                
+                </div>
               </div>
-              <div class="content" v-show="cur==5">
-                <p>简介</p>
-                <p class="title">标题：<input placeholder="请输入标题" type="text"></p>  
+              <div class="content" v-show="cur==6"> 
+                <p class="title">标题：<input placeholder="请输入标题" v-model="content8" :disabled='btitle8' type="text"></p> 
+                <div class="edit_container" v-html="datas.catalog[6].治疗方案">  
+                </div>
               </div>
-              <div class="content" v-show="cur==6">
-                <p>简介</p>
-                <p class="title">标题：<input placeholder="请输入标题" type="text"></p>  
-              </div>
-              <div class="content" v-show="cur==7">
-                <p>简介</p>
-                <p class="title">标题：<input placeholder="请输入标题" type="text"></p>  
-              </div>
-              <div class="content" v-show="cur==8">
-                <p>简介</p>
-                <p class="title">标题：<input placeholder="请输入标题" type="text"></p>  
-              </div>
-              <div class="content" v-show="cur==9">
-                <p>简介</p>
-                <p class="title">标题：<input placeholder="请输入标题" type="text"></p>  
-              </div>
-              <div class="select">
-                <el-select v-model="value" placeholder="请选择">
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-              <el-select v-model="value1" placeholder="请选择"> 
-              </el-select>
+              <div class="content" v-show="cur==7"> 
+                <p class="title">标题：<input placeholder="请输入标题" v-model="content9" :disabled='btitle9' type="text"></p>
+                <div class="edit_container" v-html="datas.catalog[7].其他">  
+                </div>  
+                </div>
+              <div class="select">  
               </div>   
             </div>
           </el-form>
@@ -126,10 +132,28 @@ export default {
   data () {
     return { 
       datas:{},
-      list:[{name:'简介',id:1},{name:'表现',id:2},{name:'预防',id:3},{name:'检测产品',id:1},
-      {name:'简介',id:1},{name:'简介',id:1},{name:'简介',id:1},{name:'简介',id:1},
-      {name:'简介',id:1},{name:'简介',id:1}],
-      cur:0
+      Name:{},
+      list:[ 
+        { name: "症状", id: 1 },
+        { name: "表现", id: 2 },
+        { name: "诊断方法", id: 3 },
+        { name: "病因及危险因素", id: 4 },
+        { name: "预防", id: 5 },
+        { name: "筛查", id: 6 },
+        { name: "治疗方案", id: 7 },
+        { name: "其他", id: 8 }
+      ], 
+      content2:'症状', 
+      content3:'表现',
+      content4:'诊断方法',
+      content5:'病因及危险因素',
+      content6:'预防',
+      content7:'筛查',
+      content8:'治疗方案',
+      content9:'其他',
+      cur:0,
+      dataOne:{},
+      titles:[]
     }
   }, 
   mounted () { 
@@ -146,7 +170,13 @@ methods: {
       }
     }).then(res=>{
       console.log(res.data)
-      this.datas = res.data.disease
+      this.datas = res.data.disease 
+      //指南
+      this.titles = res.data.disease.guides.map(item=>{
+        return item.guideId.name
+      }) 
+
+      this.Name = res.data;
     })  
   },  
 },
@@ -163,9 +193,15 @@ created () {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
+.active{
+  color:goldenrod;
+}
   *{
     list-style: none;
   }
+  .edit-form{
+  max-width: none;
+}
   .float-l {
     float: left;
   }

@@ -176,10 +176,10 @@ export default new Router({
         {
           path: '/disease/add',
           name: 'DiseaseAdd',
-          component: resolve => require(['@/views/home/disease/disease/add'], resolve)
+          component: resolve => require(['@/views/home/disease/disease/edit'], resolve)
         },
         {
-          path: '/disease/edit',
+          path: '/disease/edit/:id',
           name: 'DiseaseEdit',
           component: resolve => require(['@/views/home/disease/disease/edit'], resolve)
         },
@@ -211,10 +211,10 @@ export default new Router({
         {
           path: '/gene/add',
           name: 'GeneAdd',
-          component: resolve => require(['@/views/home/disease/gene/add'], resolve)
+          component: resolve => require(['@/views/home/disease/gene/edit'], resolve)
         },
         {
-          path: '/gene/edit',
+          path: '/gene/edit/:id',
           name: 'GeneEdit',
           component: resolve => require(['@/views/home/disease/gene/edit'], resolve)
         },
@@ -231,10 +231,10 @@ export default new Router({
         {
           path: '/drug/add',
           name: 'DrugAdd',
-          component: resolve => require(['@/views/home/disease/drug/add'], resolve)
+          component: resolve => require(['@/views/home/disease/drug/edit'], resolve)
         },
         {
-          path: '/drug/edit',
+          path: '/drug/edit/:id',
           name: 'DrugEdit',
           component: resolve => require(['@/views/home/disease/drug/edit'], resolve)
         },
@@ -287,10 +287,10 @@ export default new Router({
         {
           path: '/product-cl/add',
           name: 'ProductClAdd',
-          component: resolve => require(['@/views/home/disease/product/add'], resolve)
+          component: resolve => require(['@/views/home/disease/product/edit'], resolve)
         },
         {
-          path: '/product-cl/edit',
+          path: '/product-cl/edit/:id',
           name: 'ProductClEdit',
           component: resolve => require(['@/views/home/disease/product/edit'], resolve)
         },

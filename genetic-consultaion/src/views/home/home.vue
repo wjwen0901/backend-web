@@ -106,7 +106,7 @@
           <el-submenu index="disease" v-if="sec.includes('system')">
             <template slot="title"><i class="el-icon-setting"></i><span slot="title">疾病数据库</span></template>
             <el-menu-item-group>
-              <el-menu-item index="/guide" v-if="role === 'manager'">指南管理</el-menu-item>
+              <el-menu-item index="/drug" v-if="role === 'manager'">指南管理</el-menu-item>
               <el-menu-item index="/disease" v-if="role === 'manager'">疾病数据维护</el-menu-item>
               <el-menu-item index="/gene" v-if="role === 'manager'">基因数据维护</el-menu-item>
               <el-menu-item index="/product-cl" v-if="role === 'manager'">产品数据维护</el-menu-item>

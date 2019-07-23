@@ -3,8 +3,8 @@
     <el-row>
       <el-col :span="24">
         <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item :to="{ path: '/drug' }">疾病信息管理</el-breadcrumb-item>
-          <el-breadcrumb-item>{{menuInfo}}</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: '/drug' }">指南管理</el-breadcrumb-item>
+          <el-breadcrumb-item>预览</el-breadcrumb-item>
         </el-breadcrumb>
       </el-col>
     </el-row>
@@ -13,76 +13,31 @@
         <div class="drug-container">
           <el-form ref="solutionForm"  label-width="100px" size="mini" class="edit-form clearfix">
             <div class="form-left">
-              <el-form-item label="中文标题*"> 
-                <el-input v-model="drug.drugName"></el-input>
+              <el-form-item label="中文标题*">
+                <span>{{sessionData.title}}</span>
               </el-form-item>
-              <el-form-item label="制定者*">
-                <el-input v-model="drug.customizer"></el-input>
+              <el-form-item label="制定者*"> 
+                <span v-for="(item,index) in sessionData.framers" :key="index">{{item}}</span>
               </el-form-item>
-              <el-form-item label="发布日期*">
-                <el-input v-model="drug.inaccurate"></el-input>
+              <el-form-item label="发布日期*"> 
+                <span v-for="(item,index) in sessionData.publishDate" :key="index">{{item}}</span>                
               </el-form-item> 
-              <el-form-item label="检测产品">
-               <el-select
-                  v-model="drug.product"
-                  multiple
-                  filterable
-                  remote
-                  reserve-keyword
-                  placeholder="请输入关键词"
-                  :remote-method="remoteMethod"
-                  :loading="loading">
-                  <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
+              <el-form-item label="检测产品" > 
+                <span v-for="(item,index) in sessionData.productIds" :key="index">{{item.name}}</span>
               </el-form-item>
             </div>
             <div class="form-right">
-              <el-form-item label="英文标题*">
-                <el-input v-model="drug.drugNameEn"></el-input>
+              <el-form-item label="英文标题*" > 
+                <span v-for="(item,index) in sessionData.titleEn" :key="index">{{item}}</span>                                
               </el-form-item>
-              <el-form-item label="出处*">
-                <el-input v-model="drug.producer"></el-input>
+              <el-form-item label="出处*"> 
+                <span v-for="(item,index) in sessionData.provenance" :key="index">{{item}}</span>         
               </el-form-item> 
-              <el-form-item label="相关疾病">
-                 <el-select
-                  v-model="drug.disease"
-                  multiple
-                  filterable
-                  remote
-                  reserve-keyword
-                  placeholder="请输入关键词"
-                  :remote-method="remoteMethod"
-                  :loading="loading">
-                  <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
+              <el-form-item label="相关疾病"> 
+                <span v-for="(item,index) in sessionData.diseaseIds" :key="index">{{item.name}}</span>
               </el-form-item>
-              <el-form-item label="相关基因">
-                 <el-select
-                  v-model="drug.gene"
-                  multiple
-                  filterable
-                  remote
-                  reserve-keyword
-                  placeholder="请输入关键词"
-                  :remote-method="remoteMethod"
-                  :loading="loading">
-                  <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
+              <el-form-item label="相关基因"> 
+                <span v-for="(item,index) in sessionData.geneId" :key="index">{{item.name}}</span>
               </el-form-item>
             </div>
             <div class="form-line">
@@ -91,66 +46,14 @@
                  {{item.id}}.{{item.name}}
                 </li> 
               </ul>
-              <div class="from-contents" v-show="cur==0">
-                <div class="ap-upload">
-                <div class="u-select">
-                  <div class="upload-row">
-                    <div tabindex="0" class="el-upload el-upload--picture-card" id="selectfiles">
-                      <i class="el-icon-plus"></i>
-                      <input type="file" name="file" multiple="multiple" class="el-upload__input">
-                    </div>
-                    <!-- <div class="el-upload__tip">只能上传jpg/gif/png/bmp/pdf文件，且不超过5G</div> -->
-                    <ul class="el-upload-list el-upload-list--text" id="ossfile">
-                      <li tabindex="0" class="el-upload-list__item is-ready" :id="file.id" v-for="file in fileList" v-bind:key="file.id" ref="file.id">
-                        <a class="el-upload-list__item-name"><i class="el-icon-document"></i>{{file.name}} ({{file.size | formatSize}})</a>
-                        <label class="el-upload-list__item-status-label">
-                          <i class="el-icon-upload-success el-icon-circle-check"></i>
-                        </label>
-                        <i class="el-icon-close" @click="deleteUploadFile(file.id)"></i>
-                        <i class="el-icon-close-tip">按 delete 键可删除</i>
-                        <el-progress :percentage="file.percent" v-if="file.percent !== 100"></el-progress>
-                      </li>
-                    </ul>
-                    <div id="container"></div>
-                    </div>
-                  </div>
-                </div>
+              <div class="from-contents" v-show="cur==0"> 
+                <span v-for="(item,index) in sessionData.guideFileAttrs" :key="index">{{item.file_source}}</span>
               </div>
-              <div class="from-contents" v-show="cur==1">
-                <div class="edit_container">
-                    <quill-editor 
-                      v-model="content" 
-                      ref="myQuillEditor" 
-                      :options="editorOption" 
-                      @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
-                      @change="onEditorChange($event)">
-                    </quill-editor>
-                    <button @click="saveHtml">保存</button>
-                </div>
-              </div>
-               <div class="from-select">
-              <p>数据来源</p>
-                <el-select v-model="value" placeholder="请选择">
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-              <el-select v-model="value" placeholder="请选择">
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-              </div>
+              <div class="from-contents" v-show="cur==1"> 
+                <span v-html="sessionData.other"></span>
+              </div> 
            <el-form-item class="from-btns">
-                <el-button type="primary" @click="edit" :disabled = "openIsDisabled">发布</el-button>
-                <el-button type="primary" :disabled = " openIsDisabled ">预览</el-button>
-                <el-button type="primary" @click="disableds">暂存</el-button>
+                <el-button type="primary" @click="addData" :disabled = "openIsDisabled">发布</el-button>  
                 <el-button @click="cancel" :disabled = " openIsDisabled ">取消</el-button> 
             </el-form-item>
             </div>
@@ -158,71 +61,438 @@
         </div>
       </el-col>
     </el-row>
+    <div tabindex="0" class="el-upload el-upload--picture-card" id="selectfiless" style="display:none;">
+        <i class="el-icon-plus"></i>
+        <input type="file" name="file" multiple="multiple"  class="el-upload__input">
+    </div>
   </div>
 </template>
 <script>
+import plupload from "plupload";
+import qs from "qs";
 export default {
   name: 'DiseaseEdit',
   data () {
     return {
       data: [],
-      addRowData: ['add'],
-      fda: {},
-      cfda: {}, 
-      drug: {
-        source: {},
-        drugName:'',
-        customizer:'',
-        inaccurate:'',
-        product:'',
-        drugNameEn:'',
-        producer:'',
-        disease:'',
-        gene:'',  
-      },
-      content:'',
-      sampleMeta: [],
-      proDepts: [],
-      reportType: [],
-      consultancy: [],
-      deptList: [], 
-      reportTypeOtherRemark: '',
-      consultancyOtherRemark: '',
+      addRowData: ['add'],  
       cur: 0,
-      list:[{name:'指南',id:1},{name:'其他',id:2}],
-      openIsDisabled:false,
-      options: [],
-      value: [],
-      lists: [],
+      list:[{name:'指南',id:1},{name:'其他',id:2}],  
       loadings: false,
-      states: []
+      states: [],
+      sessionData:{},
+      productId:'',
+      productName:[],
+      userId: window.localStorage.userId,
+      accesskey: "",
+      host: "",
+      policyBase64: "",
+      signature: "",
+      fileNum:'',
+      callbackbody: "",
+      filename: "",
+      key: "",
+      expire: 0,
+      g_object_name: "",
+      g_object_name_type: "",
+      now: Date.parse(new Date()) / 1000,
+      uniqueKey: "",
+      fileList: [],
+      uploader: {},
+      files:[],
+      dis:0
     }
-  },
-  props: {},
-  methods: {
-     remoteMethod(query) {
-        if (query !== '') {
-          this.loadings = true;
-          setTimeout(() => {
-            this.loadings = false;
-            this.options = this.list.filter(item => {
-              return item.label.toLowerCase()
-                .indexOf(query.toLowerCase()) > -1;
-            });
-          }, 200);
-        } else {
-          this.options = [];
-        }
-      },
-    disableds(){
-      this.openIsDisabled = !this.openIsDisabled;
+  }, 
+  methods: { 
+    cancel(){
+      this.$router.go(-1)
+    }, 
+      sendRequest() {
+      const xmlhttp = new XMLHttpRequest();
+      const param = this.userId > 0 ? "?userId=" + this.userId : "";
+      const serverUrl =
+        "https://test.mdhcare.com/mdhcare-backend/oss/upload/policy/database-guide" + param; 
+      xmlhttp.open("GET", serverUrl, false);
+      xmlhttp.setRequestHeader("Authorization", window.localStorage.token);
+      xmlhttp.send();
+      return xmlhttp.responseText;
     },
-    onEditorReady(editor) { }, // 准备编辑器,
-        onEditorBlur(){}, // 失去焦点事件
-        onEditorFocus(){}, // 获得焦点事件
-        onEditorChange(){}, // 内容改变事件
-        saveHtml:function(event){
-          alert(this.content)
+    getSignature() {
+      const body = this.sendRequest();
+      const obj = JSON.parse(body);
+      this.host = obj.host;
+      this.policyBase64 = obj.policy;
+      this.accessid = obj.accessid;
+      this.signature = obj.signature;
+      this.expire = parseInt(obj.expire, 10);
+      this.callbackbody = obj.callback;
+      this.key = obj.dir;
+      this.uniqueKey = obj.uniqueKey;
+      return true;
+    },
+    calculateObjectName(filename) {
+      if (this.g_object_name_type === "local_name") {
+        this.g_object_name += `${filename}`;
+      } else if (this.g_object_name_type === "random_name") {
+        const suffix = this.getSuffix(filename);
+        this.g_object_name = this.key + this.randomString(10) + suffix;
+      }
+      return "";
+    },
+    getUploadedObjectName(filename) {
+      if (this.g_object_name_type === "local_name") {
+        let tmpName = this.g_object_name;
+        tmpName = tmpName.replace(`${filename}`, filename);
+        return tmpName;
+      } else if (this.g_object_name_type === "random_name") {
+        return this.g_object_name;
+      }
+      return "";
+    },
+    randomString(len = 32) {
+      const chars = "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678";
+      const maxPos = chars.length;
+      let pwd = "";
+      for (let i = 0; i < len; i += 1) {
+        pwd += chars.charAt(Math.floor(Math.random() * maxPos));
+      }
+      return pwd;
+    },
+    getSuffix(filename) {
+      const pos = filename.lastIndexOf(".");
+      let suffix = "";
+      if (pos !== -1) {
+        suffix = filename.substring(pos);
+      }
+      return suffix;
+    },
+    setUploadParam(up, filename, ret) {
+      this.getSignature();
+      this.g_object_name = this.key;
+      if (filename !== "") {
+        this.calculateObjectName(filename);
+      }
+      const newMultipartParams = {
+        key:
+          this.g_object_name + this.uniqueKey + "." + filename.split(".").pop(),
+        policy: this.policyBase64,
+        OSSAccessKeyId: this.accessid,
+        // 让服务端返回200,不然，默认会返回204
+        success_action_status: "200",
+        signature: this.signature,
+        callback: this.callbackbody,
+        uniqueKey: this.uniqueKey
+      };
+      console.log("osss---------------") 
+      console.log("https://" + this.host) 
+      up.setOption({
+        url: "https://" + this.host,
+        multipart_params: newMultipartParams
+      });
+      console.log(up) 
+      up.start();
+    },
+    deleteUploadFile(id) {
+      this.uploader.removeFile(id);
+      for (let i = 0; i < this.fileList.length; i++) {
+        if (id === this.fileList[i].id) {
+          this.fileList.splice(i, 1);
+        }
+      }
+    },
+    upload() {
+      const that = this;
+      const uploader = new plupload.Uploader({
+        runtimes: "html5,flash,silverlight,html4",
+        browse_button: "selectfiless",
+        multi_selection: true,
+        containers: "containers",
+        flash_swf_url: "/static/plupload-2.3.6/js/Moxie.swf",
+        silverlight_xap_url: "/static/plupload-2.3.6/js/Moxie.xap",
+        max_retries: 3,
+        filters: {
+          mime_types: [
+            {
+              title: "允许上传文件类型",
+              extensions: "jpg,gif,png,bmp,pdf"
+            }
+          ],
+          // 最大只能上传10GB的文件
+          max_file_size: "10gb",
+          // 不允许队列中存在重复文件
+          prevent_duplicates: true
+        },
+        init: {
+          // PostInit: () => {
+          //   document.getElementById('postfiles').onclick = () => {
+          //     that.setUploadParam(uploader, '', false)
+          //     return false
+          //   }
+          // },
+          FilesAdded: (up, files) => {
+            console.log(files);
+            that.fileList = up.files;
+            that.fileNum = up.files.length;  
+          },
+          BeforeUpload: (up, file) => {
+            that.setUploadParam(up, file.name, true);
+          },
+          UploadProgress: (up, file) => {},
+          FileUploaded: (up, file, info) => {
+            const d = document.getElementById(file.id);
+            if (info.status === 200) {
+              d.setAttribute("class", "el-upload-list__item is-success");
+              const params = {
+                fileName: file.name,
+                size: file.size,
+                mimeType: file.type,
+                uniqueKey: up.settings.multipart_params.uniqueKey,
+                filePath: up.settings.multipart_params.key,
+                objectKey: up.settings.multipart_params.key
+              };
+              that.files.push(params);  
+              //这里
+            } else {
+              d.setAttribute("class", "el-upload-list__item is-warning");
+            }
+          },
+          UploadComplete: up => {
+            up.refresh(); 
+              that.addData1();  
+          },
+          Error: (up, err) => {
+            console.log("上传失败：", err, that.onError, up);
+            if (err.code === -600) {
+              this.$message({
+                message: "文件大小超出限制，限制大小为5GB",
+                type: "error",
+                customClass: "my-message"
+              });
+            } else if (err.status === 403) {
+              this.$message({
+                message: "页面失效，请刷新页面后重新上传文件!",
+                type: "error",
+                customClass: "my-message"
+              });
+            } else {
+              this.$message({
+                message: "上传失败，请刷新页面后重新上传文件！",
+                type: "error",
+                customClass: "my-message"
+              });
+            }
+            if (that.onError) {
+              that.onError(err.message, up, err);
+            }
+          }
+        }
+      });
+      uploader.init();
+      that.uploader = uploader;
+    },
+    addData1(){ 
+      var diseaseIds = this.sessionData.diseaseIds.map(item=>{
+        return item.id
+      })
+      var geneIds = this.sessionData.geneId.map(item=>{
+        return item.id
+      })
+      var productIds = this.sessionData.productIds.map(item=>{
+        return item.id 
+      })
+      if (this.$route.query.id == undefined) {   
+          let instance = this.axios.create({
+            headers: {
+              Authorization: window.localStorage.token,
+              "Content-Type": "application/json"
+            }
+          });
+          let _this = this;
+          instance({
+            url: "guideManage/addGuide",
+            method: "post",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Requested-With": "XMLHttpRequest"
+            },
+            data: {
+              guide: {
+              other:_this.sessionData.other,
+              title:_this.sessionData.title,
+              titleEn:_this.sessionData.titleEn,
+              framers:_this.sessionData.framers,
+              provenance:_this.sessionData.provenance,
+              publishDate:_this.sessionData.publishDate,
+              diseaseIds,
+              geneIds
+            },
+            productIds,
+            guideFileAttrs:_this.files 
+            }
+          })
+            .then(res => {
+              this.temid = res.data.id;
+              window.localStorage.removeItem("params") 
+              _this.$message({
+                message: "发布成功",
+                type: "success"
+              });
+            })
+            .catch(err => {
+              _this.$message(JSON.parse(err.request.response).msg);
+            }); 
+      } else {  
+          if (this.state == 0) {
+            let instance = this.axios.create({
+              headers: {
+                Authorization: window.localStorage.token,
+                "Content-Type": "application/json"
+              }
+            });
+            let _this = this;
+            instance({
+              url: "guideManage/editGuide",
+              method: "put",
+              headers: {
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+              },
+              params: {
+                temId: _this.temid
+              },
+              data: {
+                guide: {
+                  id:_this.$route.query.id,
+                  other:_this.sessionData.other,
+                  title:_this.sessionData.title,
+                  titleEn:_this.sessionData.titleEn,
+                  framers:_this.sessionData.framers,
+                  provenance:_this.sessionData.provenance,
+                  publishDate:_this.sessionData.publishDate,
+                  diseaseIds,
+                  geneIds
+                  },
+                  productIds,
+                  guideFileAttrs:_this.files 
+              }
+            })
+              .then(res => {
+                window.localStorage.removeItem("params") 
+                _this.$message({
+                  message: "发布成功",
+                  type: "success"
+                });
+              })
+              .catch(err => {
+                _this.$message(JSON.parse(err.request.response).msg);
+              });
+          } else if (this.state == 1) {
+            if (this.guideId == "") {
+              let instance = this.axios.create({
+                headers: {
+                  Authorization: window.localStorage.token,
+                  "Content-Type": "application/json"
+                }
+              });
+              let _this = this;
+              instance({
+                url: "guideManage/addGuide",
+                method: "post",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-Requested-With": "XMLHttpRequest"
+                },
+                params: {
+                  temId: _this.$route.query.id
+                },
+                data: {
+                  guide: {
+                    id:_ths.route.query.id,
+                    other:_this.sessionData.other,
+                    title:_this.sessionData.title,
+                    titleEn:_this.sessionData.titleEn,
+                    framers:_this.sessionData.framers,
+                    provenance:_this.sessionData.provenance,
+                    publishDate:_this.sessionData.publishDate,
+                    diseaseIds,
+                    geneIds
+                  },
+                  productIds,
+                  guideFileAttrs:_this.files 
+                }
+              })
+                .then(res => {
+                  window.localStorage.removeItem("params")
+                  this.$message({
+                    type:'success',
+                    message:'发布成功'
+                  });
+                })
+                .catch(err => {
+                  _this.$message(JSON.parse(err.request.response).msg);
+                });
+            } else {
+              let instance = this.axios.create({
+                headers: {
+                  Authorization: window.localStorage.token,
+                  "Content-Type": "application/json"
+                }
+              });
+              let _this = this;
+              instance({
+                url: "guideManage/editGuide",
+                method: "put",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-Requested-With": "XMLHttpRequest"
+                },
+                params: {
+                  temId: _this.geneIds
+                },
+                data: {
+                  guide: {
+                    id: _this.$route.query.id,
+                    other:_this.sessionData.other,
+                    title:_this.sessionData.title,
+                    titleEn:_this.sessionData.titleEn,
+                    framers:_this.sessionData.framers,
+                    provenance:_this.sessionData.provenance,
+                    publishDate:_this.sessionData.publishDate,
+                    diseaseIds,
+                    geneIds
+                  },
+                  productIds,
+                  guideFileAttrs:_this.files 
+                }
+              })
+                .then(res => {
+                  this.$message({
+                    type:'success',
+                    message:'发布成功'
+                  });
+                  window.localStorage.removeItem("params")
+                })
+                .catch(err => {
+                  _this.$message(JSON.parse(err.request.response).msg);
+                });
+            }
+          } 
+      }
+    }, 
+    addData(){  
+      // this.uploader.files = this.sessionData.guideFileList;  
+      this.sessionData.guideFileList.forEach((item, index) => {
+        console.log(typeOf(item))
+        console.log("file " + index)
+        console.log(item)
+        this.uploader.addFile(item)
+      })
+      if(this.sessionData.guideFileList.length ==0){
+        this.addData1()
+      }else{
+        console.log(1)
+        this.setUploadParam(this.uploader,"", false);  
+      }
     },
     _initData () {
       if (this.$route.params.id !== undefined) {
@@ -245,9 +515,7 @@ export default {
                 }
               }
             })
-          }
-          console.log(this.reportType)
-          console.log(this.consultancy)
+          } 
         }).catch(err => {
           console.log(err)
         })
@@ -339,7 +607,11 @@ export default {
       this.$router.push('/drug')
     }
   },
-  filters: {},
+  filters: {
+    formatSize(fileSize) {
+      return plupload.formatSize(fileSize);
+    }
+  },
   computed: {
     expandParams: function () {
       let result = []
@@ -367,8 +639,7 @@ export default {
           }
           result.push(expandParams)
         })
-      }
-      console.log(result)
+      } 
       return result
     }
   },
@@ -381,16 +652,28 @@ export default {
     })
     this._initData()
     loading.close()
+    //上传
+    this.$nextTick(() => {
+      this.upload();
+    });
   },
-  mounted () {
-    this.lists = this.states.map(item => {
-        return { value: item, label: item };
-      });
-  },
-  destroyed () {}
+  mounted () { 
+    this.sessionData = JSON.parse(window.sessionStorage.getItem("drug"));
+    this.state = this.$route.query.state;
+    this.guideId = this.sessionData.guideId; 
+    console.log(this.state)
+    console.log(this.sessionData.title)
+    
+  }, 
 }
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
+.active{
+  color:goldenrod;
+}
+.edit-form{
+  max-width: none;
+}
   .float-l {
     float: left;
   }
@@ -442,10 +725,8 @@ export default {
     }
   }
   .from-select{
-    width: 100%;
-    text-align: center;
-    display: flex;
-    justify-content: space-around;
+    width: 100%; 
+    display: flex; 
   }
   .from-contents{
     width: 100%;

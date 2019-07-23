@@ -278,12 +278,10 @@ export default {
     })
     this._initData()
     loading.close()
-  },
-  mounted () {},
-  destroyed () {}
+  }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style rel="stylesheet/scss" lang="scss" scoped> 
   .float-l {
     float: left;
   }

@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>疾病管理</el-breadcrumb-item>
+      <el-breadcrumb-item>疾病信息管理</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="product-container">
       <div>
@@ -26,8 +26,8 @@
           label="英文名称">
         </el-table-column>
         <el-table-column
-          prop="gene"
-          label="相关基因">
+          prop="alias"
+          label="其他名称">
         </el-table-column>
         <el-table-column
           prop="omim"
@@ -35,11 +35,18 @@
           width="80">
         </el-table-column>
         <el-table-column
-          prop="create_time"
-          label="创建日期"
-          width="180">
+          prop="createTime"
+          label="创建时间" 
+          width="180">  
           <template slot-scope="scope">
-            {{scope.row.create_time | formatDate}}
+            <span>{{parseInt(scope.row.createTime) | formatDate}}</span>
+            </template>
+        </el-table-column>
+        <el-table-column 
+          label="状态">
+           <template slot-scope="scope">
+            <span v-if="scope.row.state==1">暂存</span>
+            <span v-if="scope.row.state==0">发布</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -49,7 +56,7 @@
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="toDetail(scope.row.id,scope.row.state)">查看详情</el-button>
             <el-button type="text" size="small" @click="toEdit(scope.row.id,scope.row.state)" >编辑</el-button>
-            <el-button type="text" size="small" @click="toDelete(scope.row.id)">删除</el-button>
+            <el-button type="text" size="small" @click="toDelete(scope.row.id,scope.row.state)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -80,14 +87,22 @@ export default {
     }
   },
   methods: {
+    // timestampToTime(timestamp) {  
+    //   console.log(timestamp)
+    //     var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000  
+    //       var Y = date.getFullYear() + '-'; 
+    //       var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+    //       var D = (date.getDate() < 10 ? '0'+date.getDate() : date.getDate()) + ' ';
+    //       var h = (date.getHours() < 10 ? '0'+date.getHours() : date.getHours()) + ':';
+    //       var m = (date.getMinutes() < 10 ? '0'+date.getMinutes() : date.getMinutes()) + ':';
+    //       var s = (date.getSeconds() < 10 ? '0'+date.getSeconds() : date.getSeconds()); 
+    //       return Y+M+D+h+m+s;
+    // },
     _initData () {
       this.getData()
     },
-    getData () {
-      console.log(process.env.DISEASE_API)
-      console.log(process.env)
-      let instance = this.axios.create({
-        baseURL: process.env.DISEASE_PC_API,
+    getData () { 
+      let instance = this.axios.create({ 
         headers: {
           'Content-Type': 'application/json'
         }
@@ -95,7 +110,7 @@ export default {
       let _this = this
       instance({
         method: 'get',
-        url: 'https://qa.mdhcare.cn/mdhcare-backend/disease/page', 
+        url: 'disease/page', 
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
@@ -123,6 +138,7 @@ export default {
     toEdit (id,state) {
       this.$router.push({
          name:'DiseaseEdit',
+         params: {'id': id},
          query:{
            id,
            state
@@ -146,10 +162,16 @@ export default {
         name: 'DiseaseAdd'
       })
     },
-    toDelete (id) {
+    toDelete (id,state) {
       this.$confirm('确认删除？')
         .then(_ => {
-          this.axios.delete('disease/' + id).then(res => {
+          this.axios({
+            url:'disease',
+            method:"delete",
+            params:{
+              id,state
+            }
+          }).then(res => {
             this.getData()
             this.$message({
               message: '删除成功',
