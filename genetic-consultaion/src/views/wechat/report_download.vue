@@ -270,8 +270,12 @@ export default {
       let param = {
         cellphone: this.patient.cellphone
       }
+      console.log(this.$route.query.k)
       if (this.$route.query.k === 'd9edd1f365c990ad260d80015136f25e') {
-        this.param.companyId = 9
+        param = {
+          cellphone: this.patient.cellphone,
+          companyId: 9
+        }
       }
       this.axios.get('verification', {
         params: param
