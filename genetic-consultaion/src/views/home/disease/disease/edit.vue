@@ -11,10 +11,10 @@
     <el-row>
       <el-col :span="24">
         <div class="disease-container">
-          <el-form ref="solutionForm"  :model="disease" label-width="80px" size="mini" class="edit-form clearfix">
+          <el-form ref="solutionForm" :model="disease" label-width="80px" size="mini" class="edit-form clearfix">
             <div class="form-left">
               <el-form-item label="中文名称*">
-                <el-input v-model="disease.name" :disabled="cname"  placeholder="请输入"></el-input>
+                <el-input v-model="disease.name" :disabled="cname" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="英文名称*">
                 <el-input v-model="disease.nameen" :disabled="ename" placeholder="请输入"></el-input>
@@ -28,46 +28,46 @@
               <el-form-item label="疾病类型">
                 <el-input v-model="disease.distype" :disabled="jdistype" placeholder="请输入"></el-input>
               </el-form-item>
-             <el-form-item label="靶向用药">
+              <el-form-item label="靶向用药">
                 <el-select
-                v-model="newMedica"
-                :disabled="bmedicaId"
-                multiple
-                value-key="name"
-                filterable
-                style="width:410px"
-                remote
-                reserve-keyword
-                :remote-method="medica"
-                :loading="medicaLoading">
-                <el-option
-                  v-for="item in medicaOption"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item">
-                </el-option>
-              </el-select>
+                  v-model="newMedica"
+                  :disabled="bmedicaId"
+                  multiple
+                  value-key="name"
+                  filterable
+                  style="width:410px"
+                  remote
+                  reserve-keyword
+                  :remote-method="medica"
+                  :loading="medicaLoading">
+                  <el-option
+                    v-for="item in medicaOption"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item">
+                  </el-option>
+                </el-select>
               </el-form-item>
               <el-form-item label="相关指南">
-               <el-select
-                v-model="guideId"
-                style="width:410px"
-                :disabled="xgudeId"
-                multiple
-                value-key="name"
-                filterable
-                remote
-                reserve-keyword
-                placeholder="请输入关键词"
-                :remote-method="guideRemote"
-                :loading="guideLoading">
-                <el-option
-                  v-for="item in guideOption"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item">
-                </el-option>
-              </el-select>
+                <el-select
+                  v-model="guideId"
+                  style="width:410px"
+                  :disabled="xgudeId"
+                  multiple
+                  value-key="name"
+                  filterable
+                  remote
+                  reserve-keyword
+                  placeholder="请输入关键词"
+                  :remote-method="guideRemote"
+                  :loading="guideLoading">
+                  <el-option
+                    v-for="item in guideOption"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item">
+                  </el-option>
+                </el-select>
               </el-form-item>
             </div>
             <div class="form-right">
@@ -75,7 +75,7 @@
                 <el-input v-model="disease.mode" :disabled="ymode" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="突变类型">
-                <el-input v-model="disease.muttype" :disabled="tmuttype" placeholder="请输入"></el-input> 
+                <el-input v-model="disease.muttype" :disabled="tmuttype" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="发病年龄">
                 <el-input v-model="disease.age" :disabled="fage" placeholder="请输入"></el-input>
@@ -84,163 +84,164 @@
                 <el-input v-model="disease.morbidity" :disabled="fmorbidity" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="适用科室">
-              <el-select class="width-100-p" v-model="newDept" value-key="name" :disabled="sprodepts" multiple filterable placeholder="请选择">
-                <el-option
-                  v-for="item in deptList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item">
-                </el-option>
-              </el-select>
-            </el-form-item>  
+                <el-select class="width-100-p" v-model="newDept" value-key="name" :disabled="sprodepts" multiple
+                           filterable placeholder="请选择">
+                  <el-option
+                    v-for="item in deptList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item">
+                  </el-option>
+                </el-select>
+              </el-form-item>
               <el-form-item label="检测产品">
                 <el-select
-                v-model="newProduct"
-                :disabled="jproductId"
-                multiple
-                value-key="name"
-                filterable
-                style="width:410px"
-                remote
-                reserve-keyword 
-                placeholder="请选择"
-                :remote-method="product"
-                :loading="productLoading">
-                <el-option
-                  v-for="item in productOption"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item">
-                </el-option>
-              </el-select>
+                  v-model="newProduct"
+                  :disabled="jproductId"
+                  multiple
+                  value-key="name"
+                  filterable
+                  style="width:410px"
+                  remote
+                  reserve-keyword
+                  placeholder="请选择"
+                  :remote-method="product"
+                  :loading="productLoading">
+                  <el-option
+                    v-for="item in productOption"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item">
+                  </el-option>
+                </el-select>
               </el-form-item>
               <el-form-item label="相关基因">
-               <el-select
-                v-model="relatedgene"
-                :disabled="xrelatedgene"
-                style="width:410px"
-                multiple
-                value-key="name"
-                filterable
-                remote
-                reserve-keyword
-                placeholder="请选择"
-                :remote-method="geneRemote"
-                :loading="geneLoading">
-                <el-option
-                  v-for="item in geneOption"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item">
-                </el-option>
-              </el-select>
-            </el-form-item>  
+                <el-select
+                  v-model="relatedgene"
+                  :disabled="xrelatedgene"
+                  style="width:410px"
+                  multiple
+                  value-key="name"
+                  filterable
+                  remote
+                  reserve-keyword
+                  placeholder="请选择"
+                  :remote-method="geneRemote"
+                  :loading="geneLoading">
+                  <el-option
+                    v-for="item in geneOption"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item">
+                  </el-option>
+                </el-select>
+              </el-form-item>
             </div>
             <div class="form-line">
               <ul class="list">
-                <li v-for="(item,index) in list " :key="index"  @click="cur=index" :class="{active:cur==index}">
+                <li v-for="(item,index) in list " :key="index" @click="cur=index" :class="{active:cur==index}">
                   {{item.id}}.{{item.name}}
                 </li>
-              </ul>  
-              <div class="content" v-show="cur==0"> 
-                <p class="title">标题：<span>症状</span></p> 
-                <div class="edit_container"> 
-                <quill-editor 
-                    v-model="content2" 
+              </ul>
+              <div class="content" v-show="cur==0">
+                <p class="title">标题：<span>症状</span></p>
+                <div class="edit_container">
+                  <quill-editor
+                    v-model="content2"
                     :disabled='fcontent2'
-                    ref="myQuillEditor" 
-                    :options="editorOption" 
+                    ref="myQuillEditor"
+                    :options="editorOption"
                     @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
                     @change="onEditorChange($event)">
                   </quill-editor>
                 </div>
               </div>
-              <div class="content" v-show="cur==1"> 
-                <p class="title">标题：<span>表现</span></p> 
-                <div class="edit_container"> 
-                <quill-editor 
-                    v-model="content3" 
-                    :disabled='fcontent3' 
-                    ref="myQuillEditor" 
-                    :options="editorOption" 
+              <div class="content" v-show="cur==1">
+                <p class="title">标题：<span>表现</span></p>
+                <div class="edit_container">
+                  <quill-editor
+                    v-model="content3"
+                    :disabled='fcontent3'
+                    ref="myQuillEditor"
+                    :options="editorOption"
                     @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
                     @change="onEditorChange($event)">
                   </quill-editor>
                 </div>
               </div>
-              <div class="content" v-show="cur==2"> 
-                <p class="title">标题：<span>诊断方法</span></p> 
-                <div class="edit_container"> 
-                <quill-editor 
-                    v-model="content4" 
+              <div class="content" v-show="cur==2">
+                <p class="title">标题：<span>诊断方法</span></p>
+                <div class="edit_container">
+                  <quill-editor
+                    v-model="content4"
                     :disabled='fcontent4'
-                    ref="myQuillEditor" 
-                    :options="editorOption" 
+                    ref="myQuillEditor"
+                    :options="editorOption"
                     @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
                     @change="onEditorChange($event)">
                   </quill-editor>
                 </div>
               </div>
-              <div class="content" v-show="cur==3"> 
-                <p class="title">标题：<span>病因及危险因素</span></p> 
-                <div class="edit_container"> 
-                <quill-editor 
-                    v-model="content5" 
+              <div class="content" v-show="cur==3">
+                <p class="title">标题：<span>病因及危险因素</span></p>
+                <div class="edit_container">
+                  <quill-editor
+                    v-model="content5"
                     :disabled='fcontent5'
-                    ref="myQuillEditor" 
-                    :options="editorOption" 
+                    ref="myQuillEditor"
+                    :options="editorOption"
                     @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
                     @change="onEditorChange($event)">
                   </quill-editor>
                 </div>
               </div>
-              <div class="content" v-show="cur==4"> 
-                <p class="title">标题：<span>预防</span></p> 
-                <div class="edit_container"> 
-                <quill-editor 
+              <div class="content" v-show="cur==4">
+                <p class="title">标题：<span>预防</span></p>
+                <div class="edit_container">
+                  <quill-editor
                     v-model="content6"
-                    :dsiabled='fcontent6' 
-                    ref="myQuillEditor" 
-                    :options="editorOption" 
+                    :dsiabled='fcontent6'
+                    ref="myQuillEditor"
+                    :options="editorOption"
                     @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
                     @change="onEditorChange($event)">
                   </quill-editor>
                 </div>
               </div>
-              <div class="content" v-show="cur==5"> 
-                <p class="title">标题：<span>筛选</span></p> 
-                <div class="edit_container"> 
-                <quill-editor 
-                    v-model="content7" 
+              <div class="content" v-show="cur==5">
+                <p class="title">标题：<span>筛选</span></p>
+                <div class="edit_container">
+                  <quill-editor
+                    v-model="content7"
                     :disabled='fcontent7'
-                    ref="myQuillEditor" 
-                    :options="editorOption" 
+                    ref="myQuillEditor"
+                    :options="editorOption"
                     @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
                     @change="onEditorChange($event)">
                   </quill-editor>
                 </div>
               </div>
-              <div class="content" v-show="cur==6"> 
-                <p class="title">标题：<span>治疗方案</span></p> 
-                <div class="edit_container"> 
-                <quill-editor 
-                    v-model="content8" 
+              <div class="content" v-show="cur==6">
+                <p class="title">标题：<span>治疗方案</span></p>
+                <div class="edit_container">
+                  <quill-editor
+                    v-model="content8"
                     :disabled='fcontent8'
-                    ref="myQuillEditor" 
-                    :options="editorOption" 
+                    ref="myQuillEditor"
+                    :options="editorOption"
                     @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
                     @change="onEditorChange($event)">
                   </quill-editor>
                 </div>
               </div>
-              <div class="content" v-show="cur==7"> 
-                <p class="title">标题：<span>其他</span></p> 
-                <div class="edit_container"> 
-                <quill-editor 
-                    v-model="content9" 
+              <div class="content" v-show="cur==7">
+                <p class="title">标题：<span>其他</span></p>
+                <div class="edit_container">
+                  <quill-editor
+                    v-model="content9"
                     :disabled='fcontent9'
-                    ref="myQuillEditor" 
-                    :options="editorOption" 
+                    ref="myQuillEditor"
+                    :options="editorOption"
                     @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
                     @change="onEditorChange($event)">
                   </quill-editor>
@@ -265,10 +266,10 @@
               </el-select>
               </div>   -->
               <el-form-item class="btns">
-                <el-button type="primary" @click="addData" :disabled = "openIsDisabled">发布</el-button>
-                <el-button type="primary" @click="preview" :disabled = " openIsDisabled ">预览</el-button>
+                <el-button type="primary" @click="addData" :disabled="openIsDisabled">发布</el-button>
+                <el-button type="primary" @click="preview" :disabled=" openIsDisabled ">预览</el-button>
                 <el-button type="primary" @click="disabeleds">暂存</el-button>
-                <el-button @click="cancel" :disabled = " openIsDisabled ">取消</el-button> 
+                <el-button @click="cancel" :disabled=" openIsDisabled ">取消</el-button>
               </el-form-item>
             </div>
           </el-form>
@@ -279,15 +280,15 @@
 </template>
 <script>
 export default {
-  name: "DiseaseEdit",
-  data() {
+  name: 'DiseaseEdit',
+  data () {
     return {
       valueList: [],
       newDept: [],
       newMedica: [],
       newProduct: [],
-      menuInfo: this.$route.query.id === undefined ? "新增" : "编辑",
-      //禁止
+      menuInfo: this.$route.query.id === undefined ? '新增' : '编辑',
+      // 禁止
       cname: false,
       ename: false,
       qname: false,
@@ -325,33 +326,33 @@ export default {
       values1: false,
       values: false,
       data: [],
-      addRowData: ["add"],
+      addRowData: ['add'],
       disease: {},
-      title: "",
-      content2: "",
-      content3: "",
-      content4: "",
-      content5: "",
-      content6: "",
-      content7: "",
-      content8: "",
-      content9: "",
+      title: '',
+      content2: '',
+      content3: '',
+      content4: '',
+      content5: '',
+      content6: '',
+      content7: '',
+      content8: '',
+      content9: '',
       deptList: [],
       guideList: [],
       guides: [],
       loading: false,
       list: [
-        { name: "症状", id: 1 },
-        { name: "表现", id: 2 },
-        { name: "诊断方法", id: 3 },
-        { name: "病因及危险因素", id: 4 },
-        { name: "预防", id: 5 },
-        { name: "筛查", id: 6 },
-        { name: "治疗方案", id: 7 },
-        { name: "其他", id: 8 }
+        {name: '症状', id: 1},
+        {name: '表现', id: 2},
+        {name: '诊断方法', id: 3},
+        {name: '病因及危险因素', id: 4},
+        {name: '预防', id: 5},
+        {name: '筛查', id: 6},
+        {name: '治疗方案', id: 7},
+        {name: '其他', id: 8}
       ],
       options: [],
-      value: "",
+      value: '',
       cur: 0,
       content: `<p>hello world</p>`,
       editorOption: {},
@@ -384,26 +385,26 @@ export default {
       prodepts: [],
       one: false,
       datas: {},
-      state: "",
+      state: '',
       dataone: {}
     };
   },
   mounted() {
     //靶向用药
     this.medicaList = this.medicaState.map(item => {
-      return { value: item, label: item };
+      return {value: item, label: item};
     });
     //相关基因
     this.geneList = this.geneState.map(item => {
-      return { value: item, label: item };
+      return {value: item, label: item};
     });
     //相关产品
     this.productList = this.productState.map(item => {
-      return { value: item, label: item };
+      return {value: item, label: item};
     });
     //相关指南
     this.guideList = this.guideState.map(item => {
-      return { value: item, label: item };
+      return {value: item, label: item};
     });
     this.state = this.$route.query.state;
     this.companyIds();
@@ -416,14 +417,14 @@ export default {
   methods: {
     getCompany() {
       this.axios({
-        url: "company"
+        url: 'company'
       }).then(res => {
         this.valueList = res.data;
       });
     },
     companyIds() {
       this.axios({
-        url: "solution/solutionByCompany",
+        url: 'solution/solutionByCompany',
         params: {
           companyId: this.proDepts
         }
@@ -444,23 +445,23 @@ export default {
         (obj.morbidity = this.disease.morbidity),
         (obj.distype = this.disease.distype),
         (obj.catalog = [
-          { 症状: this.content2 },
-          { 表现: this.content3 },
-          { 诊断方法: this.content4 },
-          { 病因及危险因素: this.content5 },
-          { 预防: this.content6 },
-          { 筛查: this.content7 },
-          { 治疗方案: this.content8 },
-          { 其他: this.content9 }
+          {症状: this.content2},
+          {表现: this.content3},
+          {诊断方法: this.content4},
+          {病因及危险因素: this.content5},
+          {预防: this.content6},
+          {筛查: this.content7},
+          {治疗方案: this.content8},
+          {其他: this.content9}
         ]),
         (obj.deptId = this.newDept),
         (obj.genes = this.relatedgene),
         (obj.druggeryIds = this.newMedica);
       (obj.guides = this.guideId), (obj.productIds = this.newProduct);
       obj.diseaseId = this.diseaseId;
-      window.sessionStorage.setItem("disease", JSON.stringify(obj));
+      window.sessionStorage.setItem('disease', JSON.stringify(obj));
       this.$router.push({
-        name: "DiseasePreview",
+        name: 'DiseasePreview',
         query: {
           id: this.$route.query.id,
           state: this.$route.query.state
@@ -470,7 +471,7 @@ export default {
     //发布
     addData() {
       var guideIds = this.guideId.map((item, index) => {
-        return { guideId: item };
+        return {guideId: item};
       });
       var druggeryIds = this.newMedica.map(item => {
         return item.id;
@@ -489,21 +490,21 @@ export default {
           this.disease.name == undefined &&
           this.disease.nameen == undefined
         ) {
-          this.$message("请输入带有*的信息");
+          this.$message('请输入带有*的信息');
         } else {
           let instance = this.axios.create({
             headers: {
               Authorization: window.localStorage.token,
-              "Content-Type": "application/json"
+              'Content-Type': 'application/json'
             }
           });
           let _this = this;
           instance({
-            url: "disease/addDisease",
-            method: "post",
+            url: 'disease/addDisease',
+            method: 'post',
             headers: {
-              "Content-Type": "application/json",
-              "X-Requested-With": "XMLHttpRequest"
+              'Content-Type': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest'
             },
             data: {
               disease: {
@@ -517,16 +518,16 @@ export default {
                 morbidity: _this.disease.morbidity,
                 distype: _this.disease.distype,
                 catalog: [
-                  { 症状: _this.content2 },
-                  { 表现: _this.content3 },
-                  { 诊断方法: _this.content4 },
-                  { 病因及危险因素: _this.content5 },
-                  { 预防: _this.content6 },
-                  { 筛查: _this.content7 },
-                  { 治疗方案: _this.content8 },
-                  { 其他: _this.content9 }
+                  {症状: _this.content2},
+                  {表现: _this.content3},
+                  {诊断方法: _this.content4},
+                  {病因及危险因素: _this.content5},
+                  {预防: _this.content6},
+                  {筛查: _this.content7},
+                  {治疗方案: _this.content8},
+                  {其他: _this.content9}
                 ],
-                content: "",
+                content: '',
                 //科室
                 deptId,
                 //基因
@@ -541,8 +542,8 @@ export default {
           })
             .then(res => {
               this.$message({
-                type: "success",
-                message: "发布成功"
+                type: 'success',
+                message: '发布成功'
               });
             })
             .catch(err => {
@@ -550,26 +551,26 @@ export default {
             });
         }
       } else {
-        if (this.disease.name == "" && this.disease.nameen == "") {
-          this.$message("请输入带有*的信息");
+        if (this.disease.name == '' && this.disease.nameen == '') {
+          this.$message('请输入带有*的信息');
         } else {
           var guideIds = this.guideId.map((item, index) => {
-            return { guideId: item };
+            return {guideId: item};
           });
           if (this.state == 0) {
             let instance = this.axios.create({
               headers: {
                 Authorization: window.localStorage.token,
-                "Content-Type": "application/json"
+                'Content-Type': 'application/json'
               }
             });
             let _this = this;
             instance({
-              url: "disease/eidtDisease",
-              method: "put",
+              url: 'disease/eidtDisease',
+              method: 'put',
               headers: {
-                "Content-Type": "application/json",
-                "X-Requested-With": "XMLHttpRequest"
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
               },
               data: {
                 disease: {
@@ -584,14 +585,14 @@ export default {
                   morbidity: _this.disease.morbidity,
                   distype: _this.disease.distype,
                   catalog: [
-                    { 症状: _this.content2 },
-                    { 表现: _this.content3 },
-                    { 诊断方法: _this.content4 },
-                    { 病因及危险因素: _this.content5 },
-                    { 预防: _this.content6 },
-                    { 筛查: _this.content7 },
-                    { 治疗方案: _this.content8 },
-                    { 其他: _this.content9 }
+                    {症状: _this.content2},
+                    {表现: _this.content3},
+                    {诊断方法: _this.content4},
+                    {病因及危险因素: _this.content5},
+                    {预防: _this.content6},
+                    {筛查: _this.content7},
+                    {治疗方案: _this.content8},
+                    {其他: _this.content9}
                   ],
                   //科室
                   deptId,
@@ -606,7 +607,7 @@ export default {
               }
             })
               .then(res => {
-                this.$message("发布成功");
+                this.$message('发布成功');
               })
               .catch(err => {
                 this.$message(JSON.parse(err.request.response).mag);
@@ -616,22 +617,22 @@ export default {
               let instance = this.axios.create({
                 headers: {
                   Authorization: window.localStorage.token,
-                  "Content-Type": "application/json"
+                  'Content-Type': 'application/json'
                 }
               });
               let _this = this;
               instance({
-                url: "disease/addDisease",
-                method: "post",
+                url: 'disease/addDisease',
+                method: 'post',
                 headers: {
-                  "Content-Type": "application/json",
-                  "X-Requested-With": "XMLHttpRequest"
+                  'Content-Type': 'application/json',
+                  'X-Requested-With': 'XMLHttpRequest'
                 },
                 params: {
                   temId: _this.id
                 },
                 data: {
-                  disease: { 
+                  disease: {
                     name: _this.disease.name,
                     nameen: _this.disease.nameen,
                     muttype: _this.disease.muttype,
@@ -642,16 +643,16 @@ export default {
                     morbidity: _this.disease.morbidity,
                     distype: _this.disease.distype,
                     catalog: [
-                      { 症状: _this.content2 },
-                      { 表现: _this.content3 },
-                      { 诊断方法: _this.content4 },
-                      { 病因及危险因素: _this.content5 },
-                      { 预防: _this.content6 },
-                      { 筛查: _this.content7 },
-                      { 治疗方案: _this.content8 },
-                      { 其他: _this.content9 }
+                      {症状: _this.content2},
+                      {表现: _this.content3},
+                      {诊断方法: _this.content4},
+                      {病因及危险因素: _this.content5},
+                      {预防: _this.content6},
+                      {筛查: _this.content7},
+                      {治疗方案: _this.content8},
+                      {其他: _this.content9}
                     ],
-                    content: "",
+                    content: '',
                     //科室
                     deptId,
                     //基因
@@ -665,7 +666,7 @@ export default {
                 }
               })
                 .then(res => {
-                  this.$message("发布成功");
+                  this.$message('发布成功');
                 })
                 .catch(err => {
                   this.$message(JSON.parse(err.request.response).mag);
@@ -674,16 +675,16 @@ export default {
               let instance = this.axios.create({
                 headers: {
                   Authorization: window.localStorage.token,
-                  "Content-Type": "application/json"
+                  'Content-Type': 'application/json'
                 }
               });
               let _this = this;
               instance({
-                url: "disease/eidtDisease",
-                method: "put",
+                url: 'disease/eidtDisease',
+                method: 'put',
                 headers: {
-                  "Content-Type": "application/json",
-                  "X-Requested-With": "XMLHttpRequest"
+                  'Content-Type': 'application/json',
+                  'X-Requested-With': 'XMLHttpRequest'
                 },
                 params: {
                   temId: _this.id
@@ -701,14 +702,14 @@ export default {
                     morbidity: _this.disease.morbidity,
                     distype: _this.disease.distype,
                     catalog: [
-                      { 症状: _this.content2 },
-                      { 表现: _this.content3 },
-                      { 诊断方法: _this.content4 },
-                      { 病因及危险因素: _this.content5 },
-                      { 预防: _this.content6 },
-                      { 筛查: _this.content7 },
-                      { 治疗方案: _this.content8 },
-                      { 其他: _this.content9 }
+                      {症状: _this.content2},
+                      {表现: _this.content3},
+                      {诊断方法: _this.content4},
+                      {病因及危险因素: _this.content5},
+                      {预防: _this.content6},
+                      {筛查: _this.content7},
+                      {治疗方案: _this.content8},
+                      {其他: _this.content9}
                     ],
                     //科室
                     deptId,
@@ -723,7 +724,7 @@ export default {
                 }
               })
                 .then(res => {
-                  this.$message("发布成功");
+                  this.$message('发布成功');
                 })
                 .catch(err => {
                   this.$message(JSON.parse(err.request.response).mag);
@@ -790,7 +791,7 @@ export default {
           "X-Requested-With": "XMLHttpRequest",
           "Content-Type": "application/json"
         }
-      }).then(function(res) {
+      }).then(function (res) {
         _this.guideOption = res.data.guides.map((item, index) => {
           return {
             id: item.id,
@@ -856,7 +857,7 @@ export default {
           "X-Requested-With": "XMLHttpRequest",
           "Content-Type": "application/json"
         }
-      }).then(function(res) {
+      }).then(function (res) {
         _this.productOption = res.data.products.list.map((item, index) => {
           return {
             id: item.id,
@@ -883,7 +884,7 @@ export default {
           id: this.$route.query.id,
           state: this.$route.query.state
         }
-      }).then(res => { 
+      }).then(res => {
         this.diseaseId = res.data.disease.diseaseId;
         this.id = res.data.disease.id;
         this.disease = res.data.disease;
@@ -898,11 +899,20 @@ export default {
         if (res.data.disease.guides !== undefined) {
           //指南
           this.guideId = res.data.disease.guides.map(item => {
-            this.guideOption.push({
-              id: item.guideId.id,
-              name: item.guideId.name
-            });
-            return { id: item.guideId.id, name: item.guideId.name };
+            let guide = {}
+            if (item.guideId === undefined) {
+              guide = {
+                id: item._id.toString(),
+                name: item.title
+              }
+            } else {
+              guide = {
+                id: item.guideId.id,
+                name: item.guideId.name
+              }
+            }
+            this.guideOption.push(guide)
+            return guide
           });
         }
         if (res.data.products !== undefined) {
@@ -911,13 +921,13 @@ export default {
               id: item.productId,
               name: item.productName
             });
-            return { id: item.productId, name: item.productName };
+            return {id: item.productId, name: item.productName};
           });
         }
-        console.log( res.data.depts)
+        console.log(res.data.depts)
         if (res.data.depts !== undefined) {
           this.newDept = res.data.depts.map(item => {
-            let _dept = { id: item.deptId, name: item.deptName }
+            let _dept = {'id': item.deptId, 'name': item.deptName}
             this.deptList.push(_dept);
             console.log(_dept)
             return _dept;
@@ -930,13 +940,13 @@ export default {
               id: item.druggeryId,
               name: item.druggeryName
             });
-            return { id: item.druggeryId, name: item.druggeryName };
+            return {id: item.druggeryId, name: item.druggeryName};
           });
         }
         if (res.data.relationGene !== undefined) {
           this.relatedgene = res.data.relationGene.map(item => {
-            this.geneOption.push({ id: item.geneId, name: item.geneName });
-            return { id: item.geneId, name: item.geneName };
+            this.geneOption.push({id: item.geneId, name: item.geneName});
+            return {id: item.geneId, name: item.geneName};
           });
         }
       });
@@ -944,7 +954,7 @@ export default {
     //暂存按钮
     disabeleds() {
       var guideIds = this.guideId.map((item, index) => {
-        return { guideId: item };
+        return {guideId: item};
       });
       var druggeryIds = this.newMedica.map(item => {
         return item.id;
@@ -1011,7 +1021,7 @@ export default {
             "X-Requested-With": "XMLHttpRequest"
           },
           data: {
-            diseaseTem: { 
+            diseaseTem: {
               name: _this.disease.name,
               nameen: _this.disease.nameen,
               muttype: _this.disease.muttype,
@@ -1022,14 +1032,14 @@ export default {
               morbidity: _this.disease.morbidity,
               distype: _this.disease.distype,
               catalog: [
-                { 症状: _this.content2 },
-                { 表现: _this.content3 },
-                { 诊断方法: _this.content4 },
-                { 病因及危险因素: _this.content5 },
-                { 预防: _this.content6 },
-                { 筛查: _this.content7 },
-                { 治疗方案: _this.content8 },
-                { 其他: _this.content9 }
+                {症状: _this.content2},
+                {表现: _this.content3},
+                {诊断方法: _this.content4},
+                {病因及危险因素: _this.content5},
+                {预防: _this.content6},
+                {筛查: _this.content7},
+                {治疗方案: _this.content8},
+                {其他: _this.content9}
               ],
               content: "",
               //科室
@@ -1080,14 +1090,14 @@ export default {
                 morbidity: _this.disease.morbidity,
                 distype: _this.disease.distype,
                 catalog: [
-                  { 症状: _this.content2 },
-                  { 表现: _this.content3 },
-                  { 诊断方法: _this.content4 },
-                  { 病因及危险因素: _this.content5 },
-                  { 预防: _this.content6 },
-                  { 筛查: _this.content7 },
-                  { 治疗方案: _this.content8 },
-                  { 其他: _this.content9 }
+                  {症状: _this.content2},
+                  {表现: _this.content3},
+                  {诊断方法: _this.content4},
+                  {病因及危险因素: _this.content5},
+                  {预防: _this.content6},
+                  {筛查: _this.content7},
+                  {治疗方案: _this.content8},
+                  {其他: _this.content9}
                 ],
                 content: "",
                 //科室
@@ -1127,7 +1137,7 @@ export default {
             data: {
               disease: {
                 id: _this.id,
-                diseaseId:_this.diseaseId,
+                diseaseId: _this.diseaseId,
                 name: _this.disease.name,
                 nameen: _this.disease.nameen,
                 muttype: _this.disease.muttype,
@@ -1138,14 +1148,14 @@ export default {
                 morbidity: _this.disease.morbidity,
                 distype: _this.disease.distype,
                 catalog: [
-                  { 症状: _this.content2 },
-                  { 表现: _this.content3 },
-                  { 诊断方法: _this.content4 },
-                  { 病因及危险因素: _this.content5 },
-                  { 预防: _this.content6 },
-                  { 筛查: _this.content7 },
-                  { 治疗方案: _this.content8 },
-                  { 其他: _this.content9 }
+                  {症状: _this.content2},
+                  {表现: _this.content3},
+                  {诊断方法: _this.content4},
+                  {病因及危险因素: _this.content5},
+                  {预防: _this.content6},
+                  {筛查: _this.content7},
+                  {治疗方案: _this.content8},
+                  {其他: _this.content9}
                 ],
                 content: "",
                 //科室
@@ -1170,11 +1180,15 @@ export default {
         }
       }
     },
-    onEditorReady(editor) {}, // 准备编辑器,
-    onEditorBlur() {}, // 失去焦点事件
-    onEditorFocus() {}, // 获得焦点事件
-    onEditorChange() {}, // 内容改变事件
-    saveHtml: function(event) {
+    onEditorReady(editor) {
+    }, // 准备编辑器,
+    onEditorBlur() {
+    }, // 失去焦点事件
+    onEditorFocus() {
+    }, // 获得焦点事件
+    onEditorChange() {
+    }, // 内容改变事件
+    saveHtml: function (event) {
       alert(this.content);
     },
     _initData() {
@@ -1196,7 +1210,7 @@ export default {
             "X-Requested-With": "XMLHttpRequest",
             "Content-Type": "application/json"
           }
-        }).then(function(res) {
+        }).then(function (res) {
           _this.disease = res.data.disease;
           if (_this.disease.deptId === undefined) {
             _this.disease.deptId = [];
@@ -1216,23 +1230,23 @@ export default {
       this.axios
         .get("hospital-dept")
         .then(res => {
-          this.deptList = res.data;
+          this.deptList = res.data
         })
         .catch(err => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
     edit() {
-      this.disease.deptId = this.disease.deptId.map(String);
-      this.disease.guides = this.guides;
+      this.disease.deptId = this.disease.deptId.map(String)
+      this.disease.guides = this.guides
       if (this.$route.params.id === undefined) {
         let instance = this.axios.create({
           headers: {
             Authorization: window.localStorage.token,
             "Content-Type": "application/json"
           }
-        });
-        let _this = this;
+        })
+        let _this = this
         instance({
           method: "post",
           url: "disease/eidtDisease",
@@ -1245,27 +1259,27 @@ export default {
             "Content-Type": "application/json"
           }
         })
-          .then(function(res) {
+          .then(function (res) {
             _this.$message({
               message: "新增成功",
               type: "success"
-            });
-            _this.$router.push("/disease");
+            })
+            _this.$router.push("/disease")
           })
-          .catch(function() {
+          .catch(function () {
             _this.$message({
               message: "新增失败",
               type: "error"
-            });
-          });
+            })
+          })
       } else {
         let instance = this.axios.create({
           headers: {
             Authorization: window.localStorage.token,
             "Content-Type": "application/json"
           }
-        });
-        let _this = this;
+        })
+        let _this = this
         instance({
           method: "put",
           url: "disease/eidtDisease",
@@ -1275,35 +1289,36 @@ export default {
             "Content-Type": "application/json"
           }
         })
-          .then(function() {
+          .then(function () {
             _this.$message({
               message: "修改成功",
               type: "success"
-            });
-            _this.$router.push("/disease");
+            })
+            _this.$router.push("/disease")
           })
-          .catch(function() {
+          .catch(function () {
             _this.$message({
               message: "修改失败",
               type: "error"
-            });
-          });
+            })
+          })
       }
     },
     cancel() {
-      this.$router.go(-1);
+      this.$router.go(-1)
     },
-    remoteMethod(query) {},
+    remoteMethod(query) {
+    },
     toAddCatelog() {
-      this.disease.catalog.push({ name: "", content: "" });
+      this.disease.catalog.push({name: "", content: ""})
     },
     deleteCatelog(index) {
-      this.disease.catalog.splice(index, 1);
+      this.disease.catalog.splice(index, 1)
     }
   },
   computed: {
-    editor() {
-      return this.$refs.myQuillEditor.quill;
+    editor () {
+      return this.$refs.myQuillEditor.quill
     }
   },
   created() {
@@ -1312,114 +1327,138 @@ export default {
       text: "Loading",
       spinner: "el-icon-loading",
       background: "rgba(0, 0, 0, 0.7)"
-    });
-    this._initData();
-    loading.close();
+    })
+    this._initData()
+    loading.close()
   },
-  destroyed() {}
-};
+  destroyed() {
+  }
+}
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
-.active {
-  color: goldenrod;
-}
-.edit-form {
-  max-width: none;
-}
-* {
-  list-style: none;
-}
-.float-l {
-  float: left;
-}
-.list {
-  width: 100%;
-  height: 150px;
-  line-height: 75px;
-  display: flex;
-  background: #ccc;
-  flex-wrap: wrap;
-  li {
-    width: 180px;
+  .active {
+    color: goldenrod;
   }
-}
-.select {
-  width: 100%;
-  text-align: center;
-  display: flex;
-  justify-content: space-around;
-  margin-top: 100px;
-}
-.content {
-  width: 100%;
-  height: 100px;
-  .title {
-    height: 30px;
-    background: #f3f3f3;
-    padding-left: 5px;
-    input {
-      width: 93%;
-      border: 0;
-      outline: none;
-      height: 28px;
-      background: #f3f3f3;
-    }
-  }
-}
-.disease-container {
-  margin: 20px 0px;
-  padding: 20px;
-  background: #ffffff;
-  .el-input {
-    width: 100%;
-  }
+
   .edit-form {
-    width: calc(100% - 40px);
-    .form-left {
-      width: 40%;
-      float: left;
+    max-width: none;
+  }
+
+  * {
+    list-style: none;
+  }
+
+  .float-l {
+    float: left;
+  }
+
+  .list {
+    width: 100%;
+    height: 150px;
+    line-height: 75px;
+    display: flex;
+    background: #ccc;
+    flex-wrap: wrap;
+
+    li {
+      width: 180px;
     }
-    .form-right {
-      padding-left: 60px;
-      width: 40%;
-      float: left;
-    }
-    .form-line {
-      width: calc(80% + 60px);
-      float: left;
-      .btns {
-        margin-top: 120px;
-        text-align: center;
-        .el-button {
-          margin: 0 20px;
-        }
+  }
+
+  .select {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: space-around;
+    margin-top: 100px;
+  }
+
+  .content {
+    width: 100%;
+    height: 100px;
+
+    .title {
+      height: 30px;
+      background: #f3f3f3;
+      padding-left: 5px;
+
+      input {
+        width: 93%;
+        border: 0;
+        outline: none;
+        height: 28px;
+        background: #f3f3f3;
       }
     }
-    .url-name {
-      width: 200px;
-      float: left;
+  }
+
+  .disease-container {
+    margin: 20px 0px;
+    padding: 20px;
+    background: #ffffff;
+
+    .el-input {
+      width: 100%;
     }
-    .url {
-      margin-left: 20px;
-      width: 600px;
-      float: left;
+
+    .edit-form {
+      width: calc(100% - 40px);
+
+      .form-left {
+        width: 40%;
+        float: left;
+      }
+
+      .form-right {
+        padding-left: 60px;
+        width: 40%;
+        float: left;
+      }
+
+      .form-line {
+        width: calc(80% + 60px);
+        float: left;
+
+        .btns {
+          margin-top: 120px;
+          text-align: center;
+
+          .el-button {
+            margin: 0 20px;
+          }
+        }
+      }
+
+      .url-name {
+        width: 200px;
+        float: left;
+      }
+
+      .url {
+        margin-left: 20px;
+        width: 600px;
+        float: left;
+      }
     }
   }
-}
-.disease-container .header {
-  margin-bottom: 20px;
-  font-size: 18px;
-}
-.width-100-p {
-  width: 100%;
-}
-.img-content {
-  margin: 20px 0px 20px 20px;
-  height: 700px;
-  background: #ffffff;
-  overflow: auto;
-  img {
+
+  .disease-container .header {
+    margin-bottom: 20px;
+    font-size: 18px;
+  }
+
+  .width-100-p {
     width: 100%;
   }
-}
+
+  .img-content {
+    margin: 20px 0px 20px 20px;
+    height: 700px;
+    background: #ffffff;
+    overflow: auto;
+
+    img {
+      width: 100%;
+    }
+  }
 </style>

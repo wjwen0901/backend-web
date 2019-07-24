@@ -101,29 +101,18 @@ export default {
     _initData () {
       this.getData()
     },
-    getData () { 
-      let instance = this.axios.create({ 
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      let _this = this
-      instance({
-        method: 'get',
-        url: 'disease/page', 
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json'
-        },
+    getData () {
+      this.axios.get('disease/page', {
         params:{
           pageSize : this.pageSize,
           pageNum : this.pageNum,
           param:this.condition
         }
-      }).then(function (res) {
+      }).then(res => {
         console.log(res.data)
-        _this.diseaseList = res.data.diseases
-        _this.totalPage = res.data.totalNum
+        this.diseaseList = res.data.diseases
+        this.totalPage = res.data.totalNum
+      }).catch(err => {
       })
     },
     handleSizeChange (val) {
