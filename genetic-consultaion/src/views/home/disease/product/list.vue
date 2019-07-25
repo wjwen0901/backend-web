@@ -90,30 +90,16 @@ export default {
       this.getData()
     },
     getData () {
-      console.log(process.env.DISEASE_API)
-      console.log(process.env)
-      let instance = this.axios.create({
-        baseURL: process.env.BASE_URL,
-        headers: {
-          'Content-Type': 'application/json'
+      this.axios.get('product/page', {
+        params:{
+          keyWord: this.condition,
+          pageSize: this.pageSize,
+          pageNum: this.pageNum
         }
-      })
-      let _this = this
-      instance({
-        method: 'get',
-        url: 'product/page',
-        params: { 
-          keyWord: _this.condition,
-          pageSize:_this.pageSize,
-          pageNum:_this.pageNum
-        },
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json'
-        }
-      }).then(function (res) {  
-        _this.proList = res.data.products
-        _this.totalPage = res.data.totalNum
+      }).then(res => {
+        this.proList = res.data.products
+        this.totalPage = res.data.totalNum
+      }).catch(err => {
       })
     },
     handleSizeChange (val) { 
@@ -127,7 +113,7 @@ export default {
     toEdit (id,state) {
       this.$router.push({
         name: 'ProductClEdit',
-        params: id,
+        params: {'id': id},
         query:{
           id,
           state

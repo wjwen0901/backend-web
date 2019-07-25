@@ -629,7 +629,8 @@ export default {
               "X-Requested-With": "XMLHttpRequest"
             },
             data: {
-              guideTem: { 
+              guideTem: {
+                guideId: _this.id,
                 other: _this.drug.other,
                 title: _this.drug.title,
                 titleEn,
@@ -686,7 +687,7 @@ export default {
               
               data: {
                 guideTem: {
-                  guideId: _this.guideId,
+                  guideId: _this.id,
                   other: _this.drug.other,
                   title: _this.drug.title,
                   titleEn,
@@ -728,6 +729,7 @@ export default {
               data: {
                 guideTem: {
                   id: _this.id,
+                  guideId: _this.id,
                   drugId:_this.drugId,
                   other: _this.drug.other,
                   title: _this.drug.title,
