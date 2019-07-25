@@ -22,6 +22,9 @@
               <el-form-item label="其他名称">
                 <el-input v-model="disease.alias" :disabled="qname" placeholder="请输入"></el-input>
               </el-form-item>
+              <el-form-item label="简介">
+                <el-input v-model="disease.content" :disabled="disintroduction" placeholder="请输入"></el-input>
+              </el-form-item>
               <el-form-item label="OMIM">
                 <el-input v-model="disease.omim" :disabled="omims" placeholder="请输入"></el-input>
               </el-form-item>
@@ -143,7 +146,7 @@
                 </li>
               </ul>  
               <div class="content" v-show="cur==0"> 
-                <p class="title">标题：<span>症状</span></p> 
+                <p class="title">标题：<input  v-model="disease.title1"/></p> 
                 <div class="edit_container"> 
                 <quill-editor 
                     v-model="content2" 
@@ -156,7 +159,7 @@
                 </div>
               </div>
               <div class="content" v-show="cur==1"> 
-                <p class="title">标题：<span>表现</span></p> 
+                <p class="title">标题：<input  v-model="disease.title2"/></p> 
                 <div class="edit_container"> 
                 <quill-editor 
                     v-model="content3" 
@@ -169,7 +172,7 @@
                 </div>
               </div>
               <div class="content" v-show="cur==2"> 
-                <p class="title">标题：<span>诊断方法</span></p> 
+                <p class="title">标题：<input  v-model="disease.title3"/></p> 
                 <div class="edit_container"> 
                 <quill-editor 
                     v-model="content4" 
@@ -182,7 +185,7 @@
                 </div>
               </div>
               <div class="content" v-show="cur==3"> 
-                <p class="title">标题：<span>病因及危险因素</span></p> 
+                <p class="title">标题：<input  v-model="disease.title4"/></p> 
                 <div class="edit_container"> 
                 <quill-editor 
                     v-model="content5" 
@@ -195,7 +198,7 @@
                 </div>
               </div>
               <div class="content" v-show="cur==4"> 
-                <p class="title">标题：<span>预防</span></p> 
+                <p class="title">标题：<input  v-model="disease.title5"/></p> 
                 <div class="edit_container"> 
                 <quill-editor 
                     v-model="content6"
@@ -208,7 +211,7 @@
                 </div>
               </div>
               <div class="content" v-show="cur==5"> 
-                <p class="title">标题：<span>筛选</span></p> 
+                <p class="title">标题：<input  v-model="disease.title6"/></p> 
                 <div class="edit_container"> 
                 <quill-editor 
                     v-model="content7" 
@@ -221,7 +224,7 @@
                 </div>
               </div>
               <div class="content" v-show="cur==6"> 
-                <p class="title">标题：<span>治疗方案</span></p> 
+                <p class="title">标题：<input  v-model="disease.title7"/></p> 
                 <div class="edit_container"> 
                 <quill-editor 
                     v-model="content8" 
@@ -234,7 +237,7 @@
                 </div>
               </div>
               <div class="content" v-show="cur==7"> 
-                <p class="title">标题：<span>其他</span></p> 
+                <p class="title">标题： <input  v-model="disease.title8"/></p> 
                 <div class="edit_container"> 
                 <quill-editor 
                     v-model="content9" 
@@ -245,25 +248,7 @@
                     @change="onEditorChange($event)">
                   </quill-editor>
                 </div>
-              </div>
-              <!-- <div class="select">
-                <el-select v-model="value" :disabled="values" placeholder="请选择">
-                <el-option
-                  v-for="item in valueList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
-              <el-select v-model="value1" :disabled="values1" filterable multiple placeholder="请选择">
-                <el-option
-                  v-for="item in options"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
-              </div>   -->
+              </div> 
               <el-form-item class="btns">
                 <el-button type="primary" @click="addData" :disabled = "openIsDisabled">发布</el-button>
                 <el-button type="primary" @click="preview" :disabled = " openIsDisabled ">预览</el-button>
@@ -324,6 +309,7 @@ export default {
       btitle9: false,
       values1: false,
       values: false,
+      introduction:false,
       data: [],
       addRowData: ["add"],
       disease: {},
@@ -352,8 +338,7 @@ export default {
       ],
       options: [],
       value: "",
-      cur: 0,
-      content: `<p>hello world</p>`,
+      cur: 0, 
       editorOption: {},
       openIsDisabled: false,
       //靶向用药
@@ -389,28 +374,27 @@ export default {
     };
   },
   mounted() {
-    //靶向用药
+    // 靶向用药
     this.medicaList = this.medicaState.map(item => {
       return { value: item, label: item };
     });
-    //相关基因
+    // 相关基因
     this.geneList = this.geneState.map(item => {
       return { value: item, label: item };
     });
-    //相关产品
+    // 相关产品
     this.productList = this.productState.map(item => {
       return { value: item, label: item };
     });
-    //相关指南
+    // 相关指南
     this.guideList = this.guideState.map(item => {
       return { value: item, label: item };
-    });
-    this.state = this.$route.query.state;
-    this.companyIds();
-    this.getCompany();
-    this.getDatas();
-
-    //获取科室列表
+    })
+    this.state = this.$route.query.state
+    this.companyIds()
+    this.getCompany()
+    this.getDatas()
+    // 获取科室列表
     this.getList();
   },
   methods: {
@@ -418,7 +402,7 @@ export default {
       this.axios({
         url: "company"
       }).then(res => {
-        this.valueList = res.data;
+        this.valueList = res.data
       });
     },
     companyIds() {
@@ -428,36 +412,39 @@ export default {
           companyId: this.proDepts
         }
       }).then(res => {
-        this.options = res.data.solutions;
-      });
+        this.options = res.data.solutions
+      })
     },
-    //预览
+    // 预览
     preview() {
-      var obj = {};
-      (obj.name = this.disease.name),
-        (obj.nameen = this.disease.nameen),
-        (obj.muttype = this.disease.muttype),
-        (obj.mode = this.disease.mode),
-        (obj.alias = this.disease.alias),
-        (obj.age = this.disease.age),
-        (obj.omim = this.disease.omim),
-        (obj.morbidity = this.disease.morbidity),
-        (obj.distype = this.disease.distype),
-        (obj.catalog = [
-          { 症状: this.content2 },
-          { 表现: this.content3 },
-          { 诊断方法: this.content4 },
-          { 病因及危险因素: this.content5 },
-          { 预防: this.content6 },
-          { 筛查: this.content7 },
-          { 治疗方案: this.content8 },
-          { 其他: this.content9 }
-        ]),
-        (obj.deptId = this.newDept),
-        (obj.genes = this.relatedgene),
-        (obj.druggeryIds = this.newMedica);
-      (obj.guides = this.guideId), (obj.productIds = this.newProduct);
-      obj.diseaseId = this.diseaseId;
+      var obj = {
+        name: this.disease.name,
+        nameen: this.disease.nameen,
+        muttype: this.disease.muttype,
+        mode: this.disease.mode,
+        alias: this.disease.alias,
+        age: this.disease.age,
+        omim: this.disease.omim,
+        morbidity: this.disease.morbidity,
+        distype: this.disease.distype,
+        content: this.disease.content,
+        catalog: [
+          { name: this.disease.title1, content: this.content2},
+          { name: this.disease.title2, content: this.content3},
+          { name: this.disease.title3, content: this.content4},
+          { name: this.disease.title4, content: this.content5},
+          { name: this.disease.title5, content: this.content6},
+          { name: this.disease.title6, content: this.content7},
+          { name: this.disease.title7, content: this.content8},
+          { name: this.disease.title8, content: this.content9}
+        ],
+        deptId: this.newDept,
+        genes: this.relatedgene,
+        druggeryIds: this.newMedica,
+        guides: this.guideId,
+        productIds: this.newProduct,
+        diseaseId: this.diseaseId
+      }; 
       window.sessionStorage.setItem("disease", JSON.stringify(obj));
       this.$router.push({
         name: "DiseasePreview",
@@ -467,11 +454,12 @@ export default {
         }
       });
     },
-    //发布
+    // 发布
     addData() {
       var guideIds = this.guideId.map((item, index) => {
         return { guideId: item };
       });
+      console.log(guideIds)
       var druggeryIds = this.newMedica.map(item => {
         return item.id;
       });
@@ -485,10 +473,7 @@ export default {
         return item.id;
       });
       if (this.$route.query.id == undefined) {
-        if (
-          this.disease.name == undefined &&
-          this.disease.nameen == undefined
-        ) {
+        if (this.disease.name == undefined &&this.disease.nameen == undefined) {
           this.$message("请输入带有*的信息");
         } else {
           let instance = this.axios.create({
@@ -516,17 +501,17 @@ export default {
                 omim: _this.disease.omim,
                 morbidity: _this.disease.morbidity,
                 distype: _this.disease.distype,
+                content:_this.disease.content,
                 catalog: [
-                  { 症状: _this.content2 },
-                  { 表现: _this.content3 },
-                  { 诊断方法: _this.content4 },
-                  { 病因及危险因素: _this.content5 },
-                  { 预防: _this.content6 },
-                  { 筛查: _this.content7 },
-                  { 治疗方案: _this.content8 },
-                  { 其他: _this.content9 }
-                ],
-                content: "",
+                  { name: _this.disease.title1, content: _this.content2},
+                  { name: _this.disease.title2, content: _this.content3},
+                  { name: _this.disease.title3, content: _this.content4},
+                  { name: _this.disease.title4, content: _this.content5},
+                  { name: _this.disease.title5, content: _this.content6},
+                  { name: _this.disease.title6, content: _this.content7},
+                  { name: _this.disease.title7, content: _this.content8},
+                  { name: _this.disease.title8, content: _this.content9}
+                ], 
                 //科室
                 deptId,
                 //基因
@@ -543,7 +528,7 @@ export default {
               this.$message({
                 type: "success",
                 message: "发布成功"
-              });
+              })
             })
             .catch(err => {
               this.$message(JSON.parse(err.request.response).mag);
@@ -583,16 +568,17 @@ export default {
                   omim: _this.disease.omim,
                   morbidity: _this.disease.morbidity,
                   distype: _this.disease.distype,
+                  content:_this.disease.content,
                   catalog: [
-                    { 症状: _this.content2 },
-                    { 表现: _this.content3 },
-                    { 诊断方法: _this.content4 },
-                    { 病因及危险因素: _this.content5 },
-                    { 预防: _this.content6 },
-                    { 筛查: _this.content7 },
-                    { 治疗方案: _this.content8 },
-                    { 其他: _this.content9 }
-                  ],
+                    { name: _this.disease.title1, content: _this.content2},
+                    { name: _this.disease.title2, content: _this.content3},
+                    { name: _this.disease.title3, content: _this.content4},
+                    { name: _this.disease.title4, content: _this.content5},
+                    { name: _this.disease.title5, content: _this.content6},
+                    { name: _this.disease.title6, content: _this.content7},
+                    { name: _this.disease.title7, content: _this.content8},
+                    { name: _this.disease.title8, content: _this.content9}
+                  ], 
                   //科室
                   deptId,
                   //基因
@@ -641,17 +627,17 @@ export default {
                     omim: _this.disease.omim,
                     morbidity: _this.disease.morbidity,
                     distype: _this.disease.distype,
+                    content:_this.disease.content,
                     catalog: [
-                      { 症状: _this.content2 },
-                      { 表现: _this.content3 },
-                      { 诊断方法: _this.content4 },
-                      { 病因及危险因素: _this.content5 },
-                      { 预防: _this.content6 },
-                      { 筛查: _this.content7 },
-                      { 治疗方案: _this.content8 },
-                      { 其他: _this.content9 }
-                    ],
-                    content: "",
+                      { name: _this.disease.title1, content: _this.content2},
+                      { name: _this.disease.title2, content: _this.content3},
+                      { name: _this.disease.title3, content: _this.content4},
+                      { name: _this.disease.title4, content: _this.content5},
+                      { name: _this.disease.title5, content: _this.content6},
+                      { name: _this.disease.title6, content: _this.content7},
+                      { name: _this.disease.title7, content: _this.content8},
+                      { name: _this.disease.title8, content: _this.content9}
+                    ], 
                     //科室
                     deptId,
                     //基因
@@ -700,16 +686,17 @@ export default {
                     omim: _this.disease.omim,
                     morbidity: _this.disease.morbidity,
                     distype: _this.disease.distype,
+                    content:_this.disease.content,
                     catalog: [
-                      { 症状: _this.content2 },
-                      { 表现: _this.content3 },
-                      { 诊断方法: _this.content4 },
-                      { 病因及危险因素: _this.content5 },
-                      { 预防: _this.content6 },
-                      { 筛查: _this.content7 },
-                      { 治疗方案: _this.content8 },
-                      { 其他: _this.content9 }
-                    ],
+                      { name: _this.disease.title1, content: _this.content2},
+                      { name: _this.disease.title2, content: _this.content3},
+                      { name: _this.disease.title3, content: _this.content4},
+                      { name: _this.disease.title4, content: _this.content5},
+                      { name: _this.disease.title5, content: _this.content6},
+                      { name: _this.disease.title6, content: _this.content7},
+                      { name: _this.disease.title7, content: _this.content8},
+                      { name: _this.disease.title8, content: _this.content9}
+                    ], 
                     //科室
                     deptId,
                     //基因
@@ -733,7 +720,7 @@ export default {
         }
       }
     },
-    //科室
+    // 科室
     getList() {
       this.axios({
         url: "hospital-dept"
@@ -744,7 +731,7 @@ export default {
         });
       });
     },
-    //基因
+    // 基因
     geneGetdata(gene) {
       this.axios({
         url: "gene/all",
@@ -771,7 +758,7 @@ export default {
         this.geneOption = [];
       }
     },
-    //相关指南
+    // 相关指南
     guideGetdata(guide) {
       let instance = this.axios.create({
         baseURL: process.env.PRODUCT,
@@ -810,7 +797,7 @@ export default {
         this.guideOption = [];
       }
     },
-    //靶向用药
+    // 靶向用药
     medicaGetdata(medica) {
       this.axios({
         url: "druggery/all",
@@ -837,7 +824,7 @@ export default {
         this.medicaOption = [];
       }
     },
-    //检测产品
+    // 检测产品
     productGetdata(product) {
       let instance = this.axios.create({
         baseURL: process.env.PRODUCT,
@@ -887,22 +874,33 @@ export default {
         this.diseaseId = res.data.disease.diseaseId;
         this.id = res.data.disease.id;
         this.disease = res.data.disease;
-        this.content2 = res.data.disease.catalog[0].症状;
-        this.content3 = res.data.disease.catalog[1].表现;
-        this.content4 = res.data.disease.catalog[2].诊断方法;
-        this.content5 = res.data.disease.catalog[3].病因及危险因素;
-        this.content6 = res.data.disease.catalog[4].预防;
-        this.content7 = res.data.disease.catalog[5].筛查;
-        this.content8 = res.data.disease.catalog[6].治疗方案;
-        this.content9 = res.data.disease.catalog[7].其他;
-        if (res.data.disease.guides !== undefined) {
-          //指南
-          this.guideId = res.data.disease.guides.map(item => {
+        // catalog模块
+        if(res.data.disease.catalog != undefined){
+          this.disease.title1 = res.data.disease.catalog[0].name
+          this.disease.title2 = res.data.disease.catalog[1].name
+          this.disease.title3 = res.data.disease.catalog[2].name
+          this.disease.title4 = res.data.disease.catalog[3].name
+          this.disease.title5 = res.data.disease.catalog[4].name
+          this.disease.title6 = res.data.disease.catalog[5].name
+          this.disease.title7 = res.data.disease.catalog[6].name
+          this.disease.title8 = res.data.disease.catalog[7].name
+          this.content2 = res.data.disease.catalog[0].content
+          this.content3 = res.data.disease.catalog[1].content
+          this.content4 = res.data.disease.catalog[2].content
+          this.content5 = res.data.disease.catalog[3].content
+          this.content6 = res.data.disease.catalog[4].content
+          this.content7 = res.data.disease.catalog[5].content
+          this.content8 = res.data.disease.catalog[6].content
+          this.content9 = res.data.disease.catalog[7].content
+        }
+        // 指南
+        if (res.data.disease.guides !== undefined) { 
+          this.guideId = res.data.disease.guides.map(item => { 
             this.guideOption.push({
-              id: item.guideId.id,
-              name: item.guideId.name
+              id: item.guideId,
+              name: item.tilte
             });
-            return { id: item.guideId.id, name: item.guideId.name };
+            return { id: item.guideId, name: item.tilte};
           });
         }
         if (res.data.products !== undefined) {
@@ -913,8 +911,7 @@ export default {
             });
             return { id: item.productId, name: item.productName };
           });
-        }
-        console.log( res.data.depts)
+        } 
         if (res.data.depts !== undefined) {
           this.newDept = res.data.depts.map(item => {
             let _dept = { id: item.deptId, name: item.deptName }
@@ -922,8 +919,7 @@ export default {
             console.log(_dept)
             return _dept;
           });
-        }
-        console.log(this.newDept)
+        } 
         if (res.data.relationDruggery !== undefined) {
           this.newMedica = res.data.relationDruggery.map(item => {
             this.medicaOption.push({
@@ -969,6 +965,7 @@ export default {
       this.tmuttype = !this.tmuttype;
       this.ymode = !this.ymode;
       this.fage = !this.fage;
+      this.disintroduction = !this.disintroduction;
       this.fmorbidity = !this.morbidity;
       this.sprodepts = !this.sprodepts;
       this.jproductId = !this.jproductId;
@@ -1021,24 +1018,24 @@ export default {
               omim: _this.disease.omim,
               morbidity: _this.disease.morbidity,
               distype: _this.disease.distype,
+              content:_this.disease.content,
               catalog: [
-                { 症状: _this.content2 },
-                { 表现: _this.content3 },
-                { 诊断方法: _this.content4 },
-                { 病因及危险因素: _this.content5 },
-                { 预防: _this.content6 },
-                { 筛查: _this.content7 },
-                { 治疗方案: _this.content8 },
-                { 其他: _this.content9 }
-              ],
-              content: "",
-              //科室
+                { name: _this.disease.title1, content: _this.content2},
+                { name: _this.disease.title2, content: _this.content3},
+                { name: _this.disease.title3, content: _this.content4},
+                { name: _this.disease.title4, content: _this.content5},
+                { name: _this.disease.title5, content: _this.content6},
+                { name: _this.disease.title6, content: _this.content7},
+                { name: _this.disease.title7, content: _this.content8},
+                { name: _this.disease.title8, content: _this.content9}
+              ], 
+              // 科室
               deptId,
-              //基因
+              // 基因
               genes,
-              //靶向
+              // 靶向
               druggeryIds,
-              //指南
+              // 指南
               guides: guideIds
             },
             productIds
@@ -1079,24 +1076,24 @@ export default {
                 omim: _this.disease.omim,
                 morbidity: _this.disease.morbidity,
                 distype: _this.disease.distype,
+                content:_this.disease.content,
                 catalog: [
-                  { 症状: _this.content2 },
-                  { 表现: _this.content3 },
-                  { 诊断方法: _this.content4 },
-                  { 病因及危险因素: _this.content5 },
-                  { 预防: _this.content6 },
-                  { 筛查: _this.content7 },
-                  { 治疗方案: _this.content8 },
-                  { 其他: _this.content9 }
-                ],
-                content: "",
-                //科室
+                  { name: _this.disease.title1, content: _this.content2},
+                  { name: _this.disease.title2, content: _this.content3},
+                  { name: _this.disease.title3, content: _this.content4},
+                  { name: _this.disease.title4, content: _this.content5},
+                  { name: _this.disease.title5, content: _this.content6},
+                  { name: _this.disease.title6, content: _this.content7},
+                  { name: _this.disease.title7, content: _this.content8},
+                  { name: _this.disease.title8, content: _this.content9}
+                ], 
+                // 科室
                 deptId,
-                //基因
+                // 基因
                 genes,
-                //靶向
+                // 靶向
                 druggeryIds,
-                //指南
+                // 指南
                 guides: guideIds
               },
               productIds
@@ -1137,24 +1134,24 @@ export default {
                 omim: _this.disease.omim,
                 morbidity: _this.disease.morbidity,
                 distype: _this.disease.distype,
+                content:_this.disease.content,
                 catalog: [
-                  { 症状: _this.content2 },
-                  { 表现: _this.content3 },
-                  { 诊断方法: _this.content4 },
-                  { 病因及危险因素: _this.content5 },
-                  { 预防: _this.content6 },
-                  { 筛查: _this.content7 },
-                  { 治疗方案: _this.content8 },
-                  { 其他: _this.content9 }
-                ],
-                content: "",
-                //科室
+                  { name: _this.disease.title1, content: _this.content2},
+                  { name: _this.disease.title2, content: _this.content3},
+                  { name: _this.disease.title3, content: _this.content4},
+                  { name: _this.disease.title4, content: _this.content5},
+                  { name: _this.disease.title5, content: _this.content6},
+                  { name: _this.disease.title6, content: _this.content7},
+                  { name: _this.disease.title7, content: _this.content8},
+                  { name: _this.disease.title8, content: _this.content9}
+                ], 
+                // 科室
                 deptId,
-                //基因
+                // 基因
                 genes,
-                //靶向
+                // 靶向
                 druggeryIds,
-                //指南
+                // 指南
                 guides: guideIds
               },
               productIds
@@ -1162,7 +1159,7 @@ export default {
           }).then(res => {
             this.$message({
               type: "success",
-              message: "暂存成功"
+              message: "暂存修改成功"
             }).catch(err => {
               this.$message(JSON.parse(err.request.response).mag);
             });
@@ -1176,134 +1173,9 @@ export default {
     onEditorChange() {}, // 内容改变事件
     saveHtml: function(event) {
       alert(this.content);
-    },
-    _initData() {
-      let instance = this.axios.create({
-        baseURL: process.env.DISEASE_PC_API,
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
-      let _this = this;
-      if (this.$route.params.id !== undefined) {
-        instance({
-          method: "get",
-          url: "diseaseData/getDisease",
-          params: {
-            id: this.$route.params.id
-          },
-          headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            "Content-Type": "application/json"
-          }
-        }).then(function(res) {
-          _this.disease = res.data.disease;
-          if (_this.disease.deptId === undefined) {
-            _this.disease.deptId = [];
-          } else {
-            _this.disease.deptId = _this.disease.deptId.map(Number);
-          }
-          _this.guides = [];
-          if (_this.disease.guides !== undefined) {
-            _this.guides = _this.disease.guides;
-          }
-          if (_this.disease.catalog === undefined) {
-            _this.disease.catalog = [];
-          }
-        });
-      }
-
-      this.axios
-        .get("hospital-dept")
-        .then(res => {
-          this.deptList = res.data;
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
-    edit() {
-      this.disease.deptId = this.disease.deptId.map(String);
-      this.disease.guides = this.guides;
-      if (this.$route.params.id === undefined) {
-        let instance = this.axios.create({
-          headers: {
-            Authorization: window.localStorage.token,
-            "Content-Type": "application/json"
-          }
-        });
-        let _this = this;
-        instance({
-          method: "post",
-          url: "disease/eidtDisease",
-          data: {
-            disease: this.disease,
-            userId: window.localStorage.userId
-          },
-          headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            "Content-Type": "application/json"
-          }
-        })
-          .then(function(res) {
-            _this.$message({
-              message: "新增成功",
-              type: "success"
-            });
-            _this.$router.push("/disease");
-          })
-          .catch(function() {
-            _this.$message({
-              message: "新增失败",
-              type: "error"
-            });
-          });
-      } else {
-        let instance = this.axios.create({
-          headers: {
-            Authorization: window.localStorage.token,
-            "Content-Type": "application/json"
-          }
-        });
-        let _this = this;
-        instance({
-          method: "put",
-          url: "disease/eidtDisease",
-          data: this.disease,
-          headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            "Content-Type": "application/json"
-          }
-        })
-          .then(function() {
-            _this.$message({
-              message: "修改成功",
-              type: "success"
-            });
-            _this.$router.push("/disease");
-          })
-          .catch(function() {
-            _this.$message({
-              message: "修改失败",
-              type: "error"
-            });
-          });
-      }
-    },
+    },  
     cancel() {
       this.$router.go(-1);
-    },
-    remoteMethod(query) {},
-    toAddCatelog() {
-      this.disease.catalog.push({ name: "", content: "" });
-    },
-    deleteCatelog(index) {
-      this.disease.catalog.splice(index, 1);
-    }
-  },
-  computed: {
-    editor() {
-      return this.$refs.myQuillEditor.quill;
     }
   },
   created() {
@@ -1313,13 +1185,13 @@ export default {
       spinner: "el-icon-loading",
       background: "rgba(0, 0, 0, 0.7)"
     });
-    this._initData();
-    loading.close();
-  },
-  destroyed() {}
-};
+    this.getDatas()
+    loading.close()
+  }
+}
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
+
 .active {
   color: goldenrod;
 }

@@ -22,6 +22,9 @@
               <el-form-item label="其他名称"> 
                 <span>{{sessionData.alias}}</span>
               </el-form-item>
+              <el-form-item label="简介"> 
+                <span>{{sessionData.content}}</span>
+              </el-form-item>
               <el-form-item label="OMIM"> 
                 <span>{{sessionData.omim}}</span>
               </el-form-item>
@@ -65,48 +68,45 @@
                 </li>
               </ul> 
               <div class="content" v-show="cur==0"> 
-                <p class="title">标题：<input placeholder="请输入标题" v-model="content2" :disabled='btitle2' type="text"></p> 
-                <div class="edit_container" v-html="sessionData.catalog[0].症状">   
-                </div>
+                <p class="title">标题：<span>{{sessionData.catalog[0].name}}</span></p> 
+                <div class="edit_container" v-html="sessionData.catalog[0].content">   
+              </div>
               </div>
               <div class="content" v-show="cur==1"> 
-                <p class="title">标题：<input placeholder="请输入标题" v-model="content3" :disabled='btitle3' type="text"></p> 
-                <div class="edit_container" v-html="sessionData.catalog[1].表现">  
+                <p class="title">标题：<span>{{sessionData.catalog[1].name}}</span></p> 
+                <div class="edit_container" v-html="sessionData.catalog[1].content">  
                 </div>
               </div>  
               <div class="content" v-show="cur==2"> 
-                <p class="title">标题：<input placeholder="请输入标题" v-model="content4" :disabled='btitle4' type="text"></p> 
-                <div class="edit_container" v-html="sessionData.catalog[2].诊断方法"> 
-                 
+                <p class="title">标题：<span>{{sessionData.catalog[2].name}}</span></p> 
+                <div class="edit_container" v-html="sessionData.catalog[2].content">  
                 </div>
               </div>
               <div class="content" v-show="cur==3"> 
-                <p class="title">标题：<input placeholder="请输入标题"  v-model="content5" :disabled='btitle5' type="text"></p> 
-                <div class="edit_container" v-html="sessionData.catalog[3].病因及危险因素">  
+                <p class="title">标题：<span>{{sessionData.catalog[2].name}}</span></p> 
+                <div class="edit_container" v-html="sessionData.catalog[3].content">  
                 </div>
               </div>
               <div class="content" v-show="cur==4"> 
-                <p class="title">标题：<input placeholder="请输入标题" v-model="content6" :disabled='btitle6' type="text"></p> 
-                <div class="edit_container" v-html="sessionData.catalog[4].预防"> 
-                 
+                <p class="title">标题：<span>{{sessionData.catalog[3].name}}</span></p> 
+                <div class="edit_container" v-html="sessionData.catalog[4].content">
                 </div>
               </div>
               <div class="content" v-show="cur==5"> 
-                <p class="title">标题：<input placeholder="请输入标题" v-model="content7" :disabled='btitle7' type="text"></p> 
-                <div class="edit_container" v-html="sessionData.catalog[5].筛查"> 
-                
+                <p class="title">标题：<span>{{sessionData.catalog[5].name}}</span></p> 
+                <div class="edit_container" v-html="sessionData.catalog[5].content">
                 </div>
               </div>
               <div class="content" v-show="cur==6"> 
-                <p class="title">标题：<input placeholder="请输入标题" v-model="content8" :disabled='btitle8' type="text"></p> 
-                <div class="edit_container" v-html="sessionData.catalog[6].治疗方案">  
+                <p class="title">标题：<span>{{sessionData.catalog[6].name}}</span></p> 
+                <div class="edit_container" v-html="sessionData.catalog[6].content">  
                 </div>
               </div>
               <div class="content" v-show="cur==7"> 
-                <p class="title">标题：<input placeholder="请输入标题" v-model="content9" :disabled='btitle9' type="text"></p>
-                <div class="edit_container" v-html="sessionData.catalog[7].其他">  
+                <p class="title">标题：<span>{{sessionData.catalog[7].name}}</span> </p>
+                <div class="edit_container" v-html="sessionData.catalog[7].content">  
                 </div>  
-                </div>
+              </div>
               <el-form-item class="btns">
                 <el-button type="primary" @click="addData" :disabled = "openIsDisabled">保存</el-button>  
                 <el-button @click="cancel" :disabled = " openIsDisabled ">取消</el-button> 
@@ -186,7 +186,7 @@ export default {
           id: this.$route.query.id,
           state: this.$route.query.state
         }
-      }).then(res => {
+      }).then(res => { 
         this.diseaseId = res.data.disease.diseaseId;
         this.id = res.data.disease.id;
       })
@@ -234,6 +234,7 @@ export default {
               omim: _this.sessionData.omim,
               morbidity: _this.sessionData.morbidity,
               distype: _this.sessionData.distype,
+              content:_this.sessionData.content,
               catalog: _this.sessionData.catalog,
               deptId,
               genes,
@@ -281,6 +282,7 @@ export default {
                 morbidity: _this.sessionData.morbidity,
                 distype: _this.sessionData.distype,
                 catalog: _this.sessionData.catalog,
+                content:_this.sessionData.content,
                 deptId,
                 genes,
                 druggeryIds,
@@ -291,7 +293,7 @@ export default {
           })
             .then(res => {
               _this.$message({
-                message: "发布成功",
+                message: "修改成功",
                 type: "success"
               });
             })
@@ -299,7 +301,7 @@ export default {
               this.$message(JSON.parse(err.request.response).mag);
             });
         } else if (this.state == 1) {
-          if (this.diseaseId == "") {
+          if (this.diseaseId == undefined) {
             let instance = this.axios.create({
               headers: {
                 Authorization: window.localStorage.token,
@@ -329,6 +331,7 @@ export default {
                   morbidity: _this.sessionData.morbidity,
                   distype: _this.sessionData.distype,
                   catalog: _this.sessionData.catalog,
+                  content:_this.sessionData.content,
                   deptId,
                   genes,
                   druggeryIds,
@@ -377,6 +380,7 @@ export default {
                   morbidity: _this.sessionData.morbidity,
                   distype: _this.sessionData.distype,
                   catalog: _this.sessionData.catalog,
+                  content:_this.sessionData.content,
                   deptId,
                   genes,
                   druggeryIds,
@@ -387,7 +391,7 @@ export default {
             })
               .then(res => {
                 _this.$message({
-                message: "发布成功",
+                message: "修改成功",
                 type: "success"
               });
               })
@@ -397,184 +401,17 @@ export default {
           }
         }
       }
-    },
-    _initData() {
-      let instance = this.axios.create({
-        baseURL: process.env.DISEASE_PC_API,
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
-      let _this = this;
-      if (this.$route.params.id !== undefined) {
-        instance({
-          method: "get",
-          url: "diseaseData/getDisease",
-          params: {
-            id: this.$route.params.id
-          },
-          headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            "Content-Type": "application/json"
-          }
-        }).then(function(res) {
-          _this.disease = res.data.disease;
-          if (_this.disease.deptId === undefined) {
-            _this.disease.deptId = [];
-          } else {
-            _this.disease.deptId = _this.disease.deptId.map(Number);
-          }
-          _this.guides = [];
-          if (_this.disease.guides !== undefined) {
-            _this.guides = _this.disease.guides;
-          }
-          if (_this.disease.catalog === undefined) {
-            _this.disease.catalog = [];
-          }
-        });
-      }
-      instance({
-        method: "get",
-        url: "guide/getGuides",
-        headers: {
-          "X-Requested-With": "XMLHttpRequest",
-          "Content-Type": "application/json"
-        },
-        params: {
-          pageNum: 1,
-          pageSize: 10,
-          param: ""
-        }
-      }).then(function(res) {
-        _this.guideList = res.data;
-      });
-
-      this.axios
-        .get("hospital-dept")
-        .then(res => {
-          this.deptList = res.data;
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
-    edit() {
-      this.disease.deptId = this.disease.deptId.map(String);
-      this.disease.guides = this.guides;
-      if (this.$route.params.id === undefined) {
-        let instance = this.axios.create({
-          headers: {
-            Authorization: window.localStorage.token,
-            "Content-Type": "application/json"
-          }
-        });
-        let _this = this;
-        instance({
-          method: "post",
-          url: "disease/eidtDisease",
-          data: {
-            disease: this.disease,
-            userId: window.localStorage.userId
-          },
-          headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            "Content-Type": "application/json"
-          }
-        })
-          .then(function(res) {
-            _this.$message({
-              message: "新增成功",
-              type: "success"
-            });
-            _this.$router.push("/disease");
-          })
-          .catch(function() {
-            _this.$message({
-              message: "新增失败",
-              type: "error"
-            });
-          });
-      } else {
-        let instance = this.axios.create({
-          headers: {
-            Authorization: window.localStorage.token,
-            "Content-Type": "application/json"
-          }
-        });
-        let _this = this;
-        instance({
-          method: "put",
-          url: "disease/eidtDisease",
-          data: this.disease,
-          headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            "Content-Type": "application/json"
-          }
-        })
-          .then(function() {
-            _this.$message({
-              message: "修改成功",
-              type: "success"
-            });
-            _this.$router.push("/disease");
-          })
-          .catch(function() {
-            _this.$message({
-              message: "修改失败",
-              type: "error"
-            });
-          });
-      }
-    },
+    }, 
     cancel() {
       this.$router.go(-1);
-    },
-    remoteMethod(query) {
-      this.loading = true;
-      setTimeout(() => {
-        this.loading = false;
-        let instance = this.axios.create({
-          baseURL: process.env.DISEASE_PC_API,
-          headers: {
-            "Content-Type": "application/json"
-          }
-        });
-        let _this = this;
-        instance({
-          method: "get",
-          url: "guide/getGuides",
-          headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            "Content-Type": "application/json"
-          },
-          params: {
-            pageNum: 1,
-            pageSize: 10,
-            param: query
-          }
-        }).then(function(res) {
-          _this.guideList = res.data;
-          console.log(_this.guideList);
-        });
-      }, 200);
-    },
-    toAddCatelog() {
-      this.disease.catalog.push({ name: "", content: "" });
-    },
-    deleteCatelog(index) {
-      this.disease.catalog.splice(index, 1);
     }
   },
   mounted() {
-    this.sessionData = JSON.parse(window.sessionStorage.getItem("disease")); 
+    this.sessionData = JSON.parse(window.sessionStorage.getItem("disease"))
+    this.state = this.$route.query.state
     this.getData()
-    this.state = this.$route.query.state;
-    console.log(this.sessionData);
-  },
-  computed: {
-    editor() {
-      return this.$refs.myQuillEditor.quill;
-    }
+    console.log(this.sessionData.catalog[6].name)
+    console.log(this.sessionData)
   },
   created() {
     let loading = this.$loading({
@@ -583,10 +420,9 @@ export default {
       spinner: "el-icon-loading",
       background: "rgba(0, 0, 0, 0.7)"
     });
-    this._initData();
+    this.getData();
     loading.close();
-  },
-  destroyed() {}
+  }
 };
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>

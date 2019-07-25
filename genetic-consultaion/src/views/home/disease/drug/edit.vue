@@ -784,24 +784,12 @@ export default {
           };
         });
         this.diseaseIds = res.data.diseases == undefined ? [] : res.data.diseases.map(item => {
-          this.diseaseOption.push({
-            id: item.diseaseId,
-            name: item.diseaseName
-          });
-          return {
-            id: item.diseaseId,
-            name: item.diseaseName
-          };
+          this.diseaseOption.push({id: item.diseaseId,name: item.diseaseName});
+          return { id: item.diseaseId, name: item.diseaseName };
         });
         this.newProduct = res.data.products == undefined ? [] :  res.data.products.map(item => {
-          this.productOption.push({
-            id: item.productId,
-            name: item.productName
-          });
-          return {
-            id: item.productId,
-            name: item.productName
-          };
+          this.productOption.push({ id: item.productId, name: item.productName});
+          return { id: item.productId, name: item.productName};
         });
       });
     },
@@ -932,7 +920,7 @@ export default {
                 if (item.type === 0) {
                   _this.reportType.push(item.name);
                   if (item.remark !== undefined) {
-                    _this.reportTypeOtherRemark = item.remark;
+                  _this.reportTypeOtherRemark = item.remark;
                   }
                 } else {
                   _this.consultancy.push(item.name);
