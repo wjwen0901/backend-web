@@ -10,11 +10,11 @@ export default new Router({
       component: resolve => require(['@/views/home/home'], resolve),
       redirect: '/dashboard',
       children: [
-        // {
-        //   path: '/dashboard',
-        //   name: 'Dashboard',
-        //   component: resolve => require(['@/views/home/dashboard/dashboard'], resolve)
-        // },
+        {
+          path: '/dashboard',
+          name: 'Dashboard',
+          component: resolve => require(['@/views/home/dashboard/dashboard'], resolve)
+        },
         {
           path: '/user',
           name: 'UserSec',
