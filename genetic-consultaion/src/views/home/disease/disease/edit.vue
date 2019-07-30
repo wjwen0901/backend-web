@@ -381,6 +381,7 @@ export default {
     });
     // 相关基因
     this.geneList = this.geneState.map(item => {
+      console.log(item)
       return {value: item, label: item};
     });
     // 相关产品
@@ -394,7 +395,6 @@ export default {
     this.state = this.$route.query.state
     this.companyIds()
     this.getCompany()
-    this.getDatas()
     // 获取科室列表
     this.getList();
   },
@@ -917,7 +917,6 @@ export default {
           this.newDept = res.data.depts.map(item => {
             let _dept = {'id': item.deptId, 'name': item.deptName}
             this.deptList.push(_dept);
-            console.log(_dept)
             return _dept;
           });
         } 
@@ -931,6 +930,7 @@ export default {
           });
         }
         if (res.data.relationGene !== undefined) {
+          console.log(res.data.relationGene)
           this.relatedgene = res.data.relationGene.map(item => {
             this.geneOption.push({id: item.geneId, name: item.geneName});
             return {id: item.geneId, name: item.geneName};
