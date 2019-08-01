@@ -458,7 +458,8 @@ export default {
     // 发布
     addData() {
       var guideIds = this.guideId.map((item, index) => {
-        return {guideId: item};
+        console.log(item)
+        return {guideId: item.id};
       });
       console.log(guideIds)
       var druggeryIds = this.newMedica.map(item => {
@@ -540,7 +541,7 @@ export default {
           this.$message('请输入带有*的信息');
         } else {
           var guideIds = this.guideId.map((item, index) => {
-            return {guideId: item};
+            return {guideId: item.id};
           });
           if (this.state == 0) {
             let instance = this.axios.create({
@@ -941,7 +942,7 @@ export default {
     //暂存按钮
     disabeleds() {
       var guideIds = this.guideId.map((item, index) => {
-        return {guideId: item};
+        return {guideId: item.id};
       });
       var druggeryIds = this.newMedica.map(item => {
         return item.id;
@@ -1123,7 +1124,7 @@ export default {
               "X-Requested-With": "XMLHttpRequest"
             },
             data: {
-              disease: {
+              diseaseTem: {
                 id: _this.id,
                 diseaseId: _this.diseaseId,
                 name: _this.disease.name,

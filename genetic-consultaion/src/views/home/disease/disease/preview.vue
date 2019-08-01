@@ -194,7 +194,7 @@ export default {
     //保存
     addData() {
       var guides = this.sessionData.guides.map((item, index) => {
-        return { guideId: item.id };
+        return { guideId: item.id};
       });
       var druggeryIds = this.sessionData.druggeryIds.map(item => {
         return item.id;
