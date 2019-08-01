@@ -175,12 +175,12 @@ export default {
       var vdeparts = this.vdepart.map(item => {
         return item.id;
       });
-      var screeningName = []
-      this.list.forEach((item) => {
-        if (item.trim() != '') {
+      var screeningName = [];
+        this.list.forEach((item) => {
+        if (item != '') {
           screeningName.push({screeningName : item})
         }
-      })
+      })      
       this.openIsDisabled = !this.openIsDisabled;
       this.names = !this.names;
       this.briefs = !this.briefs;
