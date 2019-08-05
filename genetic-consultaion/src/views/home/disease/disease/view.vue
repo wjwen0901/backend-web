@@ -35,7 +35,7 @@
                <span v-for="(item,index) in Name.relationDruggery" :key="index">{{item.druggeryName}}</span>
               </el-form-item>
               <el-form-item label="相关指南"> 
-                <p v-for="(item,index) in titles" :key="index">{{item}}</p>
+                <p v-for="(item,index) in titles" :key="index">{{item.tilte}}</p>
               </el-form-item>
             </div>
             <div class="form-right">
@@ -162,8 +162,9 @@ methods: {
       this.datas = res.data.disease 
       // 指南
       this.titles = res.data.disease.guides.map(item => {
-        return item.guideId.name
+        return item
       })
+      console.log(this.titles)
       this.Name = res.data
     })
   }

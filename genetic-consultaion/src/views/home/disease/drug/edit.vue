@@ -295,7 +295,7 @@ export default {
     },
     paths(val) {
       this.axios({
-          url: "oss/upload/show",
+          url: "/oss/upload/show",
           params: {
             objectKey: val,
             bucket: "mdhcare"
@@ -370,7 +370,7 @@ export default {
               this.drug.provenance == "") {
             this.$message("请输入带有*的信息");
           } else {
-            console.log(this.drug)
+            console.log(this.files)
             var nowDates = this.nowDate.split(",");
             var titleEn = this.drug.titleEn.split(",");
             var framers = this.drug.framers.split(",");
@@ -565,7 +565,7 @@ export default {
       if(this.fileNum==0){
         this.addData1();
       }else{ 
-          this.dis=2; 
+          this.dis=2;
           this.setUploadParam(this.uploader, "", false);  
       }
     },
@@ -768,7 +768,6 @@ export default {
           state: this.$route.query.state
         }
       }).then(res => {
-        console.log(res.data);
         this.drug = res.data.guide;
         this.guideId = res.data.guide.guideId;
         this.id = res.data.guide.id;
@@ -1024,10 +1023,9 @@ export default {
       }
     },
     sendRequest() {
-
       const xmlhttp = new XMLHttpRequest();
       const param = this.userId > 0 ? "?userId=" + this.userId : ""; 
-      const serverUrl =process.env.PRODUCT + "oss/upload/policy/database-guide" +  param;   
+      const serverUrl =process.env.BASE_URL + "/oss/upload/policy/database-guide" +  param;
       xmlhttp.open("GET", serverUrl, false);
       xmlhttp.setRequestHeader("Authorization", window.localStorage.token);
       xmlhttp.send();
@@ -1173,6 +1171,7 @@ export default {
             if(that.dis == 1){
                 that.disableds1()  
             }else if(that.dis==2){
+              console.log(213333333333)
               that.addData1(); 
             }
           },
