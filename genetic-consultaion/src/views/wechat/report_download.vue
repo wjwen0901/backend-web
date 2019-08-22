@@ -235,6 +235,7 @@ export default {
             }).catch(err => {
               console.log(err)
               this.$message({
+                type: 'error',
                 message: '暂未查询到您的检测报告',
                 center: true,
                 duration: 30000,
@@ -249,6 +250,7 @@ export default {
             }).catch(err => {
               console.log(err)
               this.$message({
+                type: 'error',
                 message: err.message,
                 center: true,
                 duration: 30000,

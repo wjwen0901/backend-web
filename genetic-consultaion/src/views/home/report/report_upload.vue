@@ -90,6 +90,7 @@ export default {
       }
     }
     return {
+      sec: window.localStorage.sec === undefined ? 'upload,upload:informed,upload:report,upload:medical-records,informed:list,report:list' : window.localStorage.sec,
       role: window.localStorage.role,
       report: {
         fullName: window.localStorage.fullName === undefined ? '' : window.localStorage.fullName,
@@ -344,6 +345,19 @@ export default {
             } else {
               d.setAttribute('class', 'el-upload-list__item is-warning')
             }
+          },
+          UploadComplete: (up) => {
+            this.$notify({
+              message: '上传成功',
+              type: 'success',
+              customClass: 'my-message'
+            })
+            if (this.sec.includes('data-collect:informed')) {
+              this.$router.push('/report/list')
+            } else {
+              this.$router.push('/report/info/list')
+            }
+
           },
           Error: (up, err) => {
             console.log('上传失败：', err, that.onError, up)

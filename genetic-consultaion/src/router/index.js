@@ -518,6 +518,14 @@ export default new Router({
       meta: {
         title: '查看快递单'
       }
+    },
+    {
+      path: '/wechat/signin',
+      name: 'Signin',
+      component: resolve => require(['@/views/wechat/signin/signin'], resolve),
+      meta: {
+        title: '见山会诊签到'
+      }
     }
   ]
 })

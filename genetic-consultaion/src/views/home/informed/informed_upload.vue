@@ -115,6 +115,7 @@ export default {
       }
     }
     return {
+      sec: window.localStorage.sec === undefined ? 'upload,upload:informed,upload:report,upload:medical-records,informed:list,report:list' : window.localStorage.sec,
       informedConsent: {
         hospital: window.localStorage.hospital !== undefined ? parseInt(window.localStorage.hospital) : '',
         dept: window.localStorage.dept !== undefined ? parseInt(window.localStorage.dept) : '',
@@ -405,16 +406,18 @@ export default {
                 param.companyId = window.localStorage.companyId
               }
               window.localStorage.doctor = this.informedConsent.doctor
+              let _this = this
               this.axios.post('informed/upload', param).then(res => {
-                this.$notify({
+                _this.$notify({
                   message: '上传成功',
                   type: 'success',
                   customClass: 'my-message'
                 })
+
                 if (isNaN(parseInt(this.informedConsent.hospital))) {
-                  this.axios.get('hospital/name', {
+                  _this.axios.get('hospital/name', {
                     params: {
-                      name: this.informedConsent.hospital
+                      name: _this.informedConsent.hospital
                     }
                   }).then(res => {
                     window.localStorage.hospital = res.data.id
@@ -422,10 +425,10 @@ export default {
                     console.log(err)
                   })
                 }
-                if (isNaN(parseInt(this.informedConsent.dept))) {
-                  this.axios.get('hospital-dept/name', {
+                if (isNaN(parseInt(_this.informedConsent.dept))) {
+                  _this.axios.get('hospital-dept/name', {
                     params: {
-                      name: this.informedConsent.dept
+                      name: _this.informedConsent.dept
                     }
                   }).then(res => {
                     window.localStorage.dept = res.data.id
@@ -440,6 +443,19 @@ export default {
             } else {
               d.setAttribute('class', 'el-upload-list__item is-warning')
             }
+          },
+          UploadComplete: (up) => {
+            this.$notify({
+              message: '上传成功',
+              type: 'success',
+              customClass: 'my-message'
+            })
+            if (this.sec.includes('data-collect:informed')) {
+              this.$router.push('/informed/list')
+            } else {
+              this.$router.push('/informed/info/list')
+            }
+
           },
           Error: (up, err) => {
             console.log('上传失败：', err, that.onError, up)

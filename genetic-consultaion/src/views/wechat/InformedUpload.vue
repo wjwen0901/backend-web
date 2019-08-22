@@ -196,6 +196,7 @@ export default {
         '?name=' + this.name + '&cellphone=' + this.cellphone + param
       xmlhttp.open('GET', serverUrl, false)
       xmlhttp.setRequestHeader('Authorization', window.localStorage.token)
+      xmlhttp.setRequestHeader('openId', this.$route.query.openid)
       xmlhttp.send()
       return xmlhttp.responseText
     },
@@ -343,7 +344,8 @@ export default {
                 },
                 headers: {
                   'X-Requested-With': 'XMLHttpRequest',
-                  'Content-Type': 'application/json'
+                  'Content-Type': 'application/json',
+                  'openId': that.$route.query.openid
                 }
               }).then(function (res) {
                 console.log(res.data)
@@ -389,7 +391,19 @@ export default {
                 param.orderId = that.$route.query.orderId
               }
               window.localStorage.doctor = that.doctor
-              that.axios.post('informed/upload', param).then(res => {
+              let instance = this.axios.create({
+                headers: {
+                  'Authorization': window.localStorage.token,
+                  'Content-Type': 'application/json',
+                  'X-Requested-With': 'XMLHttpRequest',
+                  'openId': that.$route.query.openid
+                }
+              })
+              instance({
+                method: 'post',
+                url: 'informed/upload',
+                params: param
+              }).then(function (res) {
                 that.$notify({
                   message: '上传成功',
                   type: 'success',
@@ -404,6 +418,21 @@ export default {
                 })
                 console.log(err)
               })
+              // that.axios.post('informed/upload', param).then(res => {
+              //   that.$notify({
+              //     message: '上传成功',
+              //     type: 'success',
+              //     center: true,
+              //     customClass: 'my-message'
+              //   })
+              // }).catch(err => {
+              //   that.$notify({
+              //     message: err.data.message,
+              //     type: 'error',
+              //     customClass: 'my-message'
+              //   })
+              //   console.log(err)
+              // })
             } else {
               d.setAttribute('class', 'el-upload-list__item is-warning')
             }

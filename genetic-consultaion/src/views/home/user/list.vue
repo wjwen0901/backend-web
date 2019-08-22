@@ -26,6 +26,17 @@
         width="110">
       </el-table-column>
       <el-table-column
+        v-if="roleCode=='doctor'"
+        prop="hospitalName"
+        label="所属医院">
+      </el-table-column>
+      <el-table-column
+        v-if="roleCode=='doctor'"
+        prop="hospitalDeptName"
+        label="所属科室">
+      </el-table-column>
+      <el-table-column
+        v-if="roleCode!='doctor'"
         prop="companyName"
         label="所属公司">
       </el-table-column>
