@@ -159,7 +159,7 @@ export default {
       //   'order,data-collect,data-collect:informed,data-collect:report,data-review,system,system:user-sec,' +
       //   'customer,product,report:list,patient:list,hospital:list,firm:list,channel:list',
       // role: 'manager',
-      // activeIndex: '/dashboard',
+      activeIndex: '/dashboard',
       openMenu: ['fly', 'upload', 'info', 'chann', 'system']
     }
   },
