@@ -125,6 +125,16 @@
               <el-menu-item index="/standard/list" v-if="role === 'manager'">打分项维护</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
+          
+          <!-- 新增公众号二维码模块 -->
+          <el-submenu index="/qrcode_manager" v-if="sec.includes('wechat_qrcode')">
+            <template slot="title"><i class="el-icon-setting"></i><span slot="title">公众号二维码</span></template>
+            <el-menu-item-group>
+              <el-menu-item index="/qrcode-manager/add" v-if="sec.includes('wechat_qrcode:create')">生成二维码</el-menu-item>
+              <el-menu-item index="/qrcode-manager/list" v-if="sec.includes('wechat_qrcode:list')">查看二维码列表</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+
         </el-menu>
       </el-aside>
       <el-container>
@@ -149,7 +159,7 @@ export default {
       //   'order,data-collect,data-collect:informed,data-collect:report,data-review,system,system:user-sec,' +
       //   'customer,product,report:list,patient:list,hospital:list,firm:list,channel:list',
       // role: 'manager',
-      activeIndex: '/dashboard',
+      // activeIndex: '/dashboard',
       openMenu: ['fly', 'upload', 'info', 'chann', 'system']
     }
   },

@@ -253,6 +253,7 @@ export default {
       return ''
     },
     setUploadParam (up, filename, ret) {
+      debugger;
       this.getSignature()
       this.g_object_name = this.key
       if (filename !== '') {
