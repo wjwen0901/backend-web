@@ -19,7 +19,7 @@
         <el-input type="textarea" v-model.lazy.trim="ruleForm.remark "></el-input>
       </el-form-item>
 
-      <el-form-item label="推动类型" prop="pushType">
+      <el-form-item label="推送类型" prop="pushType">
         <el-select v-model="ruleForm.pushType" placeholder="请选择推送类型">
           <el-option v-for="item in pushTypeArr" :key="item.value" :label="item.name" :value="item.value"> </el-option>
         </el-select>

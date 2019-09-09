@@ -548,6 +548,5 @@ export default new Router({
         title: '见山会诊签到'
       }
     }
-  ],
-  mode:'history'
+  ]
 })
