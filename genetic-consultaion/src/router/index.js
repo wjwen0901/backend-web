@@ -547,6 +547,6 @@ export default new Router({
       meta: {
         title: '见山会诊签到'
       }
-    }
+    },
   ]
 })
