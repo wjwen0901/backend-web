@@ -114,11 +114,10 @@
         })
         var subscripTypestr='';
         for(var i=0;i<this.subscripTypeArr.length;i++){
-          if(this.subscripTypeArr[i]==row.subscripType){
+          if(this.subscripTypeArr[i].name==row.subscripType){
             subscripTypestr=this.subscripTypeArr[i].value;
           }
         }
-        
         let _this = this
         instance({
           method: 'post',
