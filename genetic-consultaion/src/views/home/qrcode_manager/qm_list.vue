@@ -69,7 +69,7 @@
         totalPage: 0,
         keyword:null,
         subscripType:null,
-        subscripTypeArr:[{name:'易得好康',value:'mdhcare'},{name:'易见康',value:'ru6c'},{name:'见山会诊',value:'gensultation'},{name:'测试',value:'test'}],
+        subscripTypeArr:[{name:'易得好康',value:'mdhcare'},{name:'易见康',value:'ru6c'},{name:'见山会诊',value:'gensultation'}],
         dialogVisible: false,
         codeUrl:''
       }
@@ -112,13 +112,20 @@
             'Content-Type': 'application/json'
           }
         })
+        var subscripTypestr='';
+        for(var i=0;i<this.subscripTypeArr.length;i++){
+          if(this.subscripTypeArr[i]==row.subscripType){
+            subscripTypestr=this.subscripTypeArr[i].value;
+          }
+        }
+        
         let _this = this
         instance({
           method: 'post',
           url: 'barcode/createWechat',
           params: {
             qrcodeId : row.id,
-            subscripType : row.subscripType?row.subscripType:'mdhcare',
+            subscripType : subscripTypestr?subscripTypestr:'mdhcare',
           },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
