@@ -6,9 +6,15 @@
       </div>
       <div class="content">
         <img src="../../../assets/gensultation-logo-1.png"/>
-        <p>输入手机号签到领奖</p>
+        <p>在线签到领奖</p>
         <el-main>
-          <el-form ref="patient" label-width="0px" label-position="left">
+          <el-form :model="user" ref="patientForm" :rules="rules" label-width="0px" label-position="left">
+            <el-form-item prop="fullName">
+              <el-input class="width-100-p"
+                        v-model="user.fullName"
+                        placeholder="请输入姓名">
+              </el-input>
+            </el-form-item>
             <el-form-item prop="cellphone">
               <el-input class="width-100-p"
                         v-model="user.cellphone"
@@ -31,10 +37,11 @@
       </div>
       <div class="content">
         <img src="../../../assets/gensultation-logo-1.png"/>
-        <p>签到成功！截图保存领奖～</p>
+        <p>签到成功！展示截图可领奖～</p>
         <div class="qrcode">
           <img src="../../../assets/miniprogram.png"/>
-          <p>识别二维码体验见山会诊小程序</p>
+          <p>见山会诊小程序正在内测</p>
+          <p>欢迎老师们给出指导建议～</p>
         </div>
       </div>
       <div class="footer-info">
@@ -48,8 +55,15 @@
   export default {
     name: 'signin',
     data () {
+      const checkName = (rule, value, callback) => {
+        if (!this.user.fullName || this.user.fullName.trim() === '') {
+          callback(new Error('请输入您的姓名'))
+        } else {
+          callback()
+        }
+      }
       const checkCellphone = (rule, value, callback) => {
-        if (!this.user.cellphone) {
+        if (!this.user.cellphone || this.user.cellphone.trim() === '') {
           callback(new Error('请输入手机号码'))
         } else if (!(/^1\d{10}$/.test(parseInt(this.user.cellphone)))) {
           callback(new Error('请输入11位数字'))
@@ -59,9 +73,13 @@
       }
       return {
         user: {
+          fullName: '',
           cellphone: ''
         },
         rules: {
+          fullName: [
+            {required: true, validator: checkName, trigger: 'blur'}
+          ],
           cellphone: [
             {required: true, validator: checkCellphone, trigger: 'blur'}
           ]
@@ -71,30 +89,36 @@
     },
     methods: {
       toSign () {
-        let instance = this.axios.create({
-          headers: {
-            'Authorization': window.localStorage.token,
-            'Content-Type': 'application/json'
+        console.log(this.$refs.patientForm)
+        this.$refs.patientForm.validate((valid) => {
+          console.log(valid)
+          if (valid) {
+            let instance = this.axios.create({
+              headers: {
+                'Authorization': window.localStorage.token,
+                'Content-Type': 'application/json'
+              }
+            })
+            let _this = this
+            this.user.hospitalId = _this.$route.query.hospitalId
+            this.user.deptId = _this.$route.query.deptId
+            this.user.createTime = new Date()
+            this.user.role = 2
+            instance({
+              method: 'post',
+              url: 'mini/user/sign?type=wx&openId=' + _this.$route.query.openid,
+              data: this.user,
+              headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+              }
+            }).then(function (response) {
+              console.log(response)
+              _this.signSuccess = true
+            }).catch(function (err) {
+              _this.signSuccess = true
+            })
           }
-        })
-        let _this = this
-        this.user.hospitalId = 18980
-        this.user.deptId = 20
-        this.user.createTime = new Date()
-        this.user.role = 2
-        instance({
-          method: 'post',
-          url: 'mini/user/sign?type=wx&openId=' + _this.$route.query.openid,
-          data: this.user,
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Content-Type': 'application/json'
-          }
-        }).then(function (response) {
-          console.log(response)
-          _this.signSuccess = true
-        }).catch(function (err) {
-          _this.signSuccess = true
         })
       }
     }

@@ -548,5 +548,29 @@ export default new Router({
         title: '见山会诊签到'
       }
     },
+    {
+      path: '/wechat/lucky',
+      name: 'Lucky',
+      component: resolve => require(['@/views/wechat/lucky/lucky'], resolve),
+      meta: {
+        title: '见山会诊签到抽奖'
+      }
+    },
+    {
+      path: '/wechat/lucky/guide',
+      name: 'Lucky',
+      component: resolve => require(['@/views/wechat/lucky/lucky_guide'], resolve),
+      meta: {
+        title: '见山会诊签到查看指南'
+      }
+    },
+    {
+      path: '/wechat/lucky/down',
+      name: 'Lucky',
+      component: resolve => require(['@/views/wechat/lucky/guide_view'], resolve),
+      meta: {
+        title: '见山会诊签到查看指南'
+      }
+    }
   ]
 })
