@@ -32,13 +32,15 @@
 
       <!-- 推送内容为图片 -->
       <el-form-item label="上传图片" prop="file" v-if='ruleForm.pushType=="image"'>
-          <input type="file" ref='inputer' name="file" @change="uploadImg">
+          <template>
+            <input type="file" ref='inputer' name="file" @change="uploadImg1" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg">
+          </template>
       </el-form-item>
 
       <!-- 推送内容为图文链接 -->
       <div v-if='ruleForm.pushType=="article"'>
         <el-form-item label="文本标题" prop="title">
-          <el-input v-model="ruleForm.title" placeholder="请输入公众号"></el-input>
+          <el-input v-model="ruleForm.title" placeholder="请输入文本标题"></el-input>
         </el-form-item>
         <el-form-item label="推送内容" prop="content">
           <el-input type="textarea" v-model="ruleForm.content"></el-input>
@@ -86,10 +88,11 @@ export default {
           }
       };
       return {
-        subscripTypeArr:[{name:'易得好康',value:'mdhcare'},{name:'易见康',value:'ru6c'},{name:'见山会诊',value:'gensultation'},{name:'测试',value:'test'}],
+        subscripTypeArr:[{name:'易得好康',value:'mdhcare'},{name:'易见康',value:'ru6c'},{name:'见山会诊',value:'gensultation'}],
         userid:window.localStorage.userId,
         userArr:[],
         pushTypeArr:[{name:'文本',value:'text'},{name:'图片',value:'image'},{name:'图文素材',value:'article'}],
+        flag:true,
         ruleForm: {
           subscripType:'',
           userId:'',
@@ -121,7 +124,7 @@ export default {
             { required: true, message: '请上传图片', trigger: 'change' }
           ],
           title: [
-            { required: true, message: '请输入标题', trigger: 'blur' },
+            { required: true, message: '请输入文本标题', trigger: 'blur' },
           ],
           filePath: [
             { required: true, message: '请上传图片', trigger: 'change' },
@@ -142,24 +145,51 @@ export default {
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let params=this.ruleForm;
-            this.axios.post('wechat/qrcode',params).then(res => {
-                this.$message(res.data.msg);
-                this.$router.push({name:'QmList'})
-            }).catch(err => {
-              // console.log(err)
-            })
+            if(this.flag){
+              this.flag=false;
+              let params= new FormData()
+
+              params.append('subscripType',this.ruleForm.subscripType)
+              params.append('userId',this.ruleForm.userId)
+              params.append('remark',this.ruleForm.remark)
+              params.append('pushType',this.ruleForm.pushType)
+              params.append('content',this.ruleForm.content)
+              params.append('file',this.ruleForm.file)
+              params.append('title',this.ruleForm.title)
+              params.append('filePath',this.ruleForm.filePath)
+              params.append('sendUrl',this.ruleForm.sendUrl)
+              
+              let instance = this.axios.create({
+                headers: {
+                  'Authorization': window.localStorage.token,
+                  'Content-Type': 'multipart/form-data'
+                }
+              })
+              let _this = this
+              instance({
+                method: 'post',
+                url: 'wechat/qrcode',
+                data: params,
+                headers: {
+                  'Content-Type': 'multipart/form-data'
+                }
+              }).then(function (res) {
+                  _this.$message(res.data.msg);
+                  _this.flag=true;
+                  _this.$router.push({name:'QmList'})
+              })
+            }
+
           } else {
             // console.log('error submit!!');
             return false;
           }
         });
       },
-      uploadImg:function(e){
+      uploadImg1:function(){
+        var that=this;
         var inputer=this.$refs.inputer;
-        var formdata = new FormData();
-        formdata.append("formData", inputer.files[0]);
-        this.ruleForm.file=formdata;
+        this.ruleForm.file=inputer.files[0];
       },
       getUser(){
         this.axios.get('user/byRole', {

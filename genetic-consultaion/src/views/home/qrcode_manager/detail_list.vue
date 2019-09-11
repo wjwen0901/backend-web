@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item>访问详情列表</el-breadcrumb-item>
+        <el-breadcrumb-item>详情列表管理</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="qrcode-box">
         <el-table :data="tableData" border size="mini" style="width: 100%">

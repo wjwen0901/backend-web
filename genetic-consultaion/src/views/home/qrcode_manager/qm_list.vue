@@ -9,7 +9,7 @@
               <el-option v-for="item in subscripTypeArr" :key="item.value" :label="item.name" :value="item.value"> </el-option>
             </el-select>
             <div class="search-box">
-              <el-input placeholder="请输入申请人查询" v-model="keyword" class="input-with-select">
+              <el-input placeholder="请输入关键字查询" v-model="keyword" class="input-with-select">
                   <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
               </el-input>
             </div>

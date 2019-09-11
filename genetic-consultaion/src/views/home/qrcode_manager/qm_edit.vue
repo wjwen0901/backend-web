@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-header>生成二维码</el-header>
+    <el-header>修改二维码</el-header>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 
       <el-form-item label="公众号" prop="subscripType">
@@ -32,13 +32,16 @@
 
       <!-- 推送内容为图片 -->
       <el-form-item label="上传图片" prop="file" v-if='ruleForm.pushType=="image"'>
-          <input type="file" ref='inputer' name="file" @change="uploadImg">
+          <span>{{pushTypeImg}}</span>
+          <label for="" class='label-setting'>
+              <input type="file" ref='inputer' name="file" @change="uploadImg1" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg">
+          </label>
       </el-form-item>
 
       <!-- 推送内容为图文链接 -->
       <div v-if='ruleForm.pushType=="article"'>
         <el-form-item label="文本标题" prop="title">
-          <el-input v-model.lazy.trim="ruleForm.title" placeholder="请输入公众号"></el-input>
+          <el-input v-model.lazy.trim="ruleForm.title" placeholder="请输入文本标题"></el-input>
         </el-form-item>
         <el-form-item label="推送内容" prop="content">
           <el-input type="textarea" v-model.lazy.trim="ruleForm.content"></el-input>
@@ -85,12 +88,14 @@ export default {
           }
       };
       return {
-        subscripTypeArr:[{name:'易得好康',value:'mdhcare'},{name:'易见康',value:'ru6c'},{name:'见山会诊',value:'gensultation'},{name:'测试',value:'test'}],
+        subscripTypeArr:[{name:'易得好康',value:'mdhcare'},{name:'易见康',value:'ru6c'},{name:'见山会诊',value:'gensultation'}],
         userid:window.localStorage.userId,
         userArr:[],
         pushTypeArr:[{name:'文本',value:'text'},{name:'图片',value:'image'},{name:'图文素材',value:'article'}],
         qrcodeId:this.$route.query.qrcodeId,
         pushMsgId:'',
+        pushTypeImg:'',
+        flag:true,
         ruleForm: {
           subscripType:'',
           userId:'',
@@ -116,21 +121,21 @@ export default {
             { required: true, message: '请选择推送类型', trigger: 'change' }
           ],
           content: [
-            { required: true, message: '请填写推送内容', trigger: 'blur' }
+            { required: false, message: '请填写推送内容', trigger: 'blur' }
           ],
           file: [
-            { required: true, message: '请上传图片', trigger: 'change' }
+            { required: false, message: '请上传图片', trigger: 'change' }
           ],
           title: [
-            { required: true, message: '请输入标题', trigger: 'blur' },
+            { required: false, message: '请输入文本标题', trigger: 'blur' },
           ],
           filePath: [
-            { required: true, message: '请上传图片', trigger: 'change' },
+            { required: false, message: '请上传图片', trigger: 'change' },
             {validator: checkUrl, trigger: ['blur,change']}
             // { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
           ],
           sendUrl: [
-            { required: true, message: '请输入或上传访问链接', trigger: 'change' }
+            { required: false, message: '请输入或上传访问链接', trigger: 'change' }
           ]
         },
 
@@ -151,12 +156,13 @@ export default {
             this.ruleForm.remark=wechatQrcode.remark?wechatQrcode.remark:'';
             this.ruleForm.pushType=pushMsg.pushType?pushMsg.pushType:'';
             this.ruleForm.content=pushMsg.content?pushMsg.content:'';
+            this.ruleForm.filePath=pushMsg.filePath?pushMsg.filePath:'';
             this.ruleForm.file=pushMsg.file?pushMsg.file:'';
             this.ruleForm.title=pushMsg.title?pushMsg.title:'';
-            this.ruleForm.filePath=pushMsg.filePath?pushMsg.filePath:'';
             this.ruleForm.sendUrl=pushMsg.sendUrl?pushMsg.sendUrl:'';
             this.pushMsgId=pushMsg.id?pushMsg.id:'';
 
+            this.pushTypeImg=pushMsg.imgPath;
         }).catch(err => {
           // console.log(err)
           //  this.$message(res.data.msg);
@@ -165,30 +171,75 @@ export default {
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.ruleForm.qrcodeId =this.qrcodeId;
-            this.ruleForm.pushMsgId=this.pushMsgId;
-            let params=this.ruleForm;
-            this.axios.post('wechat/qrcode/message', params).then(res => {
-              this.$message({
-                message: '修改成功',
-                type: 'success'
-              })
-              this.$router.push({name:'QmList'})
-            }).catch(err => {
-              this.$message.error('修改失败')
-            })
-
+            if(this.flag){
+              this.flag=false;
+              this.ruleForm.qrcodeId =this.qrcodeId;
+              this.ruleForm.pushMsgId=this.pushMsgId;
+              
+              if(this.ruleForm.pushType=='image'){
+                let params= new FormData()
+                params.append('qrcodeId',this.ruleForm.qrcodeId)
+                params.append('pushMsgId',this.ruleForm.pushMsgId)
+                params.append('subscripType',this.ruleForm.subscripType)
+                params.append('userId',this.ruleForm.userId)
+                params.append('remark',this.ruleForm.remark)
+                params.append('pushType',this.ruleForm.pushType)
+                params.append('content',this.ruleForm.content)
+                params.append('file',this.ruleForm.file)
+                params.append('title',this.ruleForm.title)
+                params.append('filePath',this.ruleForm.filePath)
+                params.append('sendUrl',this.ruleForm.sendUrl)
+                
+                let instance = this.axios.create({
+                  headers: {
+                    'Authorization': window.localStorage.token,
+                    'Content-Type': 'multipart/form-data'
+                  }
+                })
+                let _this = this
+                instance({
+                  method: 'post',
+                  url: 'wechat/qrcode/message',
+                  data: params,
+                  headers: {
+                    'Content-Type': 'multipart/form-data'
+                  }
+                }).then(function (res) {
+                    _this.$message({
+                      message: '修改成功',
+                      type: 'success'
+                    })
+                    _this.flag=true;
+                    _this.$router.push({name:'QmList'})
+                })
+              }else{
+                var that=this;
+                let params=this.ruleForm;
+                this.axios.post('wechat/qrcode/message', params).then(res => {
+                  that.$message({
+                    message: '修改成功',
+                    type: 'success'
+                  })
+                  that.flag=true;
+                  that.$router.push({name:'QmList'})
+                }).catch(err => {
+                  that.$message.error('修改失败')
+                })
+              }
+            }
           } else {
             // console.log('error submit!!');
             return false;
           }
         });
       },
-      uploadImg:function(e){
+      uploadImg1:function(e){
         var inputer=this.$refs.inputer;
-        var formdata = new FormData();
-        formdata.append("formData", inputer.files[0]);
-        this.ruleForm.file=formdata;
+        this.ruleForm.file=inputer.files[0];
+        if(this.ruleForm.file){
+          this.pushTypeImg='';
+        }
+        
       },
       getUser(){
         this.axios.get('user/byRole', {
@@ -237,6 +288,9 @@ export default {
     }
     .demo-ruleForm{
       padding-top: 20px;
+      span{
+        background: lightgreen;
+      }
     }
     .el-select{
       display: block;
