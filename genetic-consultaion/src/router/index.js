@@ -328,6 +328,27 @@ export default new Router({
           path: '/printer/list',
           name: 'PrinterList',
           component: resolve => require(['@/views/home/printer/list'], resolve)
+        },
+        // 公众号二维码操作
+        {
+          path: '/qrcode-manager/add',
+          name: 'QmAdd',
+          component: resolve => require(['@/views/home/qrcode_manager/qm_add'], resolve)
+        },
+        {
+          path: '/qrcode-manager/edit',
+          name: 'QmEdit',
+          component: resolve => require(['@/views/home/qrcode_manager/qm_edit'], resolve)
+        },
+        {
+          path: '/qrcode-manager/list',
+          name: 'QmList',
+          component: resolve => require(['@/views/home/qrcode_manager/qm_list'], resolve)
+        },
+        {
+          path: '/qrcode-manager/detail-list',
+          name: 'DetailList',
+          component: resolve => require(['@/views/home/qrcode_manager/detail_list'], resolve)
         }
       ]
     },
