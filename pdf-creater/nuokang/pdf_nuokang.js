@@ -4,11 +4,11 @@ const OSS = require('ali-oss');
 const path = require("path");
 const fs = require("fs");
 
-const BASE_URL_API = "https://qa.mdhcare.cn/mdhcare-backend/";
-const BASE_URL = "https://qa.mdhcare.cn/";
+// const BASE_URL_API = "https://qa.mdhcare.cn/mdhcare-backend/";
+// const BASE_URL = "https://qa.mdhcare.cn/";
 
-// const BASE_URL_API = "https://www.mdhcare.cn/mdhcare-backend/";
-// const BASE_URL = "https://z.mdhcare.cn/";
+const BASE_URL_API = "https://www.mdhcare.cn/mdhcare-backend/";
+const BASE_URL = "https://z.mdhcare.cn/";
 
 const args = process.argv.splice(2);
 console.log(args);
