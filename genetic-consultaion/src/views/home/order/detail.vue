@@ -6,10 +6,11 @@
     </el-breadcrumb>
     <div class="order-container">
       <el-row :gutter="20">
+        <el-button style="float: right;margin-right: 20px;" type="primary" @click="editPay" v-if="order.statusStr != '已完成'">确认支付</el-button>
         <el-col :span="8">
           <el-row class="order-detail">
             <span class="order-detail-title">订单编号:</span>
-            <span>{{order.tid}}</span>
+            <span>{{order.orderNo}}</span>
             <el-tag type="info" size="mini">{{order.statusStr}}</el-tag>
           </el-row>
           <el-row class="order-detail">
@@ -92,6 +93,8 @@
           </el-row>
         </el-col>
       </el-row>
+
+
     </div>
   </div>
 </template>
@@ -146,6 +149,38 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    editPay () {
+      this.$alert('一定要确认客户已支付哦！！！', '确认已付款', {
+        confirmButtonText: '确定',
+        callback: action => {
+          this.order.statusStr = '已付款'
+          this.order.payTime = new Date()
+          var instance = this.axios.create({
+            headers: {
+              'Authorization': window.localStorage.token,
+              'Content-Type': 'application/json'
+            }
+          })
+          let _this = this
+          instance({
+            method: 'put',
+            url: 'order',
+            data: this.order,
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'Content-Type': 'application/json'
+            }
+          }).then(function (response) {
+            _this.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+            _this._initData()
+          })
+        }
+      });
+
     }
   },
   filters: {

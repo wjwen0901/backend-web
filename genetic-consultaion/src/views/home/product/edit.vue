@@ -202,9 +202,10 @@ export default {
           }
         })
         let _this = this
+        this.solution.id = this.$route.params.id
         instance({
           method: 'put',
-          url: 'solution/' + this.$route.params.id,
+          url: 'solution',
           data: {
             solution: this.solution,
             deptId: this.proDepts,

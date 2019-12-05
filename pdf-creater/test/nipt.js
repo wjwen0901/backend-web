@@ -3,11 +3,11 @@ const axios  = require('axios');
 const OSS = require('ali-oss');
 const path = require("path");
 const fs = require("fs");
-// const BASE_URL_API = "https://qa.mdhcare.cn/mdhcare-backend/";
-// const BASE_URL = "https://qa.mdhcare.cn/";
+const BASE_URL_API = "https://qa.mdhcare.cn/mdhcare-wonder/";
+const BASE_URL = "https://qa.mdhcare.cn/";
 
-const BASE_URL_API = "https://www.mdhcare.cn/mdhcare-backend/";
-const BASE_URL = "https://z.mdhcare.cn/";
+// const BASE_URL_API = "https://www.mdhcare.cn/mdhcare-wonder/";
+// const BASE_URL = "https://z.mdhcare.cn/";
 console.log('------进入生成PDF方法-------');
 
 const args = process.argv.splice(2);
@@ -31,7 +31,7 @@ const sampleCode = report.sampleCode;
   const page = await browser.newPage();
   const pathName = "/data/mdh/pdf/customizedreport/";
   console.log('------开始生成PDF-------');
-  await page.goto(BASE_URL + 'customized-pdf/#/nipt?name=' + name + '&sex=' + sex + '&informedDate='+ informedDate + '&sampleCode=' + sampleCode + '&reportDate=' + reportDate,
+  await page.goto(BASE_URL + 'test-pdf/#/nipt?name=' + name + '&sex=' + sex + '&informedDate='+ informedDate + '&sampleCode=' + sampleCode + '&reportDate=' + reportDate,
       {
         waitUntil: 'networkidle0',
         timeout: 0

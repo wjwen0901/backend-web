@@ -24,6 +24,14 @@
         prop="cellphone"
         label="手机号"
         width="110">
+        <template slot-scope="scope">
+          <span v-if="userId == 2222 && scope.row.cellphone != undefined">
+            {{scope.row.cellphone.substring(0,4) + '*******'}}
+          </span>
+          <span v-else>
+            {{scope.row.cellphone}}
+          </span>
+        </template>
       </el-table-column>
       <el-table-column
         v-if="roleCode=='doctor'"
@@ -66,10 +74,10 @@
         <template slot-scope="scope">
           <el-button @click="selectItem(scope.row.id, scope.row.name)" type="text" size="small" v-if="scope.row.role === 1 || scope.row.role === 8">产品二维码</el-button>
           <el-button @click="selectPayItem(scope.row.id, scope.row.name)" type="text" size="small" v-if="scope.row.role === 1 || scope.row.role === 8">收款二维码</el-button>
-          <el-button @click="selectOnlineInformed(scope.row.id, scope.row.name)" type="text" size="small" v-if="scope.row.role === 1 || scope.row.role === 8">易见康在线知情码</el-button>
+          <el-button @click="selectOnlineInformed(scope.row.id, scope.row.name)" type="text" size="small" v-if="scope.row.role === 1 || scope.row.role === 8">渠道下单码</el-button>
           <el-button @click="selectElecInformed(scope.row.id, scope.row.name)" type="text" size="small">在线知情二维码</el-button>
-          <el-button @click="toDetail(scope.row.id)" type="text" size="small">编辑</el-button>
-          <el-button @click="deleteUser(scope.row.id)" type="text" size="small">删除</el-button>
+          <el-button @click="toDetail(scope.row.id)" type="text" size="small" v-if="userId != 2222">编辑</el-button>
+          <el-button @click="deleteUser(scope.row.id)" type="text" size="small" v-if="userId != 2222">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -171,7 +179,6 @@
           </el-form-item>
           <el-form-item label="检测周期（工作日）">
             <el-input-number v-model="qrCode.period" :min="1" :max="100" label="请输入"></el-input-number>
-            <!--<el-input type="" v-model="period" placeholder="7"></el-input>&lt;!&ndash;&ndash;&gt;-->
           </el-form-item>
           <el-form-item label="送检医院">
             <el-autocomplete
@@ -182,14 +189,6 @@
               :trigger-on-focus="false"
               @select="handleSelect"
             ></el-autocomplete>
-            <!--<el-select class="width-100-p" v-model="qrCode.hospitalId" filterable placeholder="请选择">-->
-              <!--<el-option-->
-                <!--v-for="item in hospitals"-->
-                <!--:key="item.id"-->
-                <!--:label="item.name"-->
-                <!--:value="item.id">-->
-              <!--</el-option>-->
-            <!--</el-select>-->
           </el-form-item>
           <el-form-item label="送检科室">
             <el-select class="width-100-p" v-model="qrCode.deptId" filterable placeholder="请选择">
@@ -236,14 +235,6 @@
               :trigger-on-focus="false"
               @select="handleSelect"
             ></el-autocomplete>
-            <!--<el-select class="width-100-p" v-model="qrCode.hospitalId" filterable placeholder="请选择">-->
-            <!--<el-option-->
-            <!--v-for="item in hospitals"-->
-            <!--:key="item.id"-->
-            <!--:label="item.name"-->
-            <!--:value="item.id">-->
-            <!--</el-option>-->
-            <!--</el-select>-->
           </el-form-item>
           <el-form-item label="送检科室">
             <el-select class="width-100-p" v-model="qrCode.deptId" filterable placeholder="请选择">
@@ -271,7 +262,7 @@
         </el-form>
       </div>
     </el-dialog>
-    <el-dialog title="生成易见康下单二维码" :visible.sync="dialogOnlineInformedFormVisible">
+    <el-dialog title="生成渠道下单码" :visible.sync="dialogOnlineInformedFormVisible">
       <div>
         <el-form ref="form" label-width="150px">
           <el-form-item label="选择产品">
@@ -284,17 +275,15 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="样本类型">
-            <el-input v-model="informedQrCode.sampleType" placeholder="口腔拭子"></el-input>
-          </el-form-item>
-          <el-form-item label="检测费用">
-            <el-input v-model="informedQrCode.price" placeholder="688"></el-input>
-          </el-form-item>
-          <el-form-item label="采样盒编号">
-            <el-input v-model="informedQrCode.sampCode" placeholder="180314276"></el-input>
-          </el-form-item>
-          <el-form-item label="有效期">
-            <el-input v-model="informedQrCode.time" placeholder=""></el-input>
+          <el-form-item label="送检医院">
+            <el-autocomplete
+              class="inline-input"
+              v-model="informedQrCode.hospitalName"
+              :fetch-suggestions="querySearch"
+              placeholder="请输入内容"
+              :trigger-on-focus="false"
+              @select="handleChannelSelect"
+            ></el-autocomplete>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="downloadOnlineInformedCode()">确定</el-button>
@@ -356,7 +345,7 @@ export default {
         label: 'label'
       },
       companyList: [],
-      roleCode: this.$route.params.role,
+      roleCode: this.$route.role,
       currentUserRole: window.localStorage.role,
       condition: null,
       qrCode: {},
@@ -372,7 +361,8 @@ export default {
       }, {
         text: 'name2',
         value: 'value2'
-      }]
+      }],
+      userId: window.localStorage.userId
     }
   },
   methods: {
@@ -688,6 +678,9 @@ export default {
     handleSelect (item) {
       this.qrCode.hospitalId = item.id
     },
+    handleChannelSelect (item) {
+      this.informedQrCode.hospitalId = item.id
+    },
     downloadCode () {
       this.dialogCodeFormVisible = false
       // 获取权限列表
@@ -760,23 +753,22 @@ export default {
       let _this = this
       instance({
         method: 'post',
-        url: 'barcode/createPatient',
-        params: {
+        url: 'barcode/channel',
+        data: {
           solutionId: this.informedQrCode.selSolution.id,
-          sampleType: this.informedQrCode.sampleType,
-          sampCode: this.informedQrCode.sampCode,
-          solutionName: this.informedQrCode.selSolution.name,
-          validityDate: this.informedQrCode.time,
-          unitPrice: this.informedQrCode.price
+          userId: this.userId,
+          hospitalId: this.informedQrCode.hospitalId,
         },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
         }
       }).then(function (res) {
-        window.open(_this.axios.defaults.baseURL + '/barcode/down?isPatientCode=true&filename=' + res.data + '&Authorization=' + window.localStorage.token)
-        _this.dialogPayCodeFormVisible = false
+        window.open(_this.axios.defaults.baseURL + '/barcode/down?isPatientCode=false&filename=' + res.data + '&Authorization=' + window.localStorage.token)
+        _this.dialogOnlineInformedFormVisible = false
       })
+
+
     },
     downloadElecInformedCode () {
       let instance = this.axios.create({

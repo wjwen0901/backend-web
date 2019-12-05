@@ -67,7 +67,7 @@
       </el-col>
       <el-col :span="14">
         <div class="img-content">
-          <object :data="imagePath" type="application/pdf" width="100%" height="700px" v-if="report.mimeType === 'application/pdf'">
+          <object :data="imagePath" type="application/pdf" width="100%" height="700px" v-if="report.mimeType === 'application/pdf'" id="pdfDocument">
             <embed :src="imagePath">
           </object>
           <img :src="imagePath" v-else>
@@ -84,6 +84,7 @@ export default {
       role: window.localStorage.role,
       report: {},
       projects: [],
+      objectKey: '',
       idType: [
         {'id': 0, 'name': '身份证'},
         {'id': 1, 'name': '军官证'},
@@ -91,10 +92,13 @@ export default {
         {'id': 3, 'name': '社保卡'}
       ],
       imagePath: '',
-      depts: []
+      depts: [],
+      _printIframe: undefined
     }
   },
   props: {},
+  mounted () {
+  },
   methods: {
     _initData () {
       this.axios.get('report/' + this.$route.params.reportId).then(res => {
@@ -108,6 +112,7 @@ export default {
         }).then(res1 => {
           this.imagePath = this.axios.defaults.baseURL.includes('https://')
             ? res1.data.replace('http://', 'https://') : res1.data
+
         }).catch(err => {
           console.log(err)
         })
@@ -204,10 +209,12 @@ export default {
         let result = this.axios.defaults.baseURL.includes('https://')
           ? res.data.replace('http://', 'https://') : res.data
         window.open(result)
+
       }).catch(err => {
         console.log(err)
       })
     }
+
   },
   filters: {},
   computed: {},

@@ -3,11 +3,11 @@ const axios  = require('axios');
 const OSS = require('ali-oss');
 const path = require("path");
 const fs = require("fs");
-// const BASE_URL_API = "https://qa.mdhcare.cn/mdhcare-backend/";
-// const BASE_URL = "https://qa.mdhcare.cn/";
+const BASE_URL_API = "https://qa.mdhcare.cn/mdhcare-wonder/";
+const BASE_URL = "https://qa.mdhcare.cn/";
 
-const BASE_URL_API = "https://www.mdhcare.cn/mdhcare-backend/";
-const BASE_URL = "https://z.mdhcare.cn/";
+// const BASE_URL_API = "https://www.mdhcare.cn/mdhcare-backend/";
+// const BASE_URL = "https://z.mdhcare.cn/";
 console.log('------进入生成PDF方法-------');
 
 const args = process.argv.splice(2);

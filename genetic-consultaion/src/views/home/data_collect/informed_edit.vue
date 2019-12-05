@@ -106,6 +106,26 @@
                 <el-input v-model="informedContent.email"></el-input>
               </el-col>
             </el-form-item>
+            <el-form-item label="出生日期">
+              <el-form-item>
+                <el-date-picker
+                  v-model="informedContent.dateOfBirth"
+                  type="date"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  placeholder="选择日期时间">
+                </el-date-picker>
+              </el-form-item>
+            </el-form-item>
+            <el-form-item label="采样日期">
+              <el-form-item>
+                <el-date-picker
+                  v-model="informedContent.samplingDate"
+                  type="date"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  placeholder="选择日期">
+                </el-date-picker>
+              </el-form-item>
+            </el-form-item>
             <el-form-item label="地址">
               <el-cascader class="width-100-p"
                 :options="regionData"
@@ -145,9 +165,9 @@ export default {
   name: 'EditInformed',
   data () {
     return {
-      smsStatus: 0,
+      smsStatus: 1,
       informedContent: {
-        smsStatus: 0
+        smsStatus: 1
       },
       projects: [],
       hospitals: [],

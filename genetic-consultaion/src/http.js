@@ -36,7 +36,7 @@ axios.interceptors.response.use(
                 case 401:
                     // 401 清除token信息并跳转到登录页面
                     window.localStorage.clear()
-                    window.location.href = 'https://z.mdhcare.cn/login.html'
+                    window.location.href = 'https://z.mdhcare.cn/z/login.html'
             }
         }
         // console.log(JSON.stringify(error));//console : Error: Request failed with status code 402

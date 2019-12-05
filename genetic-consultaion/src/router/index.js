@@ -579,6 +579,14 @@ export default new Router({
             meta: {
                 title: '见山会诊签到查看指南'
             }
+        },
+        {
+            path: '/wechat/qrcode/order',
+            name: 'channelOrder',
+            component: resolve => require(['@/views/wechat/qrcode/order_code'], resolve),
+            meta: {
+                title: '见山会诊签到查看指南'
+            }
         }
     ]
 })

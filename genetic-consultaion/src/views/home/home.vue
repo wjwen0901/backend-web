@@ -168,6 +168,8 @@ export default {
       window.localStorage.clear()
       if (this.axios.defaults.baseURL.includes('qa.mdhcare.cn')) {
         window.location.href = 'http://qa.mdhcare.cn/website/login.html'
+      } else if (this.axios.defaults.baseURL.includes('z.mdhcare.cn/z/')) {
+        window.location.href = 'https://z.mdhcare.cn/z/login.html'
       } else {
         window.location.href = 'https://z.mdhcare.cn/login.html'
       }
