@@ -12,56 +12,47 @@
     <el-row>
       <el-col :span="12" v-if="role === 'manager' || role === 'jk-service'">
         <div class="user-container">
-          <el-form ref="informedForm" :model="informedContent" label-width="80px" size="mini" class="edit-form">
-            <el-form-item label="订单编号">
-              <el-input v-model="informedContent.orderNo"></el-input>
+          <el-form ref="informedForm" :model="informedContent" label-width="120px" size="mini" class="edit-form">
+            <h4>基本信息</h4>
+
+            <el-form-item label="姓名">
+              <el-col :span="9">
+                <el-input v-model="informedContent.truename"></el-input>
+              </el-col>
+              <el-col class="line" :span="3" style="padding-left:10px;">性别</el-col>
+              <el-col :span="12">
+                <el-radio-group v-model="informedContent.sex">
+                  <el-radio label="男">男</el-radio>
+                  <el-radio label="女">女</el-radio>
+                </el-radio-group>
+              </el-col>
             </el-form-item>
-            <el-form-item label="送检医院">
-              <el-autocomplete
-                class="inline-input"
-                v-model="informedContent.hospitalName"
-                :fetch-suggestions="hospitalQuerySearch"
-                placeholder="请输入内容"
-                :trigger-on-focus="false"
-                @select="hospitalHandleSelect"
-              ></el-autocomplete>
-              <!--<el-select class="width-100-p" v-model="informedContent.hospitalId" filterable placeholder="请选择">-->
-                <!--<el-option-->
-                  <!--v-for="item in hospitals"-->
-                  <!--:key="item.id"-->
-                  <!--:label="item.name"-->
-                  <!--:value="item.id">-->
-                <!--</el-option>-->
-              <!--</el-select>-->
+            <el-form-item label="出生日期">
+              <el-col :span="9">
+                <el-date-picker
+                  v-model="informedContent.dateOfBirth"
+                  type="date"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  placeholder="选择日期时间">
+                </el-date-picker>
+              </el-col>
+              <el-col class="line" :span="3" style="padding-left:10px;">年龄</el-col>
+              <el-col :span="12">
+                <el-input v-model="informedContent.age"></el-input>
+              </el-col>
             </el-form-item>
-            <el-form-item label="送检科室">
-              <el-select class="width-100-p" v-model="informedContent.deptId" filterable placeholder="请选择">
-                <el-option
-                  v-for="item in depts"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="送检医生">
-              <el-input v-model="informedContent.doctor"></el-input>
-            </el-form-item>
-            <el-form-item label="条码编号">
-              <el-input v-model="informedContent.sampleCode"></el-input>
-            </el-form-item>
-            <el-form-item label="送检项目">
-              <el-select class="width-100-p" v-model="informedContent.solutionId" filterable placeholder="请选择">
-                <el-option
-                  v-for="item in projects"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
+            <el-form-item label="地址">
+              <el-cascader class="width-100-p"
+                           :options="regionData"
+                           v-model="areaInfo"
+                           @change="addressHandleChange">
+              </el-cascader>
             </el-form-item>
             <el-form-item label="联系电话">
               <el-input v-model="informedContent.cellphone"></el-input>
+            </el-form-item>
+            <el-form-item label="邮箱">
+              <el-input v-model="informedContent.email"></el-input>
             </el-form-item>
             <el-form-item label="发送短信">
               <el-radio-group v-model="smsStatus">
@@ -85,60 +76,146 @@
                 <el-input v-model="informedContent.idCode"></el-input>
               </el-col>
             </el-form-item>
-            <el-form-item label="姓名">
-              <el-col :span="9">
-                <el-input v-model="informedContent.truename"></el-input>
-              </el-col>
-              <el-col class="line" :span="3" style="padding-left:10px;">性别</el-col>
-              <el-col :span="12">
-                <el-radio-group v-model="informedContent.sex">
-                  <el-radio label="男">男</el-radio>
-                  <el-radio label="女">女</el-radio>
-                </el-radio-group>
-              </el-col>
-            </el-form-item>
-            <el-form-item label="年龄">
-              <el-col :span="9">
-                <el-input v-model="informedContent.age"></el-input>
-              </el-col>
-              <el-col class="line" :span="3" style="padding-left:10px;">邮箱</el-col>
-              <el-col :span="12">
-                <el-input v-model="informedContent.email"></el-input>
-              </el-col>
-            </el-form-item>
-            <el-form-item label="出生日期">
-              <el-form-item>
-                <el-date-picker
-                  v-model="informedContent.dateOfBirth"
-                  type="date"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                  placeholder="选择日期时间">
-                </el-date-picker>
-              </el-form-item>
-            </el-form-item>
-            <el-form-item label="采样日期">
-              <el-form-item>
-                <el-date-picker
-                  v-model="informedContent.samplingDate"
-                  type="date"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                  placeholder="选择日期">
-                </el-date-picker>
-              </el-form-item>
-            </el-form-item>
-            <el-form-item label="地址">
-              <el-cascader class="width-100-p"
-                :options="regionData"
-                v-model="areaInfo"
-                @change="addressHandleChange">
-              </el-cascader>
-            </el-form-item>
             <el-form-item label="详细地址">
               <el-input v-model="informedContent.address"></el-input>
             </el-form-item>
             <el-form-item label="备注">
               <el-input type="textarea" v-model="informedContent.remark"></el-input>
             </el-form-item>
+            <h4>送检信息</h4>
+            <el-form-item label="订单编号">
+              <el-input v-model="informedContent.orderNo"></el-input>
+            </el-form-item>
+            <el-form-item label="送检项目">
+              <el-select class="width-100-p" v-model="informedContent.solutionId" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in projects"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="送检医院">
+              <el-autocomplete
+                class="inline-input"
+                v-model="informedContent.hospitalName"
+                :fetch-suggestions="hospitalQuerySearch"
+                placeholder="请输入内容"
+                :trigger-on-focus="false"
+                @select="hospitalHandleSelect"
+              ></el-autocomplete>
+            </el-form-item>
+            <el-form-item label="送检科室">
+              <el-select class="width-100-p" v-model="informedContent.deptId" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in depts"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="送检医生">
+              <el-input v-model="informedContent.doctor"></el-input>
+            </el-form-item>
+            <el-form-item label="条码编号">
+              <el-input v-model="informedContent.sampleCode"></el-input>
+            </el-form-item>
+            <el-form-item label="采样日期">
+                <el-date-picker
+                  v-model="informedContent.samplingDate"
+                  type="date"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  placeholder="选择日期">
+                </el-date-picker>
+            </el-form-item>
+            <h4>病理信息</h4>
+            <el-form-item label="疾病类型">
+              <el-select class="width-100-p" v-model="informedContent.cancerType" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in diseaseList"
+                  :key="item"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="其他癌种" v-if="informedContent.cancerType == '其他癌种'">
+              <el-input v-model="otherDisease"></el-input>
+            </el-form-item>
+            <el-form-item label="组织分型">
+              <el-select class="width-100-p" v-model="zuzhifenxing" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in zuzhifenxingList"
+                  :key="item"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="FIGO分期">
+              <el-select class="width-100-p" v-model="figo" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in figoList"
+                  :key="item"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="治疗阶段">
+              <el-select class="width-100-p" v-model="jieduan" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in jieduanList"
+                  :key="item"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="分子分型">
+              <el-select class="width-100-p" v-model="fenzifenxing" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in fenzifenxingList"
+                  :key="item"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="TNM分期">
+              <el-select class="width-100-p" v-model="tnm" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in figoList"
+                  :key="item"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="病程">
+              <el-select class="width-100-p" v-model="bingcheng" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in bingchengList"
+                  :key="item"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="是否为复发检测">
+              <el-radio-group v-model="informedContent.isRelapse">
+                <el-radio label="0">是</el-radio>
+                <el-radio label="1">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="肿瘤家族史">
+              <el-input type="textarea" v-model="familyTumorHistory"></el-input>
+            </el-form-item>
+
+
+
             <el-form-item>
               <el-button @click="cancel">取消</el-button>
               <el-button @click="unread">图形不可读</el-button>
@@ -149,11 +226,13 @@
       </el-col>
       <el-col :span="12">
         <div class="img-content">
-          <!--<img :src="imagePath">-->
-          <img :src="imagePath" v-if="informedContent.mimeType != 'application/pdf'">
-          <object :data="imagePath" type="application/pdf" width="100%" height="700px" v-else>
-            <embed :src="imagePath">
-          </object>
+          <div v-if="imagePath.indexOf('.pdf') > -1">
+            <img :src="imagePath">
+            <object :data="imagePath" type="application/pdf" width="100%" height="700px">
+              <embed :src="imagePath">
+            </object>
+          </div>
+          <img :src="imagePath" v-else>
         </div>
       </el-col>
     </el-row>
@@ -182,7 +261,34 @@ export default {
       regionData: regionData,
       CodeToText: CodeToText,
       TextToCode: TextToCode,
-      role: window.localStorage.role
+      role: window.localStorage.role,
+      relation: '',
+      relationList: ['本人','父母','妻子','丈夫','子女','侄子','孙子','其他'],
+
+      disease: '',
+      diseaseList: ['卵巢癌', '乳腺癌', '前列腺癌', '胰腺癌', '子宫内膜癌', '输卵管癌', '其他癌种', '表型正常'],
+
+      zuzhifenxing: '',
+      zuzhifenxingList: ['上皮细胞肿瘤', '性索-间质肿瘤', '生殖细胞肿瘤'],
+
+      figo: '',
+      figoList: ['I期', 'II期', 'III期', 'IV期'],
+
+      jieduan: '',
+      jieduanList: ['一线', '二线', '三线', '其他'],
+
+      fenzifenxing: '',
+      fenzifenxingList: ['HER2阳性', 'HER2阴性', 'ER 或 PR阳性', '三阴性'],
+
+      bingcheng: '',
+      bingchengList: ['局限期前列腺癌', '非转移性激素抵抗性前列腺癌',
+        '转移性前列腺癌激素敏感阶段', '转移性前列腺癌激素抵抗阶段'],
+
+      otherDisease: '',
+      tnm: '',
+      hasFamilyTumorHistory:null,
+      familyTumorHistory: '',
+      moreInfo: []
     }
   },
   props: {},
@@ -194,10 +300,46 @@ export default {
           this.informedContent.orderNo = res.data.tid
         }
         if (this.informedContent.smsStatus === undefined) {
-          this.informedContent.smsStatus = 0
-          this.smsStatus = 0
-        } else {
+          this.informedContent.smsStatus = 1
           this.smsStatus = 1
+        }
+        if (this.informedContent.samplingDate !== undefined) {
+          this.informedContent.samplingDate = new Date(this.informedContent.samplingDate).Format("yyyy-MM-dd hh:mm:ss")
+        }
+        if (this.informedContent.dateOfBirth !== undefined) {
+          this.informedContent.dateOfBirth = new Date(this.informedContent.dateOfBirth).Format("yyyy-MM-dd hh:mm:ss")
+          console.log(this.informedContent.dateOfBirth)
+        }
+        if (this.informedContent.moreInfo) {
+          this.moreInfo = JSON.parse(this.informedContent.moreInfo)
+          if (this.moreInfo.length > 0) {
+            this.moreInfo.forEach(item => {
+              if (item.key == '组织分型') {
+                this.zuzhifenxing = item.value
+              }
+              if (item.key == 'FIGO分期') {
+                this.figo = item.value
+              }
+              if (item.key == '治疗阶段') {
+                this.jieduan = item.value
+              }
+              if (item.key == '分子分型') {
+                this.fenzifenxing = item.value
+              }
+              if (item.key == 'TNM分期') {
+                this.tnm = item.value
+              }
+              if (item.key == '病程') {
+                this.bingcheng = item.value
+              }
+              if (item.key == '癌种名称') {
+                this.otherDisease = item.value
+              }
+              if (item.key == '肿瘤家族史') {
+                this.familyTumorHistory = item.value
+              }
+            })
+          }
         }
         this.axios.get('oss/upload/show', {
           params: {
@@ -230,6 +372,58 @@ export default {
     },
     edit () {
       delete this.informedContent.createTime
+      let moreInfo = []
+
+      if (this.zuzhifenxing) {
+        moreInfo.push({
+          key: '组织分型',
+          value: this.zuzhifenxing
+        })
+      }
+      if (this.figo) {
+        moreInfo.push({
+          key: 'FIGO分期',
+          value: this.figo
+        })
+      }
+      if (this.jieduan) {
+        moreInfo.push({
+          key: '治疗阶段',
+          value: this.jieduan
+        })
+      }
+      if (this.fenzifenxing) {
+        moreInfo.push({
+          key: '分子分型',
+          value: this.fenzifenxing
+        })
+      }
+      if (this.tnm) {
+        moreInfo.push({
+          key: 'TNM分期',
+          value: this.tnm
+        })
+      }
+      if (this.bingcheng) {
+        moreInfo.push({
+          key: '病程',
+          value: this.bingcheng
+        })
+      }
+
+      if (this.informedContent.cancerType == '其他癌种') {
+        moreInfo.push({
+          key: '癌种名称',
+          value: this.otherDisease
+        })
+      }
+      if (this.familyTumorHistory != null && this.familyTumorHistory != '') {
+        moreInfo.push({
+          key: '肿瘤家族史',
+          value: this.familyTumorHistory
+        })
+      }
+      this.informedContent.moreInfo = JSON.stringify(moreInfo)
       this.axios.put('informed/' + this.$route.params.informedId, this.informedContent).then(res => {
         this.$message({
           message: '修改成功',
@@ -354,4 +548,9 @@ export default {
       width: 100%;
     }
   }
+
+  .el-date-editor.el-input {
+    width: 100% !important;
+  }
+
 </style>

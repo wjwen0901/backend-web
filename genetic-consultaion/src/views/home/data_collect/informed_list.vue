@@ -6,7 +6,7 @@
     </el-breadcrumb>
     <div class="user-container">
       <div>
-        <!--<el-button class="add-solution" size="small" type="primary" @click="toAdd">新增</el-button>-->
+        <el-button class="add-solution" size="small" type="primary" @click="toExport">导出</el-button>
         <div class="search-box">
           <el-input placeholder="请输入条码编号/受检者姓名/手机号" v-model="condition" class="input-with-select">
             <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
@@ -14,10 +14,16 @@
         </div>
       </div>
       <el-table
+        @selection-change="handleSelectionChange"
         :data="informedList"
         size="mini"
         border
         style="width: 100%">
+        <el-table-column
+          fixed
+          type="selection"
+          width="40">
+        </el-table-column>
         <el-table-column
           prop="sampleCode"
           label="条码编号"
@@ -45,6 +51,18 @@
           label="上传人联系电话">
         </el-table-column>
         <el-table-column
+          prop="group"
+          label="所属分组">
+        </el-table-column>
+        <el-table-column
+          prop="solutionName"
+          label="检测项目">
+        </el-table-column>
+        <el-table-column
+          prop="companyName"
+          label="实验室">
+        </el-table-column>
+        <el-table-column
           prop="state"
           label="状态">
           <template slot-scope="scope">
@@ -57,9 +75,10 @@
         <el-table-column
           fixed="right"
           label="操作"
-          width="100">
+          width="160">
           <template slot-scope="scope">
-            <el-button @click="toDetail(scope.row.id)" type="text" size="small">查看</el-button>
+            <el-button @click="toDetail(scope.row.id)" type="text" size="small">编辑</el-button>
+            <el-button @click="toAllDetail(scope.row)" type="text" size="small">查看病理信息</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -83,6 +102,7 @@ export default {
   data () {
     return {
       informedList: [],
+      multipleSelection: [],
       pageNum: window.sessionStorage.informedPageNum === undefined ? 1 : window.sessionStorage.informedPageNum,
       pageSize: window.sessionStorage.informedPageSize === undefined ? 20 : parseInt(window.sessionStorage.informedPageSize),
       totalPage: 0,
@@ -125,7 +145,39 @@ export default {
         name: 'InformedEdit',
         params: { informedId: id }
       })
-    }
+    },
+    toAllDetail (item) {
+      this.$router.push({
+        name: 'InformedAll',
+        params: { sampleNo: item.sampleCode }
+      })
+    },
+    toExport () {
+      let informedIds = []
+      this.multipleSelection.forEach(item => {
+        informedIds.push(item.id)
+      })
+      this.axios.get('informed/export?informedIds=' + informedIds, {
+        responseType:"blob"
+      }).then(response => {
+        const blob = new Blob(
+          [response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8' })
+        const aEle = document.createElement('a');     // 创建a标签
+        const href = window.URL.createObjectURL(blob);       // 创建下载的链接
+        aEle.href = href;
+        const today = new Date();
+        aEle.download = "知情同意-" + today.getFullYear() + '-'+ (today.getMonth()+1)+ '-' + today.getDate() + ".xls";  // 下载后文件名
+        document.body.appendChild(aEle);
+        aEle.click();     // 点击下载
+        document.body.removeChild(aEle); // 下载完成移除元素
+        window.URL.revokeObjectURL(href) // 释放掉blob对象
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    handleSelectionChange (value) {
+      this.multipleSelection = value
+    },
   },
   filters: {
     stateFilter: function (state) {

@@ -18,6 +18,52 @@ export default new Router({
                     component: resolve => require(['@/views/home/dashboard/dashboard'], resolve)
                 },
                 {
+                  path: '/brca/order',
+                  name: 'BrcaOrder',
+                  component: resolve => require(['@/views/home/brca/order'], resolve)
+                },
+                {
+                  path: '/brca',
+                  name: 'UserSec',
+                  component: resolve => require(['@/views/home/brca/user'], resolve)
+                },
+                {
+                  path: '/brca/whitelist',
+                  name: 'Whitelist',
+                  component: resolve => require(['@/views/home/brca/whitelist'], resolve)
+                },
+                {
+                  path: '/brca/commission',
+                  name: 'commission',
+                  component: resolve => require(['@/views/home/brca/commission'], resolve)
+                },
+                {
+                  path: '/brca/withdraw',
+                  name: 'withdraw',
+                  component: resolve => require(['@/views/home/brca/withdraw'], resolve)
+                },
+                {
+                  path: '/brca/invoice',
+                  name: 'Invoice',
+                  component: resolve => require(['@/views/home/brca/invoice'], resolve)
+                },
+                {
+                  path: '/brca/express',
+                  name: 'Express',
+                  component: resolve => require(['@/views/home/brca/express'], resolve)
+                },
+                {
+                  path: '/brca/doctor',
+                  name: 'BrcaUserSec',
+                  component: resolve => require(['@/views/home/brca/user'], resolve),
+                  redirect: '/brca/doctor/list/business-agent',
+                  children: [{
+                    path: '/brca/doctor/list/:role',
+                    name: 'BrcaUserList',
+                    component: resolve => require(['@/views/home/brca/user-list'], resolve)
+                  }]
+                },
+                {
                     path: '/user',
                     name: 'UserSec',
                     component: resolve => require(['@/views/home/user/user'], resolve),
@@ -67,6 +113,11 @@ export default new Router({
                     path: '/informed/edit/:informedId',
                     name: 'InformedEdit',
                     component: resolve => require(['@/views/home/data_collect/informed_edit'], resolve)
+                },
+                {
+                    path: '/informed/all/:sampleNo',
+                    name: 'InformedAll',
+                    component: resolve => require(['@/views/home/data_collect/informed_all'], resolve)
                 },
                 {
                     path: '/report/edit/:reportId',
@@ -350,6 +401,18 @@ export default new Router({
                     name: 'DetailList',
                     component: resolve => require(['@/views/home/qrcode_manager/detail_list'], resolve)
                 }
+                ,
+                {
+                  path: '/ru6c/upload',
+                  name: 'Ru6cUpload',
+                  component: resolve => require(['@/views/home/ru6c/upload'], resolve)
+                },
+                {
+                  path: '/ru6c/list',
+                  name: 'Ru6cList',
+                  component: resolve => require(['@/views/home/ru6c/list'], resolve)
+                }
+
             ]
         },
         {

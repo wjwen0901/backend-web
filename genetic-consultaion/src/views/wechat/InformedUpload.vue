@@ -355,6 +355,7 @@ export default {
               }
             })
             if (that.userId === 0||that.userId===''||that.userId===undefined||that.userId===null) {
+
               instance({
                 method: 'post',
                 url: 'user/wechat/add',

@@ -42,6 +42,21 @@
               <span slot="title">首页</span>
             </template>
           </el-menu-item>
+          <el-submenu index="/brca" v-if="sec.includes('system')">
+            <template slot="title">
+              <i class="el-icon-document"></i>
+              <span slot="title">BRCA轻松检</span>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item index="/brca/order">订单</el-menu-item>
+              <el-menu-item index="/brca/doctor">注册医生</el-menu-item>
+              <el-menu-item index="/brca/whitelist">白名单</el-menu-item>
+              <el-menu-item index="/brca/commission">佣金账户</el-menu-item>
+              <el-menu-item index="/brca/withdraw">提现记录</el-menu-item>
+              <el-menu-item index="/brca/invoice">发票记录</el-menu-item>
+              <el-menu-item index="/brca/express">快递查询</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
           <el-menu-item index="/order" v-if="sec.includes('order')">
             <template slot="title">
               <i class="fas fa-globe"></i>
@@ -75,6 +90,13 @@
             <i class="fas fa-binoculars"></i>
             <span slot="title">信息复核</span>
           </el-menu-item>
+          <el-submenu index="/ru6c" v-if="sec.includes('ru6c-gene')">
+            <template slot="title"><i class="el-icon-document"></i><span slot="title">易见康检测</span></template>
+            <el-menu-item-group>
+              <el-menu-item index="/ru6c/upload">上传文件</el-menu-item>
+              <el-menu-item index="/ru6c/list">查看结果</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
           <el-menu-item index="/product" v-if="sec.includes('product')">
             <i class="el-icon-goods"></i>
             <span slot="title">产品管理</span>
@@ -102,7 +124,7 @@
             <el-menu-item-group>
               <el-menu-item index="/user" v-if="sec.includes('system:user-sec')">账号管理</el-menu-item>
             </el-menu-item-group>
-          </el-submenu>
+          </el-submenu index="system" v-if="sec.includes('system')">
           <el-submenu index="disease" v-if="sec.includes('system')">
             <template slot="title"><i class="el-icon-setting"></i><span slot="title">疾病数据库</span></template>
             <el-menu-item-group>
@@ -125,7 +147,7 @@
               <el-menu-item index="/standard/list" v-if="role === 'manager'">打分项维护</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          
+
           <!-- 新增公众号二维码模块 -->
           <el-submenu index="/qrcode_manager" v-if="sec.includes('wechat_qrcode')">
             <template slot="title"><i class="el-icon-setting"></i><span slot="title">公众号二维码</span></template>
