@@ -28,7 +28,7 @@
         </el-main>
       </div>
       <div class="footer-info">
-        &copy; 2019 MDHcare.cn 版权所有  丨  ICP证：京ICP备17067248号
+        &copy; 2020 MDHcare.cn 版权所有  丨  ICP证：京ICP备17067248号
       </div>
     </div>
     <div class="mdh-default" :class="!signSuccess ? 'hidden' : ''">
@@ -37,15 +37,15 @@
       </div>
       <div class="content">
         <img src="../../../assets/gensultation-logo-1.png"/>
-        <p>签到成功！展示截图可领奖～</p>
+        <p>签到成功！</p>
         <div class="qrcode">
-          <img src="../../../assets/miniprogram.png"/>
+          <a :href="`https://z.mdhcare.cn/gensultation-wx/#/?openId=${openId}`">点击进入见山会诊</a>
           <p>见山会诊小程序正在内测</p>
           <p>欢迎老师们给出指导建议～</p>
         </div>
       </div>
       <div class="footer-info">
-        &copy; 2019 MDHcare.cn 版权所有  丨  ICP证：京ICP备17067248号
+        &copy; 2020 MDHcare.cn 版权所有  丨  ICP证：京ICP备17067248号
       </div>
     </div>
   </el-container>
@@ -74,8 +74,9 @@
       return {
         user: {
           fullName: '',
-          cellphone: ''
+          cellphone: '',
         },
+        openId: '',
         rules: {
           fullName: [
             {required: true, validator: checkName, trigger: 'blur'}
@@ -86,6 +87,9 @@
         },
         signSuccess: false
       }
+    },
+    mounted() {
+      this.openId = this.$route.query.openId
     },
     methods: {
       toSign () {

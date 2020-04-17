@@ -84,12 +84,12 @@
             <el-input v-model="salesman.email"></el-input>
           </el-form-item>
           <el-form-item label="收款银行">
-            <el-select v-model="salesman.bank" filterable placeholder="请选择">
+            <el-select v-model="salesman.bankCode" filterable placeholder="请选择" @change="changeBankSelect">
               <el-option
                 v-for="item in bankList"
-                :value-key="item.bankName"
-                :label="item.bankName"
-                :value="item">
+                :key="item['bankCode']"
+                :label="item['bankName']"
+                :value="item['bankCode']">
               </el-option>
             </el-select>
           </el-form-item>
@@ -124,12 +124,12 @@
             <el-input v-model="serviceman.email"></el-input>
           </el-form-item>
           <el-form-item label="收款银行">
-            <el-select v-model="serviceman.bank" filterable placeholder="请选择">
+            <el-select v-model="serviceman.bankCode" filterable placeholder="请选择" @change="changeServiceBankSelect">
               <el-option
                 v-for="item in bankList"
-                :value-key="item.bankName"
-                :label="item.bankName"
-                :value="item">
+                :key="item['bankCode']"
+                :label="item['bankName']"
+                :value="item['bankCode']">
               </el-option>
             </el-select>
           </el-form-item>
@@ -216,7 +216,8 @@ export default {
       condition: null,
       qrCode: {},
       eleInformed: {},
-      salesman: {},
+      salesman: {
+      },
       serviceman: {},
       informedQrCode: {
         sampleType: '口腔拭子',
@@ -230,6 +231,7 @@ export default {
         text: 'name2',
         value: 'value2'
       }],
+      bankInfo: [],
       userId: window.localStorage.userId
     }
   },
@@ -415,10 +417,24 @@ export default {
       this.salesman.hospitalId = user.hospitalId
       this.dialogSalesmanVisible = true
     },
+    changeBankSelect (val) {
+      this.bankList.forEach(item => {
+        if (item.bankCode === val) {
+          this.salesman.bank = item.bankName
+          this.salesman.bankCode = item.bankCode
+        }
+      })
+    },
+    changeServiceBankSelect (val) {
+      this.bankList.forEach(item => {
+
+        if (item.bankCode === val) {
+          this.serviceman.bank = item['bankName']
+          this.serviceman.bankCode = item['bankCode']
+        }
+      })
+    },
     submitSalesman () {
-      let bank = this.salesman.bank
-      this.salesman.bank = bank.bankName
-      this.salesman.bankCode = bank.bankCode
       let instance = this.axios.create({
         headers: {
           'Authorization': window.localStorage.token,
@@ -444,15 +460,13 @@ export default {
       })
     },
     addServiceman(user) {
+      this.serviceman = {}
       this.serviceman.doctorId = user.userId
       this.serviceman.doctorName = user.fullName
       this.serviceman.hospitalId = user.hospitalId
       this.dialogServiceVisible = true
     },
     submitServiceman () {
-      let bank = this.serviceman.bank
-      this.serviceman.bank = bank.bankName
-      this.serviceman.bankCode = bank.bankCode
       let instance = this.axios.create({
         headers: {
           'Authorization': window.localStorage.token,

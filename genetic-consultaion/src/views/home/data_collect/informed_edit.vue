@@ -215,12 +215,90 @@
             </el-form-item>
 
 
-
+<!--            <h5>家族史</h5>-->
+<!--            <el-form-item :label="item.key" v-for="item in familyHistory">-->
+<!--              <el-input v-model="item.value"></el-input>-->
+<!--            </el-form-item>-->
+<!--            <h5>个人史</h5>-->
+<!--            <el-form-item :label="item.key" v-for="item in personHistory">-->
+<!--              <el-input v-model="item.value"></el-input>-->
+<!--            </el-form-item>-->
             <el-form-item>
               <el-button @click="cancel">取消</el-button>
               <el-button @click="unread">图形不可读</el-button>
               <el-button type="primary" @click="edit">保存信息</el-button>
             </el-form-item>
+
+            <div>
+              <h5>家族史：</h5>
+              <el-form-item label="患癌亲属">
+                <el-radio-group v-model="hasFamilyTumorHistory">
+                  <el-radio label="有">有</el-radio>
+                  <el-radio label="无">无</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="亲属何种癌种">
+                <el-input v-model="normalFamilyTumorHistory"></el-input>
+              </el-form-item>
+              <el-form-item label="与患者关系">
+                <el-input v-model="familyTumorRelation"></el-input>
+              </el-form-item>
+            </div>
+
+            <div>
+              <h5>个人史：</h5>
+              <el-form-item label="吸烟史">
+                <el-radio-group v-model="diseaseHistory.smoking">
+                  <el-radio label="有">有</el-radio>
+                  <el-radio label="无">无</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="饮酒史">
+                <el-radio-group v-model="diseaseHistory.drinking">
+                  <el-radio label="有">有</el-radio>
+                  <el-radio label="无">无</el-radio>
+                </el-radio-group>
+              </el-form-item>
+
+              <el-form-item label="胃炎">
+                <el-radio-group v-model="diseaseHistory.gastritis">
+                  <el-radio label="有">有</el-radio>
+                  <el-radio label="无">无</el-radio>
+                </el-radio-group>
+              </el-form-item>
+
+              <el-form-item label="肠炎">
+                <el-radio-group v-model="diseaseHistory.enteritis">
+                  <el-radio label="有">有</el-radio>
+                  <el-radio label="无">无</el-radio>
+                </el-radio-group>
+              </el-form-item>
+
+              <el-form-item label="幽门螺旋杆菌感染">
+                <el-radio-group v-model="diseaseHistory.hp">
+                  <el-radio label="有">有</el-radio>
+                  <el-radio label="无">无</el-radio>
+                </el-radio-group>
+              </el-form-item>
+
+              <el-form-item label="乙肝感染">
+                <el-radio-group v-model="diseaseHistory.hepatitisB">
+                  <el-radio label="有">有</el-radio>
+                  <el-radio label="无">无</el-radio>
+                </el-radio-group>
+              </el-form-item>
+
+              <el-form-item label="是否长期接触毒害物质">
+                <el-checkbox-group v-model="diseaseHistory.poison">
+                  <el-checkbox label="氡"></el-checkbox>
+                  <el-checkbox label="铀"></el-checkbox>
+                  <el-checkbox label="镍"></el-checkbox>
+                  <el-checkbox label="铬"></el-checkbox>
+                  <el-checkbox label="铍"></el-checkbox>
+                  <el-checkbox label="石棉"></el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+            </div>
           </el-form>
         </div>
       </el-col>
@@ -286,9 +364,16 @@ export default {
 
       otherDisease: '',
       tnm: '',
-      hasFamilyTumorHistory:null,
-      familyTumorHistory: '',
-      moreInfo: []
+      personHistory: {},
+      moreInfo: [],
+
+      hasFamilyTumorHistory:  null,
+      familyTumorHistory:'',
+      normalFamilyTumorHistory:'',
+      familyTumorRelation:'',
+      diseaseHistory: {
+        poison: []
+      },
     }
   },
   props: {},
@@ -338,6 +423,46 @@ export default {
               if (item.key == '肿瘤家族史') {
                 this.familyTumorHistory = item.value
               }
+              if (item.key == '家族史') {
+                let familyHistory = item.value
+                familyHistory.forEach(item1 => {
+                  if (item1.key == '是否有家族史') {
+                    this.hasFamilyTumorHistory = item1.value
+                  }
+                  if (item1.key == '亲属何种癌种') {
+                    this.normalFamilyTumorHistory = item1.value
+                  }
+                  if (item1.key == '与家属关系') {
+                    this.familyTumorRelation = item1.value
+                  }
+                })
+              }
+              if (item.key == '个人史') {
+                let personHistory = item.value
+                personHistory.forEach(item1 => {
+                  if (item1.key == '吸烟史') {
+                    this.diseaseHistory.smoking = item1.value
+                  }
+                  if (item1.key == '饮酒史') {
+                    this.diseaseHistory.drinking = item1.value
+                  }
+                  if (item1.key == '胃炎') {
+                    this.diseaseHistory.gastritis = item1.value
+                  }
+                  if (item1.key == '肠炎') {
+                    this.diseaseHistory.enteritis = item1.value
+                  }
+                  if (item1.key == '幽门螺旋杆菌感染') {
+                    this.diseaseHistory.hp = item1.value
+                  }
+                  if (item1.key == '乙肝感染') {
+                    this.diseaseHistory.hepatitisB = item1.value
+                  }
+                  if (item1.key == '是否长期接触毒害物质') {
+                    this.diseaseHistory.poison = item1.value
+                  }
+                })
+              }
             })
           }
         }
@@ -371,6 +496,9 @@ export default {
       })
     },
     edit () {
+      // console.log(this.familyHistory)
+      // console.log(this.personHistory)
+      // return
       delete this.informedContent.createTime
       let moreInfo = []
 
@@ -421,6 +549,83 @@ export default {
         moreInfo.push({
           key: '肿瘤家族史',
           value: this.familyTumorHistory
+        })
+      }
+      if (this.normalFamilyTumorHistory) {
+        let familyHistory = []
+        familyHistory.push({
+          key: '是否有家族史',
+          value: this.hasFamilyTumorHistory
+        })
+        if (this.hasFamilyTumorHistory == '有') {
+          if (this.normalFamilyTumorHistory) {
+            familyHistory.push({
+              key: '亲属何种癌种',
+              value: this.normalFamilyTumorHistory
+            })
+          }
+          if (this.familyTumorRelation) {
+            familyHistory.push({
+              key: '与家属关系',
+              value: this.familyTumorRelation
+            })
+          }
+        }
+        moreInfo.push({
+          key: '家族史',
+          value: familyHistory
+        })
+      }
+
+
+      if (this.diseaseHistory) {
+        let personHistory = []
+        if (this.diseaseHistory && this.diseaseHistory.smoking) {
+          personHistory.push({
+            key: '吸烟史',
+            value: this.diseaseHistory.smoking
+          })
+        }
+        if (this.diseaseHistory && this.diseaseHistory.drinking) {
+          personHistory.push({
+            key: '饮酒史',
+            value: this.diseaseHistory.drinking
+          })
+        }
+        if (this.diseaseHistory && this.diseaseHistory.gastritis) {
+          personHistory.push({
+            key: '胃炎',
+            value: this.diseaseHistory.gastritis
+          })
+        }
+        if (this.diseaseHistory && this.diseaseHistory.enteritis) {
+          personHistory.push({
+            key: '肠炎',
+            value: this.diseaseHistory.enteritis
+          })
+        }
+        if (this.diseaseHistory && this.diseaseHistory.hp) {
+          personHistory.push({
+            key: '幽门螺旋杆菌感染',
+            value: this.diseaseHistory.hp
+          })
+        }
+        if (this.diseaseHistory && this.diseaseHistory.hepatitisB) {
+          personHistory.push({
+            key: '乙肝感染',
+            value: this.diseaseHistory.hepatitisB
+          })
+        }
+        if (this.diseaseHistory && this.diseaseHistory.poison) {
+          personHistory.push({
+            key: '是否长期接触毒害物质',
+            value: this.diseaseHistory.poison
+          })
+        }
+
+        moreInfo.push({
+          key: '个人史',
+          value: personHistory
         })
       }
       this.informedContent.moreInfo = JSON.stringify(moreInfo)

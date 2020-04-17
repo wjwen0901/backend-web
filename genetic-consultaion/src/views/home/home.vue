@@ -124,7 +124,7 @@
             <el-menu-item-group>
               <el-menu-item index="/user" v-if="sec.includes('system:user-sec')">账号管理</el-menu-item>
             </el-menu-item-group>
-          </el-submenu index="system" v-if="sec.includes('system')">
+          </el-submenu>
           <el-submenu index="disease" v-if="sec.includes('system')">
             <template slot="title"><i class="el-icon-setting"></i><span slot="title">疾病数据库</span></template>
             <el-menu-item-group>

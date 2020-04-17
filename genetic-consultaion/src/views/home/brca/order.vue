@@ -408,6 +408,7 @@ export default {
     // 分账
     toDistribution () {
       let doctorIds = []
+      this.serviceUserList = []
       this.distribution.orderIds = []
       this.multipleSelection.forEach(item => {
         this.distribution.orderIds.push(item.orderId)
@@ -436,6 +437,7 @@ export default {
     // 分账
     toDistributionSalesman () {
       let doctorIds = []
+      this.serviceUserList = []
       this.distribution.orderIds = []
       this.multipleSelection.forEach(item => {
         this.distribution.orderIds.push(item.orderId)
@@ -463,6 +465,7 @@ export default {
     toDistributionSalesman () {
       let doctorIds = []
       this.distribution.orderIds = []
+      this.serviceUserList = []
       this.multipleSelection.forEach(item => {
         this.distribution.orderIds.push(item.orderId)
         if (doctorIds.indexOf(item.doctorId) == -1) {
@@ -487,6 +490,7 @@ export default {
     },
     // 分账
     submitDistribution (serviceType) {
+      let _this = this
       this.distribution.serviceType = serviceType
       let instance = this.axios.create({
         headers: {
@@ -504,7 +508,7 @@ export default {
         }
       }).then(res => {
         _this.$message({
-          message: '修改成功',
+          message: '分账成功',
           type: 'success'
         })
         _this._initData()
@@ -525,11 +529,9 @@ export default {
               type: 'success'
             })
           }
-
         }).catch(err => {
           console.log(err)
         })
-
       })
     }
   },

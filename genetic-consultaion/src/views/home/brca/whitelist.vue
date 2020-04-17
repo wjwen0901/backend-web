@@ -167,7 +167,7 @@
 </template>
 <script>
 
-import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
+  import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
 export default {
   components: {},
   name: 'UserList',
