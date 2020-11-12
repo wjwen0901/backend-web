@@ -28,13 +28,13 @@
               <p>科室：{{informed.deptName}}</p>
               <p>医生：{{informed.informed ? informed.informed.doctor : '-'}}</p>
             </div>
-            <div class="brief">
+            <div class="brief" v-if="informed.receiver">
               <h5>报告接收地址</h5>
               <p>收件人：{{informed.receiver.receiver}}</p>
               <p>联系方式：{{informed.receiver.cellphone}}</p>
               <p>地址：{{informed.receiver.province}}{{informed.receiver.city}}{{informed.receiver.county}}{{informed.receiver.address}}</p>
             </div>
-            <div class="brief">
+            <div class="brief" v-if="informed.waxReceiver">
               <h5>剩余蜡块接收地址</h5>
               <p>收件人：{{informed.waxReceiver.receiver}}</p>
               <p>联系方式：{{informed.waxReceiver.cellphone}}</p>

@@ -20,6 +20,7 @@
     "echarts": "^4.2.0-rc.2",
     "element-china-area-data": "^4.1.0",
     "element-ui": "^2.4.3",
+    "file-saver": "^2.0.2",
     "filestack-js": "^1.4.1",
     "jquery": "^3.3.1",
     "jspdf": "^1.5.3",

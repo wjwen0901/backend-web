@@ -12,10 +12,21 @@ export default new Router({
             name: 'Home',
             component: resolve => require(['@/views/home/home'], resolve),
             redirect: '/dashboard',
-            children: [{
+            children: [
+              {
                     path: '/dashboard',
                     name: 'Dashboard',
                     component: resolve => require(['@/views/home/dashboard/dashboard'], resolve)
+                },
+                {
+                  path: '/accuragen/channel',
+                  name: 'AccuragenChannel',
+                  component: resolve => require(['@/views/home/accuragen/channel-list'], resolve)
+                },
+                {
+                  path: '/accuragen/paper/report',
+                  name: 'AccuragenPaperReport',
+                  component: resolve => require(['@/views/home/accuragen/paper-report'], resolve)
                 },
                 {
                   path: '/brca/order',
@@ -53,6 +64,16 @@ export default new Router({
                   component: resolve => require(['@/views/home/brca/express'], resolve)
                 },
                 {
+                  path: '/brca/exchange',
+                  name: 'Exchange',
+                  component: resolve => require(['@/views/home/brca/exchange'], resolve)
+                },
+                {
+                  path: '/brca/paper/report',
+                  name: 'PaperReport',
+                  component: resolve => require(['@/views/home/brca/paper-report'], resolve)
+                },
+                {
                   path: '/brca/doctor',
                   name: 'BrcaUserSec',
                   component: resolve => require(['@/views/home/brca/user'], resolve),
@@ -63,6 +84,29 @@ export default new Router({
                     component: resolve => require(['@/views/home/brca/user-list'], resolve)
                   }]
                 },
+
+                {
+                  path: '/wrj/order',
+                  name: 'WrjOrder',
+                  component: resolve => require(['@/views/home/wrj/order'], resolve)
+                },
+                {
+                  path: '/wrj/invoice',
+                  name: 'WrjInvoice',
+                  component: resolve => require(['@/views/home/wrj/invoice'], resolve)
+                },
+                {
+                  path: '/wrj/express',
+                  name: 'WrjExpress',
+                  component: resolve => require(['@/views/home/wrj/express'], resolve)
+                },
+                {
+                  path: '/wrj/paper/report',
+                  name: 'WrjPaperReport',
+                  component: resolve => require(['@/views/home/wrj/paper-report'], resolve)
+                },
+
+
                 {
                     path: '/user',
                     name: 'UserSec',

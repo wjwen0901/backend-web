@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>BRCA轻松检</el-breadcrumb-item>
+      <el-breadcrumb-item>诠见康-维汝健</el-breadcrumb-item>
       <el-breadcrumb-item>订单管理</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="user-container">
@@ -33,27 +33,12 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="医生">
-                <el-input v-model="searchForm.doctor" placeholder="王大夫、李大夫（顿号分割多选）" @change="getData"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
               <el-form-item label="患者">
                 <el-input v-model="searchForm.patient" placeholder="样本编号/姓名" @change="getData"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="6">
-              <el-form-item label="实验室">
-                <el-select v-model="searchForm.companyId" placeholder="请选择实验室" @change="getData">
-                  <el-option label="华大基因" value="6"></el-option>
-                  <el-option label="拓普" value="966"></el-option>
-                  <el-option label="泛生子" value="11"></el-option>
-                  <el-option label="艾德" value="1322"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
             <el-col :span="6">
               <el-form-item label="订单状态">
                 <el-select v-model="searchForm.status" placeholder="请选择订单状态" @change="getData">
@@ -89,8 +74,8 @@
       </div>
       <div class="opera-box">
         <el-row>
-          <el-button type="primary" size="small" @click="toDistribution">分配解读费用</el-button>
-          <el-button type="primary" size="small" @click="toDistributionSalesman">分配市场费用</el-button>
+<!--          <el-button type="primary" size="small" @click="toDistribution">分配解读费用</el-button>-->
+<!--          <el-button type="primary" size="small" @click="toDistributionSalesman">分配市场费用</el-button>-->
           <el-button type="success" size="small" @click="confirmMoney">确认到帐</el-button>
         </el-row>
       </div>

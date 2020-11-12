@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="24">
         <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item>信息提取</el-breadcrumb-item>
+          <el-breadcrumb-item>知情同意</el-breadcrumb-item>
           <el-breadcrumb-item :to="{ path: '/informed/list' }">知情列表</el-breadcrumb-item>
           <el-breadcrumb-item>详情</el-breadcrumb-item>
         </el-breadcrumb>

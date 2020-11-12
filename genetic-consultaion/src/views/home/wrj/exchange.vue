@@ -2,7 +2,7 @@
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>BRCA轻松检</el-breadcrumb-item>
-      <el-breadcrumb-item>发票记录</el-breadcrumb-item>
+      <el-breadcrumb-item>积分兑换</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="user-container">
       <div>
@@ -14,34 +14,30 @@
         border
         style="width: 100%">
         <el-table-column
-          label="订单信息"
+          label="兑换商品"
           width="240"
+          prop="rewardName"
         >
+        </el-table-column>
+        <el-table-column
+          label="申请时间"
+          width="160">
           <template slot-scope="scope">
-            <p>订单编号：{{scope.row.order.orderNo ? scope.row.order.orderNo : scope.row.order.tid}}</p>
-            <p>患者姓名：{{scope.row.patientName}}</p>
-            <p>样本编号：{{scope.row.sampleCode}}</p>
+            {{scope.row.createTime | formatDate}}
           </template>
         </el-table-column>
         <el-table-column
-          label="寄出时间"
+          label="更新时间"
           width="160">
           <template slot-scope="scope">
-            {{scope.row.express.createTime | formatDate}}
+            {{scope.row.updateTime | formatDate}}
           </template>
         </el-table-column>
         <el-table-column
           label="快递单号"
           width="160">
           <template slot-scope="scope">
-            {{scope.row.express.expressCode}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="寄件人">
-          <template slot-scope="scope">
-            <p>寄件人：{{scope.row.sender.receiver}}&emsp;&emsp;{{scope.row.sender.cellphone}}</p>
-            <p>地址：：{{scope.row.sender.province}}{{scope.row.sender.city}}{{scope.row.sender.county}}{{scope.row.sender.address}}</p>
+            （{{scope.row.mailName}}）{{scope.row.mailNo}}
           </template>
         </el-table-column>
         <el-table-column
@@ -54,14 +50,17 @@
           </template>
         </el-table-column>
 
-
+        <el-table-column
+          prop="statusStr"
+          label="状态"
+          width="100">
+        </el-table-column>
         <el-table-column
           fixed="right"
           label="操作"
           width="180">
           <template slot-scope="scope">
-            <el-button @click="toExpress(scope.row)" type="text" size="small">查看物流</el-button>
-            <el-button @click="cancelExpress(scope.row.express.expressCode)" type="text" size="small">取消物流</el-button>
+            <el-button @click="toExpress(scope.row)" type="text" size="small">绑定物流</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -75,30 +74,37 @@
         :total="totalPage">
       </el-pagination>
 
-      <el-dialog title="物流详情" :visible.sync="dialogEditFormVisible">
+      <el-dialog title="绑定物流信息" :visible.sync="dialogExpressFormVisible">
         <div>
-
-          <div class="wrapper">
-            <div class="from-to">
-              <div class="from" v-if="express.sender">{{express.sender.city}}</div>
-              <svg t="1582010962554" class="icon" viewBox="0 0 6997 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="24477" width="280" height="280"><path d="M876.159 647.79v131.836h5258.013l-502.427-552.788-97.559 88.726 301.904 332.227z" p-id="24478" fill="#8a8a8a"></path></svg>
-              <div class="to" v-if="express.receiver">{{express.receiver.city}}</div>
-              <div class="state" v-if="!express.route">等待快递小哥接单</div>
-            </div>
-            <div class="infos" v-if="express.route && express.route.mailno">
-              <div class="title">运单编号： {{express.route.mailno}}</div>
-              <el-timeline :reverse="reverse">
-                <el-timeline-item
-                  v-for="(item, index) in express.route.Route"
-                  :key="index"
-                  :timestamp="item.accept_time">
-                  {{item.remark}}
-                </el-timeline-item>
-              </el-timeline>
-              </div>
-
+          <h4>收件人信息</h4>
+          <p v-if="expressItem.receiver">地址：：{{expressItem.receiver.province}}{{expressItem.receiver.city}}{{expressItem.receiver.county}}{{expressItem.receiver.address}}</p>
+          <div v-if="expressItem.riceRewardId != 9">
+            <h4>礼品寄送快递</h4>
+            <el-form ref="form" :model="expressItem" label-width="80px">
+              <el-form-item label="快递方式">
+                <el-input v-model="expressItem.mailName"></el-input>
+              </el-form-item>
+              <el-form-item label="快递单号">
+                <el-input type="text" v-model="expressItem.mailNo"></el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="onExpressSubmit">确定</el-button>
+                <el-button @click="dialogExpressFormVisible = false">取消</el-button>
+              </el-form-item>
+            </el-form>
           </div>
-
+          <div v-else>
+            <h4>生成折扣券</h4>
+            <el-form ref="form" :model="expressItem" label-width="80px">
+              <el-form-item label="输入折扣">
+                <el-input type="number" v-model="expressItem.discount"></el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="onExpressSubmit">确定</el-button>
+                <el-button @click="dialogExpressFormVisible = false">取消</el-button>
+              </el-form-item>
+            </el-form>
+          </div>
         </div>
       </el-dialog>
     </div>
@@ -117,10 +123,11 @@ export default {
       pageSize: 20,
       totalPage: 0,
       express: {},
-      dialogEditFormVisible: false,
+      dialogExpressFormVisible: false,
       condition: null,
       userId: window.localStorage.userId,
       reverse: true,
+      expressItem: {},
     }
   },
   methods: {
@@ -129,7 +136,7 @@ export default {
     },
     getData () {
       this.resourceList = []
-      this.axios.get('sf/list', {
+      this.axios.get('rice/list', {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
@@ -153,46 +160,81 @@ export default {
       this.pageNum = val
       this.getData()
     },
-    toExpress (express) {
-      this.axios.get('/sf/route', {
-        params: {
-          mailno: express.express.expressCode,
-          subPhone: express.receiver.cellphone.substr(express.receiver.cellphone.length-4,4)
-        }
-      }).then(res => {
-        this.express = res.data
-        this.express.route = JSON.parse(res.data.route)
-        if (this.express.route.Head === 'OK') {
-          if (JSON.stringify(this.express.route.Body.RouteResponse).indexOf('[') == -1) {
-            let routes = []
-            routes.push(this.express.route.Body.RouteResponse.Route)
-            console.log(routes)
-            this.express.route.Body.RouteResponse.Route = routes
-          }
-          this.express.route = this.express.route.Body.RouteResponse
+    onExpressSubmit () {
+
+      this.expressItem.operatorId = this.userId
+      let instance = this.axios.create({
+        headers: {
+          'Authorization': window.localStorage.token,
+          'Content-Type': 'application/json'
         }
       })
-      this.dialogEditFormVisible = true
-    },
-    cancelExpress (expressNo) {
-      let that = this
-      that.axios.delete('/sf/order', {
-        params: {
-          expressNo: expressNo
-        }
-      }).then(res => {
-        if (res.data == 'failure') {
-          this.$message({
-            message: '取消失败，请重试或等待快递小哥联系',
-            type: 'fail'
-          })
-        } else {
-          this.$message({
-            message: '取消成功',
+      let _this = this
+      if (this.expressItem.riceRewardId != 9) {
+        instance({
+          method: 'post',
+          url: 'rice/confirm',
+          data: this.expressItem,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json'
+          }
+        }).then(function (response) {
+          _this.$message({
+            message: '提交成功',
             type: 'success'
           })
-        }
-      })
+          _this._initData()
+          _this.dialogExpressFormVisible = false
+        })
+
+      } else {
+        instance({
+          method: 'post',
+          url: 'cashout/discount',
+          data: {
+            userId: this.expressItem.userId,
+            discount: this.expressItem.discount,
+            productId: 1901,
+          },
+          params:{
+            count: 1
+          },
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json'
+          }
+        }).then(res => {
+          if (res.data.length == 10) {
+            _this.expressItem.mailName = '安易筛0.0001折扣码'
+            _this.expressItem.mailNo = res.data
+            instance({
+              method: 'post',
+              url: 'rice/confirm',
+              data: this.expressItem,
+              headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+              }
+            }).then(function (response) {
+              _this.$message({
+                message: '提交成功',
+                type: 'success'
+              })
+              _this._initData()
+              _this.dialogExpressFormVisible = false
+            })
+          } else {
+            // @ts-ignore
+            this.$toast.fail('券面限额为' + this.discountMap.product.max + '元');
+          }
+        })
+      }
+    },
+    toExpress (express) {
+      this.expressItem = express
+      this.expressItem.discount = 0.0001
+      this.dialogExpressFormVisible = true
     },
   },
 

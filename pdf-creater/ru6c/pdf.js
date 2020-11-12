@@ -20,31 +20,22 @@ const personReportId = args[2];
 (async() => {
     const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'] });
     const page = await browser.newPage();
-    // const pathName = "/data/mdh/pdf/ru6c/";
-    // await page.goto(BASE_URL + 'ru6c-pdf/?objectId=' + reportId + '&companyId=' + companyId, {
-    const pathName = "/Users/leamo/data/mdh/pdf/ru6c/"
-    await page.setViewport({ width: 1920, height: 1080 })
-    await page.goto('http://localhost:1234/?objectId=' + reportId + '&companyId=' + companyId, {
+    const pathName = "/data/mdh/pdf/ru6c/";
+    await page.goto(BASE_URL + 'ru6c-pdf/?objectId=' + reportId + '&companyId=' + companyId, {
         waitUntil: 'networkidle0',
         timeout: 0
     });
     const fileName = reportId.indexOf('\"') > -1 ? reportId.replace( new RegExp('"',"g"), "") : reportId;
-    await page.evaluate(() => { window.scrollBy(0, window.innerHeight) })
-    await page.emulateMedia('screen')
-    //等待列表完成
-    await page.waitForSelector('table')
-    //等待图片加载
-    await page.waitForSelector('img')
-    console.log(`* convert to pdf`)
+    await page.emulateMedia('screen');
     await page.pdf({
         path: pathName + fileName + '.pdf',
-        // format: 'A4',
+        format: 'A4',
         width: '216mm',
         height: '291mm',
         margin: '0mm',
         printBackground: true
     });
-    console.log(`* done with file... ${reportId}`)
+
     await browser.close();
 
     let accessid = '';

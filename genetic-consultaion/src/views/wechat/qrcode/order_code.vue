@@ -208,7 +208,7 @@
             return []
           }
           let city = this.patient.city
-          if (this.patient.city.indexOf('天津') > -1 || this.patient.city.indexOf('北京') > -1) {
+          if (this.patient.city.indexOf('天津') > -1 || this.patient.city.indexOf('北京') > -1 || this.patient.city.indexOf('上海') > -1) {
             city = '市辖区'
           }
           return [this.TextToCode[this.patient.province].code, this.TextToCode[this.patient.province][city].code, this.TextToCode[this.patient.province][city][this.patient.county].code]

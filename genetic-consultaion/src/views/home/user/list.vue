@@ -95,7 +95,7 @@
       <div>
         <el-form ref="form" :model="userResource" label-width="80px">
           <el-form-item label="姓名">
-            <el-input v-model="userResource.fullName"></el-input>
+            <el-input v-model="userResource.fullName"></el-input> 
           </el-form-item>
           <el-form-item label="手机号码">
             <el-input type="tel" v-model="userResource.cellphone"></el-input>
@@ -107,14 +107,22 @@
             <el-input v-model="userResource.email"></el-input>
           </el-form-item>
           <el-form-item label="所属医院" v-if="userResource.role === 2">
-            <el-select v-model="userResource.hospitalId" filterable placeholder="请选择">
-              <el-option
-                v-for="item in hospitalList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-              </el-option>
-            </el-select>
+            <el-autocomplete
+              class="inline-input"
+              v-model="userResource.hospitalName"
+              :fetch-suggestions="querySearch"
+              placeholder="请输入内容"
+              :trigger-on-focus="false"
+              @select="handleUserHospitalSelect"
+            ></el-autocomplete>
+<!--            <el-select v-model="userResource.hospitalId" filterable placeholder="请选择">-->
+<!--              <el-option-->
+<!--                v-for="item in hospitals"-->
+<!--                :key="item.id"-->
+<!--                :label="item.name"-->
+<!--                :value="item.id">-->
+<!--              </el-option>-->
+<!--            </el-select>-->
           </el-form-item>
           <el-form-item label="所属企业" v-else>
             <el-select v-model="userResource.companyId" filterable placeholder="请选择">
@@ -680,6 +688,9 @@ export default {
     },
     handleChannelSelect (item) {
       this.informedQrCode.hospitalId = item.id
+    },
+    handleUserHospitalSelect (item) {
+      this.userResource.hospitalId = item.id
     },
     downloadCode () {
       this.dialogCodeFormVisible = false

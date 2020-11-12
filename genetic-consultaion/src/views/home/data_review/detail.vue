@@ -104,18 +104,23 @@ export default {
         let _this = this
         res.data.informed.forEach(function (item) {
           let informed = item
-          _this.axios.get('oss/upload/show', {
-            params: {
-              objectKey: item.path,
-              bucket: item.type
-            }
-          }).then(res1 => {
-            informed['imagePath'] = _this.axios.defaults.baseURL.includes('https://')
-              ? res1.data.replace('http://', 'https://') : res1.data
+          if (item.path) {
+            _this.axios.get('oss/upload/show', {
+              params: {
+                objectKey: item.path,
+                bucket: item.type
+              }
+            }).then(res1 => {
+              informed['imagePath'] = _this.axios.defaults.baseURL.includes('https://')
+                ? res1.data.replace('http://', 'https://') : res1.data
+              _this.informedList.push(informed)
+            }).catch(err => {
+              console.log(err)
+            })
+          } else {
             _this.informedList.push(informed)
-          }).catch(err => {
-            console.log(err)
-          })
+          }
+
         })
       }).catch(err => {
         console.log(err)

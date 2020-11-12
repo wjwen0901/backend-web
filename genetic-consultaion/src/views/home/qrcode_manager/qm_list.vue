@@ -58,7 +58,7 @@
 </template>
 
 <script>
-  import Clipboard from 'clipboard';  
+  import Clipboard from 'clipboard';
   export default {
     name:'qm_list',
     data() {
@@ -69,7 +69,14 @@
         totalPage: 0,
         keyword:null,
         subscripType:null,
-        subscripTypeArr:[{name:'易得好康',value:'mdhcare'},{name:'易见康',value:'ru6c'},{name:'见山会诊',value:'gensultation'}],
+        subscripTypeArr:[
+          {name:'易得好康',value:'mdhcare'},
+          {name:'易见康',value:'ru6c'},
+          {name:'见山会诊',value:'gensultation'},
+          {name:'安易筛',value:'accuragen'},
+          {name:'迈基诺',value:'mygeno'},
+          {name:'诠见康',value:'qx'}
+          ],
         dialogVisible: false,
         codeUrl:''
       }
@@ -146,7 +153,7 @@
       },
       copy(done) {
         this.dialogVisible=false;
-        var clipboard = new Clipboard('.tag-read')  
+        var clipboard = new Clipboard('.tag-read')
       }
     },
     created () {

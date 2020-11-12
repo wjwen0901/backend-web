@@ -55,6 +55,31 @@
               <el-menu-item index="/brca/withdraw">提现记录</el-menu-item>
               <el-menu-item index="/brca/invoice">发票记录</el-menu-item>
               <el-menu-item index="/brca/express">快递查询</el-menu-item>
+              <el-menu-item index="/brca/exchange">积分兑换</el-menu-item>
+              <el-menu-item index="/brca/paper/report">纸质报告</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+          <el-submenu index="/wrj" v-if="sec.includes('system')">
+            <template slot="title">
+              <i class="el-icon-document"></i>
+              <span slot="title">维汝健</span>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item index="/wrj/order">订单</el-menu-item>
+              <el-menu-item index="/wrj/invoice">发票记录</el-menu-item>
+              <el-menu-item index="/wrj/express">快递查询</el-menu-item>
+              <el-menu-item index="/wrj/exchange">积分兑换</el-menu-item>
+              <el-menu-item index="/wrj/paper/report">纸质报告</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+          <el-submenu index="/accuragen" v-if="sec.includes('accuragen:manage')">
+            <template slot="title">
+              <i class="el-icon-document"></i>
+              <span slot="title">安易筛</span>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item index="/accuragen/channel">渠道管理</el-menu-item>
+              <el-menu-item index="/accuragen/paper/report">纸质报告</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-menu-item index="/order" v-if="sec.includes('order')">

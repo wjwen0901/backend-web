@@ -69,7 +69,7 @@
           <template slot-scope="scope">
             <el-button @click="toConfirm(scope.row)" type="text" size="small" v-if="scope.row.status == 1">审核提醒</el-button>
             <el-button @click="toDetail(scope.row.id)" type="text" size="small">查看订单</el-button>
-<!--            <el-button @click="showExpress(scope.row.id)" type="text" size="small" v-if="scope.row.status >= 2">查看物流</el-button>-->
+            <el-button @click="showExpress(scope.row.id)" type="text" size="small" v-if="scope.row.status >= 2">查看物流</el-button>
             <el-button @click="toExpress(scope.row)" type="text" size="small" v-if="scope.row.status == 1 || scope.row.status == 2">邮寄单据</el-button>
             <el-button @click="toExpress(scope.row)" type="text" size="small" v-if="scope.row.status == 3">重新邮寄单据</el-button>
           </template>

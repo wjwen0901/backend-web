@@ -88,7 +88,14 @@ export default {
           }
       };
       return {
-        subscripTypeArr:[{name:'易得好康',value:'mdhcare'},{name:'易见康',value:'ru6c'},{name:'见山会诊',value:'gensultation'}],
+        subscripTypeArr:[
+          {name:'易得好康',value:'mdhcare'},
+          {name:'易见康',value:'ru6c'},
+          {name:'见山会诊',value:'gensultation'},
+          {name:'安易筛',value:'accuragen'},
+          {name:'迈基诺',value:'mygeno'},
+          {name:'诠见康',value:'qx'},
+          ],
         userid:window.localStorage.userId,
         userArr:[],
         pushTypeArr:[{name:'文本',value:'text'},{name:'图片',value:'image'},{name:'图文素材',value:'article'}],
@@ -158,7 +165,7 @@ export default {
               params.append('title',this.ruleForm.title)
               params.append('filePath',this.ruleForm.filePath)
               params.append('sendUrl',this.ruleForm.sendUrl)
-              
+
               let instance = this.axios.create({
                 headers: {
                   'Authorization': window.localStorage.token,
@@ -249,5 +256,5 @@ export default {
       width:8%;float: left;
     }
   }
-  
+
 </style>

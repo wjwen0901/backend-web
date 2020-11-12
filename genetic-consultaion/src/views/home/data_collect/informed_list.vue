@@ -145,6 +145,7 @@ export default {
         name: 'InformedEdit',
         params: { informedId: id }
       })
+      _hmt.push(['_trackEvent', '知情同意', '编辑', 'informedId', id]);
     },
     toAllDetail (item) {
       this.$router.push({

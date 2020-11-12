@@ -10,7 +10,7 @@ const BASE_URL_API = "https://www.mdhcare.cn/mdhcare-backend/";
 const BASE_URL = "https://z.mdhcare.cn/";
 
 const args = process.argv.splice(2);
-let names = args[1].substring(1, args[1].length - 2).split(',');
+let names = args[1].substring(1, args[1].length - 1).split(',');
 const filesName = names;
 const reportId = args[0];
 
@@ -26,8 +26,9 @@ filesName.forEach((item, index) => {
             waitUntil: 'networkidle0',
             timeout: 0
         });
+        const fileName = item.indexOf('\"') > -1 ? item.replace( new RegExp('"',"g"), "") : item;
         await page.pdf({
-            path: pathName + item + '.pdf',
+            path: pathName + fileName + '.pdf',
             format: 'A4',
             printBackground: true,
         });
@@ -59,7 +60,7 @@ filesName.forEach((item, index) => {
 
 
 
-            var states = fs.statSync(path.join(pathName, item + '.pdf'))
+            var states = fs.statSync(path.join(pathName, fileName + '.pdf'))
             if (states.isFile()) {
                 let client = new OSS({
                     region: 'oss-cn-beijing',
@@ -72,11 +73,11 @@ filesName.forEach((item, index) => {
                 console.log(client);
                 let newName = key + uniqueKey + '.pdf';
                 console.log(newName);
-                console.log(path.join(pathName, item + '.pdf'));
+                console.log(path.join(pathName, fileName + '.pdf'));
                 async function put() {
                     try {
                         // object表示上传到OSS的Object名称，localfile表示本地文件或者文件路径
-                        let r1 = await client.put(newName, path.join(pathName, item + '.pdf'));
+                        let r1 = await client.put(newName, path.join(pathName, fileName + '.pdf'));
                         console.log('put success: %j', r1);
                         // let r2 = await client.get(newName);
                         // console.log('get success: %j', r2);

@@ -168,7 +168,7 @@ export default {
           return []
         }
         let city = this.hospital.city
-        if (this.hospital.city.indexOf('天津') > -1 || this.hospital.city.indexOf('北京') > -1) {
+        if (this.hospital.city.indexOf('天津') > -1 || this.hospital.city.indexOf('北京') > -1 || this.hospital.city.indexOf('上海') > -1) {
           city = '市辖区'
         }
         return [this.TextToCode[this.hospital.province].code, this.TextToCode[this.hospital.province][city].code, this.TextToCode[this.hospital.province][city][this.hospital.county].code]

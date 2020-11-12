@@ -2,7 +2,7 @@
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>BRCA轻松检</el-breadcrumb-item>
-      <el-breadcrumb-item>发票记录</el-breadcrumb-item>
+      <el-breadcrumb-item>用户申请记录</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="user-container">
       <div>
@@ -14,29 +14,27 @@
         border
         style="width: 100%">
         <el-table-column
-          prop="invoiceType"
-          label="发票类型"
+          prop="purpose"
+          label="申请类型"
           width="110">
         </el-table-column>
         <el-table-column
-          prop="title"
-          label="抬头"
+          prop="productName"
+          label="产品名称"
           width="160">
         </el-table-column>
         <el-table-column
-          prop="dutyNumber"
-          label="税号"
+          prop="sample_code"
+          label="样本编号"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="price"
-          label="金额"
-          width="80">
-        </el-table-column>
-        <el-table-column
-          prop="statusStr"
+          prop="status"
           label="当前状态"
           width="80">
+          <template slot-scope="scope">
+            {{scope.row.status | invoiceStatusFilter}}
+          </template>
         </el-table-column>
         <el-table-column
           prop="statusStr"
@@ -67,11 +65,12 @@
           label="操作"
           width="240">
           <template slot-scope="scope">
-            <el-button @click="toConfirm(scope.row)" type="text" size="small" v-if="scope.row.status == 1">审核提醒</el-button>
+<!--            <el-button @click="toConfirm(scope.row)" type="text" size="small" v-if="scope.row.status == 1">审核提醒</el-button>-->
+            <el-button @click="toConfirm(scope.row)" type="text" size="small">审核提醒</el-button>
             <el-button @click="toDetail(scope.row.id)" type="text" size="small">查看订单</el-button>
-<!--            <el-button @click="showExpress(scope.row.id)" type="text" size="small" v-if="scope.row.status >= 2">查看物流</el-button>-->
-            <el-button @click="toExpress(scope.row)" type="text" size="small" v-if="scope.row.status == 1 || scope.row.status == 2">邮寄单据</el-button>
-            <el-button @click="toExpress(scope.row)" type="text" size="small" v-if="scope.row.status == 3">重新邮寄单据</el-button>
+<!--            <el-button @click="showExpress(scope.row.id)" type="text" size="small" v-if="scope.row.status == 2">查看物流</el-button>-->
+            <el-button @click="toExpress(scope.row)" type="text" size="small" v-if="scope.row.status == 1">邮寄单据</el-button>
+            <el-button @click="toExpress(scope.row)" type="text" size="small" v-if="scope.row.status == 2">重新邮寄单据</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -84,6 +83,8 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="totalPage">
       </el-pagination>
+
+
 
       <el-dialog title="订单详情" :visible.sync="dialogEditFormVisible">
         <div>
@@ -242,12 +243,13 @@ export default {
     },
     getData () {
       this.resourceList = []
-      this.axios.get('invoice/list', {
+      this.axios.get('report/paper', {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           userId: window.localStorage.userId,
-          condition: this.condition
+          group: 'BRCA轻松检'
+          // group: '安易筛'
         }
       }).then(res => {
         this.list = res.data.list
@@ -280,9 +282,9 @@ export default {
       let _this = this
       instance({
         method: 'post',
-        url: 'sf/invoice',
+        url: 'sf/report',
         data: this.expressItem,
-        params: {invoiceId: this.expressItem.invoiceId},
+        params: {goodsId: this.expressItem.id},
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
@@ -305,7 +307,7 @@ export default {
       this.dialogEditFormVisible = true
     },
     toExpress (invoice) {
-      this.expressItem.invoiceId = invoice.id
+      this.expressItem.goodsId = invoice.id
       this.expressItem.dContact = invoice.receiver.receiver
       this.expressItem.dTel = invoice.receiver.cellphone
       this.expressItem.dProvince = invoice.receiver.province
@@ -330,14 +332,7 @@ export default {
     },
     toConfirm (invoice) {
       this.expressItem = invoice
-      this.expressItem.invoiceId = invoice.id
-      this.expressItem.dContact = invoice.receiver.receiver
-      this.expressItem.dTel = invoice.receiver.cellphone
-      this.expressItem.dProvince = invoice.receiver.province
-      this.expressItem.dCity = invoice.receiver.city
-      this.expressItem.dCounty = invoice.receiver.county
-      this.expressItem.dAddress = invoice.receiver.address
-      this.expressItem.receiverId = invoice.receiverId
+      this.expressItem.goodsId = invoice.id
       this.dialogConfirmFormVisible = true
     },
 
@@ -351,7 +346,7 @@ export default {
       let _this = this
       instance({
         method: 'put',
-        url: 'invoice/confirm/' + this.expressItem.invoiceId,
+        url: 'report/confirm/' + this.expressItem.goodsId,
         data: this.expressItem,
         params: {note: this.expressItem.note},
         headers: {
@@ -377,6 +372,15 @@ export default {
     }
   },
   filters: {
+    invoiceStatusFilter (status) {
+      if (status <= 1) {
+        return '已审核'
+      } else if (status == 2) {
+        return '已审核，待寄出'
+      } else if (status == 3) {
+        return '已寄出'
+      }
+    }
   },
   computed: {
     areaInfo: {

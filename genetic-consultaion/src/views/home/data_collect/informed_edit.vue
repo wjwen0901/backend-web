@@ -82,6 +82,7 @@
             <el-form-item label="备注">
               <el-input type="textarea" v-model="informedContent.remark"></el-input>
             </el-form-item>
+
             <h4>送检信息</h4>
             <el-form-item label="订单编号">
               <el-input v-model="informedContent.orderNo"></el-input>
@@ -116,11 +117,17 @@
                 </el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="诊室">
+              <el-input v-model="informedContent.room"></el-input>
+            </el-form-item>
             <el-form-item label="送检医生">
               <el-input v-model="informedContent.doctor"></el-input>
             </el-form-item>
             <el-form-item label="条码编号">
               <el-input v-model="informedContent.sampleCode"></el-input>
+            </el-form-item>
+            <el-form-item label="样本类型">
+              <el-input v-model="informedContent.sampleType"></el-input>
             </el-form-item>
             <el-form-item label="采样日期">
                 <el-date-picker
@@ -210,7 +217,7 @@
                 <el-radio label="1">否</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="肿瘤家族史">
+            <el-form-item label="肿瘤家族史(兼容旧版)">
               <el-input type="textarea" v-model="familyTumorHistory"></el-input>
             </el-form-item>
 
@@ -230,22 +237,136 @@
             </el-form-item>
 
             <div>
-              <h5>家族史：</h5>
+              <h5>肿瘤遗传史：</h5>
               <el-form-item label="患癌亲属">
                 <el-radio-group v-model="hasFamilyTumorHistory">
                   <el-radio label="有">有</el-radio>
                   <el-radio label="无">无</el-radio>
                 </el-radio-group>
               </el-form-item>
-              <el-form-item label="亲属何种癌种">
-                <el-input v-model="normalFamilyTumorHistory"></el-input>
+
+              <div v-if="hasFamilyTumorHistory == '有'">
+                <div class="cell-group" v-for="family in familyHistory">
+                  <el-form-item label="与患者关系">
+                    <el-input v-model="family.familyTumorRelation"></el-input>
+                  </el-form-item>
+                  <el-form-item label="亲属何种癌种">
+                    <el-input v-model="family.familyTumorHistory"></el-input>
+                  </el-form-item>
+                  <el-form-item label="发病年龄">
+                    <el-input v-model="family.familyTumorAge"></el-input>
+                  </el-form-item>
+                  <el-divider></el-divider>
+                </div>
+                <el-button type="text" @click="addFamilyHistory">添加一个人</el-button>
+              </div>
+
+            </div>
+            <div>
+              <h5>个人健康状态：</h5>
+              <el-form-item label="吸烟史">
+                <el-radio-group v-model="personalHealthy.smoking">
+                  <el-radio label="偶尔">偶尔</el-radio>
+                  <el-radio label="经常">经常</el-radio>
+                  <el-radio label="不抽烟">不抽烟</el-radio>
+                  <el-radio label="已戒烟">已戒烟</el-radio>
+                </el-radio-group>
               </el-form-item>
-              <el-form-item label="与患者关系">
-                <el-input v-model="familyTumorRelation"></el-input>
+              <el-form-item label="饮酒史">
+                <el-radio-group v-model="personalHealthy.drinking">
+                  <el-radio label="少量">少量</el-radio>
+                  <el-radio label="经常">经常</el-radio>
+                  <el-radio label="不饮酒">不饮酒</el-radio>
+                  <el-radio label="已戒酒">已戒酒</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="睡眠状况">
+                <el-checkbox-group v-model="personalHealthy.sleeping">
+                  <el-checkbox label="长期熬夜"></el-checkbox>
+                  <el-checkbox label="长期失眠"></el-checkbox>
+                  <el-checkbox label="长期压力"></el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+              <el-form-item label="血糖血压">
+                <el-checkbox-group v-model="personalHealthy.blood_suger">
+                  <el-checkbox label="高血糖"></el-checkbox>
+                  <el-checkbox label="高血压"></el-checkbox>
+                </el-checkbox-group>
               </el-form-item>
             </div>
 
             <div>
+              <h5>既往史：</h5>
+              <el-form-item label="胃">
+                <el-checkbox-group v-model="diseaseHistory.stomach">
+                  <el-checkbox label="胃炎"></el-checkbox>
+                  <el-checkbox label="胃息肉"></el-checkbox>
+                  <el-checkbox label="幽门螺旋杆菌感染"></el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+              <el-form-item label="结直肠">
+                <el-checkbox-group v-model="diseaseHistory.colorectal">
+                  <el-checkbox label="肠炎"></el-checkbox>
+                  <el-checkbox label="肠息肉"></el-checkbox>
+                  <el-checkbox label="大便改变（2周以上腹泻，大便变细，便血、粘液便等）"></el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+              <el-form-item label="肝">
+                <el-checkbox-group v-model="diseaseHistory.liver">
+                  <el-checkbox label="乙肝感染"></el-checkbox>
+                  <el-checkbox label="丙肝感染"></el-checkbox>
+                  <el-checkbox label="脂肪肝"></el-checkbox>
+                  <el-checkbox label="肝硬化"></el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+              <el-form-item label="食管">
+                <el-checkbox-group v-model="diseaseHistory.esophagus">
+                  <el-checkbox label="高盐食物"></el-checkbox>
+                  <el-checkbox label="酸返流"></el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+              <el-form-item label="胰腺">
+                <el-checkbox-group v-model="diseaseHistory.pancreas">
+                  <el-checkbox label="胰腺炎"></el-checkbox>
+                  <el-checkbox label="糖尿病"></el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+              <el-form-item label="乳腺">
+                <el-checkbox-group v-model="diseaseHistory.breast">
+                  <el-checkbox label="乳腺纤维瘤"></el-checkbox>
+                  <el-checkbox label="乳腺小叶增生"></el-checkbox>
+                  <el-checkbox label="乳腺结节／包块"></el-checkbox>
+                  <el-checkbox label="BRCA基因突变"></el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+              <el-form-item label="卵巢">
+                <el-checkbox-group v-model="diseaseHistory.ovary">
+                  <el-checkbox label="卵巢囊肿"></el-checkbox>
+                  <el-checkbox label="BRCA基因突变"></el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+            </div>
+            <div>
+              <h5>用药史（近14天如服用药物或保健品请注明）</h5>
+              <el-form-item label="保健品名称">
+                <el-input v-model="drugHistory.drugHealth"></el-input>
+              </el-form-item>
+              <el-form-item label="药物名称">
+                <el-input v-model="drugHistory.drugTreatment"></el-input>
+              </el-form-item>
+            </div>
+            <div>
+              <el-divider content-position="left">以下为兼容旧版知情</el-divider>
+              <h5>家族史（只一人）：</h5>
+              <el-form-item label="癌种(旧版)">
+                <el-input v-model="normalFamilyTumorHistory"></el-input>
+              </el-form-item>
+              <el-form-item label="患者关系(旧版)">
+                <el-input v-model="familyTumorRelation"></el-input>
+              </el-form-item>
+              <el-form-item label="发病年龄(旧版)">
+                <el-input v-model="familyTumorAge"></el-input>
+              </el-form-item>
               <h5>个人史：</h5>
               <el-form-item label="吸烟史">
                 <el-radio-group v-model="diseaseHistory.smoking">
@@ -366,14 +487,32 @@ export default {
       tnm: '',
       personHistory: {},
       moreInfo: [],
+      familyHistory: [{
+        familyTumorRelation: '',
+        familyTumorHistory: '',
+        familyTumorAge: '',
+      }],
 
       hasFamilyTumorHistory:  null,
       familyTumorHistory:'',
       normalFamilyTumorHistory:'',
       familyTumorRelation:'',
-      diseaseHistory: {
-        poison: []
+      familyTumorAge:'',
+      personalHealthy: {
+        sleeping: [],
+        blood_suger: [],
       },
+      diseaseHistory: {
+        poison: [],
+        breast: [],
+        ovary: [],
+        stomach: [],
+        colorectal: [],
+        liver: [],
+        esophagus: [],
+        pancreas: [],
+      },
+      drugHistory: {}
     }
   },
   props: {},
@@ -401,29 +540,21 @@ export default {
             this.moreInfo.forEach(item => {
               if (item.key == '组织分型') {
                 this.zuzhifenxing = item.value
-              }
-              if (item.key == 'FIGO分期') {
+              } else if (item.key == 'FIGO分期') {
                 this.figo = item.value
-              }
-              if (item.key == '治疗阶段') {
+              } else if (item.key == '治疗阶段') {
                 this.jieduan = item.value
-              }
-              if (item.key == '分子分型') {
+              } else if (item.key == '分子分型') {
                 this.fenzifenxing = item.value
-              }
-              if (item.key == 'TNM分期') {
+              } else if (item.key == 'TNM分期') {
                 this.tnm = item.value
-              }
-              if (item.key == '病程') {
+              } else if (item.key == '病程') {
                 this.bingcheng = item.value
-              }
-              if (item.key == '癌种名称') {
+              } else if (item.key == '癌种名称') {
                 this.otherDisease = item.value
-              }
-              if (item.key == '肿瘤家族史') {
+              } else if (item.key == '肿瘤家族史') {
                 this.familyTumorHistory = item.value
-              }
-              if (item.key == '家族史') {
+              } else if (item.key == '家族史') {
                 let familyHistory = item.value
                 familyHistory.forEach(item1 => {
                   if (item1.key == '是否有家族史') {
@@ -432,12 +563,14 @@ export default {
                   if (item1.key == '亲属何种癌种') {
                     this.normalFamilyTumorHistory = item1.value
                   }
-                  if (item1.key == '与家属关系') {
+                  if (item1.key == '与家属关系' || item1.key == '与受检者关系') {
                     this.familyTumorRelation = item1.value
                   }
+                  if (item1.key == '发病年龄') {
+                    this.familyTumorAge = item1.value
+                  }
                 })
-              }
-              if (item.key == '个人史') {
+              } else if (item.key == '个人史') {
                 let personHistory = item.value
                 personHistory.forEach(item1 => {
                   if (item1.key == '吸烟史') {
@@ -461,6 +594,71 @@ export default {
                   if (item1.key == '是否长期接触毒害物质') {
                     this.diseaseHistory.poison = item1.value
                   }
+                })
+              } else if (item.key == '肿瘤遗传史') {
+                this.familyHistory = []
+                for (let _familyJson of item.value) {
+
+                  if (Object.prototype.toString.call(_familyJson) === '[object Array]') {
+                    let _family = {}
+                    _familyJson.forEach(_item1 => {
+                      if (_item1.key == '肿瘤类型') {
+                        _family.familyTumorHistory = _item1.value
+                      } else if (_item1.key == '患者关系') {
+                        _family.familyTumorRelation = _item1.value
+                      } else if (_item1.key == '发病年龄') {
+                        _family.familyTumorAge = _item1.value
+                      }
+                    })
+                    this.familyHistory.push(_family)
+                    console.log(this.familyHistory)
+                  } else {
+                    if (_familyJson.key == '是否有家族史') {
+                      this.hasFamilyTumorHistory = _familyJson.value
+                    }
+                  }
+                }
+              } else if (item.key == '个人健康状态') {
+                let _personalHealthy = item.value
+                _personalHealthy.forEach(item1 => {
+                  if (item1.key == '吸烟史') {
+                    this.personalHealthy.smoking = item1.value
+                  } else if (item1.key == '饮酒史') {
+                    this.personalHealthy.drinking = item1.value
+                  } else if (item1.key == '睡眠状况') {
+                    this.personalHealthy.sleeping = item1.value
+                  } else if (item1.key == '血糖血压') {
+                    this.personalHealthy.blood_suger = item1.value
+                  }
+                })
+              } else if (item.key == '既往史') {
+                let _diseaseHistory = item.value
+                _diseaseHistory.forEach(item1 => {
+                  if (item1.key == '胃') {
+                    this.diseaseHistory.stomach = item1.value
+                  } else if (item1.key == '结直肠') {
+                    this.diseaseHistory.colorectal = item1.value
+                  } else if (item1.key == '肝') {
+                    this.diseaseHistory.liver = item1.value
+                  } else if (item1.key == '食管') {
+                    this.diseaseHistory.esophagus = item1.value
+                  } else if (item1.key == '胰腺') {
+                    this.diseaseHistory.pancreas = item1.value
+                  } else if (item1.key == '乳腺') {
+                    this.diseaseHistory.breast = item1.value
+                  } else if (item1.key == '卵巢') {
+                    this.diseaseHistory.ovary = item1.value
+                  }
+                })
+              } else if (item.key == '用药史') {
+                let _drugHistory = item.value
+                _drugHistory.forEach(item1 => {
+                  if (item1.key == '保健品名称') {
+                    this.drugHistory.drugHealth = item1.value
+                  } else if (item1.key == '药物名称') {
+                    this.drugHistory.drugTreatment = item1.value
+                  }
+
                 })
               }
             })
@@ -570,14 +768,77 @@ export default {
               value: this.familyTumorRelation
             })
           }
+          if (this.familyTumorAge) {
+            familyHistory.push({
+              key: '发病年龄',
+              value: this.familyTumorAge
+            })
+          }
         }
         moreInfo.push({
           key: '家族史',
           value: familyHistory
         })
       }
+      if (this.hasFamilyTumorHistory) {
+        let familyHistory = []
+        familyHistory.push({
+          key: '是否有家族史',
+          value: this.hasFamilyTumorHistory
+        })
 
-
+        for(let family of this.familyHistory) {
+          let _aPerson = []
+          if (family.familyTumorHistory !== '') {
+            _aPerson.push({
+              key: '肿瘤类型',
+              value: family.familyTumorHistory
+            })
+          }
+          if (family.familyTumorRelation !== '') {
+            _aPerson.push({
+              key: '患者关系',
+              value: family.familyTumorRelation
+            })
+          }
+          familyHistory.push(_aPerson)
+        }
+        moreInfo.push({
+          key: '肿瘤遗传史',
+          value: familyHistory
+        })
+      }
+      if (this.personalHealthy) {
+        let personHistory = []
+        if (this.personalHealthy.smoking) {
+          personHistory.push({
+            key: '吸烟史',
+            value: this.personalHealthy.smoking
+          })
+        }
+        if (this.personalHealthy.drinking) {
+          personHistory.push({
+            key: '饮酒史',
+            value: this.personalHealthy.drinking
+          })
+        }
+        if (this.personalHealthy.sleeping) {
+          personHistory.push({
+            key: '睡眠状况',
+            value: this.personalHealthy.sleeping
+          })
+        }
+        if (this.personalHealthy.blood_suger) {
+          personHistory.push({
+            key: '血糖血压',
+            value: this.personalHealthy.blood_suger
+          })
+        }
+        moreInfo.push({
+          key: '个人健康状态',
+          value: personHistory
+        })
+      }
       if (this.diseaseHistory) {
         let personHistory = []
         if (this.diseaseHistory && this.diseaseHistory.smoking) {
@@ -626,6 +887,78 @@ export default {
         moreInfo.push({
           key: '个人史',
           value: personHistory
+        })
+      }
+      if (this.diseaseHistory) {
+        let diseaseHistory = []
+
+        console.log(this.diseaseHistory.stomach)
+        if (this.diseaseHistory.stomach) {
+          diseaseHistory.push({
+            key: '胃',
+            value: this.diseaseHistory.stomach
+          })
+        }
+        if (this.diseaseHistory.colorectal) {
+          diseaseHistory.push({
+            key: '结直肠',
+            value: this.diseaseHistory.colorectal
+          })
+        }
+        if (this.diseaseHistory.liver) {
+          diseaseHistory.push({
+            key: '肝',
+            value: this.diseaseHistory.liver
+          })
+        }
+        if (this.diseaseHistory.esophagus) {
+          diseaseHistory.push({
+            key: '食管',
+            value: this.diseaseHistory.esophagus
+          })
+        }
+        if (this.diseaseHistory.pancreas) {
+          diseaseHistory.push({
+            key: '胰腺',
+            value: this.diseaseHistory.pancreas
+          })
+        }
+        if (this.diseaseHistory.breast) {
+          diseaseHistory.push({
+            key: '乳腺',
+            value: this.diseaseHistory.breast
+          })
+        }
+        if (this.diseaseHistory.ovary) {
+          diseaseHistory.push({
+            key: '卵巢',
+            value: this.diseaseHistory.ovary
+          })
+        }
+
+        moreInfo.push({
+          key: '既往史',
+          value: diseaseHistory
+        })
+      }
+      if (this.drugHistory) {
+        let _drugHistory = []
+        if (this.drugHistory.drugHealth) {
+          _drugHistory.push({
+            key: '保健品名称',
+            value: this.drugHistory.drugHealth
+          })
+        }
+        if (this.drugHistory.drugTreatment) {
+          _drugHistory.push({
+            key: '药物名称',
+            value: this.drugHistory.drugTreatment
+          })
+        }
+
+        moreInfo.push({
+          key: '用药史',
+          value: _drugHistory
         })
       }
       this.informedContent.moreInfo = JSON.stringify(moreInfo)
@@ -692,6 +1025,13 @@ export default {
     updateSmsStatus (status) {
       this.smsStatus = status
       this.informedContent.smsStatus = status
+    },
+    addFamilyHistory () {
+      this.familyHistory.push({
+        familyTumorRelation: '',
+        familyTumorHistory: '',
+        familyTumorAge: '',
+      })
     }
   },
   filters: {},
