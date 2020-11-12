@@ -104,6 +104,14 @@ export default {
       })
     },
     toPay () {
+      if (!this.patient.name) {
+        this.$message.error('请填写受检者姓名')
+        return
+      }
+      if (!this.patient.cellphone) {
+        this.$message.error('请填写受检者手机号')
+        return
+      }
       let instance = this.axios.create({
         headers: {
           'Authorization': window.localStorage.token,

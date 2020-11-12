@@ -40,6 +40,7 @@
         <input type="text" v-model="doctor" placeholder="请输入医生姓名">
         <span class="error-tip" v-if="doctorError">医生姓名不可为空</span>
       </div>
+
       <div class="mdh-upload-row">
         <label>选择文件</label>
         <div class="upload-row">
@@ -62,14 +63,26 @@
           </ul>
           <div id="container"></div>
         </div>
-      </div>
+      </div> 
+      <!-- <input type="file" @change="fileChangeBtn"> -->
+
       <div class="btn-row">
         <el-button type="primary" @click="toUpload">开始上传</el-button>
+      </div>
+
+    </div>
+    <!-- 遮罩  -->
+    <div class="mark" v-if='markflag'>
+      <img src="../../assets/yidehaokang/icon1.png" alt="" class='tishi'>
+      <div class="mark-content">
+          <img src="../../assets/yidehaokang/icon3.png" alt="" class='tip'>
+          <p class='bundk'>您的微信不支持文件上传</p>
+          <div class="sand">点击<img src="../../assets/yidehaokang/icon2.png" alt="" class='sandian'></div>
+          <div class="liulanq">选择从“浏览器”打开</div>
       </div>
     </div>
   </el-container>
 </template>
-
 <script>
 import plupload from 'plupload'
 export default {
@@ -79,8 +92,8 @@ export default {
       userId: 0,
       readyName: '',
       readyCellphone: '',
-      name: '',
-      cellphone: '',
+      name: ''||window.localStorage.fullName,
+      cellphone: ''||window.localStorage.cellphone,
       hospitalId: 0,
       hospitalName: '',
       deptName: '',
@@ -114,7 +127,9 @@ export default {
       orderNo: this.$route.query.orderNo,
       loading: null,
 
-      companyId: parseInt(this.$route.query.companyId)
+      companyId: parseInt(this.$route.query.companyId),
+      markflag:false
+
     }
   },
   props: {
@@ -315,8 +330,16 @@ export default {
           //   }
           // },
           FilesAdded: (up, files) => {
-            that.fileList = up.files
-            that.fileNum = up.files.length
+            let reg=/\./ig;
+            if(!reg.test(up.files[0].name)){
+              up.files[0].name=up.files[0].name+'.pdf';
+               up.files[0].type='application/pdf';
+              that.fileList = up.files
+              that.fileNum = up.files.length
+            }else{
+              that.fileList = up.files
+              that.fileNum = up.files.length
+            }
           },
           BeforeUpload: (up, file) => {
             that.loading = that.$loading({
@@ -331,8 +354,8 @@ export default {
                 'Content-Type': 'application/json'
               }
             })
-            console.log(that.userId)
-            if (that.userId === 0) {
+            if (that.userId === 0||that.userId===''||that.userId===undefined||that.userId===null) {
+
               instance({
                 method: 'post',
                 url: 'user/wechat/add',
@@ -408,8 +431,20 @@ export default {
                   message: '上传成功',
                   type: 'success',
                   center: true,
-                  customClass: 'my-message'
+                  customClass: 'my-message',
+                  duration:2000,
+                  onClose(){
+                    // 判断是否是微信
+                    var ua = navigator.userAgent.toLowerCase();
+                    if (!(ua.match(/MicroMessenger/i) == "micromessenger")) {
+                        // window.location.href('weixin://dl/business/?ticket=t852de9efd9b540df8b355699d4f2ed63');
+                        let url=window.location.href;
+                        that.$router.push({path: '/wechat/browser/upload', query: {num:that.fileNum,path: url}})
+                    } 
+                  }
                 })
+                
+
               }).catch(err => {
                 that.$notify({
                   message: err.data.message,
@@ -438,7 +473,7 @@ export default {
             }
           },
           UploadComplete: (up) => {
-            console.log(up)
+            // console.log(up)
             const param = {
               userId: this.userId,
               count: up.files.length
@@ -462,11 +497,16 @@ export default {
           Error: (up, err) => {
             console.log('上传失败：', err, that.onError, up)
             if (err.code === -600) {
+
               this.$message({
                 message: '文件大小超出限制，限制大小为5GB',
                 type: 'error',
                 customClass: 'my-message'
               })
+              if(up.files.length==0){
+                that.markflag=true;
+              }
+
             } else if (err.status === 403) {
               this.$message({
                 message: '页面失效，请刷新页面后重新上传文件!',
@@ -512,7 +552,6 @@ export default {
         window.localStorage.dept = this.$route.query.did
         window.localStorage.deptName = this.$route.query.dname
       }
-
       if (this.$route.query.openid !== undefined) {
         this.axios.get('user/openid', {
           params: {
@@ -783,5 +822,46 @@ export default {
   .order-no {
     padding: 10px 15px;
     font-size: 14px;
+  }
+  .mark{
+    width:100%;height:100%;background: rgba(0, 0, 0, .7);position: fixed;top:0;left:0;z-index: 999;
+    .tishi{
+      width: 84px;height: 84px;position: absolute;top: 72px;right: 31px;
+    }
+    .mark-content{
+      width:250px;
+      height:200px;
+      border:1px dashed rgba(250,250,250,0.63);
+      border-radius:29px;margin: 153px auto;
+      .tip{
+        margin: 16px auto;display: block;width: 35px;
+      }
+      .bundk{
+        font-size:18px;
+        font-family:Source Han Sans SC;
+        color:rgba(255,255,255,1);
+        line-height: 18px;
+        padding-left: 27px;
+        margin-bottom: 30px;
+      }
+      .sand{
+        font-size:18px;
+        font-family:Source Han Sans SC;
+        color:rgba(255,255,255,1);
+        line-height: 18px;
+        padding-left: 27px;
+        margin-bottom: 25px;
+        img{
+          width: 17px;height:4px;margin-left: 7px;
+        }
+      }
+      .liulanq{
+        font-size:18px;
+        font-family:Source Han Sans SC;
+        color:rgba(255,255,255,1);
+        line-height: 18px;
+        padding-left: 27px;
+      }
+    }
   }
 </style>

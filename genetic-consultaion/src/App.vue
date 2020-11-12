@@ -50,11 +50,14 @@ body {
   height: 40px;
   line-height: 40px;
 }
+.clearfix {
+  clear: both;
+}
 .clearfix:after {
   visibility: hidden;
   display: block;
   font-size: 0;
-  content: " ";
+  content: ".";
   clear: both;
   height: 0;
 }

@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="24">
         <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item>信息提取</el-breadcrumb-item>
+          <el-breadcrumb-item>知情同意</el-breadcrumb-item>
           <el-breadcrumb-item :to="{ path: '/informed/list' }">知情列表</el-breadcrumb-item>
           <el-breadcrumb-item>详情</el-breadcrumb-item>
         </el-breadcrumb>
@@ -12,6 +12,7 @@
     <el-row>
       <el-col :span="12">
         <div class="user-container">
+
           <el-form ref="informedForm" :model="informedContent" label-width="80px" size="mini" class="edit-form">
             <el-form-item label="订单编号">
               {{informedContent.orderNo}}
@@ -70,6 +71,7 @@
                 {{informedContent.email}}
               </el-col>
             </el-form-item>
+
             <el-form-item label="地址">
               <el-cascader class="width-100-p"
                 :options="regionData"
@@ -86,15 +88,16 @@
           </el-form>
         </div>
       </el-col>
-      <el-col :span="12">
-        <div class="img-content">
-          <!--<img :src="imagePath">-->
-          <img :src="imagePath" v-if="informedContent.mimeType != 'application/pdf'">
-          <object :data="imagePath" type="application/pdf" width="100%" height="700px" v-else>
-            <embed :src="imagePath">
-          </object>
-        </div>
-      </el-col>
+<!--      <el-col :span="12">-->
+<!--        <div class="img-content">-->
+<!--          &lt;!&ndash;<img :src="imagePath">&ndash;&gt;-->
+<!--          <img :src="imagePath" v-if="informedContent.mimeType != 'application/pdf'">-->
+<!--          <object :data="imagePath" type="application/pdf" width="100%" height="700px" v-else>-->
+<!--            <embed :src="imagePath">-->
+<!--          </object>-->
+<!--        </div>-->
+<!--      </el-col>-->
+
     </el-row>
   </div>
 </template>

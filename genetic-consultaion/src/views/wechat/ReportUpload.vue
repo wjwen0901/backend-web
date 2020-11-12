@@ -17,6 +17,7 @@
           <label>电话</label>
           <input type="text" v-model="cellphone" placeholder="请输入手机号">
           <span class="error-tip" v-if="cellphoneError">手机号不可为空</span>
+          <span class="error-tip" v-if="cellphoneError1">请输入正确的手机号</span>
         </div>
       </div>
       <div class="mdh-upload-row">
@@ -46,6 +47,16 @@
         <el-button type="primary" @click="toUpload">开始上传</el-button>
       </div>
     </div>
+     <!-- 遮罩 -->
+    <div class="mark" v-if='markflag'>
+      <img src="../../assets/yidehaokang/icon1.png" alt="" class='tishi'>
+      <div class="mark-content">
+          <img src="../../assets/yidehaokang/icon3.png" alt="" class='tip'>
+          <p class='bundk'>您的微信不支持文件上传</p>
+          <div class="sand">点击<img src="../../assets/yidehaokang/icon2.png" alt="" class='sandian'></div>
+          <div class="liulanq">选择从“浏览器”打开</div>
+      </div>
+    </div>
   </el-container>
 </template>
 
@@ -62,6 +73,7 @@ export default {
       cellphone: '',
       nameError: false,
       cellphoneError: false,
+      cellphoneError1: false,
       fileError: false,
       fileNum: 0,
 
@@ -81,7 +93,8 @@ export default {
       fileList: [],
       uploader: {},
 
-      hasUserInfo: false
+      hasUserInfo: false,
+      markflag:false
     }
   },
   props: {
@@ -110,6 +123,14 @@ export default {
       if (this.cellphone.trim() === '') {
         this.cellphoneError = true
         return false
+      }else{
+        this.cellphoneError = false
+      }
+      if(!(/^1[3456789]\d{9}$/.test(this.cellphone))){
+        this.cellphoneError1 = true
+        return false
+      }else{
+        this.cellphoneError1 = false
       }
       if (this.fileNum === 0) {
         this.fileError = true
@@ -237,10 +258,52 @@ export default {
         },
         init: {
           FilesAdded: (up, files) => {
-            that.fileList = up.files
-            that.fileNum = up.files.length
+            let reg=/\./ig;
+            if(!reg.test(up.files[0].name)){
+              up.files[0].name=up.files[0].name+'.pdf';
+              up.files[0].type='application/pdf';
+              that.fileList = up.files
+              that.fileNum = up.files.length
+            }else{
+              that.fileList = up.files
+              that.fileNum = up.files.length
+            }
+            console.log(that.fileList)
           },
           BeforeUpload: (up, file) => {
+            that.loading = that.$loading({
+              lock: true,
+              text: 'Loading',
+              spinner: 'el-icon-loading',
+              background: 'rgba(0, 0, 0, 0.7)'
+            })
+            let instance = this.axios.create({
+              headers: {
+                'Authorization': window.localStorage.token,
+                'Content-Type': 'application/json'
+              }
+            })
+            console.log(that.userId)
+            if (that.userId === 0||that.userId===''||that.userId===undefined||that.userId===null) {
+              instance({
+                method: 'post',
+                url: 'user/wechat/add',
+                params: {
+                  openId: that.$route.query.openid,
+                  name: that.name,
+                  cellphone: that.cellphone,
+                  companyId: that.$route.query.companyId
+                },
+                headers: {
+                  'X-Requested-With': 'XMLHttpRequest',
+                  'Content-Type': 'application/json',
+                  'openId': that.$route.query.openid
+                }
+              }).then(function (res) {
+                console.log(res.data)
+                that.userId = res.data.userId
+              })
+            }
             that.setUploadParam(up, file.name, true)
           },
           UploadProgress: (up, file) => {
@@ -270,8 +333,19 @@ export default {
                   message: '上传成功',
                   type: 'success',
                   center: true,
-                  customClass: 'my-message'
+                  customClass: 'my-message',
+                  duration:2000,
+                  onClose(){
+                    // 判断是否是微信
+                    var ua = navigator.userAgent.toLowerCase();
+                    if (!(ua.match(/MicroMessenger/i) == "micromessenger")) {
+                        // window.location.href('weixin://dl/business/?ticket=t852de9efd9b540df8b355699d4f2ed63');
+                        let url=window.location.href;
+                        that.$router.push({path: '/wechat/browser/upload', query: {num:that.fileNum,path: url}})
+                    } 
+                  }
                 })
+
               }).catch(err => {
                 this.$message({
                   message: err.data.message,
@@ -286,6 +360,7 @@ export default {
           },
           UploadComplete: (up) => {
             up.refresh()
+            that.loading.close()
           },
           Error: (up, err) => {
             console.log('上传失败：', err, that.onError, up)
@@ -295,6 +370,9 @@ export default {
                 type: 'error',
                 customClass: 'my-message'
               })
+              if(up.files.length==0){
+                that.markflag=true;
+              }
             } else if (err.status === 403) {
               this.$message({
                 message: '页面失效，请刷新页面后重新上传文件!',
@@ -545,5 +623,46 @@ export default {
     min-width: auto;
     background-color: rgba(0, 0, 0, .6);
     border-color: rgba(0, 0, 0, .6);
+  }
+  .mark{
+    width:100%;height:100%;background: rgba(0, 0, 0, .7);position: fixed;top:0;left:0;z-index: 999;
+    .tishi{
+      width: 84px;height: 84px;position: absolute;top: 72px;right: 31px;
+    }
+    .mark-content{
+      width:250px;
+      height:200px;
+      border:1px dashed rgba(250,250,250,0.63);
+      border-radius:29px;margin: 153px auto;
+      .tip{
+        margin: 16px auto;display: block;width: 35px;
+      }
+      .bundk{
+        font-size:18px;
+        font-family:Source Han Sans SC;
+        color:rgba(255,255,255,1);
+        line-height: 18px;
+        padding-left: 27px;
+        margin-bottom: 30px;
+      }
+      .sand{
+        font-size:18px;
+        font-family:Source Han Sans SC;
+        color:rgba(255,255,255,1);
+        line-height: 18px;
+        padding-left: 27px;
+        margin-bottom: 25px;
+        img{
+          width: 17px;height:4px;margin-left: 7px;
+        }
+      }
+      .liulanq{
+        font-size:18px;
+        font-family:Source Han Sans SC;
+        color:rgba(255,255,255,1);
+        line-height: 18px;
+        padding-left: 27px;
+      }
+    }
   }
 </style>

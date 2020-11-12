@@ -193,7 +193,7 @@ export default {
               keywords: query
             }
           }).then(res => {
-            this.hospitalList = res.data
+            this.hospitalList = res.data.list
           }).catch(err => {
             console.log(err)
           })

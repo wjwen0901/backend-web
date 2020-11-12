@@ -42,6 +42,46 @@
               <span slot="title">首页</span>
             </template>
           </el-menu-item>
+          <el-submenu index="/brca" v-if="sec.includes('system')">
+            <template slot="title">
+              <i class="el-icon-document"></i>
+              <span slot="title">BRCA轻松检</span>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item index="/brca/order">订单</el-menu-item>
+              <el-menu-item index="/brca/doctor">注册医生</el-menu-item>
+              <el-menu-item index="/brca/whitelist">白名单</el-menu-item>
+              <el-menu-item index="/brca/commission">佣金账户</el-menu-item>
+              <el-menu-item index="/brca/withdraw">提现记录</el-menu-item>
+              <el-menu-item index="/brca/invoice">发票记录</el-menu-item>
+              <el-menu-item index="/brca/express">快递查询</el-menu-item>
+              <el-menu-item index="/brca/exchange">积分兑换</el-menu-item>
+              <el-menu-item index="/brca/paper/report">纸质报告</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+          <el-submenu index="/wrj" v-if="sec.includes('system')">
+            <template slot="title">
+              <i class="el-icon-document"></i>
+              <span slot="title">维汝健</span>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item index="/wrj/order">订单</el-menu-item>
+              <el-menu-item index="/wrj/invoice">发票记录</el-menu-item>
+              <el-menu-item index="/wrj/express">快递查询</el-menu-item>
+              <el-menu-item index="/wrj/exchange">积分兑换</el-menu-item>
+              <el-menu-item index="/wrj/paper/report">纸质报告</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+          <el-submenu index="/accuragen" v-if="sec.includes('accuragen:manage')">
+            <template slot="title">
+              <i class="el-icon-document"></i>
+              <span slot="title">安易筛</span>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item index="/accuragen/channel">渠道管理</el-menu-item>
+              <el-menu-item index="/accuragen/paper/report">纸质报告</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
           <el-menu-item index="/order" v-if="sec.includes('order')">
             <template slot="title">
               <i class="fas fa-globe"></i>
@@ -75,6 +115,13 @@
             <i class="fas fa-binoculars"></i>
             <span slot="title">信息复核</span>
           </el-menu-item>
+          <el-submenu index="/ru6c" v-if="sec.includes('ru6c-gene')">
+            <template slot="title"><i class="el-icon-document"></i><span slot="title">易见康检测</span></template>
+            <el-menu-item-group>
+              <el-menu-item index="/ru6c/upload">上传文件</el-menu-item>
+              <el-menu-item index="/ru6c/list">查看结果</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
           <el-menu-item index="/product" v-if="sec.includes('product')">
             <i class="el-icon-goods"></i>
             <span slot="title">产品管理</span>
@@ -125,6 +172,16 @@
               <el-menu-item index="/standard/list" v-if="role === 'manager'">打分项维护</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
+
+          <!-- 新增公众号二维码模块 -->
+          <el-submenu index="/qrcode_manager" v-if="sec.includes('wechat_qrcode')">
+            <template slot="title"><i class="el-icon-setting"></i><span slot="title">公众号二维码</span></template>
+            <el-menu-item-group>
+              <el-menu-item index="/qrcode-manager/add" v-if="sec.includes('wechat_qrcode:create')">生成二维码</el-menu-item>
+              <el-menu-item index="/qrcode-manager/list" v-if="sec.includes('wechat_qrcode:list')">查看二维码列表</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+
         </el-menu>
       </el-aside>
       <el-container>
@@ -158,6 +215,8 @@ export default {
       window.localStorage.clear()
       if (this.axios.defaults.baseURL.includes('qa.mdhcare.cn')) {
         window.location.href = 'http://qa.mdhcare.cn/website/login.html'
+      } else if (this.axios.defaults.baseURL.includes('z.mdhcare.cn/z/')) {
+        window.location.href = 'https://z.mdhcare.cn/z/login.html'
       } else {
         window.location.href = 'https://z.mdhcare.cn/login.html'
       }

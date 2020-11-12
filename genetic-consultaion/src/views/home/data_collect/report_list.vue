@@ -131,6 +131,7 @@ export default {
         name: 'ReportEdit',
         params: { reportId: id }
       })
+      _hmt.push(['_trackEvent', '检测报告', '编辑', 'informedId', id]);
     }
   },
   filters: {

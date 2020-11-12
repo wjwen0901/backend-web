@@ -49,11 +49,20 @@
           </template>
         </el-table-column>
         <el-table-column
+          prop="ustate"
+          label="报告状态">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.ustate !== undefined" type="info">已打印</el-tag>
+            <el-tag v-else type="success">未打印</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
           fixed="right"
           label="操作"
           width="200">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="toDetail(scope.row.id)">查看文件</el-button>
+            <a class="el-button el-button--text el-button--small" target="_blank" @click="toPrint(scope.row.id)">打印报告</a>
             <!--<el-button type="text" size="small" @click="toDetail(scope.row.id)">编辑</el-button>-->
             <!--<el-button type="text" size="small" @click="toDetail(scope.row.id)">删除</el-button>-->
           </template>
@@ -118,7 +127,37 @@ export default {
         name: 'ReportEdit',
         params: { reportId: id }
       })
+    },
+    toPrint (id) {
+      console.log(id)
+      this.axios.get('report/' + id).then(res => {
+        console.log(res.data.type)
+        this.axios.get('oss/upload/show', {
+          params: {
+            objectKey: res.data.path,
+            bucket: res.data.type
+          }
+        }).then(res1 => {
+          window.open(this.axios.defaults.baseURL.includes('https://')
+            ? res1.data.replace('http://', 'https://') : res1.data)
+          this.axios.post('report/callback/print', {
+            userId: window.localStorage.userId,
+            reportId: id
+          }).then(res => {
+            console.log(res)
+
+          }).catch(err => {
+
+          })
+        }).catch(err => {
+          console.log(err)
+        })
+      }).catch(err => {
+        console.log(err)
+      })
+
     }
+
   },
   filters: {
     stateFilter: function (state) {

@@ -37,6 +37,18 @@
           label="联系电话">
         </el-table-column>
         <el-table-column
+          prop="group"
+          label="所属分组">
+        </el-table-column>
+        <el-table-column
+          prop="solutionName"
+          label="检测项目">
+        </el-table-column>
+        <el-table-column
+          prop="companyName"
+          label="实验室">
+        </el-table-column>
+        <el-table-column
           prop="state"
           label="状态">
           <template slot-scope="scope">

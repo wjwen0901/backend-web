@@ -13,7 +13,7 @@
         <el-tab-pane label="见山会诊管理" name="jk-service" v-if="roleCode === 'manager'"></el-tab-pane>
         <el-tab-pane label="医生" name="doctor" v-if="roleCode === 'manager'"></el-tab-pane>
         <el-tab-pane label="患者" name="patient" v-if="roleCode === 'manager'"></el-tab-pane>
-        <el-tab-pane label="系统管理" name="manager" v-if="roleCode === 'manager'"></el-tab-pane>
+<!--        <el-tab-pane label="系统管理" name="manager" v-if="roleCode === 'manager'"></el-tab-pane>-->
       </el-tabs>
       <router-view></router-view>
     </div>

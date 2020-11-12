@@ -9,7 +9,7 @@
         <!--<el-form-item label="检测项目" v-if="order.id !== undefined">-->
           <!--{{order.itemTitle}}-->
         <!--</el-form-item>-->
-        <el-form-item label="选择客户公司" v-if="role === 'firm-service' || role === 'manager' || role === 'jk-service'">
+        <el-form-item label="选择客户公司" v-if="role === 'manager' || role === 'jk-service'">
           <el-select class="width-100-p"
                      v-model="report.companyId"
                      filterable
@@ -27,6 +27,12 @@
               :value="item.id">
             </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="标记报告阳性/阴性">
+          <el-radio-group v-model="isPositive">
+            <el-radio @click.native.prevent="updatPositive(0)" :label="0">阴性</el-radio>
+            <el-radio @click.native.prevent="updatPositive(1)" :label="1">阳性</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="选择检测产品">
           <el-select class="width-100-p" v-model="report.solutionId" filterable placeholder="请选择">
@@ -118,6 +124,7 @@ export default {
       filename: '',
       key: '',
       expire: 0,
+      isPositive: null,
       g_object_name: '',
       g_object_name_type: '',
       now: Date.parse(new Date()) / 1000,
@@ -161,6 +168,11 @@ export default {
         console.log(err)
       })
     },
+    updatPositive (status) {
+      this.isPositive = status
+      this.report.isPositive = status
+    },
+
     getOrder () {
       this.axios.get('order/' + this.$route.query.orderId).then(res => {
         this.order = res.data
@@ -331,7 +343,8 @@ export default {
                 objectKey: up.settings.multipart_params.key,
                 companyId: this.report.companyId,
                 orderId: this.$route.query.orderId,
-                solutionId: this.report.solutionId
+                solutionId: this.report.solutionId,
+                isPositive: this.report.isPositive,
               }
               this.axios.post('report/upload', param).then(res => {
                 this.$message({

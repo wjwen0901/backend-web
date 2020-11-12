@@ -111,8 +111,8 @@ export default {
   props: {},
   methods: {
     _initData () {
-      if (this.$route.params.id !== undefined) {
-        this.companyId = this.$route.params.id
+      if (this.$route.params.id !== undefined || this.companyId) {
+        this.companyId = this.$route.params.id ? this.$route.params.id : this.companyId
         this.axios.get('term', {
           params: {
             condition: this.condition
@@ -120,7 +120,8 @@ export default {
         }).then(res => {
           const rankTemp = res.data
           const _this = this
-          this.axios.get('assess/company/' + this.$route.params.id).then(res => {
+          _this.terms = []
+          this.axios.get('assess/company/' + this.companyId).then(res => {
             _this.rankList = res.data
             rankTemp.forEach((value) => {
               _this.rankList.some((value1) => {
@@ -170,6 +171,7 @@ export default {
         }).then(res1 => {
           let p = res1.data
           let _this = this
+          this.pieceIds = []
           console.log(p)
           p.forEach((value) => {
             _this.pieceIds.push(value.id)

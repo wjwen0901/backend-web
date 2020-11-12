@@ -15,7 +15,7 @@
         border
         style="width: 100%">
         <el-table-column
-          prop="tid"
+          prop="orderNo"
           label="订单编号"
           width="184">
         </el-table-column>
@@ -40,14 +40,19 @@
           label="受检者"
           width="180">
           <template slot-scope="scope">
-            <span v-if="scope.row.pName != undefined">{{scope.row.pName}}({{scope.row.pCellphone}})</span>
+            <span v-if="scope.row.pName != undefined">
+              <span>
+                {{scope.row.pName}}({{scope.row.pCellphone}})
+              </span>
+            </span>
           </template>
         </el-table-column>
         <el-table-column
           label="下单人"
           width="180">
           <template slot-scope="scope">
-            {{scope.row.fullName}}({{scope.row.cellphone}})
+            {{scope.row.fullName}}
+<!--            ({{scope.row.cellphone}})-->
           </template>
         </el-table-column>
         <el-table-column
@@ -109,7 +114,8 @@ export default {
       companyEmail: [],
       emailList: [],
       roleCode: window.localStorage.role,
-      condition: null
+      condition: null,
+      userId: window.localStorage.userId
     }
   },
   methods: {
