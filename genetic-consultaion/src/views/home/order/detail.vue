@@ -114,12 +114,20 @@ export default {
       this.getData()
     },
     getData () {
-      this.axios.get('order/' + this.$route.params.id).then(res => {
+      this.axios.get('order/' + this.$route.params.id, {
+        params: {
+          userId: window.localStorage.userId
+        },
+      }).then(res => {
         this.order = res.data
         this.order.expressCode = this.$route.query.expressCode
         this.skuPropertiesName = JSON.parse(this.order.skuPropertiesName)
         if (this.$route.query.expressId !== undefined) {
-          this.axios.get('express/' + this.$route.query.expressId).then(resExp => {
+          this.axios.get('express/' + this.$route.query.expressId, {
+            params: {
+              userId: window.localStorage.userId
+            },
+          }).then(resExp => {
             this.order.expressCode = resExp.data.expressOrder.expressCode
             this.order.expressPath = resExp.data.expressOrder.path
           }).catch(err => {
@@ -131,8 +139,9 @@ export default {
       })
       this.axios.get('informed/order', {
         params: {
-          orderId: this.$route.params.id
-        }
+          orderId: this.$route.params.id,
+          userId: window.localStorage.userId
+        },
       }).then(res => {
         this.informedList = res.data
       }).catch(err => {
@@ -142,8 +151,9 @@ export default {
     imgPath (path) {
       this.axios.get('oss/upload/show', {
         params: {
-          objectKey: path
-        }
+          objectKey: path,
+          userId: window.localStorage.userId
+        },
       }).then(res1 => {
         window.open(res1.data)
       }).catch(err => {
@@ -170,6 +180,9 @@ export default {
             headers: {
               'X-Requested-With': 'XMLHttpRequest',
               'Content-Type': 'application/json'
+            },
+            params: {
+              userId: window.localStorage.userId
             }
           }).then(function (response) {
             _this.$message({

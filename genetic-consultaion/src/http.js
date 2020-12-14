@@ -13,6 +13,8 @@ axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded'
 axios.interceptors.request.use(
     config => {
         config.headers.Authorization = window.localStorage.token
+        config.params = config.params ? config.params:{}
+        config.params.userId = window.localStorage.userId
         if (config.method === 'post' || config.method === 'put') {
             config.data = qs.stringify(config.data)
                 // config.headers['Content-Type'] = 'application/x-www-form-urlencoded'

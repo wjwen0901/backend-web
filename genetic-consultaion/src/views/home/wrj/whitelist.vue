@@ -286,7 +286,11 @@ export default {
       })
     },
     toDetail (id) {
-      this.axios.get('white/' + id).then(res => {
+      this.axios.get('white/' + id, {
+        params: {
+          userId: window.localStorage.userId,
+        }
+      }).then(res => {
         this.whitelistDoctor = res.data
       }).catch(err => {
         console.log(err)
@@ -305,6 +309,9 @@ export default {
         method: 'put',
         url: 'white/' + id,
         data: this.whitelistDoctor,
+        params: {
+          userId: window.localStorage.userId,
+        },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
@@ -324,7 +331,11 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.axios.delete('white/' + id).then(res => {
+        this.axios.delete('white/' + id, {
+          params: {
+            userId: window.localStorage.userId,
+          }
+        }).then(res => {
           this._initData()
           this.$message({
             type: 'success',

@@ -7,7 +7,7 @@ module.exports = {
 
   // BASE_URL: '"https://qa.mdhcare.cn/mdhcare-backend"',
   // DISEASE_API: '"https://qa.mdhcare.cn/mdhcare-backend"',
-  // PRODUCT: '"https://www.mdhcare.cn/mdhcare-pc"'
+  // PRODUCT: '"https://qa.mdhcare.cn/mdhcare-pc"'
 
     // BASE_URL: '"https://www.mdhcare.cn/mdhcare-wonder"',
     // DISEASE_API: '"https://www.mdhcare.cn/mdhcare-wonder/"',

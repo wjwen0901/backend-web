@@ -10,7 +10,7 @@
     </el-row>
     <el-row>
       <el-col :span="24">
-        <div class="gene-container"> 
+        <div class="gene-container">
           <el-form ref="solutionForm" :model="product" label-width="80px" size="mini" class="edit-form clearfix">
             <div class="left">
             <el-form-item label="产品名称*">
@@ -22,12 +22,12 @@
             <el-form-item label="适用阶段">
               <el-input v-for="(item,index) in list" :key="item+index" v-model="list[index]" style="width:720px"  placeholder="请输入内容"></el-input>
               <!-- <Input  v-on:ipt="ipt" v-for="(item,index) in list" :index='index' :key="item+index"  :value='item'/> -->
-              <span class="add" @click="add">+</span> 
+              <span class="add" @click="add">+</span>
             </el-form-item>
             <el-form-item label="适用科室">
               <el-select :disabled='departments' style="width:720px"  v-model="vdepart" value-key="name" filterable multiple  >
                 <el-option
-                  v-for="item in depart" 
+                  v-for="item in depart"
                   :key="item.id"
                   :label="item.name"
                   :value="item">
@@ -42,7 +42,7 @@
                 v-model="product.brief"
                 placeholder="请输入" >
               </el-input>
-            </el-form-item> 
+            </el-form-item>
             <el-form-item  label="临床意义">
               <el-input
               placeholder="请输入"
@@ -51,13 +51,13 @@
                 v-model="product.purpose"
                 :rows="2" >
               </el-input>
-            </el-form-item> 
-          </div>  
+            </el-form-item>
+          </div>
           <div class="chang">
             检测厂商
           </div>
           </el-form>
-          <div class="gene-select"> 
+          <div class="gene-select">
               <el-select class="width-100-p" :disabled='proDepts1' style="width:300px"  v-model="product.proDepts"  filterable placeholder="请选择">
                 <el-option
                   v-for="item in deptList"
@@ -65,7 +65,7 @@
                   :label="item.name"
                   :value="item.id">
                 </el-option>
-              </el-select> 
+              </el-select>
           <el-select v-model="products" :disabled='products1'  value-key="name" filterable multiple placeholder="请选择产品">
             <el-option
               v-for="item in options"
@@ -79,14 +79,14 @@
                 <el-button type="primary" @click="addData" :disabled = "openIsDisabled">发布</el-button>
                 <el-button type="primary" @click="preview" :disabled = " openIsDisabled ">预览</el-button>
                 <el-button type="primary" @click="disableds">暂存</el-button>
-                <el-button @click="cancel" :disabled = "openIsDisabled ">取消</el-button> 
+                <el-button @click="cancel" :disabled = "openIsDisabled ">取消</el-button>
            </div>
-        </div> 
+        </div>
       </el-col>
     </el-row>
   </div>
 </template>
-<script> 
+<script>
 export default {
   name: "GeneEdit",
   data() {
@@ -121,7 +121,7 @@ export default {
       productId: "",
       department1: []
     };
-  }, 
+  },
   watch: {
     vdepart: {
       handler(newArr, oldArr) {
@@ -134,31 +134,32 @@ export default {
       this.$router.go(-1);
     },
     //获取信息
-    getData() { 
+    getData() {
       this.axios({
         url: "product/productById",
         params: {
           id: this.$route.query.id,
-          state: this.$route.query.state
+          state: this.$route.query.state,
+          userId: window.localStorage.userId
         }
-      }).then(res => { 
+      }).then(res => {
         console.log(res.data)
         this.productId = res.data.product.productId;
-        this.product = res.data.product; 
+        this.product = res.data.product;
         this.id = res.data.product.id;
-        this.products = res.data.solutions; 
+        this.products = res.data.solutions;
         this.vdepart = res.data.depts.map(item=>{
             this.depart.push({id:item.id,name:item.name})
             return {id:item.id,name:item.name}
-          }) 
+          })
         if (res.data.screenings == undefined || res.data.screenings.length == 0){
            this.list = ['']
         } else {
           this.list = res.data.screenings.map(item => {
             return item.screeningName
-          }) 
+          })
         }
-        
+
         console.log(this.list)
         this.products = res.data.solutions.map(item=>{
           this.options.push({id:item.id,name:item.name})
@@ -180,7 +181,7 @@ export default {
         if (item != '') {
           screeningName.push({screeningName : item})
         }
-      })      
+      })
       this.openIsDisabled = !this.openIsDisabled;
       this.names = !this.names;
       this.briefs = !this.briefs;
@@ -207,7 +208,10 @@ export default {
               "Content-Type": "application/json",
               "X-Requested-With": "XMLHttpRequest"
             },
-            data: { 
+            params: {
+              userId: window.localStorage.userId
+            },
+            data: {
               name: _this.product.name,
               brief: _this.product.brief,
               nameEn:_this.product.nameEn,
@@ -217,7 +221,7 @@ export default {
               solutionIds: solutionName
             }
           }).then(res => {
-            this.$message("暂存成功"); 
+            this.$message("暂存成功");
           });
         }
       } else {
@@ -240,7 +244,8 @@ export default {
                 "X-Requested-With": "XMLHttpRequest"
               },
               params:{
-                temId:_this.productId
+                temId:_this.productId,
+                userId: window.localStorage.userId
               },
               data: {
                 productId: _this.id,
@@ -271,6 +276,9 @@ export default {
                 "Content-Type": "application/json",
                 "X-Requested-With": "XMLHttpRequest"
               },
+              params: {
+                userId: window.localStorage.userId
+              },
               data: {
                 id: _this.id,
                 productId:_this.productId,
@@ -293,12 +301,12 @@ export default {
       console.log(this.list)
       this.list.push('')
     },
-    ipt(data, index) { 
+    ipt(data, index) {
       // this.list = data;
       this.list[index] = data;
     },
     //发布
-    addData() { 
+    addData() {
       //适用科室
       var vdeparts = this.vdepart.map(item => {
         return item.id;
@@ -327,6 +335,9 @@ export default {
             headers: {
               "Content-Type": "application/json",
               "X-Requested-With": "XMLHttpRequest"
+            },
+            params: {
+              userId: window.localStorage.userId
             },
             data: {
               name: _this.product.name,
@@ -364,6 +375,9 @@ export default {
               "Content-Type": "application/json",
               "X-Requested-With": "XMLHttpRequest"
             },
+            params: {
+              userId: window.localStorage.userId
+            },
             data: {
               id: _this.id,
               name: _this.product.name,
@@ -398,7 +412,8 @@ export default {
                 "X-Requested-With": "XMLHttpRequest"
               },
               params: {
-                temId: _this.id
+                temId: _this.id,
+                userId: window.localStorage.userId
               },
               data: {
                 name: _this.product.name,
@@ -435,7 +450,8 @@ export default {
                 "X-Requested-With": "XMLHttpRequest"
               },
               params: {
-                temId: _this.id
+                temId: _this.id,
+                userId: window.localStorage.userId
               },
               data: {
                 id: _this.productId,
@@ -462,11 +478,11 @@ export default {
       }
     },
     //预览
-    preview() { 
-      console.log(this.list) 
+    preview() {
+      console.log(this.list)
       var screeningName =this.list.map(item=>{
         return {screeningName:item}
-      })  
+      })
       var obj = {};
       obj.name = this.product.name;
       obj.nameEn = this.product.nameEn;
@@ -487,7 +503,10 @@ export default {
     },
     getKe() {
       this.axios({
-        url: "hospital-dept"
+        url: "hospital-dept",
+        params: {
+          userId: window.localStorage.userId
+        },
       }).then(res => {
         this.depart = res.data.map(item => {
           item.name = item.name.indexOf("|") >= 0 ? item.name.split("|")[1] : item.name
@@ -497,7 +516,10 @@ export default {
     },
     getCompany() {
       this.axios({
-        url: "company"
+        url: "company",
+        params: {
+          userId: window.localStorage.userId
+        },
       }).then(res => {
         this.deptList = res.data;
       });
@@ -506,8 +528,9 @@ export default {
       this.axios({
         url: "solution/solutionByCompany",
         params: {
-          companyId: this.proDepts
-        }
+          companyId: this.proDepts,
+          userId: window.localStorage.userId
+        },
       }).then(res => {
         this.options = res.data.solutions;
       });

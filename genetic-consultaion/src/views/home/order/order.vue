@@ -165,8 +165,9 @@ export default {
     toRecheck (reportId, informedId) {
       this.axios.get('report/recheck/' + reportId, {
         params: {
-          informedId: informedId
-        }
+          informedId: informedId,
+          userId: window.localStorage.userId
+        },
       }).then(res => {
         this.informed = res.data.informed
         this.report = res.data.report

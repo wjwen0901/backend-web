@@ -130,12 +130,17 @@ export default {
     },
     toPrint (id) {
       console.log(id)
-      this.axios.get('report/' + id).then(res => {
+      this.axios.get('report/' + id, {
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
         console.log(res.data.type)
         this.axios.get('oss/upload/show', {
           params: {
             objectKey: res.data.path,
-            bucket: res.data.type
+            bucket: res.data.type,
+            userId: window.localStorage.userId
           }
         }).then(res1 => {
           window.open(this.axios.defaults.baseURL.includes('https://')

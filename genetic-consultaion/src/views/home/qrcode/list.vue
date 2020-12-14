@@ -137,7 +137,11 @@ export default {
     toDelete (id) {
       this.$confirm('确认删除？')
         .then(_ => {
-          this.axios.delete('solution/' + id).then(res => {
+          this.axios.delete('solution/' + id,{
+            params: {
+              userId: window.localStorage.userId
+            }
+          }).then(res => {
             this.getData()
             this.$message({
               message: '删除成功',

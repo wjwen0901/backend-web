@@ -287,6 +287,9 @@ export default {
     },
     toExcel () {
       this.axios.get('/white/export',{
+        params: {
+          userId: window.localStorage.userId,
+        },
         responseType:"blob"
       }).then(response => {
         const blob = new Blob(

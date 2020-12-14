@@ -54,7 +54,11 @@ export default {
   methods: {
     _initData () {
       if (this.$route.params.id !== undefined) {
-        this.axios.get('company/' + this.$route.params.id).then(res => {
+        this.axios.get('company/' + this.$route.params.id, {
+          params: {
+            userId: window.localStorage.userId
+          }
+        }).then(res => {
           this.company = res.data
         }).catch(err => {
           console.log(err)

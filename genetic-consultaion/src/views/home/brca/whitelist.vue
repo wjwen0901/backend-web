@@ -237,12 +237,20 @@ export default {
       }).catch(err => {
         console.log(err)
       })
-      this.axios.get('hospital').then(res => {
+      this.axios.get('hospital', {
+        params: {
+          userId: window.localStorage.userId,
+        },
+      }).then(res => {
         this.hospitals = res.data
       }).catch(err => {
         console.log(err)
       })
-      this.axios.get('hospital-dept').then(res => {
+      this.axios.get('hospital-dept', {
+        params: {
+          userId: window.localStorage.userId,
+        },
+      }).then(res => {
         this.depts = res.data
       }).catch(err => {
         console.log(err)
@@ -272,6 +280,9 @@ export default {
         method: 'post',
         url: 'white',
         data: this.whitelistDoctor,
+        params: {
+          userId: window.localStorage.userId,
+        },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
@@ -286,7 +297,11 @@ export default {
       })
     },
     toDetail (id) {
-      this.axios.get('white/' + id).then(res => {
+      this.axios.get('white/' + id, {
+        params: {
+          userId: window.localStorage.userId,
+        }
+      }).then(res => {
         this.whitelistDoctor = res.data
       }).catch(err => {
         console.log(err)
@@ -304,6 +319,9 @@ export default {
       instance({
         method: 'put',
         url: 'white/' + id,
+        params: {
+          userId: window.localStorage.userId,
+        },
         data: this.whitelistDoctor,
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
@@ -324,7 +342,11 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.axios.delete('white/' + id).then(res => {
+        this.axios.delete('white/' + id, {
+          params: {
+            userId: window.localStorage.userId,
+          }
+        }).then(res => {
           this._initData()
           this.$message({
             type: 'success',
@@ -345,8 +367,9 @@ export default {
       // 获取权限列表
       this.axios.get('user/secs', {
         params: {
-          role: val
-        }
+          role: val,
+          userId: window.localStorage.userId,
+        },
       }).then(res => {
         this.resourceList = []
         for (let sec of res.data) {
@@ -394,8 +417,9 @@ export default {
         params: {
           pageNum: 1, // 页码
           pageSize: 8, // 每页长度
-          keywords: queryString
-        }
+          keywords: queryString,
+          userId: window.localStorage.userId,
+        },
       }).then(res => {
         console.log(res.data)
         let result = []

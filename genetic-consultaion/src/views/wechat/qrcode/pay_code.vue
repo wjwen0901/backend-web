@@ -96,8 +96,11 @@ export default {
   methods: {
     initData () {
       // window.location = this.$route.query.url
-      this.axios.get('barcode/' + this.$route.params.id).then(res => {
-        console.log(res)
+      this.axios.get('barcode/' + this.$route.params.id, {
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
         this.barcode = res.data
       }).catch(err => {
         console.log(err)
@@ -113,7 +116,8 @@ export default {
       }
       this.axios.get('verification', {
         params: {
-          cellphone: this.patient.cellphone
+          cellphone: this.patient.cellphone,
+          userId: window.localStorage.userId
         }
       }).then(res => {
         if (res.data === 'success') {

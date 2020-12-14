@@ -297,6 +297,13 @@
 
             <div>
               <h5>既往史：</h5>
+              <el-form-item label="肺">
+                <el-checkbox-group v-model="diseaseHistory.lung">
+                  <el-checkbox label="肺结节"></el-checkbox>
+                  <el-checkbox label="肺结核"></el-checkbox>
+                  <el-checkbox label="长期石棉接触史"></el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
               <el-form-item label="胃">
                 <el-checkbox-group v-model="diseaseHistory.stomach">
                   <el-checkbox label="胃炎"></el-checkbox>
@@ -506,6 +513,7 @@ export default {
         poison: [],
         breast: [],
         ovary: [],
+        lung: [],
         stomach: [],
         colorectal: [],
         liver: [],
@@ -518,7 +526,11 @@ export default {
   props: {},
   methods: {
     _initData () {
-      this.axios.get('informed/' + this.$route.params.informedId).then(res => {
+      this.axios.get('informed/' + this.$route.params.informedId, {
+        params: {
+          userId: window.localStorage.userId,
+        },
+      }).then(res => {
         this.informedContent = res.data
         if (res.data.tid !== undefined) {
           this.informedContent.orderNo = res.data.tid
@@ -636,6 +648,8 @@ export default {
                 _diseaseHistory.forEach(item1 => {
                   if (item1.key == '胃') {
                     this.diseaseHistory.stomach = item1.value
+                  } else if (item1.key == '肺') {
+                    this.diseaseHistory.lung = item1.value
                   } else if (item1.key == '结直肠') {
                     this.diseaseHistory.colorectal = item1.value
                   } else if (item1.key == '肝') {
@@ -666,8 +680,9 @@ export default {
         }
         this.axios.get('oss/upload/show', {
           params: {
-            objectKey: res.data.path
-          }
+            objectKey: res.data.path,
+            userId: window.localStorage.userId,
+          },
         }).then(res1 => {
           this.imagePath = this.axios.defaults.baseURL.includes('https://')
             ? res1.data.replace('http://', 'https://') : res1.data
@@ -687,7 +702,11 @@ export default {
       }).catch(err => {
         console.log(err)
       })
-      this.axios.get('hospital-dept').then(res => {
+      this.axios.get('hospital-dept', {
+        params: {
+          userId: window.localStorage.userId,
+        }
+      }).then(res => {
         this.depts = res.data
       }).catch(err => {
         console.log(err)
@@ -892,7 +911,12 @@ export default {
       if (this.diseaseHistory) {
         let diseaseHistory = []
 
-        console.log(this.diseaseHistory.stomach)
+        if (this.diseaseHistory.lung) {
+          diseaseHistory.push({
+            key: '肺',
+            value: this.diseaseHistory.lung
+          })
+        }
         if (this.diseaseHistory.stomach) {
           diseaseHistory.push({
             key: '胃',
@@ -962,7 +986,7 @@ export default {
         })
       }
       this.informedContent.moreInfo = JSON.stringify(moreInfo)
-      this.axios.put('informed/' + this.$route.params.informedId, this.informedContent).then(res => {
+      this.axios.put('informed/' + this.$route.params.informedId + '?userId=' + window.localStorage.userId, this.informedContent).then(res => {
         this.$message({
           message: '修改成功',
           type: 'success'
@@ -978,7 +1002,7 @@ export default {
     },
     unread () {
       delete this.informedContent.createTime
-      this.axios.put('informed/unread/' + this.$route.params.informedId, this.informedContent).then(res => {
+      this.axios.put('informed/unread/' + this.$route.params.informedId+ '?userId=' + window.localStorage.userId, this.informedContent).then(res => {
         this.$message({
           message: '修改成功',
           type: 'success'
@@ -1000,7 +1024,8 @@ export default {
         params: {
           pageNum: 1, // 页码
           pageSize: 8, // 每页长度
-          keywords: queryString
+          keywords: queryString,
+          userId: window.localStorage.userId
         }
       }).then(res => {
         let result = []

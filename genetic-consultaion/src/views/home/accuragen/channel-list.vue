@@ -192,6 +192,9 @@ export default {
           hospitalId: 0,
           userId: this.userId,
         },
+        params: {
+          userId: window.localStorage.userId,
+        },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'

@@ -48,7 +48,8 @@ export default {
       this.axios.get('oss/upload/show', {
         params: {
           objectKey: 'solution/service/' + name + '.pdf',
-          bucket: 'mdhcare'
+          bucket: 'mdhcare',
+          userId: window.localStorage.userId
         }
       }).then(res => {
         // this.imagePath = this.axios.defaults.baseURL.includes('https://')

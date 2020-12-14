@@ -316,7 +316,11 @@ export default {
       this.dialogExpressFormVisible = true
     },
     showExpress (id) {
-      this.axios.get('white/' + id).then(res => {
+      this.axios.get('white/' + id, {
+        params: {
+          userId: window.localStorage.userId,
+        }
+      }).then(res => {
         this.whitelistDoctor = res.data
       }).catch(err => {
         console.log(err)

@@ -284,7 +284,10 @@ export default {
         method: 'post',
         url: 'sf/report',
         data: this.expressItem,
-        params: {goodsId: this.expressItem.id},
+        params: {
+          goodsId: this.expressItem.id,
+          userId: window.localStorage.userId,
+        },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
@@ -299,7 +302,11 @@ export default {
       })
     },
     toDetail (id) {
-      this.axios.get('invoice/detail/' + id).then(res => {
+      this.axios.get('invoice/detail/' + id, {
+        params: {
+          userId: window.localStorage.userId,
+        }
+      }).then(res => {
         this.invoiceDetail = res.data
       }).catch(err => {
         console.log(err)
@@ -318,7 +325,11 @@ export default {
       this.dialogExpressFormVisible = true
     },
     showExpress (id) {
-      this.axios.get('white/' + id).then(res => {
+      this.axios.get('white/' + id, {
+        params: {
+          userId: window.localStorage.userId,
+        }
+      }).then(res => {
         this.whitelistDoctor = res.data
       }).catch(err => {
         console.log(err)
@@ -348,7 +359,10 @@ export default {
         method: 'put',
         url: 'report/confirm/' + this.expressItem.goodsId,
         data: this.expressItem,
-        params: {note: this.expressItem.note},
+        params: {
+          note: this.expressItem.note,
+          userId: window.localStorage.userId,
+        },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'

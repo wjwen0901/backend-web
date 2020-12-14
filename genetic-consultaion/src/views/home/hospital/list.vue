@@ -132,7 +132,11 @@ export default {
     toDelete (id) {
       this.$confirm('确认删除？')
         .then(_ => {
-          this.axios.delete('hospital/' + id).then(res => {
+          this.axios.delete('hospital/' + id, {
+            params: {
+              userId: window.localStorage.userId
+            },
+          }).then(res => {
             this.getData()
             this.$message({
               message: '删除成功',

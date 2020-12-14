@@ -64,6 +64,7 @@ export default {
     _initData () {
       this.axios.get('overview', {
         params: {
+          userId: window.localStorage.userId,
           id: window.localStorage.userId
         }
       }).then(res => {

@@ -42,9 +42,13 @@
           prop="statusStr"
           label="接收信息">
           <template slot-scope="scope">
-            <div v-if="scope.row.receiver">
+            <p>接收方式：{{scope.row.receivingMode == '0' ? '纸质发票' : '电子发票'}}</p>
+            <div v-if="scope.row.receivingMode == '0' && scope.row.receiver">
               <p>收件人：{{scope.row.receiver.receiver}} | {{scope.row.receiver.cellphone}}</p>
               <p>地址：：{{scope.row.receiver.province}}{{scope.row.receiver.city}}{{scope.row.receiver.county}}{{scope.row.receiver.address}}</p>
+            </div>
+            <div v-if="scope.row.receivingMode == '1'">
+              <p>电子邮箱：{{scope.row.email}}</p>
             </div>
           </template>
         </el-table-column>
@@ -72,6 +76,8 @@
 <!--            <el-button @click="showExpress(scope.row.id)" type="text" size="small" v-if="scope.row.status >= 2">查看物流</el-button>-->
             <el-button @click="toExpress(scope.row)" type="text" size="small" v-if="scope.row.status == 1 || scope.row.status == 2">邮寄单据</el-button>
             <el-button @click="toExpress(scope.row)" type="text" size="small" v-if="scope.row.status == 3">重新邮寄单据</el-button>
+            <el-button @click="toEmail(scope.row)" type="text" size="small" v-if="scope.row.receivingMode == '1'">发送电子邮件</el-button>
+
           </template>
         </el-table-column>
       </el-table>
@@ -282,7 +288,10 @@ export default {
         method: 'post',
         url: 'sf/invoice',
         data: this.expressItem,
-        params: {invoiceId: this.expressItem.invoiceId},
+        params: {
+          invoiceId: this.expressItem.invoiceId,
+          userId: window.localStorage.userId,
+        },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
@@ -297,7 +306,11 @@ export default {
       })
     },
     toDetail (id) {
-      this.axios.get('invoice/detail/' + id).then(res => {
+      this.axios.get('invoice/detail/' + id,{
+        params: {
+          userId: window.localStorage.userId,
+        },
+      }).then(res => {
         this.invoiceDetail = res.data
       }).catch(err => {
         console.log(err)
@@ -316,7 +329,11 @@ export default {
       this.dialogExpressFormVisible = true
     },
     showExpress (id) {
-      this.axios.get('white/' + id).then(res => {
+      this.axios.get('white/' + id, {
+        params: {
+          userId: window.localStorage.userId,
+        }
+      }).then(res => {
         this.whitelistDoctor = res.data
       }).catch(err => {
         console.log(err)
@@ -353,7 +370,10 @@ export default {
         method: 'put',
         url: 'invoice/confirm/' + this.expressItem.invoiceId,
         data: this.expressItem,
-        params: {note: this.expressItem.note},
+        params: {
+          note: this.expressItem.note,
+          userId: window.localStorage.userId,
+        },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'

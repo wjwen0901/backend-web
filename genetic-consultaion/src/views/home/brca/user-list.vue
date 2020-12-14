@@ -239,12 +239,20 @@ export default {
     _initData () {
       this.getData()
       this.getBankList()
-      this.axios.get('hospital').then(res => {
+      this.axios.get('hospital',{
+        params: {
+          userId: window.localStorage.userId,
+        },
+      }).then(res => {
         this.hospitals = res.data
       }).catch(err => {
         console.log(err)
       })
-      this.axios.get('hospital-dept').then(res => {
+      this.axios.get('hospital-dept', {
+        params: {
+          userId: window.localStorage.userId,
+        }
+      }).then(res => {
         this.depts = res.data
       }).catch(err => {
         console.log(err)
@@ -287,6 +295,9 @@ export default {
     },
     toExcel () {
       this.axios.get('/white/export',{
+        params: {
+          userId: window.localStorage.userId,
+        },
         responseType:"blob"
       }).then(response => {
         const blob = new Blob(
@@ -329,6 +340,9 @@ export default {
         method: 'post',
         url: 'user',
         data: this.userResource,
+        params: {
+          userId: window.localStorage.userId,
+        },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
@@ -343,7 +357,11 @@ export default {
       })
     },
     toDetail (id) {
-      this.axios.get('user/' + id).then(res => {
+      this.axios.get('user/' + id,{
+        params: {
+          userId: window.localStorage.userId,
+        }
+      }).then(res => {
         this.userResource = res.data
         this.resourceSelet = []
         for (let sec of res.data.secList) {
@@ -376,6 +394,9 @@ export default {
         method: 'put',
         url: 'user/' + id,
         data: this.userResource,
+        params: {
+          userId: window.localStorage.userId,
+        },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
@@ -395,7 +416,11 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.axios.delete('user/' + id).then(res => {
+        this.axios.delete('user/' + id, {
+          params: {
+            userId: window.localStorage.userId,
+          },
+        }).then(res => {
           this._initData()
           this.$message({
             type: 'success',
@@ -446,6 +471,9 @@ export default {
         method: 'post',
         url: 'user/manager/service?type=salesman&hospitalId=' + this.salesman.hospitalId,
         data: this.salesman,
+        params: {
+          userId: window.localStorage.userId,
+        },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
@@ -478,6 +506,9 @@ export default {
         method: 'post',
         url: 'user/manager/service?type=service&hospitalId=' + this.serviceman.hospitalId,
         data: this.serviceman,
+        params: {
+          userId: window.localStorage.userId,
+        },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
@@ -498,8 +529,9 @@ export default {
         params: {
           pageNum: 1, // 页码
           pageSize: 8, // 每页长度
-          keywords: queryString
-        }
+          keywords: queryString,
+          userId: window.localStorage.userId,
+        },
       }).then(res => {
         let result = []
         if (res.data.endRow === 0) {

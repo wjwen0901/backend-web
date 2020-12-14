@@ -32,14 +32,14 @@
         <el-table-column
           prop="provenance"
           label="出处">
-        </el-table-column> 
+        </el-table-column>
         <el-table-column
           prop="publishDate"
           label="发布日期"
-          width="180"> 
+          width="180">
         </el-table-column>
         <el-table-column
-          prop="producer" 
+          prop="producer"
           label="状态">
           <template slot-scope="scope">
             <span v-if="scope.row.state==1">暂存</span>
@@ -60,7 +60,7 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="pageNum"  
+        :current-page="pageNum"
         layout="total, sizes, prev, pager, next, jumper"
         :total="totalPage">
       </el-pagination>
@@ -75,7 +75,7 @@ export default {
     return {
       drugList: [],
       pageNum:1,
-      pageSize: 10, 
+      pageSize: 10,
       paramSelect: '',
       condition: null,
       totalPage: 0
@@ -86,25 +86,26 @@ export default {
       this.getData()
     },
     getData () {
-      this.axios.get('guideManage/page', { 
+      this.axios.get('guideManage/page', {
         params:{
           pageSize:this.pageSize,
           pageNum:this.pageNum,
-          param:this.condition
+          param:this.condition,
+          userId: window.localStorage.userId
         }
-      }).then(res => { 
+      }).then(res => {
         console.log(res.data)
-        this.drugList = res.data.guides 
+        this.drugList = res.data.guides
         this.totalPage = res.data.totalNum
-      }).catch(err => { 
+      }).catch(err => {
       })
     },
     handleSizeChange (val) {
-      this.pageSize = val 
+      this.pageSize = val
       this.getData()
     },
     handleCurrentChange (val) {
-      this.pageNum = val 
+      this.pageNum = val
       this.getData()
     },
     toEdit (id,state) {
@@ -136,7 +137,9 @@ export default {
             url:'guideManage',
             method:"delete",
             params:{
-              id,state
+              id,
+              state,
+              userId: window.localStorage.userId
             }
           }).then(res => {
             this.getData()
@@ -144,14 +147,14 @@ export default {
               message: '删除成功',
               type: 'success'
             })
-          }).catch(err => { 
+          }).catch(err => {
             this.$message({
               message: '删除失败',
               type: 'error'
             })
           })
         })
-        .catch(_ => {}) 
+        .catch(_ => {})
     }
   },
   filters: {
@@ -184,6 +187,6 @@ export default {
       width: 400px;
       float: right;
       margin-bottom: 10px;
-    } 
+    }
   }
 </style>

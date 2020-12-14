@@ -62,7 +62,8 @@ export default {
           openId: this.$route.query.openid,
           companyId: this.$route.query.companyId,
           pageNum: this.pageNum,
-          pageSize: this.pageSize
+          pageSize: this.pageSize,
+          userId: window.localStorage.userId
         }
       }).then(res => {
         this.companyId = res.data.companyId

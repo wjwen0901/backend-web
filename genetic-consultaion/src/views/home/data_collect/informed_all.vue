@@ -24,8 +24,8 @@
             </div>
             <div class="brief">
               <h5>送检信息</h5>
-              <p>医院：{{informed.hospitalName}}</p>
-              <p>科室：{{informed.deptName}}</p>
+              <p>医院：{{informed.hospitalName ? informed.hospitalName : informed.informed.hospitalTemp}}</p>
+              <p>科室：{{informed.deptName ? informed.deptName : informed.informed.deptTemp}}</p>
               <p>医生：{{informed.informed ? informed.informed.doctor : '-'}}</p>
             </div>
             <div class="brief" v-if="informed.receiver">

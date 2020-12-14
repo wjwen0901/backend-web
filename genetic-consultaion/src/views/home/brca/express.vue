@@ -157,7 +157,8 @@ export default {
       this.axios.get('/sf/route', {
         params: {
           mailno: express.express.expressCode,
-          subPhone: express.receiver.cellphone.substr(express.receiver.cellphone.length-4,4)
+          subPhone: express.receiver.cellphone.substr(express.receiver.cellphone.length-4,4),
+          userId: window.localStorage.userId,
         }
       }).then(res => {
         this.express = res.data
@@ -178,7 +179,8 @@ export default {
       let that = this
       that.axios.delete('/sf/order', {
         params: {
-          expressNo: expressNo
+          expressNo: expressNo,
+          userId: window.localStorage.userId,
         }
       }).then(res => {
         if (res.data == 'failure') {

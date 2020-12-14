@@ -13,13 +13,13 @@
         <div class="drug-container">
           <el-form ref="solutionForm" :model="drug" label-width="100px" size="mini" class="edit-form clearfix">
             <div class="form-left">
-              <el-form-item label="中文标题*"> 
+              <el-form-item label="中文标题*">
                 <el-input v-model="drug.title" :disabled="drugNames" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="制定者*">
                 <el-input v-model="drug.framers" :disabled="customizers" placeholder="请输入"></el-input>
               </el-form-item>
-              <el-form-item label="发布日期*"> 
+              <el-form-item label="发布日期*">
                  <el-date-picker
                     v-model="nowDate"
                     :disabled="inaccurates"
@@ -27,9 +27,9 @@
                     value-format="yyyy-MM-dd"
                     placeholder="请输入">
                   </el-date-picker>
-              </el-form-item> 
+              </el-form-item>
               <el-form-item label="检测产品">
-               <el-select 
+               <el-select
                   v-model="newProduct"
                   :disabled="products"
                   value-key="name"
@@ -56,7 +56,7 @@
               </el-form-item>
               <el-form-item label="出处*">
                 <el-input v-model="drug.provenance" :disabled="producers" placeholder="请输入"></el-input>
-              </el-form-item> 
+              </el-form-item>
               <el-form-item label="相关疾病">
                  <el-select
                   v-model="diseaseIds"
@@ -87,7 +87,7 @@
                   style="width:390px"
                   filterable
                   remote
-                  reserve-keyword 
+                  reserve-keyword
                   placeholder="请选择"
                   :remote-method="geneRemote"
                   :loading="geneLoading">
@@ -104,11 +104,11 @@
               <ul class="form-list" >
                 <li v-for="(item,index) in list" :key="index" @click="cur=index" :class="{active:cur==index}">
                  {{item.id}}.{{item.name}}
-                </li> 
+                </li>
               </ul>
               <div class="from-contents" v-show="cur==0">
                 <div>
-                  <span v-for="(item,index) in path" :key="index"  class="path" @click="paths(item.path)">{{item.file_source}}</span> 
+                  <span v-for="(item,index) in path" :key="index"  class="path" @click="paths(item.path)">{{item.file_source}}</span>
                 </div>
                 <div class="ap-upload">
                   <div class="u-select">
@@ -127,7 +127,7 @@
                           </label>
                           <i class="el-icon-close" @click="deleteUploadFile(file.id)"></i>
                           </li>
-                      </ul> 
+                      </ul>
                       <div id="containers"></div>
                       </div>
                       </div>
@@ -135,20 +135,20 @@
               </div>
               <div class="from-contents" v-show="cur==1">
                 <div class="edit_container">
-                    <quill-editor 
-                      v-model="drug.other" 
+                    <quill-editor
+                      v-model="drug.other"
                       :disabled="countenes"
-                      ref="myQuillEditor" 
+                      ref="myQuillEditor"
                       @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
                       @change="onEditorChange($event)">
-                    </quill-editor> 
+                    </quill-editor>
                 </div>
-              </div> 
+              </div>
            <el-form-item class="from-btns">
                 <el-button type="primary" @click="addData" :disabled = "openIsDisabled">发布</el-button>
                 <!-- <el-button type="primary" @click="preview" :disabled = " openIsDisabled ">预览</el-button> -->
                 <el-button type="primary"  @click="disableds">暂存</el-button>
-                <el-button @click="cancel" :disabled = " openIsDisabled ">取消</el-button> 
+                <el-button @click="cancel" :disabled = " openIsDisabled ">取消</el-button>
             </el-form-item>
             </div>
           </el-form>
@@ -159,7 +159,7 @@
 </template>
 <script>
 import plupload from "plupload";
-import qs from "qs"; 
+import qs from "qs";
 export default {
   name: "DiseaseEdit",
   data() {
@@ -269,7 +269,7 @@ export default {
       newDates: "",
       path: []
     };
-  }, 
+  },
   mounted() {
     this.lists = this.states.map(item => {
       return { value: item.id, label: item.name };
@@ -289,7 +289,7 @@ export default {
     this.getCompany();
     this.getDatas();
   },
-  methods: {  
+  methods: {
     del() {
       this.path = "";
     },
@@ -297,11 +297,12 @@ export default {
       this.axios({
           url: "/oss/upload/show",
           params: {
+            userId: window.localStorage.userId,
             objectKey: val,
             bucket: "mdhcare"
           }
         }).then(res => {
-      window.open(res.data); 
+      window.open(res.data);
         });
     },
     //取消
@@ -310,7 +311,10 @@ export default {
     },
     getCompany() {
       this.axios({
-        url: "company"
+        url: "company",
+        params: {
+          userId: window.localStorage.userId
+        }
       }).then(res => {
         this.valueList = res.data;
       });
@@ -319,6 +323,7 @@ export default {
       this.axios({
         url: "solution/solutionByCompany",
         params: {
+          userId: window.localStorage.userId,
           companyId: this.proDepts
         }
       }).then(res => {
@@ -326,7 +331,7 @@ export default {
       });
     },
     //预览
-    preview() { 
+    preview() {
       console.log(this.path)
       var nowDates = this.nowDate.split(",");
       var titleEn = this.drug.titleEn.split(",");
@@ -363,7 +368,7 @@ export default {
         });
         var productIds = this.newProduct.map(item => {
           return item.id;
-        }); 
+        });
         if (this.$route.query.id == undefined) {
           if (this.drug.title == undefined || this.drug.framers == undefined ||
               this.nowDate == undefined || this.drug.titleEn == "" ||
@@ -389,6 +394,9 @@ export default {
                 "Content-Type": "application/json",
                 "X-Requested-With": "XMLHttpRequest"
               },
+              params: {
+                userId: window.localStorage.userId
+              },
               data: {
                 guide: {
                   other: _this.drug.other,
@@ -405,7 +413,7 @@ export default {
               }
             })
               .then(res => {
-                this.temid = res.data.id; 
+                this.temid = res.data.id;
                 _this.$message({
                   message: "发布成功",
                   type: "success"
@@ -429,7 +437,7 @@ export default {
             var titleEn = this.drug.titleEn.split(",");
             var framers = this.drug.framers.split(",");
             var provenance = this.drug.provenance.split(",");
-            if (this.state == 0) {  
+            if (this.state == 0) {
               let instance = this.axios.create({
                 headers: {
                   Authorization: window.localStorage.token,
@@ -443,7 +451,10 @@ export default {
                 headers: {
                   "Content-Type": "application/json",
                   "X-Requested-With": "XMLHttpRequest"
-                }, 
+                },
+                params: {
+                  userId: window.localStorage.userId
+                },
                 data: {
                   guide: {
                     id: _this.id,
@@ -460,7 +471,7 @@ export default {
                   guideFileAttrs: _this.files
                 }
               })
-                .then(res => { 
+                .then(res => {
                   _this.$message({
                     message: "发布成功",
                     type: "success"
@@ -484,12 +495,13 @@ export default {
                   headers: {
                     "Content-Type": "application/json",
                     "X-Requested-With": "XMLHttpRequest"
-                  }, 
+                  },
                   params: {
-                    temId: _this.id
+                    temId: _this.id,
+                    userId: window.localStorage.userId
                   },
                   data: {
-                    guide: { 
+                    guide: {
                       other: _this.drug.other,
                       title: _this.drug.title,
                       titleEn,
@@ -503,7 +515,7 @@ export default {
                    guideFileAttrs: _this.files
                   }
                 })
-                  .then(res => { 
+                  .then(res => {
                     this.$message({
                       type: "success",
                       message: "发布成功"
@@ -528,7 +540,8 @@ export default {
                     "X-Requested-With": "XMLHttpRequest"
                   },
                   params: {
-                    temId: _this.id
+                    temId: _this.id,
+                    userId: window.localStorage.userId
                   },
                   data: {
                     guide: {
@@ -550,7 +563,7 @@ export default {
                     this.$message({
                       type: "success",
                       message: "发布成功"
-                    });  
+                    });
                   })
                   .catch(err => {
                     _this.$message(JSON.parse(err.request.response).msg);
@@ -558,24 +571,24 @@ export default {
               }
             }
           }
-        } 
+        }
     },
     //发布
-    addData() {  
+    addData() {
       if(this.fileNum==0){
         this.addData1();
-      }else{ 
+      }else{
           this.dis=2;
-          this.setUploadParam(this.uploader, "", false);  
+          this.setUploadParam(this.uploader, "", false);
       }
     },
      //暂存
      disableds(){
         if(this.fileNum==0){
-          this.disableds1() 
-        }else{ 
-          this.dis=1; 
-          this.setUploadParam(this.uploader, "", false);   
+          this.disableds1()
+        }else{
+          this.dis=1;
+          this.setUploadParam(this.uploader, "", false);
         }
       },
     disableds1() {
@@ -613,7 +626,7 @@ export default {
           this.drug.provenance == ""
         ) {
           this.$message("请输入带有*的信息");
-        } else { 
+        } else {
           let instance = this.axios.create({
             headers: {
               Authorization: window.localStorage.token,
@@ -627,6 +640,9 @@ export default {
             headers: {
               "Content-Type": "application/json",
               "X-Requested-With": "XMLHttpRequest"
+            },
+            params: {
+              userId: window.localStorage.userId
             },
             data: {
               guideTem: {
@@ -668,7 +684,7 @@ export default {
           this.drug.provenance == ""
         ) {
           this.$message("请输入带有*的信息");
-        } else { 
+        } else {
           if (this.state == 0) {
             let instance = this.axios.create({
               headers: {
@@ -684,7 +700,9 @@ export default {
                 "Content-Type": "application/json",
                 "X-Requested-With": "XMLHttpRequest"
               },
-              
+              params: {
+                userId: window.localStorage.userId
+              },
               data: {
                 guideTem: {
                   guideId: _this.id,
@@ -726,6 +744,9 @@ export default {
                 "Content-Type": "application/json",
                 "X-Requested-With": "XMLHttpRequest"
               },
+              params: {
+                userId: window.localStorage.userId
+              },
               data: {
                 guideTem: {
                   id: _this.id,
@@ -758,14 +779,15 @@ export default {
         }
       }
     },
-    
+
     //获取信息
     getDatas() {
       this.axios({
         url: "guideManage/byId",
         params: {
           id: this.$route.query.id,
-          state: this.$route.query.state
+          state: this.$route.query.state,
+          userId: window.localStorage.userId
         }
       }).then(res => {
         this.drug = res.data.guide;
@@ -774,8 +796,8 @@ export default {
         this.nowDate = res.data.guide.publishDate.join(",");
         this.drug.framers = res.data.guide.framers.join(",");
         this.drug.provenance = res.data.guide.provenance.join(",");
-        this.drug.titleEn = res.data.guide.titleEn.join(","); 
-        this.path = res.data.guide.files; 
+        this.drug.titleEn = res.data.guide.titleEn.join(",");
+        this.path = res.data.guide.files;
 
         this.geneId = res.data.genes == undefined ? [] : res.data.genes.map(item => {
           this.geneOption.push({ id: item.geneId, name: item.geneName });
@@ -807,7 +829,8 @@ export default {
         method: "get",
         url: "product/getProductByName",
         params: {
-          param: product
+          param: product,
+          userId: window.localStorage.userId
         },
         headers: {
           "X-Requested-With": "XMLHttpRequest",
@@ -846,7 +869,8 @@ export default {
         method: "get",
         url: "diseaseData/getDiseasesByPage",
         params: {
-          param: disease
+          param: disease,
+          userId: window.localStorage.userId
         },
         headers: {
           "X-Requested-With": "XMLHttpRequest",
@@ -877,7 +901,8 @@ export default {
       this.axios({
         url: "gene/all",
         params: {
-          keyWord: gene
+          keyWord: gene,
+          userId: window.localStorage.userId
         }
       }).then(res => {
         this.geneOption = res.data.genes.map((item, index) => {
@@ -899,7 +924,7 @@ export default {
         this.geneOption = [];
       }
     },
-   
+
     onEditorReady(editor) {}, // 准备编辑器,
     onEditorBlur() {}, // 失去焦点事件
     onEditorFocus() {}, // 获得焦点事件
@@ -910,7 +935,11 @@ export default {
     _initData() {
       if (this.$route.params.id !== undefined) {
         this.axios
-          .get("drug/" + this.$route.params.id)
+          .get("drug/" + this.$route.params.id, {
+            params: {
+              userId: window.localStorage.userId
+            }
+          })
           .then(res => {
             this.drug = res.data;
             this.sampleMeta = res.data.sampleMeta;
@@ -934,8 +963,11 @@ export default {
           })
           .catch(err => {});
       }
-      this.axios
-        .get("hospital-dept")
+      this.axios.get("hospital-dept", {
+          params: {
+            userId: window.localStorage.userId
+          }
+        })
         .then(res => {
           this.deptList = res.data;
         })
@@ -953,6 +985,9 @@ export default {
         instance({
           method: "post",
           url: "drug",
+          params: {
+            userId: window.localStorage.userId
+          },
           data: {
             drug: this.drug,
             deptId: this.proDepts,
@@ -995,6 +1030,9 @@ export default {
         instance({
           method: "put",
           url: "drug/" + this.$route.params.id,
+          params: {
+            userId: window.localStorage.userId
+          },
           data: {
             drug: this.drug,
             deptId: this.proDepts,
@@ -1024,7 +1062,7 @@ export default {
     },
     sendRequest() {
       const xmlhttp = new XMLHttpRequest();
-      const param = this.userId > 0 ? "?userId=" + this.userId : ""; 
+      const param = this.userId > 0 ? "?userId=" + this.userId : "";
       const serverUrl =process.env.BASE_URL + "/oss/upload/policy/database-guide" +  param;
       xmlhttp.open("GET", serverUrl, false);
       xmlhttp.setRequestHeader("Authorization", window.localStorage.token);
@@ -1142,7 +1180,7 @@ export default {
           // },
           FilesAdded: (up, files) => {
             that.fileList = up.files;
-            that.fileNum = up.files.length;  
+            that.fileNum = up.files.length;
           },
           BeforeUpload: (up, file) => {
             that.setUploadParam(up, file.name, true);
@@ -1160,19 +1198,19 @@ export default {
                 filePath: up.settings.multipart_params.key,
                 objectKey: up.settings.multipart_params.key
               };
-              that.files.push(params);  
+              that.files.push(params);
               //这里
             } else {
               d.setAttribute("class", "el-upload-list__item is-warning");
             }
           },
           UploadComplete: up => {
-            up.refresh(); 
+            up.refresh();
             if(that.dis == 1){
-                that.disableds1()  
+                that.disableds1()
             }else if(that.dis==2){
               console.log(213333333333)
-              that.addData1(); 
+              that.addData1();
             }
           },
           Error: (up, err) => {

@@ -125,7 +125,11 @@ export default {
   methods: {
     _initData () {
       if (this.$route.params.id !== undefined) {
-        this.axios.get('solution/' + this.$route.params.id).then(res => {
+        this.axios.get('solution/' + this.$route.params.id, {
+          params: {
+            userId: window.localStorage.userId
+          }
+        }).then(res => {
           this.solution = res.data
           this.sampleMeta = res.data.sampleMeta
           this.proDepts = res.data.deptName
@@ -151,7 +155,11 @@ export default {
           console.log(err)
         })
       }
-      this.axios.get('hospital-dept').then(res => {
+      this.axios.get('hospital-dept', {
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
         this.deptList = res.data
       }).catch(err => {
         console.log(err)
@@ -173,6 +181,9 @@ export default {
             solution: this.solution,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
+            userId: window.localStorage.userId
+          },
+          params: {
             userId: window.localStorage.userId
           },
           headers: {
@@ -214,6 +225,9 @@ export default {
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
             solutionExpands: this.expandParams,
+            userId: window.localStorage.userId
+          },
+          params: {
             userId: window.localStorage.userId
           },
           headers: {

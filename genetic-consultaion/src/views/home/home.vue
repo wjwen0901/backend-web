@@ -59,7 +59,7 @@
               <el-menu-item index="/brca/paper/report">纸质报告</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="/wrj" v-if="sec.includes('system')">
+          <el-submenu index="/wrj" v-if="sec.includes('wrj:manage')">
             <template slot="title">
               <i class="el-icon-document"></i>
               <span slot="title">维汝健</span>
@@ -84,18 +84,18 @@
           </el-submenu>
           <el-menu-item index="/order" v-if="sec.includes('order')">
             <template slot="title">
-              <i class="fas fa-globe"></i>
+              <i class="el-icon-document"></i>
               <span slot="title">订单管理</span>
             </template>
           </el-menu-item>
           <el-menu-item index="/patient/list" v-if="sec.includes('patient:list')">
             <template slot="title">
-              <i class="fas fa-user-cog"></i>
+              <i class="el-icon-s-custom"></i>
               <span slot="title">客户管理</span>
             </template>
           </el-menu-item>
           <el-submenu index="/informed" v-if="sec.includes('upload:informed') || sec.includes('data-collect:informed')">
-            <template slot="title"><i class="el-icon-document"></i><span slot="title">知情管理</span></template>
+            <template slot="title"><i class="el-icon-edit-outline"></i><span slot="title">知情管理</span></template>
             <el-menu-item-group>
               <el-menu-item index="/informed/upload" v-if="sec.includes('upload:informed')">上传文件</el-menu-item>
               <el-menu-item index="/informed/list" v-if="sec.includes('data-collect:informed')">查看知情</el-menu-item>
@@ -103,7 +103,7 @@
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="upload" v-if="sec.includes('upload:report') || sec.includes('data-collect:report') || sec.includes('report:list')">
-            <template slot="title"><i class="fas fa-book-open"></i><span slot="title">报告管理</span></template>
+            <template slot="title"><i class="el-icon-notebook-2"></i><span slot="title">报告管理</span></template>
             <el-menu-item-group>
               <el-menu-item index="/report/customize/genessential" v-if="sec.includes('custome-report:genessential')">定制报告</el-menu-item>
               <el-menu-item index="/report/upload" v-if="sec.includes('upload:report')">上传报告</el-menu-item>
@@ -112,7 +112,7 @@
             </el-menu-item-group>
           </el-submenu>
           <el-menu-item index="/review" v-if="sec.includes('data-review')">
-            <i class="fas fa-binoculars"></i>
+            <i class="el-icon-copy-document"></i>
             <span slot="title">信息复核</span>
           </el-menu-item>
           <el-submenu index="/ru6c" v-if="sec.includes('ru6c-gene')">
@@ -128,19 +128,19 @@
           </el-menu-item>
           <el-menu-item index="/hospital" v-if="sec.includes('hospital:list')">
             <template slot="title">
-              <i class="fas fa-hospital"></i>
+              <i class="el-icon-office-building"></i>
               <span slot="title">医院管理</span>
             </template>
           </el-menu-item>
           <el-menu-item index="/firm" v-if="sec.includes('firm:list')">
             <template slot="title">
-              <i class="fas fa-flask"></i>
+              <i class="el-icon-school"></i>
               <span slot="title">厂商管理</span>
             </template>
           </el-menu-item>
           <el-menu-item index="/channel" v-if="sec.includes('channel:list')">
             <template slot="title">
-              <i class="fas fa-building"></i>
+              <i class="el-icon-house"></i>
               <span slot="title">渠道商管理</span>
             </template>
           </el-menu-item>
@@ -150,7 +150,7 @@
               <el-menu-item index="/user" v-if="sec.includes('system:user-sec')">账号管理</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="disease" v-if="sec.includes('system')">
+          <el-submenu index="disease" v-if="sec.includes('system') && role === 'manager' && userId == 1">
             <template slot="title"><i class="el-icon-setting"></i><span slot="title">疾病数据库</span></template>
             <el-menu-item-group>
               <el-menu-item index="/drug" v-if="role === 'manager'">指南管理</el-menu-item>
@@ -159,13 +159,13 @@
               <el-menu-item index="/product-cl" v-if="role === 'manager'">产品数据维护</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="printer" v-if="sec.includes('system')">
+          <el-submenu index="printer" v-if="sec.includes('system') && role === 'manager' && userId == 1">
             <template slot="title"><i class="el-icon-setting"></i><span slot="title">一体机管理</span></template>
             <el-menu-item-group>
               <el-menu-item index="/printer/list" v-if="role === 'manager'">一体机列表</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="rank" v-if="sec.includes('system')">
+          <el-submenu index="rank" v-if="sec.includes('system') && role === 'manager' && userId == 1">
             <template slot="title"><i class="el-icon-setting"></i><span slot="title">实验室排名</span></template>
             <el-menu-item-group>
               <el-menu-item index="/rank/list">总排名</el-menu-item>
@@ -199,6 +199,7 @@ export default {
   data () {
     return {
       username: window.localStorage.username,
+      userId: window.localStorage.userId,
       sec: window.localStorage.sec === undefined ? 'upload,upload:informed,upload:report,upload:medical-records,informed:list,report:list' : window.localStorage.sec,
       role: window.localStorage.role,
       // username: 'admin',

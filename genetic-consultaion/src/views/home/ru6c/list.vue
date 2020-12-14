@@ -143,7 +143,8 @@ export default {
           companyId: window.localStorage.companyId,
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          searchCondition: this.condition
+          searchCondition: this.condition,
+          userId: window.localStorage.userId
         }
       }).then(res => {
         this.list = res.data
@@ -164,13 +165,18 @@ export default {
     },
     toDownPDF (id) {
       let loadingInstance = Loading.service({ fullscreen: true });
-      this.axios.get('report/' + id).then(res => {
+      this.axios.get('report/' + id,{
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
         this.report = res.data
         console.log(res.data.type)
         this.axios.get('oss/upload/show', {
           params: {
             objectKey: res.data.path,
-            bucket: res.data.type
+            bucket: res.data.type,
+            userId: window.localStorage.userId
           }
         }).then(res1 => {
           window.open(this.axios.defaults.baseURL.includes('https://')
@@ -187,12 +193,20 @@ export default {
     },
     toDownJSON (id, sample) {
       let loadingInstance = Loading.service({ fullscreen: true, text: '数据比较大，请耐心等候'});
-      this.axios.get('report/' + id).then(res => {
+      this.axios.get('report/' + id, {
+        params: {
+          userId: window.localStorage.userId
+        }
+      }).then(res => {
         this.report = res.data
         console.log(this.report)
         let ObjectId = this.report.fileName.split('.')[0]
 
-        this.axios.get('analyse/json/' + ObjectId).then(res1 => {
+        this.axios.get('analyse/json/' + ObjectId, {
+          params: {
+            userId: window.localStorage.userId
+          }
+        }).then(res1 => {
           const blob = new Blob([JSON.stringify(res1.data)], {type: ''})
           FileSaver.saveAs(blob, sample + '.json')
           this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭

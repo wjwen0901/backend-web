@@ -158,7 +158,7 @@ export default {
       this.multipleSelection.forEach(item => {
         informedIds.push(item.id)
       })
-      this.axios.get('informed/export?informedIds=' + informedIds, {
+      this.axios.get('informed/export?informedIds=' + informedIds + '&userId=' + window.localStorage.userId, {
         responseType:"blob"
       }).then(response => {
         const blob = new Blob(

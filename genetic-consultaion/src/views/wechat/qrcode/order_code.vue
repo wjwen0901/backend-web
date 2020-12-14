@@ -141,6 +141,9 @@
         instance({
           method: 'post',
           url: 'informed/channel',
+          params: {
+            userId: window.localStorage.userId
+          },
           data: {
             userId: parseInt(this.$route.query.userId),
             truename: this.patient.name,
@@ -175,7 +178,8 @@
         }
         this.axios.get('verification', {
           params: {
-            cellphone: this.patient.cellphone
+            cellphone: this.patient.cellphone,
+            userId: window.localStorage.userId
           }
         }).then(res => {
           if (res.data === 'success') {
