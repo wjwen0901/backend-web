@@ -32,7 +32,7 @@
                 <el-date-picker
                   v-model="informedContent.dateOfBirth"
                   type="date"
-                  value-format="yyyy-MM-dd HH:mm:ss"
+                  value-format="timestamp"
                   placeholder="选择日期时间">
                 </el-date-picker>
               </el-col>
@@ -133,7 +133,7 @@
                 <el-date-picker
                   v-model="informedContent.samplingDate"
                   type="date"
-                  value-format="yyyy-MM-dd HH:mm:ss"
+                  value-format="timestamp"
                   placeholder="选择日期">
                 </el-date-picker>
             </el-form-item>
@@ -539,13 +539,13 @@ export default {
           this.informedContent.smsStatus = 1
           this.smsStatus = 1
         }
-        if (this.informedContent.samplingDate !== undefined) {
-          this.informedContent.samplingDate = new Date(this.informedContent.samplingDate).Format("yyyy-MM-dd hh:mm:ss")
-        }
-        if (this.informedContent.dateOfBirth !== undefined) {
-          this.informedContent.dateOfBirth = new Date(this.informedContent.dateOfBirth).Format("yyyy-MM-dd hh:mm:ss")
-          console.log(this.informedContent.dateOfBirth)
-        }
+        // if (this.informedContent.samplingDate !== undefined) {
+        //   this.informedContent.samplingDate = new Date(this.informedContent.samplingDate).Format("yyyy-MM-dd hh:mm:ss")
+        // }
+        // if (this.informedContent.dateOfBirth !== undefined) {
+        //   this.informedContent.dateOfBirth = new Date(this.informedContent.dateOfBirth).Format("yyyy-MM-dd hh:mm:ss")
+        //   console.log(this.informedContent.dateOfBirth)
+        // }
         if (this.informedContent.moreInfo) {
           this.moreInfo = JSON.parse(this.informedContent.moreInfo)
           if (this.moreInfo.length > 0) {

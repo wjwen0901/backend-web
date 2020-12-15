@@ -6,8 +6,10 @@ import axios from 'axios'
 import qs from 'qs'
 
 axios.defaults.baseURL = process.env.BASE_URL
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
-axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded'
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+// axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded'
+axios.defaults.headers.post['Content-Type'] = 'application/json'
+axios.defaults.headers.put['Content-Type'] = 'application/json'
 
 // http request 拦截器
 axios.interceptors.request.use(
@@ -16,7 +18,7 @@ axios.interceptors.request.use(
         config.params = config.params ? config.params:{}
         config.params.userId = window.localStorage.userId
         if (config.method === 'post' || config.method === 'put') {
-            config.data = qs.stringify(config.data)
+            // config.data = qs.stringify(config.data)
                 // config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
         }
         // if (store.state.token) {
