@@ -407,7 +407,9 @@ export default {
               }
               window.localStorage.doctor = this.informedConsent.doctor
               let _this = this
-              this.axios.post('informed/upload', param).then(res => {
+              this.axios.post('informed/upload',null, {
+                params: param
+              }).then(res => {
                 _this.$notify({
                   message: '上传成功',
                   type: 'success',

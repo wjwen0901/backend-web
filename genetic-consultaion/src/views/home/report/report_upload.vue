@@ -346,7 +346,32 @@ export default {
                 solutionId: this.report.solutionId,
                 isPositive: this.report.isPositive,
               }
-              this.axios.post('report/upload', param).then(res => {
+              // this.axios.post('report/upload', param).then(res => {
+              //   this.$message({
+              //     message: '上传成功',
+              //     type: 'success'
+              //   })
+              // }).catch(err => {
+              //   this.$message.error(err.data.message)
+              //   console.log(err)
+              // })
+
+              let instance = this.axios.create({
+                headers: {
+                  'Authorization': window.localStorage.token,
+                  'Content-Type': 'application/json'
+                }
+              })
+              let _this = this
+              instance({
+                method: 'post',
+                url: 'report/upload',
+                params: param,
+                headers: {
+                  'X-Requested-With': 'XMLHttpRequest',
+                  'Content-Type': 'application/json'
+                }
+              }).then(res => {
                 this.$message({
                   message: '上传成功',
                   type: 'success'
@@ -355,6 +380,7 @@ export default {
                 this.$message.error(err.data.message)
                 console.log(err)
               })
+
             } else {
               d.setAttribute('class', 'el-upload-list__item is-warning')
             }
