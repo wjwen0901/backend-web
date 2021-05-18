@@ -59,7 +59,7 @@ export default {
         url: 'customize/genessential',
         params: {
           solutionId: _this.solutionId,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           sampleNo: _this.sampleNo
         },
         headers: {
@@ -79,7 +79,7 @@ export default {
     initData () {
       this.axios.get('solution', {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.projects = res.data

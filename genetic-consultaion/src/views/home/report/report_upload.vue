@@ -133,7 +133,7 @@ export default {
       uploader: {},
       companyList: [],
       userList: [],
-      userId: window.localStorage.userId,
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
       order: {},
       projects: []
     }
@@ -160,7 +160,7 @@ export default {
       }
       this.axios.get('solution', {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.projects = res.data
@@ -183,7 +183,7 @@ export default {
     getCompanyList () {
       this.axios.get('company/CustCompany', {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.companyList = res.data
@@ -332,7 +332,7 @@ export default {
               console.log(up)
               console.log(file.mime_types)
               const param = {
-                userId: window.localStorage.userId,
+                userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
                 name: this.report.fullName,
                 cellphone: this.report.cellphone,
                 fileName: file.name,
@@ -367,6 +367,7 @@ export default {
                 method: 'post',
                 url: 'report/upload',
                 params: param,
+                data: param,
                 headers: {
                   'X-Requested-With': 'XMLHttpRequest',
                   'Content-Type': 'application/json'

@@ -16,27 +16,27 @@
               <el-form-item label="中文标题*">
                 <span>{{sessionData.title}}</span>
               </el-form-item>
-              <el-form-item label="制定者*"> 
+              <el-form-item label="制定者*">
                 <span v-for="(item,index) in sessionData.framers" :key="index">{{item}}</span>
               </el-form-item>
-              <el-form-item label="发布日期*"> 
-                <span v-for="(item,index) in sessionData.publishDate" :key="index">{{item}}</span>                
-              </el-form-item> 
-              <el-form-item label="检测产品" > 
+              <el-form-item label="发布日期*">
+                <span v-for="(item,index) in sessionData.publishDate" :key="index">{{item}}</span>
+              </el-form-item>
+              <el-form-item label="检测产品" >
                 <span v-for="(item,index) in sessionData.productIds" :key="index">{{item.name}}</span>
               </el-form-item>
             </div>
             <div class="form-right">
-              <el-form-item label="英文标题*" > 
-                <span v-for="(item,index) in sessionData.titleEn" :key="index">{{item}}</span>                                
+              <el-form-item label="英文标题*" >
+                <span v-for="(item,index) in sessionData.titleEn" :key="index">{{item}}</span>
               </el-form-item>
-              <el-form-item label="出处*"> 
-                <span v-for="(item,index) in sessionData.provenance" :key="index">{{item}}</span>         
-              </el-form-item> 
-              <el-form-item label="相关疾病"> 
+              <el-form-item label="出处*">
+                <span v-for="(item,index) in sessionData.provenance" :key="index">{{item}}</span>
+              </el-form-item>
+              <el-form-item label="相关疾病">
                 <span v-for="(item,index) in sessionData.diseaseIds" :key="index">{{item.name}}</span>
               </el-form-item>
-              <el-form-item label="相关基因"> 
+              <el-form-item label="相关基因">
                 <span v-for="(item,index) in sessionData.geneId" :key="index">{{item.name}}</span>
               </el-form-item>
             </div>
@@ -44,17 +44,17 @@
               <ul class="form-list" >
                 <li v-for="(item,index) in list" :key="index" @click="cur=index" :class="{active:cur==index}">
                  {{item.id}}.{{item.name}}
-                </li> 
+                </li>
               </ul>
-              <div class="from-contents" v-show="cur==0"> 
+              <div class="from-contents" v-show="cur==0">
                 <span v-for="(item,index) in sessionData.guideFileAttrs" :key="index">{{item.file_source}}</span>
               </div>
-              <div class="from-contents" v-show="cur==1"> 
+              <div class="from-contents" v-show="cur==1">
                 <span v-html="sessionData.other"></span>
-              </div> 
+              </div>
            <el-form-item class="from-btns">
-                <el-button type="primary" @click="addData" :disabled = "openIsDisabled">发布</el-button>  
-                <el-button @click="cancel" :disabled = " openIsDisabled ">取消</el-button> 
+                <el-button type="primary" @click="addData" :disabled = "openIsDisabled">发布</el-button>
+                <el-button @click="cancel" :disabled = " openIsDisabled ">取消</el-button>
             </el-form-item>
             </div>
           </el-form>
@@ -75,15 +75,15 @@ export default {
   data () {
     return {
       data: [],
-      addRowData: ['add'],  
+      addRowData: ['add'],
       cur: 0,
-      list:[{name:'指南',id:1},{name:'其他',id:2}],  
+      list:[{name:'指南',id:1},{name:'其他',id:2}],
       loadings: false,
       states: [],
       sessionData:{},
       productId:'',
       productName:[],
-      userId: window.localStorage.userId,
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
       accesskey: "",
       host: "",
       policyBase64: "",
@@ -102,16 +102,16 @@ export default {
       files:[],
       dis:0
     }
-  }, 
-  methods: { 
+  },
+  methods: {
     cancel(){
       this.$router.go(-1)
-    }, 
+    },
       sendRequest() {
       const xmlhttp = new XMLHttpRequest();
       const param = this.userId > 0 ? "?userId=" + this.userId : "";
       const serverUrl =
-        "https://test.mdhcare.com/mdhcare-backend/oss/upload/policy/database-guide" + param; 
+        "https://test.mdhcare.com/mdhcare-backend/oss/upload/policy/database-guide" + param;
       xmlhttp.open("GET", serverUrl, false);
       xmlhttp.setRequestHeader("Authorization", window.localStorage.token);
       xmlhttp.send();
@@ -183,13 +183,13 @@ export default {
         callback: this.callbackbody,
         uniqueKey: this.uniqueKey
       };
-      console.log("osss---------------") 
-      console.log("https://" + this.host) 
+      console.log("osss---------------")
+      console.log("https://" + this.host)
       up.setOption({
         url: "https://" + this.host,
         multipart_params: newMultipartParams
       });
-      console.log(up) 
+      console.log(up)
       up.start();
     },
     deleteUploadFile(id) {
@@ -232,7 +232,7 @@ export default {
           FilesAdded: (up, files) => {
             console.log(files);
             that.fileList = up.files;
-            that.fileNum = up.files.length;  
+            that.fileNum = up.files.length;
           },
           BeforeUpload: (up, file) => {
             that.setUploadParam(up, file.name, true);
@@ -250,15 +250,15 @@ export default {
                 filePath: up.settings.multipart_params.key,
                 objectKey: up.settings.multipart_params.key
               };
-              that.files.push(params);  
+              that.files.push(params);
               //这里
             } else {
               d.setAttribute("class", "el-upload-list__item is-warning");
             }
           },
           UploadComplete: up => {
-            up.refresh(); 
-              that.addData1();  
+            up.refresh();
+              that.addData1();
           },
           Error: (up, err) => {
             console.log("上传失败：", err, that.onError, up);
@@ -290,7 +290,7 @@ export default {
       uploader.init();
       that.uploader = uploader;
     },
-    addData1(){ 
+    addData1(){
       var diseaseIds = this.sessionData.diseaseIds.map(item=>{
         return item.id
       })
@@ -298,9 +298,9 @@ export default {
         return item.id
       })
       var productIds = this.sessionData.productIds.map(item=>{
-        return item.id 
+        return item.id
       })
-      if (this.$route.query.id == undefined) {   
+      if (this.$route.query.id == undefined) {
           let instance = this.axios.create({
             headers: {
               Authorization: window.localStorage.token,
@@ -327,12 +327,12 @@ export default {
               geneIds
             },
             productIds,
-            guideFileAttrs:_this.files 
+            guideFileAttrs:_this.files
             }
           })
             .then(res => {
               this.temid = res.data.id;
-              window.localStorage.removeItem("params") 
+              window.localStorage.removeItem("params")
               _this.$message({
                 message: "发布成功",
                 type: "success"
@@ -340,8 +340,8 @@ export default {
             })
             .catch(err => {
               _this.$message(JSON.parse(err.request.response).msg);
-            }); 
-      } else {  
+            });
+      } else {
           if (this.state == 0) {
             let instance = this.axios.create({
               headers: {
@@ -373,11 +373,11 @@ export default {
                   geneIds
                   },
                   productIds,
-                  guideFileAttrs:_this.files 
+                  guideFileAttrs:_this.files
               }
             })
               .then(res => {
-                window.localStorage.removeItem("params") 
+                window.localStorage.removeItem("params")
                 _this.$message({
                   message: "发布成功",
                   type: "success"
@@ -418,7 +418,7 @@ export default {
                     geneIds
                   },
                   productIds,
-                  guideFileAttrs:_this.files 
+                  guideFileAttrs:_this.files
                 }
               })
                 .then(res => {
@@ -462,7 +462,7 @@ export default {
                     geneIds
                   },
                   productIds,
-                  guideFileAttrs:_this.files 
+                  guideFileAttrs:_this.files
                 }
               })
                 .then(res => {
@@ -476,11 +476,11 @@ export default {
                   _this.$message(JSON.parse(err.request.response).msg);
                 });
             }
-          } 
+          }
       }
-    }, 
-    addData(){  
-      // this.uploader.files = this.sessionData.guideFileList;  
+    },
+    addData(){
+      // this.uploader.files = this.sessionData.guideFileList;
       this.sessionData.guideFileList.forEach((item, index) => {
         console.log(typeOf(item))
         console.log("file " + index)
@@ -491,7 +491,7 @@ export default {
         this.addData1()
       }else{
         console.log(1)
-        this.setUploadParam(this.uploader,"", false);  
+        this.setUploadParam(this.uploader,"", false);
       }
     },
     _initData () {
@@ -515,7 +515,7 @@ export default {
                 }
               }
             })
-          } 
+          }
         }).catch(err => {
           console.log(err)
         })
@@ -542,7 +542,7 @@ export default {
             drug: this.drug,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
@@ -583,7 +583,7 @@ export default {
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
             solutionExpands: this.expandParams,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
@@ -639,7 +639,7 @@ export default {
           }
           result.push(expandParams)
         })
-      } 
+      }
       return result
     }
   },
@@ -657,14 +657,14 @@ export default {
       this.upload();
     });
   },
-  mounted () { 
+  mounted () {
     this.sessionData = JSON.parse(window.sessionStorage.getItem("drug"));
     this.state = this.$route.query.state;
-    this.guideId = this.sessionData.guideId; 
+    this.guideId = this.sessionData.guideId;
     console.log(this.state)
     console.log(this.sessionData.title)
-    
-  }, 
+
+  },
 }
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
@@ -725,8 +725,8 @@ export default {
     }
   }
   .from-select{
-    width: 100%; 
-    display: flex; 
+    width: 100%;
+    display: flex;
   }
   .from-contents{
     width: 100%;

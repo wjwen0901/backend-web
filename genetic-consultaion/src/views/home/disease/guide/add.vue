@@ -150,7 +150,7 @@ export default {
       }
       this.axios.get('solution', {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.solutionList = res.data
@@ -174,7 +174,7 @@ export default {
             guide: this.guide,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
@@ -212,7 +212,7 @@ export default {
           url: 'guide/' + this.$route.params.id,
           data: {
             guide: this.guide,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
@@ -281,7 +281,7 @@ export default {
   }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss" scoped> 
+<style rel="stylesheet/scss" lang="scss" scoped>
   .float-l {
     float: left;
   }

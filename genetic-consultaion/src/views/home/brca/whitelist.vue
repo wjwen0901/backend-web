@@ -210,7 +210,7 @@ export default {
         text: 'name2',
         value: 'value2'
       }],
-      userId: window.localStorage.userId,
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
       regionData: regionData,
       CodeToText: CodeToText,
       TextToCode: TextToCode,
@@ -226,7 +226,7 @@ export default {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           condition: this.condition
         }
       }).then(res => {
@@ -239,7 +239,7 @@ export default {
       })
       this.axios.get('hospital', {
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         },
       }).then(res => {
         this.hospitals = res.data
@@ -248,7 +248,7 @@ export default {
       })
       this.axios.get('hospital-dept', {
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         },
       }).then(res => {
         this.depts = res.data
@@ -281,7 +281,7 @@ export default {
         url: 'white',
         data: this.whitelistDoctor,
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
@@ -299,7 +299,7 @@ export default {
     toDetail (id) {
       this.axios.get('white/' + id, {
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         }
       }).then(res => {
         this.whitelistDoctor = res.data
@@ -320,7 +320,7 @@ export default {
         method: 'put',
         url: 'white/' + id,
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         },
         data: this.whitelistDoctor,
         headers: {
@@ -344,7 +344,7 @@ export default {
       }).then(() => {
         this.axios.delete('white/' + id, {
           params: {
-            userId: window.localStorage.userId,
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           }
         }).then(res => {
           this._initData()
@@ -368,7 +368,7 @@ export default {
       this.axios.get('user/secs', {
         params: {
           role: val,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         },
       }).then(res => {
         this.resourceList = []
@@ -418,7 +418,7 @@ export default {
           pageNum: 1, // 页码
           pageSize: 8, // 每页长度
           keywords: queryString,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         },
       }).then(res => {
         console.log(res.data)

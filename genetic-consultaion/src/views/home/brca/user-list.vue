@@ -232,7 +232,7 @@ export default {
         value: 'value2'
       }],
       bankInfo: [],
-      userId: window.localStorage.userId
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
     }
   },
   methods: {
@@ -241,7 +241,7 @@ export default {
       this.getBankList()
       this.axios.get('hospital',{
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         },
       }).then(res => {
         this.hospitals = res.data
@@ -250,7 +250,7 @@ export default {
       })
       this.axios.get('hospital-dept', {
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         }
       }).then(res => {
         this.depts = res.data
@@ -263,7 +263,7 @@ export default {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           condition: this.condition
         }
       }).then(res => {
@@ -296,7 +296,7 @@ export default {
     toExcel () {
       this.axios.get('/white/export',{
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         },
         responseType:"blob"
       }).then(response => {
@@ -341,7 +341,7 @@ export default {
         url: 'user',
         data: this.userResource,
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
@@ -359,7 +359,7 @@ export default {
     toDetail (id) {
       this.axios.get('user/' + id,{
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         }
       }).then(res => {
         this.userResource = res.data
@@ -395,7 +395,7 @@ export default {
         url: 'user/' + id,
         data: this.userResource,
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
@@ -418,7 +418,7 @@ export default {
       }).then(() => {
         this.axios.delete('user/' + id, {
           params: {
-            userId: window.localStorage.userId,
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           },
         }).then(res => {
           this._initData()
@@ -472,7 +472,7 @@ export default {
         url: 'user/manager/service?type=salesman&hospitalId=' + this.salesman.hospitalId,
         data: this.salesman,
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
@@ -507,7 +507,7 @@ export default {
         url: 'user/manager/service?type=service&hospitalId=' + this.serviceman.hospitalId,
         data: this.serviceman,
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
@@ -530,7 +530,7 @@ export default {
           pageNum: 1, // 页码
           pageSize: 8, // 每页长度
           keywords: queryString,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         },
       }).then(res => {
         let result = []

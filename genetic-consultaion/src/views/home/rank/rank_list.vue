@@ -82,7 +82,7 @@ export default {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.rankList = res.data

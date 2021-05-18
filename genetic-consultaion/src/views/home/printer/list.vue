@@ -96,7 +96,7 @@ export default {
     getData () {
       this.axios.get('wechatPrt/printer', {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
       }).then(res => {
         this.printerList = res.data
@@ -124,7 +124,7 @@ export default {
         url: 'wechatPrt/printer',
         data: _this.addPrinter,
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
@@ -152,7 +152,7 @@ export default {
         url: 'wechatPrt/printer',
         data: _this.printer,
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',

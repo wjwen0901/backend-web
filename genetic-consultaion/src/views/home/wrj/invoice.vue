@@ -230,7 +230,7 @@ export default {
         text: 'name2',
         value: 'value2'
       }],
-      userId: window.localStorage.userId,
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
       regionData: regionData,
       CodeToText: CodeToText,
       TextToCode: TextToCode,
@@ -246,7 +246,7 @@ export default {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           condition: this.condition
         }
       }).then(res => {
@@ -318,7 +318,7 @@ export default {
     showExpress (id) {
       this.axios.get('white/' + id, {
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         }
       }).then(res => {
         this.whitelistDoctor = res.data

@@ -116,7 +116,7 @@ export default {
     getData () {
       this.axios.get('order/' + this.$route.params.id, {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
       }).then(res => {
         this.order = res.data
@@ -125,7 +125,7 @@ export default {
         if (this.$route.query.expressId !== undefined) {
           this.axios.get('express/' + this.$route.query.expressId, {
             params: {
-              userId: window.localStorage.userId
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
             },
           }).then(resExp => {
             this.order.expressCode = resExp.data.expressOrder.expressCode
@@ -140,7 +140,7 @@ export default {
       this.axios.get('informed/order', {
         params: {
           orderId: this.$route.params.id,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
       }).then(res => {
         this.informedList = res.data
@@ -152,7 +152,7 @@ export default {
       this.axios.get('oss/upload/show', {
         params: {
           objectKey: path,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
       }).then(res1 => {
         window.open(res1.data)
@@ -164,32 +164,47 @@ export default {
       this.$alert('一定要确认客户已支付哦！！！', '确认已付款', {
         confirmButtonText: '确定',
         callback: action => {
-          this.order.statusStr = '已付款'
-          this.order.payTime = new Date()
-          var instance = this.axios.create({
-            headers: {
-              'Authorization': window.localStorage.token,
-              'Content-Type': 'application/json'
-            }
-          })
-          let _this = this
-          instance({
-            method: 'put',
-            url: 'order',
-            data: this.order,
-            headers: {
-              'X-Requested-With': 'XMLHttpRequest',
-              'Content-Type': 'application/json'
-            },
+          // this.order.statusStr = '已付款'
+          // this.order.payTime = new Date()
+          // var instance = this.axios.create({
+          //   headers: {
+          //     'Authorization': window.localStorage.token,
+          //     'Content-Type': 'application/json'
+          //   }
+          // })
+          // let _this = this
+          // instance({
+          //   method: 'put',
+          //   url: 'order/',
+          //   data: this.order,
+          //   headers: {
+          //     'X-Requested-With': 'XMLHttpRequest',
+          //     'Content-Type': 'application/json'
+          //   },
+          //   params: {
+          //     userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+          //   }
+          // }).then(function (response) {
+          //   _this.$message({
+          //     message: '修改成功',
+          //     type: 'success'
+          //   })
+          //   _this._initData()
+          // })
+          this.axios.get('order/confirm', {
             params: {
-              userId: window.localStorage.userId
+              orderId: this.$route.params.id,
+              userId: this.userId
             }
-          }).then(function (response) {
-            _this.$message({
-              message: '修改成功',
-              type: 'success'
-            })
-            _this._initData()
+          }).then(res => {
+            if (res.data == 'success') {
+              this.$message({
+                message: '确认成功',
+                type: 'success'
+              })
+            }
+          }).catch(err => {
+            console.log(err)
           })
         }
       });

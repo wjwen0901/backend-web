@@ -100,7 +100,7 @@ export default {
     getData () {
       this.axios.get('report', {
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           searchCondition: this.condition
@@ -132,7 +132,7 @@ export default {
       console.log(id)
       this.axios.get('report/' + id, {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         console.log(res.data.type)
@@ -140,14 +140,16 @@ export default {
           params: {
             objectKey: res.data.path,
             bucket: res.data.type,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
         }).then(res1 => {
           window.open(this.axios.defaults.baseURL.includes('https://')
             ? res1.data.replace('http://', 'https://') : res1.data)
-          this.axios.post('report/callback/print', {
-            userId: window.localStorage.userId,
-            reportId: id
+          this.axios.post('report/callback/print',{}, {
+            params: {
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
+              reportId: id
+            }
           }).then(res => {
             console.log(res)
 

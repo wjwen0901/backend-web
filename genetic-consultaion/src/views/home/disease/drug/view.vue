@@ -85,7 +85,7 @@ export default {
         params: {
           id: this.$route.query.id,
           state: this.$route.query.state,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         console.log(res.data)
@@ -99,7 +99,7 @@ export default {
           params: {
             objectKey: val,
             bucket: "mdhcare",
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
         }).then(res => {
           window.open(res.data)
@@ -109,7 +109,7 @@ export default {
       if (this.$route.params.id !== undefined) {
         this.axios.get("drug/" + this.$route.params.id, {
             params: {
-              userId: window.localStorage.userId
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
             }
           })
           .then(res => {
@@ -140,7 +140,7 @@ export default {
       this.axios
         .get("hospital-dept", {
           params: {
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
         })
         .then(res => {
@@ -163,13 +163,13 @@ export default {
           method: "post",
           url: "drug",
           params: {
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           data: {
             drug: this.drug,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             "X-Requested-With": "XMLHttpRequest",
@@ -208,14 +208,14 @@ export default {
           method: "put",
           url: "drug/" + this.$route.params.id,
           params: {
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           data: {
             drug: this.drug,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
             solutionExpands: this.expandParams,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             "X-Requested-With": "XMLHttpRequest",

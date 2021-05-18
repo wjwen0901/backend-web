@@ -49,7 +49,7 @@ export default {
         params: {
           objectKey: 'solution/service/' + name + '.pdf',
           bucket: 'mdhcare',
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         // this.imagePath = this.axios.defaults.baseURL.includes('https://')

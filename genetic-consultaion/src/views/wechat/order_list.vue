@@ -63,7 +63,7 @@ export default {
           companyId: this.$route.query.companyId,
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.companyId = res.data.companyId

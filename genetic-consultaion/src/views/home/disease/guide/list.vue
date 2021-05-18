@@ -99,7 +99,7 @@ export default {
         params: {
           pageNum: _this.pageNum,
           pageSize: _this.pageSize,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           param: _this.condition
         },
         headers: {

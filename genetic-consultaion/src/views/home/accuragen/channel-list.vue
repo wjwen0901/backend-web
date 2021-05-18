@@ -153,7 +153,7 @@ export default {
           group: '安易筛',
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           condition: this.condition
         }
       }).then(res => {
@@ -193,7 +193,7 @@ export default {
           userId: this.userId,
         },
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',

@@ -144,7 +144,7 @@ export default {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           searchCondition: this.condition,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.list = res.data
@@ -167,7 +167,7 @@ export default {
       let loadingInstance = Loading.service({ fullscreen: true });
       this.axios.get('report/' + id,{
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.report = res.data
@@ -176,7 +176,7 @@ export default {
           params: {
             objectKey: res.data.path,
             bucket: res.data.type,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
         }).then(res1 => {
           window.open(this.axios.defaults.baseURL.includes('https://')
@@ -195,7 +195,7 @@ export default {
       let loadingInstance = Loading.service({ fullscreen: true, text: '数据比较大，请耐心等候'});
       this.axios.get('report/' + id, {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.report = res.data
@@ -204,7 +204,7 @@ export default {
 
         this.axios.get('analyse/json/' + ObjectId, {
           params: {
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
         }).then(res1 => {
           const blob = new Blob([JSON.stringify(res1.data)], {type: ''})

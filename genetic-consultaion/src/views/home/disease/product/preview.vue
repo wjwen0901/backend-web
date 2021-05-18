@@ -89,7 +89,7 @@ export default {
         params: {
           id: this.$route.query.id,
           state: this.$route.query.state,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
       }).then(res => {
         this.id = res.data.product.id;
@@ -127,7 +127,7 @@ export default {
               "X-Requested-With": "XMLHttpRequest"
             },
             params: {
-              userId: window.localStorage.userId
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
             },
             data: {
               name: _this.sessionData.name,
@@ -165,7 +165,7 @@ export default {
               "X-Requested-With": "XMLHttpRequest"
             },
             params: {
-              userId: window.localStorage.userId
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
             },
             data: {
               id: _this.id,
@@ -202,7 +202,7 @@ export default {
               },
               params: {
                 temId: _this.id,
-                userId: window.localStorage.userId
+                userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
               },
               data: {
                 name: _this.sessionData.name,
@@ -236,7 +236,7 @@ export default {
               },
               params: {
                 temId: _this.id,
-                userId: window.localStorage.userId
+                userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
               },
               data: {
                 id: _this.productId,

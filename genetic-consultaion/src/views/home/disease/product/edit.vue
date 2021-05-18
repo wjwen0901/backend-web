@@ -140,7 +140,7 @@ export default {
         params: {
           id: this.$route.query.id,
           state: this.$route.query.state,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         console.log(res.data)
@@ -209,7 +209,7 @@ export default {
               "X-Requested-With": "XMLHttpRequest"
             },
             params: {
-              userId: window.localStorage.userId
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
             },
             data: {
               name: _this.product.name,
@@ -245,7 +245,7 @@ export default {
               },
               params:{
                 temId:_this.productId,
-                userId: window.localStorage.userId
+                userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
               },
               data: {
                 productId: _this.id,
@@ -277,7 +277,7 @@ export default {
                 "X-Requested-With": "XMLHttpRequest"
               },
               params: {
-                userId: window.localStorage.userId
+                userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
               },
               data: {
                 id: _this.id,
@@ -337,7 +337,7 @@ export default {
               "X-Requested-With": "XMLHttpRequest"
             },
             params: {
-              userId: window.localStorage.userId
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
             },
             data: {
               name: _this.product.name,
@@ -376,7 +376,7 @@ export default {
               "X-Requested-With": "XMLHttpRequest"
             },
             params: {
-              userId: window.localStorage.userId
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
             },
             data: {
               id: _this.id,
@@ -413,7 +413,7 @@ export default {
               },
               params: {
                 temId: _this.id,
-                userId: window.localStorage.userId
+                userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
               },
               data: {
                 name: _this.product.name,
@@ -451,7 +451,7 @@ export default {
               },
               params: {
                 temId: _this.id,
-                userId: window.localStorage.userId
+                userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
               },
               data: {
                 id: _this.productId,
@@ -505,7 +505,7 @@ export default {
       this.axios({
         url: "hospital-dept",
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
       }).then(res => {
         this.depart = res.data.map(item => {
@@ -518,7 +518,7 @@ export default {
       this.axios({
         url: "company",
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
       }).then(res => {
         this.deptList = res.data;
@@ -529,7 +529,7 @@ export default {
         url: "solution/solutionByCompany",
         params: {
           companyId: this.proDepts,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
       }).then(res => {
         this.options = res.data.solutions;

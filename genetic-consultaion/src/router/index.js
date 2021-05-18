@@ -116,6 +116,10 @@ export default new Router({
                         path: '/user/list/:role',
                         name: 'UserList',
                         component: resolve => require(['@/views/home/user/list'], resolve)
+                    }, {
+                        path: '/user/invite',
+                        name: 'UserInvite',
+                        component: resolve => require(['@/views/home/user/invite'], resolve)
                     }]
                 },
                 {

@@ -116,7 +116,7 @@ export default {
         this.axios.get('term', {
           params: {
             condition: this.condition,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
         }).then(res => {
           const rankTemp = res.data
@@ -124,7 +124,7 @@ export default {
           _this.terms = []
           this.axios.get('assess/company/' + this.companyId, {
             params: {
-              userId: window.localStorage.userId
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
             }
           }).then(res => {
             _this.rankList = res.data
@@ -149,7 +149,7 @@ export default {
         this.axios.get('term', {
           params: {
             condition: this.condition,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
         }).then(res => {
           this.terms = res.data
@@ -158,7 +158,7 @@ export default {
         })
         this.axios.get('company', {
           params: {
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
         }).then(res => {
           this.companyList = res.data
@@ -177,7 +177,7 @@ export default {
           params: {
             termId: id,
             companyId: this.companyId,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
         }).then(res1 => {
           let p = res1.data
@@ -232,7 +232,7 @@ export default {
             'Content-Type': 'application/json'
           },
           params: {
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
         }).then(function (response) {
           _this.$message({
@@ -267,7 +267,7 @@ export default {
             'Content-Type': 'application/json'
           },
           params: {
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
         }).then(function (response) {
           _this.$message({

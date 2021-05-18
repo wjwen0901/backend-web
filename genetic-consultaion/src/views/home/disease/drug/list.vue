@@ -91,7 +91,7 @@ export default {
           pageSize:this.pageSize,
           pageNum:this.pageNum,
           param:this.condition,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         console.log(res.data)
@@ -139,7 +139,7 @@ export default {
             params:{
               id,
               state,
-              userId: window.localStorage.userId
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
             }
           }).then(res => {
             this.getData()

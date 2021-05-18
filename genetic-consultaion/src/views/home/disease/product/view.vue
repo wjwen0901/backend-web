@@ -83,7 +83,7 @@ export default {
         params:{
           id:this.$route.query.id,
           state:this.$route.query.state,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
       }).then(res=>{
         this.datas = res.data.product;

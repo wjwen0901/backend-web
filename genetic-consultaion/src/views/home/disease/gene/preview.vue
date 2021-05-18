@@ -10,7 +10,7 @@
     </el-row>
     <el-row>
       <el-col :span="24">
-        <div class="gene-container"> 
+        <div class="gene-container">
           <el-form ref="solutionForm" :model="gene" label-width="80px" size="mini" class="edit-form clearfix">
             <div class="left">
             <el-form-item label="基因*">
@@ -28,36 +28,36 @@
             <el-form-item label="内含子数">
               <span>{{sessionData.intron}}</span>
               <!-- <el-input v-model="gene.intron" :placeholder="sessionData.intron"></el-input> -->
-            </el-form-item> 
+            </el-form-item>
           </div>
           <div class="right">
             <el-form-item label="NM号">
               <span>{{sessionData.nm}}</span>
               <!-- <el-input v-model="gene.nm" :placeholder="sessionData.nm"></el-input> -->
-            </el-form-item> 
+            </el-form-item>
             <el-form-item label="相关疾病">
                 <span v-for="(item,index) in sessionData.diseaseIds" :key="index">{{item.name}} &nbsp;&nbsp;</span>
-            </el-form-item>  
+            </el-form-item>
               <el-form-item label="靶向用药">
                  <span v-for="(item,index) in sessionData.druggeryIds" :key="index">{{item.name}}&nbsp;&nbsp;</span>
               </el-form-item>
               <el-form-item label="检测产品">
                 <span v-for="(item,index) in sessionData.productIds" :key="index">{{item.name}}&nbsp;&nbsp;</span>
               </el-form-item>
-          </div>   
+          </div>
           </el-form>
           <ul class="gene-list" >
             其他
-          </ul> 
-          <div class="gene-contents"> 
+          </ul>
+          <div class="gene-contents">
               <p class="title">标题：<span>其他</span> </p>
               <p v-html="sessionData.other"></p>
-          </div>  
+          </div>
            <div class="gene-btns">
-                <el-button type="primary" @click="addData" :disabled = "openIsDisabled">发布</el-button> 
-                <el-button @click="cancel" :disabled = " openIsDisabled ">取消</el-button> 
+                <el-button type="primary" @click="addData" :disabled = "openIsDisabled">发布</el-button>
+                <el-button @click="cancel" :disabled = " openIsDisabled ">取消</el-button>
            </div>
-        </div> 
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -66,14 +66,14 @@
 export default {
   name: "GeneEdit",
   data() {
-    return { 
-      list: [{ name: "其他", id: 1 }],  
+    return {
+      list: [{ name: "其他", id: 1 }],
       sessionData: {},
       geneId:null,
       state:null
     };
   },
-  mounted() { 
+  mounted() {
     this.sessionData = JSON.parse(window.sessionStorage.getItem("gene"));
     this.getData();
     this.state = this.$route.query.state;
@@ -105,8 +105,8 @@ export default {
       });
       var medicaId = this.sessionData.druggeryIds.map(item => {
         return item.id;
-      });  
-        if (this.$route.query.id == undefined) { 
+      });
+        if (this.$route.query.id == undefined) {
           let instance = this.axios.create({
             headers: {
               Authorization: window.localStorage.token,
@@ -143,8 +143,8 @@ export default {
             })
             .catch(err => {
               _this.$message(JSON.parse(err.request.response).msg);
-            }); 
-      } else { 
+            });
+      } else {
           if (this.state == 0) {
             let instance = this.axios.create({
               headers: {
@@ -159,7 +159,7 @@ export default {
               headers: {
                 "Content-Type": "application/json",
                 "X-Requested-With": "XMLHttpRequest"
-              }, 
+              },
               data: {
                 gene: {
                   id:_this.id,
@@ -263,10 +263,10 @@ export default {
                   _this.$message(JSON.parse(err.request.response).msg);
                 });
             }
-          } 
+          }
       }
     },
-    
+
     _initData() {
       if (this.$route.params.id !== undefined) {
         this.axios
@@ -315,7 +315,7 @@ export default {
             gene: this.gene,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             "X-Requested-With": "XMLHttpRequest",
@@ -358,7 +358,7 @@ export default {
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
             solutionExpands: this.expandParams,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             "X-Requested-With": "XMLHttpRequest",
@@ -426,7 +426,7 @@ export default {
     });
     this._initData();
     loading.close();
-  }, 
+  },
 };
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>

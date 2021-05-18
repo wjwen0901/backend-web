@@ -203,8 +203,8 @@ export default {
   data () {
     return {
       reportList: [],
-      pageNum: window.sessionStorage.reviewDataPageNum === undefined ? 1 : parseInt(window.sessionStorage.reviewDataPageNum),
-      pageSize: window.sessionStorage.reviewDataPageSize === undefined ? 20 : parseInt(window.sessionStorage.reviewDataPageSize),
+      pageNum: 1,
+      pageSize: 20,
       totalPage: 0,
       dialogFormVisible: false,
       report: {},
@@ -221,13 +221,19 @@ export default {
   },
   methods: {
     _initData () {
+      if (window.sessionStorage.reviewDataPageNum && window.sessionStorage.reviewDataPageNum !== 'undefined') {
+        this.pageNum = parseInt(window.sessionStorage.reviewDataPageNum)
+      }
+      if (window.sessionStorage.reviewDataPageSize && window.sessionStorage.reviewDataPageSize !== 'undefined') {
+        this.pageSize = parseInt(window.sessionStorage.reviewDataPageSize)
+      }
       this.getData()
       this.getCompanyList()
     },
     getData () {
       this.axios.get('report/recheck', {
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           companyId: this.companyId,
           pageNum: this.pageNum,
           pageSize: this.pageSize
@@ -246,7 +252,7 @@ export default {
     getCompanyList () {
       this.axios.get('company/CustCompany', {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.companyList = res.data

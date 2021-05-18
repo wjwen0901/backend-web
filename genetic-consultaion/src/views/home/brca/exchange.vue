@@ -125,7 +125,7 @@ export default {
       express: {},
       dialogExpressFormVisible: false,
       condition: null,
-      userId: window.localStorage.userId,
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
       reverse: true,
       expressItem: {},
     }
@@ -140,7 +140,7 @@ export default {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           condition: this.condition
         }
       }).then(res => {

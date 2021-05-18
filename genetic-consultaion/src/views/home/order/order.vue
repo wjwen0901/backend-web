@@ -115,7 +115,7 @@ export default {
       emailList: [],
       roleCode: window.localStorage.role,
       condition: null,
-      userId: window.localStorage.userId
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
     }
   },
   methods: {
@@ -126,7 +126,7 @@ export default {
     getData () {
       this.axios.get('order/user', {
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           condition: this.condition
@@ -143,7 +143,7 @@ export default {
     getCompanyList () {
       this.axios.get('company/CustCompany', {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.companyList = res.data
@@ -166,7 +166,7 @@ export default {
       this.axios.get('report/recheck/' + reportId, {
         params: {
           informedId: informedId,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
       }).then(res => {
         this.informed = res.data.informed

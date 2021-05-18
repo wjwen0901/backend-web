@@ -98,7 +98,7 @@ export default {
       // window.location = this.$route.query.url
       this.axios.get('barcode/' + this.$route.params.id, {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.barcode = res.data
@@ -117,7 +117,7 @@ export default {
       this.axios.get('verification', {
         params: {
           cellphone: this.patient.cellphone,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         if (res.data === 'success') {

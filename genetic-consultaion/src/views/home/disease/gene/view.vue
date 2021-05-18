@@ -115,7 +115,7 @@ export default {
       if (this.$route.params.id !== undefined) {
         this.axios.get('gene/' + this.$route.params.id, {
           params: {
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
         }).then(res => {
           this.gene = res.data
@@ -160,10 +160,10 @@ export default {
             gene: this.gene,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           params: {
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
@@ -204,10 +204,10 @@ export default {
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
             solutionExpands: this.expandParams,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           params: {
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',

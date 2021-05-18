@@ -383,6 +383,7 @@ export default {
         // 获取权限列表
         this.axios.get('user/secs', {
           params: {
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
             role: this.roleCode
           }
         }).then(res => {
@@ -440,12 +441,20 @@ export default {
       }).catch(err => {
         console.log(err)
       })
-      this.axios.get('hospital').then(res => {
+      this.axios.get('hospital', {
+        params: {
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+        }
+      }).then(res => {
         this.hospitals = res.data
       }).catch(err => {
         console.log(err)
       })
-      this.axios.get('hospital-dept').then(res => {
+      this.axios.get('hospital-dept', {
+        params: {
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+        }
+      }).then(res => {
         this.depts = res.data
       }).catch(err => {
         console.log(err)
@@ -491,7 +500,7 @@ export default {
           'Content-Type': 'application/json'
         },
         params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(function (response) {
         _this.$message({
@@ -552,7 +561,7 @@ export default {
           'Content-Type': 'application/json'
         },
         params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(function (response) {
         _this.$message({
@@ -569,9 +578,9 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.axios.delete('user/' + id, {
+        this.axios.delete('user/' + id,{
           params: {
-            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
         }).then(res => {
           this._initData()
@@ -594,8 +603,8 @@ export default {
       // 获取权限列表
       this.axios.get('user/secs', {
         params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-          role: val
+          role: val,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.resourceList = []
@@ -674,7 +683,7 @@ export default {
           pageNum: 1, // 页码
           pageSize: 8, // 每页长度
           keywords: queryString,
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         console.log(res.data)
@@ -744,8 +753,8 @@ export default {
         method: 'post',
         url: 'barcode/payCode/' + this.userId,
         params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-          alias: this.qrCode.selSolution.yzAlias
+          alias: this.qrCode.selSolution.yzAlias,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
         data: {
           userId: this.userId,
@@ -788,7 +797,7 @@ export default {
           'Content-Type': 'application/json'
         },
         params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(function (res) {
         window.open(_this.axios.defaults.baseURL + '/barcode/down?isPatientCode=false&filename=' + res.data + '&Authorization=' + window.localStorage.token)
@@ -809,12 +818,12 @@ export default {
         method: 'post',
         url: 'barcode/elecInformed',
         params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           salesmanId: this.userId,
           solutionId: this.eleInformed.selSolution.id,
           solutionName: this.eleInformed.selSolution.name,
           fullName: this.name,
-          description: this.qrCodeDescription
+          description: this.qrCodeDescription,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',

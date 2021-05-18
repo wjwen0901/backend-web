@@ -298,7 +298,9 @@ export default {
               if (this.$route.query.openid !== undefined) {
                 param.openId = this.$route.query.openid
               }
-              this.axios.post('pathlogic/upload', param).then(res => {
+              this.axios.post('pathlogic/upload', null, {
+                params: param
+              }).then(res => {
                 this.$message({
                   message: '上传成功',
                   type: 'success',
@@ -312,7 +314,7 @@ export default {
                         // window.location.href('weixin://dl/business/?ticket=t852de9efd9b540df8b355699d4f2ed63');
                         let url=window.location.href;
                         that.$router.push({path: '/wechat/browser/upload', query: {num:that.fileNum,path: url}})
-                    } 
+                    }
                   }
                 })
 

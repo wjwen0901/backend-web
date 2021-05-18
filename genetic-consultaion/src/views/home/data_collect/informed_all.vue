@@ -102,7 +102,7 @@ export default {
 
       this.axios.get('solution', {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.projects = res.data

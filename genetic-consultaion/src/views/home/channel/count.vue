@@ -149,7 +149,7 @@ export default {
       this.name = name
       this.axios.get('solution', {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.solutionList = res.data

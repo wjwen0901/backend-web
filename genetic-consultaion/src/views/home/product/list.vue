@@ -102,7 +102,7 @@ export default {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           condition: this.condition
         }
       }).then(res => {
@@ -139,7 +139,7 @@ export default {
         .then(_ => {
           this.axios.delete('solution/' + id, {
             params: {
-              userId: window.localStorage.userId
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
             }
           }).then(res => {
             this.getData()

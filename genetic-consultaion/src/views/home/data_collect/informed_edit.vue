@@ -528,7 +528,7 @@ export default {
     _initData () {
       this.axios.get('informed/' + this.$route.params.informedId, {
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         },
       }).then(res => {
         this.informedContent = res.data
@@ -681,7 +681,7 @@ export default {
         this.axios.get('oss/upload/show', {
           params: {
             objectKey: res.data.path,
-            userId: window.localStorage.userId,
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           },
         }).then(res1 => {
           this.imagePath = this.axios.defaults.baseURL.includes('https://')
@@ -695,7 +695,7 @@ export default {
 
       this.axios.get('solution', {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.projects = res.data
@@ -704,7 +704,7 @@ export default {
       })
       this.axios.get('hospital-dept', {
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         }
       }).then(res => {
         this.depts = res.data
@@ -1025,7 +1025,7 @@ export default {
           pageNum: 1, // 页码
           pageSize: 8, // 每页长度
           keywords: queryString,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         let result = []

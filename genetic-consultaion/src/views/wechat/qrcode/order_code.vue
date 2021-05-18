@@ -142,7 +142,7 @@
           method: 'post',
           url: 'informed/channel',
           params: {
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           data: {
             userId: parseInt(this.$route.query.userId),
@@ -179,7 +179,7 @@
         this.axios.get('verification', {
           params: {
             cellphone: this.patient.cellphone,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
         }).then(res => {
           if (res.data === 'success') {

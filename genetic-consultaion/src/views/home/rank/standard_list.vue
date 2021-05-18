@@ -176,7 +176,7 @@ export default {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           condition: this.condition,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.standardList = res.data
@@ -212,7 +212,7 @@ export default {
         url: 'term',
         data: _this.standard,
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
@@ -244,7 +244,7 @@ export default {
         url: 'term',
         data: _this.standard,
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
@@ -273,7 +273,7 @@ export default {
         url: 'term/piece',
         data: standardPiece,
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
@@ -293,7 +293,7 @@ export default {
       this.standard.name = name
       this.axios.get('term/piece/' + id, {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.standardPieces = res.data
@@ -325,7 +325,7 @@ export default {
             url: 'term/piece',
             data: value,
             params: {
-              userId: window.localStorage.userId
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
             },
             headers: {
               'X-Requested-With': 'XMLHttpRequest',
@@ -350,7 +350,7 @@ export default {
         .then(_ => {
           this.axios.delete('term/' + id, {
             params: {
-              userId: window.localStorage.userId
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
             }
           }).then(res => {
             this.getData()

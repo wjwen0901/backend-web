@@ -148,6 +148,7 @@
             <template slot="title"><i class="el-icon-setting"></i><span slot="title">系统管理</span></template>
             <el-menu-item-group>
               <el-menu-item index="/user" v-if="sec.includes('system:user-sec')">账号管理</el-menu-item>
+              <el-menu-item index="/invite" v-if="sec.includes('system:user-sec')">邀请用户</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="disease" v-if="sec.includes('system') && role === 'manager' && userId == 1">
@@ -199,7 +200,7 @@ export default {
   data () {
     return {
       username: window.localStorage.username,
-      userId: window.localStorage.userId,
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
       sec: window.localStorage.sec === undefined ? 'upload,upload:informed,upload:report,upload:medical-records,informed:list,report:list' : window.localStorage.sec,
       role: window.localStorage.role,
       // username: 'admin',

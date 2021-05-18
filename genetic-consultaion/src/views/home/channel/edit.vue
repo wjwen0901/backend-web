@@ -76,7 +76,7 @@ export default {
           url: 'company',
           data: this.company,
           params: {
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',

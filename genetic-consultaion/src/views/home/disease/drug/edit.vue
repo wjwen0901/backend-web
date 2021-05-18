@@ -224,7 +224,7 @@ export default {
       guideId: "",
       dataOne: {},
       //上传
-      userId: window.localStorage.userId,
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
       report: {
         fullName:
           window.localStorage.fullName === undefined
@@ -297,7 +297,7 @@ export default {
       this.axios({
           url: "/oss/upload/show",
           params: {
-            userId: window.localStorage.userId,
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
             objectKey: val,
             bucket: "mdhcare"
           }
@@ -313,7 +313,7 @@ export default {
       this.axios({
         url: "company",
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.valueList = res.data;
@@ -323,7 +323,7 @@ export default {
       this.axios({
         url: "solution/solutionByCompany",
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           companyId: this.proDepts
         }
       }).then(res => {
@@ -395,7 +395,7 @@ export default {
                 "X-Requested-With": "XMLHttpRequest"
               },
               params: {
-                userId: window.localStorage.userId
+                userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
               },
               data: {
                 guide: {
@@ -453,7 +453,7 @@ export default {
                   "X-Requested-With": "XMLHttpRequest"
                 },
                 params: {
-                  userId: window.localStorage.userId
+                  userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
                 },
                 data: {
                   guide: {
@@ -498,7 +498,7 @@ export default {
                   },
                   params: {
                     temId: _this.id,
-                    userId: window.localStorage.userId
+                    userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
                   },
                   data: {
                     guide: {
@@ -541,7 +541,7 @@ export default {
                   },
                   params: {
                     temId: _this.id,
-                    userId: window.localStorage.userId
+                    userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
                   },
                   data: {
                     guide: {
@@ -642,7 +642,7 @@ export default {
               "X-Requested-With": "XMLHttpRequest"
             },
             params: {
-              userId: window.localStorage.userId
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
             },
             data: {
               guideTem: {
@@ -701,7 +701,7 @@ export default {
                 "X-Requested-With": "XMLHttpRequest"
               },
               params: {
-                userId: window.localStorage.userId
+                userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
               },
               data: {
                 guideTem: {
@@ -745,7 +745,7 @@ export default {
                 "X-Requested-With": "XMLHttpRequest"
               },
               params: {
-                userId: window.localStorage.userId
+                userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
               },
               data: {
                 guideTem: {
@@ -787,7 +787,7 @@ export default {
         params: {
           id: this.$route.query.id,
           state: this.$route.query.state,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.drug = res.data.guide;
@@ -830,7 +830,7 @@ export default {
         url: "product/getProductByName",
         params: {
           param: product,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
         headers: {
           "X-Requested-With": "XMLHttpRequest",
@@ -870,7 +870,7 @@ export default {
         url: "diseaseData/getDiseasesByPage",
         params: {
           param: disease,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
         headers: {
           "X-Requested-With": "XMLHttpRequest",
@@ -902,7 +902,7 @@ export default {
         url: "gene/all",
         params: {
           keyWord: gene,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.geneOption = res.data.genes.map((item, index) => {
@@ -937,7 +937,7 @@ export default {
         this.axios
           .get("drug/" + this.$route.params.id, {
             params: {
-              userId: window.localStorage.userId
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
             }
           })
           .then(res => {
@@ -965,7 +965,7 @@ export default {
       }
       this.axios.get("hospital-dept", {
           params: {
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
         })
         .then(res => {
@@ -986,13 +986,13 @@ export default {
           method: "post",
           url: "drug",
           params: {
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           data: {
             drug: this.drug,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             "X-Requested-With": "XMLHttpRequest",
@@ -1031,14 +1031,14 @@ export default {
           method: "put",
           url: "drug/" + this.$route.params.id,
           params: {
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           data: {
             drug: this.drug,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
             solutionExpands: this.expandParams,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             "X-Requested-With": "XMLHttpRequest",

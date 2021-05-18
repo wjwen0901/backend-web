@@ -95,7 +95,7 @@ export default {
           keyWord: this.condition,
           pageSize: this.pageSize,
           pageNum: this.pageNum,
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
       }).then(res => {
         this.proList = res.data.products
@@ -145,7 +145,7 @@ export default {
             params:{
               productId:id,
               state,
-              userId: window.localStorage.userId
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
             },
           }).then(res => {
             this.getData()

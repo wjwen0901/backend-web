@@ -119,7 +119,7 @@ export default {
       express: {},
       dialogEditFormVisible: false,
       condition: null,
-      userId: window.localStorage.userId,
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
       reverse: true,
     }
   },
@@ -133,7 +133,7 @@ export default {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           condition: this.condition
         }
       }).then(res => {
@@ -158,7 +158,7 @@ export default {
         params: {
           mailno: express.express.expressCode,
           subPhone: express.receiver.cellphone.substr(express.receiver.cellphone.length-4,4),
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         }
       }).then(res => {
         this.express = res.data
@@ -180,7 +180,7 @@ export default {
       that.axios.delete('/sf/order', {
         params: {
           expressNo: expressNo,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         }
       }).then(res => {
         if (res.data == 'failure') {
