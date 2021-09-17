@@ -29,6 +29,7 @@
       <el-aside width="180px" style="background-color: rgb(238, 241, 246)">
         <!--<el-menu class="el-menu-vertical-demo" router :collapse="isCollapse">-->
         <el-menu class="el-menu-vertical-demo"
+                 style="height: 100%;"
                  default-active="dashboard"
                  :default-openeds="openMenu"
                  @select="handleSelect"
@@ -201,7 +202,8 @@ export default {
     return {
       username: window.localStorage.username,
       userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-      sec: window.localStorage.sec === undefined ? 'upload,upload:informed,upload:report,upload:medical-records,informed:list,report:list' : window.localStorage.sec,
+      // sec: window.localStorage.sec === undefined ? 'upload,upload:informed,upload:report,upload:medical-records,informed:list,report:list' : window.localStorage.sec,
+      sec:'upload,upload:informed,upload:report,upload:medical-records,order,data-collect,data-collect:informed,data-collect:report,data-review,system,system:user-sec,product,patient:list,hospital:list,firm:list,channel:list,custome-report:genessential,wechat_qrcode,wechat_qrcode:create,wechat_qrcode:list,accuragen:manage,wrj:manage',
       role: window.localStorage.role,
       // username: 'admin',
       // sec: 'upload,upload:informed,upload:report,upload:medical-records,' +
@@ -215,6 +217,7 @@ export default {
   methods: {
     logout () {
       window.localStorage.clear()
+      debugger
       if (this.axios.defaults.baseURL.includes('qa.mdhcare.cn')) {
         window.location.href = 'http://qa.mdhcare.cn/website/login.html'
       } else if (this.axios.defaults.baseURL.includes('z.mdhcare.cn/z/')) {

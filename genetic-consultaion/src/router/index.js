@@ -205,12 +205,12 @@ export default new Router({
                 {
                     path: '/product/edit/:id',
                     name: 'ProductEdit',
-                    component: resolve => require(['@/views/home/product/edit'], resolve)
+                    component: resolve => require(['@/views/home/product/editv1'], resolve)
                 },
                 {
                     path: '/product/add',
                     name: 'ProductAdd',
-                    component: resolve => require(['@/views/home/product/edit'], resolve)
+                    component: resolve => require(['@/views/home/product/editv1'], resolve)
                 },
                 {
                     path: '/patient/list',
