@@ -9,8 +9,8 @@
                     @change="checkAddress(row)" :label="row.id"><i></i></el-radio>
         </template>
       </el-table-column>
-      <el-table-column label="收样人" prop="receiver" align="center" width="300"></el-table-column>
-      <el-table-column label="电话" prop="cellphone" align="center" width="200"></el-table-column>
+      <el-table-column label="收样人" prop="receiver" align="center"></el-table-column>
+      <el-table-column label="电话" prop="cellphone" align="center"></el-table-column>
       <el-table-column label="地址" align="center">
         <template slot-scope="{row}">
           {{row.province}}{{row.city}}{{row.county}}{{row.address}}
@@ -129,7 +129,7 @@ export default {
        id:this.id,
        ...this.info
       }).then(res => {
-        if(res.data === '修改成功'){
+        if(res.data === 'success'){
           this.$message({message: '修改成功', type: 'success'})
           this.status = 1
           this.getList()
@@ -145,7 +145,7 @@ export default {
       this.axios.post('solution/receiver',{
         ...this.info
       }).then(res => {
-        if (res.data.msg === '修改成功') {
+        if (res.data === 'success') {
           this.$message({message: '新增成功', type: 'success'})
           this.status = 1
           this.getList()

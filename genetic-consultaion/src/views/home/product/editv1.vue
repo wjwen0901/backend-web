@@ -32,7 +32,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="实验室" prop="company">
-          <el-select v-model="solution.company" placeholder="请选择">
+          <el-select v-model="solution.company" placeholder="请选择" filterable >
             <el-option
               v-for="item in companyOptions"
               :key="item.id"
@@ -54,12 +54,12 @@
           <el-input v-model="solution.directPrice" style="width: 300px"></el-input> 元
         </el-form-item>
         <el-form-item label="检测内容" prop="testingContent">
-          <el-input v-model="solution.testingContent" type="textarea" maxlength="100" show-word-limit style="width: 300px"></el-input>
+          <el-input v-model="solution.testingContent" type="textarea" maxlength="300" show-word-limit style="width: 300px"></el-input>
         </el-form-item>
         <el-form-item label="检测意义" prop="clinicalSense">
-          <el-input v-model="solution.clinicalSense" type="textarea" maxlength="100" show-word-limit style="width: 300px"></el-input>
+          <el-input v-model="solution.clinicalSense" type="textarea" maxlength="300" show-word-limit style="width: 300px"></el-input>
         </el-form-item>
-        <el-form-item label="使用人群" prop="fitCrowd">
+        <el-form-item label="适用人群" prop="fitCrowd">
           <el-input v-model="solution.fitCrowd" style="width: 300px"></el-input>
         </el-form-item>
         <el-form-item label="样本类型" prop="sampleType">
@@ -85,13 +85,15 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="样本收样地址" prop="receiveAddressId">
+<!--        prop="receiveAddressId"-->
+        <el-form-item label="样本收样地址">
           <el-button type="text" @click="addressDialogVisible = true">请选择样本接收地址</el-button>
           <span v-if="solution.receiveAddressId" class="check">&nbsp;&nbsp;已选择：{{addressForm.receiver}}&nbsp;&nbsp;&nbsp;&nbsp{{addressForm.cellphone}}</span>
+          <span class="error-span" v-if="addressSatus && !solution.receiveAddressId">请选择样本收样地址</span>
         </el-form-item>
-        <el-form-item label="知情" prop="informedInfo">
+        <el-form-item label="知情">
           <quill-editor
-            style="width: 75%"
+            style="width: 100%"
             v-model="solution.informedInfo"
             ref="myQuillEditor"
             :options="editorOption"
@@ -177,6 +179,7 @@ export default {
        groupOptions:[],//产品所属分组下拉框
        solutionCategoryOptions:[],//癌种分类下拉框
        companyOptions:[],//实验室下拉框
+       addressSatus:false,
        areaOptions:[{name:'全部'},{name:'北京市'},{name:'河南省'},{name:'河北省'},{name:'陕西省'},{name:'青海省'}
          ,{name:'广西壮族自治区'},{name:'江苏省'},{name:'甘肃省'},{name:'浙江省'},{name:'湖北省'}
          ,{name:'安徽省'},{name:'山西省'},{name:'云南省'},{name:'海南省'},{name:'浙江省'}
@@ -194,7 +197,7 @@ export default {
            {validator: validateMoney, trigger: 'blur'}],
          testingContent:[{ required: true, message: '请输入检测内容', trigger: 'blur' }],
          clinicalSense:[{ required: true, message: '请输入检测意义', trigger: 'blur' }],
-         informedInfo:[{ required: true, message: '请输入知情', trigger: 'blur' }],
+         // informedInfo:[{ required: true, message: '请输入知情', trigger: 'blur' }],
          fitCrowd:[{ required: true, message: '请输入使用人群', trigger: 'blur' }],
          sampleType:[{ required: true, message: '请输入样本类型', trigger: 'blur' }],
          collectionMode:[{ required: true, message: '请输入采集摘要', trigger: 'blur' }],
@@ -225,6 +228,8 @@ export default {
     },
      /*保存，判断是新增还是编辑*/
      handleSave(formName){
+       this.addressSatus = true
+       if(!this.solution.receiveAddressId) return
        this.$refs[formName].validate((valid) => {
          if (valid) {
            let that = this
@@ -244,14 +249,17 @@ export default {
         solutionId:this.$route.params.id,
         ...this.solution
       }).then(res => {
-        if (res.data === '修改成功') {
-          this.$message({message: '新增成功', type: 'success'})
+        if (res.data.msg === '添加成功') {
+          this.$message({message: '添加成功', type: 'success'})
           this.$router.push('/product')
-        } else {
+        } else if(res.data.msg === '产品已存在'){
+          this.$message({message: '产品已存在', type: 'warning'})
+        }else {
           this.$message({message: '新增失败', type: 'warning'})
         }
       }).catch(err => {
         console.log(err)
+        this.$message({message: '新增失败', type: 'warning'})
       })
     },
     /*编辑接口*/
@@ -327,6 +335,10 @@ export default {
     .el-input {
       width: 100%;
     }
+  }
+  .error-span{
+    color: #F56C6C;
+    font-size: 12px
   }
   .solution-container .header {
     margin-bottom: 20px;
