@@ -137,6 +137,7 @@
                   placeholder="选择日期">
                 </el-date-picker>
             </el-form-item>
+            <template v-if="groupId !== 7">
             <h4>病理信息</h4>
             <el-form-item label="疾病类型">
               <el-select class="width-100-p" v-model="informedContent.cancerType" filterable placeholder="请选择">
@@ -220,7 +221,7 @@
             <el-form-item label="肿瘤家族史(兼容旧版)">
               <el-input type="textarea" v-model="familyTumorHistory"></el-input>
             </el-form-item>
-
+            </template>
 
 <!--            <h5>家族史</h5>-->
 <!--            <el-form-item :label="item.key" v-for="item in familyHistory">-->
@@ -235,7 +236,7 @@
               <el-button @click="unread">图形不可读</el-button>
               <el-button type="primary" @click="edit">保存信息</el-button>
             </el-form-item>
-
+            <template v-if="groupId !== 7">
             <div>
               <h5>肿瘤遗传史：</h5>
               <el-form-item label="患癌亲属">
@@ -353,7 +354,8 @@
                 </el-checkbox-group>
               </el-form-item>
             </div>
-            <div>
+            </template>
+            <div v-if="groupId !== 7">
               <h5>用药史（近14天如服用药物或保健品请注明）</h5>
               <el-form-item label="保健品名称">
                 <el-input v-model="drugHistory.drugHealth"></el-input>
@@ -362,7 +364,7 @@
                 <el-input v-model="drugHistory.drugTreatment"></el-input>
               </el-form-item>
             </div>
-            <div>
+            <div v-if="groupId !== 7">
               <el-divider content-position="left">以下为兼容旧版知情</el-divider>
               <h5>家族史（只一人）：</h5>
               <el-form-item label="癌种(旧版)">
@@ -427,6 +429,116 @@
                 </el-checkbox-group>
               </el-form-item>
             </div>
+            <h4 v-if="groupId === 7">普瑞详情</h4>
+            <div v-if="groupId === 7" class="informat-detail">
+              <div class="box"><span>产品名称：{{formData.productName || '-'}}</span></div>
+              <div class="box">
+                <h5>患者信息</h5>
+                <span>姓名：{{formData.patient.truename || '-'}}</span>
+                <span>性别：{{formData.patient.sex || '-'}}</span>
+                <span>出生年月：{{formData.patient.birthday?formatDate(formData.patient.birthday):'-'}}</span>
+                <span>身份证号：{{formData.patient.idCode || '-'}}</span>
+              </div>
+              <div class="box">
+                <h5>报告邮寄信息</h5>
+                <span>报告接收人：{{formData.orderReceiver.receiver || '-'}}</span>
+                <span>报告接收人电话：{{formData.orderReceiver.cellphone || '-'}}</span>
+                <span>报告邮寄地址：{{formData.orderReceiver.province || '-'}}{{formData.orderReceiver.city}}{{formData.orderReceiver.county}}{{formData.orderReceiver.address}}</span>
+              </div>
+              <div class="box">
+                <h5>样本信息</h5>
+                <span>样本编号：{{formData.sampleVo.sampleCode || '-'}}</span>
+                <span>样本类型：</span>
+                <div class="box-cell">
+                  <span>血液/拭子：{{formData.sampleVo.sampleTypesString?formData.sampleVo.sampleTypesString.toString():'-'}}</span>
+                  <template v-for="item in formData.sampleVo.sampleTypes">
+                    <template v-if="['外周血（EDTA 采血管）','外周血（Streck 采血管）','口腔拭子'].includes(item.sampleType)">
+                      <span>{{item.sampleType}}数量：{{item.saveType?item.saveType:''}}{{item.quantity || '-'}}{{item.unit}}&nbsp;&nbsp;{{item.capacity?item.capacity+'ml' :''}}</span>
+                      <span v-if="item.samplingDate">{{item.sampleType}}采样日期：{{item.samplingDate?formatDate(item.samplingDate):'-'}}</span>
+                      <span v-if="item.sampleOpera">{{item.sampleType}}手术日期：{{item.sampleOpera?formatDate(item.sampleOpera):'-'}}</span>
+                      <span v-if="item.samplingLoca">{{item.sampleType}}取样部位：{{item.samplingLoca || '-'}}</span>
+                    </template>
+                  </template>
+                  <span>组织样本：{{formData.sampleVo.sampleTypeOrange?formData.sampleVo.sampleTypeOrange.toString():'-'}}</span>
+                  <span>组织样本具体信息：</span>
+                  <template v-for="item in formData.sampleVo.sampleTypes">
+                    <template v-if="['手术组织石蜡切片（白片）','穿刺组织石蜡切片（白片）','蜡块','新鲜手术组织','新鲜穿刺组织'].includes(item.sampleType)">
+                      <span>{{item.sampleType}}数量：{{item.saveType?item.saveType:''}}{{item.quantity}}{{item.unit}}&nbsp;&nbsp;{{item.capacity?item.capacity+'ml' :''}}</span>
+                      <span v-if="item.samplingDate">{{item.sampleType}}采样日期：{{item.samplingDate?formatDate(item.samplingDate):'-'}}</span>
+                      <span v-if="item.sampleOpera">{{item.sampleType}}手术日期：{{item.sampleOpera?formatDate(item.sampleOpera):'-'}}</span>
+                      <span v-if="item.samplingLoca">{{item.sampleType}}取样部位：{{item.samplingLoca || '-'}}</span>
+                    </template>
+                  </template>
+                </div>
+              </div>
+              <template v-for="item in formData.sampleVo.sampleTypes">
+                <div class="box" v-if="item.waxOrderReceiver">
+                  <h5>剩余组织样本归还</h5>
+                  <span>归还联系人：{{item.waxOrderReceiver.receiver || '-'}}</span>
+                  <span>联系人电话：{{item.waxOrderReceiver.cellphone || '-'}}</span>
+                  <span>归还地址：{{item.waxOrderReceiver.province || '-'}}{{item.waxOrderReceiver.city}}{{item.waxOrderReceiver.county}}{{item.waxOrderReceiver.address}}</span>
+                </div>
+              </template>
+              <div class="box">
+                <h5>送检信息</h5>
+                <span>医院：{{formData.inspectVo.hospitalName || '-'}}</span>
+                <span>科室：{{formData.inspectVo.deptName || '-'}}</span>
+                <span>医生：{{formData.inspectVo.doctor || '-'}}</span>
+              </div>
+              <div class="box">
+                <h5>疾病相关信息</h5>
+                <span>肿瘤类型：{{formData.diseaseVo.tumorName || '-'}}</span>
+                <span>临床分期：{{formData.diseaseVo.clinicalStages || '-'}}</span>
+                <span>病理类型：{{formData.diseaseVo.pathologiclName || '-'}}</span>
+                <span>初次确诊时间：{{formData.diseaseVo.firstConfirmedDate || '-'}}</span>
+                <span>癌症家族史：{{formData.diseaseVo.familyHistory || '-'}}</span>
+                <div class="family" v-for="item in formData.diseaseVo.familyInformations">
+                  <span>亲属关系：{{item.kinship || '-'}}</span>
+                  <span>确诊年龄：{{item.confirmedAge || '-'}}</span>
+                  <span>癌种：{{item.canker || '-'}}</span>
+                </div>
+              </div>
+              <div class="box" v-if="formData.sampleVoBJ">
+                <h5>补寄样本信息</h5>
+                <span>样本编号：{{formData.sampleVoBJ.sampleCode || '-'}}</span>
+                <span>样本类型：</span>
+                <div class="box-cell">
+                  <span>血液/拭子：{{formData.sampleVoBJ.sampleTypesString?formData.sampleVoBJ.sampleTypesString.toString():'-'}}</span>
+                  <template v-for="item in formData.sampleVoBJ.sampleTypes">
+                    <template v-if="['外周血（EDTA 采血管）','外周血（Streck 采血管）','口腔拭子'].includes(item.sampleType)">
+                      <span>{{item.sampleType}}数量：{{item.saveType?item.saveType:''}}{{item.quantity || '-'}}{{item.unit}}&nbsp;&nbsp;{{item.capacity?item.capacity+'ml' :''}}</span>
+                      <span v-if="item.samplingDate">{{item.sampleType}}采样日期：{{item.samplingDate?formatDate(item.samplingDate):'-'}}</span>
+                      <span v-if="item.sampleOpera">{{item.sampleType}}手术日期：{{item.sampleOpera?formatDate(item.sampleOpera):'-'}}</span>
+                      <span v-if="item.samplingLoca">{{item.sampleType}}取样部位：{{item.samplingLoca || '-'}}</span>
+                    </template>
+                  </template>
+                  <span>组织样本：{{formData.sampleVoBJ.sampleTypeOrange?formData.sampleVoBJ.sampleTypeOrange.toString():'-'}}</span>
+                  <span>组织样本具体信息：</span>
+                  <template v-for="item in formData.sampleVoBJ.sampleTypes">
+                    <template v-if="['手术组织石蜡切片（白片）','穿刺组织石蜡切片（白片）','蜡块','新鲜手术组织','新鲜穿刺组织'].includes(item.sampleType)">
+                      <span>{{item.sampleType}}数量：{{item.saveType?item.saveType:''}}{{item.quantity}}{{item.unit}}&nbsp;&nbsp;{{item.capacity?item.capacity+'ml' :''}}</span>
+                      <span v-if="item.samplingDate">{{item.sampleType}}采样日期：{{item.samplingDate?formatDate(item.samplingDate):'-'}}</span>
+                      <span v-if="item.sampleOpera">{{item.sampleType}}手术日期：{{item.sampleOpera?formatDate(item.sampleOpera):'-'}}</span>
+                      <span v-if="item.samplingLoca">{{item.sampleType}}取样部位：{{item.samplingLoca || '-'}}</span>
+                    </template>
+                  </template>
+                </div>
+              </div>
+              <template v-if="formData.sampleVoBJ">
+                <template v-for="item in formData.sampleVoBJ.sampleTypes">
+                  <div class="box" v-if="item.waxOrderReceiver">
+                    <h5>补寄剩余组织样本归还</h5>
+                    <span>归还联系人：{{item.waxOrderReceiver.receiver || '-'}}</span>
+                    <span>联系人电话：{{item.waxOrderReceiver.cellphone || '-'}}</span>
+                    <span>归还地址：{{item.waxOrderReceiver.province || '-'}}{{item.waxOrderReceiver.city}}{{item.waxOrderReceiver.county}}{{item.waxOrderReceiver.address}}</span>
+                  </div>
+                </template>
+              </template>
+              <div class="box">
+                <h5>手写签名</h5>
+                <img :src="formData.informedUrl">
+              </div>
+            </div>
           </el-form>
         </div>
       </el-col>
@@ -450,6 +562,7 @@ export default {
   name: 'EditInformed',
   data () {
     return {
+      groupId:0,
       smsStatus: 1,
       informedContent: {
         smsStatus: 1
@@ -520,18 +633,109 @@ export default {
         esophagus: [],
         pancreas: [],
       },
-      drugHistory: {}
+      drugHistory: {},
+      formData: {
+        informedUrl:'',
+        userId:0,
+        productName:'',
+        patient:{
+          truename:'',
+          sex:'',
+          idCode:'',
+          birthday:''
+        },
+        orderReceiver:{
+          receiver:'',
+          cellphone:'',
+          province:'',
+          city:'',
+          county:'',
+          address:''
+        },
+        sampleVo:{
+          sampleCode:'',
+          sampleTypes:[],
+          sampleTypesString:[],
+          sampleTypeOrange:[]
+        },
+        inspectVo:{
+          hospitalName:'',
+          deptName:'',
+          doctor:''
+        },
+        diseaseVo:{
+          tumorName:'',
+          clinicalStages:'',
+          pathologiclName:'',
+          firstConfirmedDate:'',
+          familyHistory:'',
+          familyInformations:[]
+        },
+        sampleVoBJ:{
+          sampleCode:'',
+          sampleType:[],
+          sampleTypesString:[],
+          sampleTypeOrange:[]
+        }
+      }
     }
   },
   props: {},
   methods: {
+      /*查看信息*/
+     getInformated() {
+       this.axios.get('/ru6c/informed/PRinfo', {
+         params: {
+           sampleCode: this.$route.query.sampleCode,
+           userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+         }
+       }).then(res => {
+         this.formData = res.data
+         this.formData.sampleVo.sampleTypesString=[]
+         this.formData.sampleVo.sampleTypeOrange=[]
+         this.setSampleType('sampleVo')
+         if(this.formData.sampleVoBJ) {
+           this.formData.sampleVoBJ.sampleTypesString=[]
+           this.formData.sampleVoBJ.sampleTypeOrange=[]
+           this.setSampleType('sampleVoBJ')
+         }
+         this.formData.diseaseVo.firstConfirmedDate = this.formData.diseaseVo.firstConfirmedDate ?this.formatDate(this.formData.diseaseVo.firstConfirmedDate):''
+         this.formData.diseaseVo.clinicalStages =  this.formData.diseaseVo.clinicalStages? this.formData.diseaseVo.clinicalStages.toString():''
+       })
+   },
+    setSampleType(val){
+      this.formData[val].sampleTypesString = this.formData[val].sampleTypes.map((item)=>{
+        if(['手术组织石蜡切片（白片）','穿刺组织石蜡切片（白片）','蜡块','新鲜手术组织','新鲜穿刺组织'].includes(item.sampleType)){
+          this.formData[val].sampleTypeOrange.push(item.sampleType)
+          // return '组织样本'
+          return ''
+        }else{
+          return item.sampleType
+        }
+      })
+      this.formData[val].sampleTypesString=this.formData[val].sampleTypesString.filter((item)=>{
+        return item
+      })
+      this.formData[val].sampleTypesString = Array.from(new Set(this.formData[val].sampleTypesString))
+    },
+    /*日期格式话*/
+    formatDate(date) {
+      let dateStr = new Date(date);
+      const YY = dateStr.getFullYear() + '-';
+      const MM = (dateStr.getMonth() + 1 < 10 ? '0' + (dateStr.getMonth() + 1) : dateStr.getMonth() + 1) + '-';
+      const DD = (dateStr.getDate() < 10 ? '0' + (dateStr.getDate()) : dateStr.getDate());
+      return YY + MM + DD;
+    },
     _initData () {
-      this.axios.get('informed/' + this.$route.params.informedId, {
+      this.axios.get('informed/' + this.$route.query.informedId, {
         params: {
           userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         },
       }).then(res => {
         this.informedContent = res.data
+        if(this.groupId===7){
+          this.getInformated()
+        }
         if (res.data.tid !== undefined) {
           this.informedContent.orderNo = res.data.tid
         }
@@ -985,8 +1189,13 @@ export default {
           value: _drugHistory
         })
       }
-      this.informedContent.moreInfo = JSON.stringify(moreInfo)
-      this.axios.put('informed/' + this.$route.params.informedId + '?userId=' + window.localStorage.userId, this.informedContent).then(res => {
+        this.informedContent.moreInfo = JSON.stringify(moreInfo)
+      if(this.groupId===7){
+        delete this.informedContent.moreInfo;
+        delete this.informedContent.mailInfo;
+        delete this.informedContent.sampleInfor;
+      }
+      this.axios.put('informed/' + this.$route.query.informedId + '?userId=' + window.localStorage.userId, this.informedContent).then(res => {
         this.$message({
           message: '修改成功',
           type: 'success'
@@ -1002,7 +1211,7 @@ export default {
     },
     unread () {
       delete this.informedContent.createTime
-      this.axios.put('informed/unread/' + this.$route.params.informedId+ '?userId=' + window.localStorage.userId, this.informedContent).then(res => {
+      this.axios.put('informed/unread/' + this.$route.query.informedId+ '?userId=' + window.localStorage.userId, this.informedContent).then(res => {
         this.$message({
           message: '修改成功',
           type: 'success'
@@ -1077,6 +1286,7 @@ export default {
     }
   },
   created () {
+    this.groupId = parseInt(this.$route.query.groupId)
     let loading = this.$loading({
       lock: true,
       text: 'Loading',
@@ -1093,6 +1303,53 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
   .el-autocomplete {
     width: 100%;
+  }
+  .informat-detail{
+    min-height: 100%;
+    .title-tab{
+      font-weight: 600;
+    }
+    .title{
+      position: relative;
+      padding: 0 10px 20px;
+      font-size: 18px;
+      font-weight: 400;
+      color: #333;
+    }
+    .box{
+      position: relative;
+      margin-left: 20px;
+      background: hsla(0,0%,100%,.9)!important;
+      border-radius: 6px;
+      color: #555;
+      display: flex;
+      flex-direction: column;
+      .box-cell{
+        padding-left: 15px;
+        display: flex;
+        flex-direction: column;
+      }
+      .family{
+        border: 1px dashed;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        margin-top: 10px;
+      }
+      h5{
+        color: #333;
+      }
+      span{
+        font-size: 14px;
+        margin-bottom: 4px;
+        margin-left: 20px;
+        line-height: 2;
+      }
+    }
+    .box:last-child{
+      margin-bottom: 100px;
+    }
   }
   .user-container {
     margin: 20px 0px;
