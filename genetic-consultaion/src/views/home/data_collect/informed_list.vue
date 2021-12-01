@@ -77,7 +77,7 @@
           label="操作"
           width="160">
           <template slot-scope="scope">
-            <el-button @click="toDetail(scope.row.id,scope.row.groupId,scope.row.sampleCode)" type="text" size="small">编辑</el-button>
+            <el-button @click="toDetail(scope.row.id,scope.row.groupId,scope.row.sampleCode,scope.row)" type="text" size="small">编辑</el-button>
             <el-button @click="toAllDetail(scope.row)" type="text" size="small">查看病理信息</el-button>
           </template>
         </el-table-column>
@@ -140,10 +140,15 @@ export default {
       window.sessionStorage.informedPageNum = val
       this.getData()
     },
-    toDetail (id,groupId,sampleCode) {
+    toDetail (id,groupId,sampleCode,obj) {
       this.$router.push({
         path:'/informed/edit/'+id,
-        query: { informedId: id,groupId: groupId,sampleCode:sampleCode }
+        query: { informedId: id,groupId: groupId,sampleCode:sampleCode,
+            orderId:obj.orderId,
+            solutionId:obj.solutionId,
+            fileId:obj.id,
+            orderNo:obj.orderNo
+          }
       })
       // this.$router.push({
       //   name: 'InformedEdit',

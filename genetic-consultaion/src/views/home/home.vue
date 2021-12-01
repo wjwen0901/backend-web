@@ -217,7 +217,6 @@ export default {
   methods: {
     logout () {
       window.localStorage.clear()
-      debugger
       if (this.axios.defaults.baseURL.includes('qa.mdhcare.cn')) {
         window.location.href = 'http://qa.mdhcare.cn/website/login.html'
       } else if (this.axios.defaults.baseURL.includes('z.mdhcare.cn/z/')) {

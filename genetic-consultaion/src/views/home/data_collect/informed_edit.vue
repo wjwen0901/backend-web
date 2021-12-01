@@ -10,12 +10,14 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="12" v-if="role === 'manager' || role === 'jk-service'">
-        <div class="user-container">
+      <el-col :span="16" v-if="role === 'manager' || role === 'jk-service'">
+        <div class="user-container" v-if="groupId !== 7">
           <el-form ref="informedForm" :model="informedContent" label-width="120px" size="mini" class="edit-form">
+            <div class="del-box">
             <h4>基本信息</h4>
-
-            <el-form-item label="姓名">
+            <el-button type="text" size="small" @click="$router.push({name: 'InformedAll',params: { sampleNo:$route.query.sampleCode }})">查看病理信息</el-button>
+            </div>
+              <el-form-item label="姓名">
               <el-col :span="9">
                 <el-input v-model="informedContent.truename"></el-input>
               </el-col>
@@ -222,21 +224,11 @@
               <el-input type="textarea" v-model="familyTumorHistory"></el-input>
             </el-form-item>
             </template>
-
-<!--            <h5>家族史</h5>-->
-<!--            <el-form-item :label="item.key" v-for="item in familyHistory">-->
-<!--              <el-input v-model="item.value"></el-input>-->
-<!--            </el-form-item>-->
-<!--            <h5>个人史</h5>-->
-<!--            <el-form-item :label="item.key" v-for="item in personHistory">-->
-<!--              <el-input v-model="item.value"></el-input>-->
-<!--            </el-form-item>-->
             <el-form-item>
               <el-button @click="cancel">取消</el-button>
               <el-button @click="unread">图形不可读</el-button>
               <el-button type="primary" @click="edit">保存信息</el-button>
             </el-form-item>
-            <template v-if="groupId !== 7">
             <div>
               <h5>肿瘤遗传史：</h5>
               <el-form-item label="患癌亲属">
@@ -354,8 +346,6 @@
                 </el-checkbox-group>
               </el-form-item>
             </div>
-            </template>
-            <div v-if="groupId !== 7">
               <h5>用药史（近14天如服用药物或保健品请注明）</h5>
               <el-form-item label="保健品名称">
                 <el-input v-model="drugHistory.drugHealth"></el-input>
@@ -363,8 +353,6 @@
               <el-form-item label="药物名称">
                 <el-input v-model="drugHistory.drugTreatment"></el-input>
               </el-form-item>
-            </div>
-            <div v-if="groupId !== 7">
               <el-divider content-position="left">以下为兼容旧版知情</el-divider>
               <h5>家族史（只一人）：</h5>
               <el-form-item label="癌种(旧版)">
@@ -428,121 +416,126 @@
                   <el-checkbox label="石棉"></el-checkbox>
                 </el-checkbox-group>
               </el-form-item>
-            </div>
-            <h4 v-if="groupId === 7">普瑞详情</h4>
-            <div v-if="groupId === 7" class="informat-detail">
-              <div class="box"><span>产品名称：{{formData.productName || '-'}}</span></div>
-              <div class="box">
-                <h5>患者信息</h5>
-                <span>姓名：{{formData.patient.truename || '-'}}</span>
-                <span>性别：{{formData.patient.sex || '-'}}</span>
-                <span>出生年月：{{formData.patient.birthday?formatDate(formData.patient.birthday):'-'}}</span>
-                <span>身份证号：{{formData.patient.idCode || '-'}}</span>
-              </div>
-              <div class="box">
-                <h5>报告邮寄信息</h5>
-                <span>报告接收人：{{formData.orderReceiver.receiver || '-'}}</span>
-                <span>报告接收人电话：{{formData.orderReceiver.cellphone || '-'}}</span>
-                <span>报告邮寄地址：{{formData.orderReceiver.province || '-'}}{{formData.orderReceiver.city}}{{formData.orderReceiver.county}}{{formData.orderReceiver.address}}</span>
-              </div>
-              <div class="box">
-                <h5>样本信息</h5>
-                <span>样本编号：{{formData.sampleVo.sampleCode || '-'}}</span>
-                <span>样本类型：</span>
-                <div class="box-cell">
-                  <span>血液/拭子：{{formData.sampleVo.sampleTypesString?formData.sampleVo.sampleTypesString.toString():'-'}}</span>
-                  <template v-for="item in formData.sampleVo.sampleTypes">
-                    <template v-if="['外周血（EDTA 采血管）','外周血（Streck 采血管）','口腔拭子'].includes(item.sampleType)">
-                      <span>{{item.sampleType}}数量：{{item.saveType?item.saveType:''}}{{item.quantity || '-'}}{{item.unit}}&nbsp;&nbsp;{{item.capacity?item.capacity+'ml' :''}}</span>
-                      <span v-if="item.samplingDate">{{item.sampleType}}采样日期：{{item.samplingDate?formatDate(item.samplingDate):'-'}}</span>
-                      <span v-if="item.sampleOpera">{{item.sampleType}}手术日期：{{item.sampleOpera?formatDate(item.sampleOpera):'-'}}</span>
-                      <span v-if="item.samplingLoca">{{item.sampleType}}取样部位：{{item.samplingLoca || '-'}}</span>
-                    </template>
-                  </template>
-                  <span>组织样本：{{formData.sampleVo.sampleTypeOrange?formData.sampleVo.sampleTypeOrange.toString():'-'}}</span>
-                  <span>组织样本具体信息：</span>
-                  <template v-for="item in formData.sampleVo.sampleTypes">
-                    <template v-if="['手术组织石蜡切片（白片）','穿刺组织石蜡切片（白片）','蜡块','新鲜手术组织','新鲜穿刺组织'].includes(item.sampleType)">
-                      <span>{{item.sampleType}}数量：{{item.saveType?item.saveType:''}}{{item.quantity}}{{item.unit}}&nbsp;&nbsp;{{item.capacity?item.capacity+'ml' :''}}</span>
-                      <span v-if="item.samplingDate">{{item.sampleType}}采样日期：{{item.samplingDate?formatDate(item.samplingDate):'-'}}</span>
-                      <span v-if="item.sampleOpera">{{item.sampleType}}手术日期：{{item.sampleOpera?formatDate(item.sampleOpera):'-'}}</span>
-                      <span v-if="item.samplingLoca">{{item.sampleType}}取样部位：{{item.samplingLoca || '-'}}</span>
-                    </template>
-                  </template>
-                </div>
-              </div>
-              <template v-for="item in formData.sampleVo.sampleTypes">
-                <div class="box" v-if="item.waxOrderReceiver">
-                  <h5>剩余组织样本归还</h5>
-                  <span>归还联系人：{{item.waxOrderReceiver.receiver || '-'}}</span>
-                  <span>联系人电话：{{item.waxOrderReceiver.cellphone || '-'}}</span>
-                  <span>归还地址：{{item.waxOrderReceiver.province || '-'}}{{item.waxOrderReceiver.city}}{{item.waxOrderReceiver.county}}{{item.waxOrderReceiver.address}}</span>
-                </div>
-              </template>
-              <div class="box">
-                <h5>送检信息</h5>
-                <span>医院：{{formData.inspectVo.hospitalName || '-'}}</span>
-                <span>科室：{{formData.inspectVo.deptName || '-'}}</span>
-                <span>医生：{{formData.inspectVo.doctor || '-'}}</span>
-              </div>
-              <div class="box">
-                <h5>疾病相关信息</h5>
-                <span>肿瘤类型：{{formData.diseaseVo.tumorName || '-'}}</span>
-                <span>临床分期：{{formData.diseaseVo.clinicalStages || '-'}}</span>
-                <span>病理类型：{{formData.diseaseVo.pathologiclName || '-'}}</span>
-                <span>初次确诊时间：{{formData.diseaseVo.firstConfirmedDate || '-'}}</span>
-                <span>癌症家族史：{{formData.diseaseVo.familyHistory || '-'}}</span>
-                <div class="family" v-for="item in formData.diseaseVo.familyInformations">
-                  <span>亲属关系：{{item.kinship || '-'}}</span>
-                  <span>确诊年龄：{{item.confirmedAge || '-'}}</span>
-                  <span>癌种：{{item.canker || '-'}}</span>
-                </div>
-              </div>
-              <div class="box" v-if="formData.sampleVoBJ">
-                <h5>补寄样本信息</h5>
-                <span>样本编号：{{formData.sampleVoBJ.sampleCode || '-'}}</span>
-                <span>样本类型：</span>
-                <div class="box-cell">
-                  <span>血液/拭子：{{formData.sampleVoBJ.sampleTypesString?formData.sampleVoBJ.sampleTypesString.toString():'-'}}</span>
-                  <template v-for="item in formData.sampleVoBJ.sampleTypes">
-                    <template v-if="['外周血（EDTA 采血管）','外周血（Streck 采血管）','口腔拭子'].includes(item.sampleType)">
-                      <span>{{item.sampleType}}数量：{{item.saveType?item.saveType:''}}{{item.quantity || '-'}}{{item.unit}}&nbsp;&nbsp;{{item.capacity?item.capacity+'ml' :''}}</span>
-                      <span v-if="item.samplingDate">{{item.sampleType}}采样日期：{{item.samplingDate?formatDate(item.samplingDate):'-'}}</span>
-                      <span v-if="item.sampleOpera">{{item.sampleType}}手术日期：{{item.sampleOpera?formatDate(item.sampleOpera):'-'}}</span>
-                      <span v-if="item.samplingLoca">{{item.sampleType}}取样部位：{{item.samplingLoca || '-'}}</span>
-                    </template>
-                  </template>
-                  <span>组织样本：{{formData.sampleVoBJ.sampleTypeOrange?formData.sampleVoBJ.sampleTypeOrange.toString():'-'}}</span>
-                  <span>组织样本具体信息：</span>
-                  <template v-for="item in formData.sampleVoBJ.sampleTypes">
-                    <template v-if="['手术组织石蜡切片（白片）','穿刺组织石蜡切片（白片）','蜡块','新鲜手术组织','新鲜穿刺组织'].includes(item.sampleType)">
-                      <span>{{item.sampleType}}数量：{{item.saveType?item.saveType:''}}{{item.quantity}}{{item.unit}}&nbsp;&nbsp;{{item.capacity?item.capacity+'ml' :''}}</span>
-                      <span v-if="item.samplingDate">{{item.sampleType}}采样日期：{{item.samplingDate?formatDate(item.samplingDate):'-'}}</span>
-                      <span v-if="item.sampleOpera">{{item.sampleType}}手术日期：{{item.sampleOpera?formatDate(item.sampleOpera):'-'}}</span>
-                      <span v-if="item.samplingLoca">{{item.sampleType}}取样部位：{{item.samplingLoca || '-'}}</span>
-                    </template>
-                  </template>
-                </div>
-              </div>
-              <template v-if="formData.sampleVoBJ">
-                <template v-for="item in formData.sampleVoBJ.sampleTypes">
-                  <div class="box" v-if="item.waxOrderReceiver">
-                    <h5>补寄剩余组织样本归还</h5>
-                    <span>归还联系人：{{item.waxOrderReceiver.receiver || '-'}}</span>
-                    <span>联系人电话：{{item.waxOrderReceiver.cellphone || '-'}}</span>
-                    <span>归还地址：{{item.waxOrderReceiver.province || '-'}}{{item.waxOrderReceiver.city}}{{item.waxOrderReceiver.county}}{{item.waxOrderReceiver.address}}</span>
-                  </div>
-                </template>
-              </template>
-              <div class="box">
-                <h5>手写签名</h5>
-                <img :src="formData.informedUrl">
-              </div>
-            </div>
+<!--            <h4 v-if="groupId === 7">普瑞详情</h4>-->
+<!--            <div v-if="groupId === 7" class="informat-detail">-->
+<!--              <div class="box"><span>产品名称：{{formData.productName || '-'}}</span></div>-->
+<!--              <div class="box">-->
+<!--                <h5>患者信息</h5>-->
+<!--                <span>姓名：{{formData.patient.truename || '-'}}</span>-->
+<!--                <span>性别：{{formData.patient.sex || '-'}}</span>-->
+<!--                <span>出生年月：{{formData.patient.birthday?formatDate(formData.patient.birthday):'-'}}</span>-->
+<!--                <span>身份证号：{{formData.patient.idCode || '-'}}</span>-->
+<!--              </div>-->
+<!--              <div class="box">-->
+<!--                <h5>报告邮寄信息</h5>-->
+<!--                <span>报告接收人：{{formData.orderReceiver.receiver || '-'}}</span>-->
+<!--                <span>报告接收人电话：{{formData.orderReceiver.cellphone || '-'}}</span>-->
+<!--                <span>报告邮寄地址：{{formData.orderReceiver.province || '-'}}{{formData.orderReceiver.city}}{{formData.orderReceiver.county}}{{formData.orderReceiver.address}}</span>-->
+<!--              </div>-->
+<!--              <div class="box">-->
+<!--                <h5>样本信息</h5>-->
+<!--                <span>样本编号：{{formData.sampleVo.sampleCode || '-'}}</span>-->
+<!--                <span>样本类型：</span>-->
+<!--                <div class="box-cell">-->
+<!--                  <span>血液/拭子：{{formData.sampleVo.sampleTypesString?formData.sampleVo.sampleTypesString.toString():'-'}}</span>-->
+<!--                  <template v-for="item in formData.sampleVo.sampleTypes">-->
+<!--                    <template v-if="['外周血（EDTA 采血管）','外周血（Streck 采血管）','口腔拭子'].includes(item.sampleType)">-->
+<!--                      <span>{{item.sampleType}}数量：{{item.saveType?item.saveType:''}}{{item.quantity || '-'}}{{item.unit}}&nbsp;&nbsp;{{item.capacity?item.capacity+'ml' :''}}</span>-->
+<!--                      <span v-if="item.samplingDate">{{item.sampleType}}采样日期：{{item.samplingDate?formatDate(item.samplingDate):'-'}}</span>-->
+<!--                      <span v-if="item.sampleOpera">{{item.sampleType}}手术日期：{{item.sampleOpera?formatDate(item.sampleOpera):'-'}}</span>-->
+<!--                      <span v-if="item.samplingLoca">{{item.sampleType}}取样部位：{{item.samplingLoca || '-'}}</span>-->
+<!--                    </template>-->
+<!--                  </template>-->
+<!--                  <span>组织样本：{{formData.sampleVo.sampleTypeOrange?formData.sampleVo.sampleTypeOrange.toString():'-'}}</span>-->
+<!--                  <span>组织样本具体信息：</span>-->
+<!--                  <template v-for="item in formData.sampleVo.sampleTypes">-->
+<!--                    <template v-if="['手术组织石蜡切片（白片）','穿刺组织石蜡切片（白片）','蜡块','新鲜手术组织','新鲜穿刺组织'].includes(item.sampleType)">-->
+<!--                      <span>{{item.sampleType}}数量：{{item.saveType?item.saveType:''}}{{item.quantity}}{{item.unit}}&nbsp;&nbsp;{{item.capacity?item.capacity+'ml' :''}}</span>-->
+<!--                      <span v-if="item.samplingDate">{{item.sampleType}}采样日期：{{item.samplingDate?formatDate(item.samplingDate):'-'}}</span>-->
+<!--                      <span v-if="item.sampleOpera">{{item.sampleType}}手术日期：{{item.sampleOpera?formatDate(item.sampleOpera):'-'}}</span>-->
+<!--                      <span v-if="item.samplingLoca">{{item.sampleType}}取样部位：{{item.samplingLoca || '-'}}</span>-->
+<!--                    </template>-->
+<!--                  </template>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <template v-for="item in formData.sampleVo.sampleTypes">-->
+<!--                <div class="box" v-if="item.waxOrderReceiver">-->
+<!--                  <h5>剩余组织样本归还</h5>-->
+<!--                  <span>归还联系人：{{item.waxOrderReceiver.receiver || '-'}}</span>-->
+<!--                  <span>联系人电话：{{item.waxOrderReceiver.cellphone || '-'}}</span>-->
+<!--                  <span>归还地址：{{item.waxOrderReceiver.province || '-'}}{{item.waxOrderReceiver.city}}{{item.waxOrderReceiver.county}}{{item.waxOrderReceiver.address}}</span>-->
+<!--                </div>-->
+<!--              </template>-->
+<!--              <div class="box">-->
+<!--                <h5>送检信息</h5>-->
+<!--                <span>医院：{{formData.inspectVo.hospitalName || '-'}}</span>-->
+<!--                <span>科室：{{formData.inspectVo.deptName || '-'}}</span>-->
+<!--                <span>医生：{{formData.inspectVo.doctor || '-'}}</span>-->
+<!--              </div>-->
+<!--              <div class="box">-->
+<!--                <h5>疾病相关信息</h5>-->
+<!--                <span>肿瘤类型：{{formData.diseaseVo.tumorName || '-'}}</span>-->
+<!--                <span>临床分期：{{formData.diseaseVo.clinicalStages || '-'}}</span>-->
+<!--                <span>病理类型：{{formData.diseaseVo.pathologiclName || '-'}}</span>-->
+<!--                <span>初次确诊时间：{{formData.diseaseVo.firstConfirmedDate || '-'}}</span>-->
+<!--                <span>癌症家族史：{{formData.diseaseVo.familyHistory || '-'}}</span>-->
+<!--                <div class="family" v-for="item in formData.diseaseVo.familyInformations">-->
+<!--                  <span>亲属关系：{{item.kinship || '-'}}</span>-->
+<!--                  <span>确诊年龄：{{item.confirmedAge || '-'}}</span>-->
+<!--                  <span>癌种：{{item.canker || '-'}}</span>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="box" v-if="formData.sampleVoBJ">-->
+<!--                <h5>补寄样本信息</h5>-->
+<!--                <span>样本编号：{{formData.sampleVoBJ.sampleCode || '-'}}</span>-->
+<!--                <span>样本类型：</span>-->
+<!--                <div class="box-cell">-->
+<!--                  <span>血液/拭子：{{formData.sampleVoBJ.sampleTypesString?formData.sampleVoBJ.sampleTypesString.toString():'-'}}</span>-->
+<!--                  <template v-for="item in formData.sampleVoBJ.sampleTypes">-->
+<!--                    <template v-if="['外周血（EDTA 采血管）','外周血（Streck 采血管）','口腔拭子'].includes(item.sampleType)">-->
+<!--                      <span>{{item.sampleType}}数量：{{item.saveType?item.saveType:''}}{{item.quantity || '-'}}{{item.unit}}&nbsp;&nbsp;{{item.capacity?item.capacity+'ml' :''}}</span>-->
+<!--                      <span v-if="item.samplingDate">{{item.sampleType}}采样日期：{{item.samplingDate?formatDate(item.samplingDate):'-'}}</span>-->
+<!--                      <span v-if="item.sampleOpera">{{item.sampleType}}手术日期：{{item.sampleOpera?formatDate(item.sampleOpera):'-'}}</span>-->
+<!--                      <span v-if="item.samplingLoca">{{item.sampleType}}取样部位：{{item.samplingLoca || '-'}}</span>-->
+<!--                    </template>-->
+<!--                  </template>-->
+<!--                  <span>组织样本：{{formData.sampleVoBJ.sampleTypeOrange?formData.sampleVoBJ.sampleTypeOrange.toString():'-'}}</span>-->
+<!--                  <span>组织样本具体信息：</span>-->
+<!--                  <template v-for="item in formData.sampleVoBJ.sampleTypes">-->
+<!--                    <template v-if="['手术组织石蜡切片（白片）','穿刺组织石蜡切片（白片）','蜡块','新鲜手术组织','新鲜穿刺组织'].includes(item.sampleType)">-->
+<!--                      <span>{{item.sampleType}}数量：{{item.saveType?item.saveType:''}}{{item.quantity}}{{item.unit}}&nbsp;&nbsp;{{item.capacity?item.capacity+'ml' :''}}</span>-->
+<!--                      <span v-if="item.samplingDate">{{item.sampleType}}采样日期：{{item.samplingDate?formatDate(item.samplingDate):'-'}}</span>-->
+<!--                      <span v-if="item.sampleOpera">{{item.sampleType}}手术日期：{{item.sampleOpera?formatDate(item.sampleOpera):'-'}}</span>-->
+<!--                      <span v-if="item.samplingLoca">{{item.sampleType}}取样部位：{{item.samplingLoca || '-'}}</span>-->
+<!--                    </template>-->
+<!--                  </template>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <template v-if="formData.sampleVoBJ">-->
+<!--                <template v-for="item in formData.sampleVoBJ.sampleTypes">-->
+<!--                  <div class="box" v-if="item.waxOrderReceiver">-->
+<!--                    <h5>补寄剩余组织样本归还</h5>-->
+<!--                    <span>归还联系人：{{item.waxOrderReceiver.receiver || '-'}}</span>-->
+<!--                    <span>联系人电话：{{item.waxOrderReceiver.cellphone || '-'}}</span>-->
+<!--                    <span>归还地址：{{item.waxOrderReceiver.province || '-'}}{{item.waxOrderReceiver.city}}{{item.waxOrderReceiver.county}}{{item.waxOrderReceiver.address}}</span>-->
+<!--                  </div>-->
+<!--                </template>-->
+<!--              </template>-->
+<!--              <div class="box">-->
+<!--                <h5>手写签名</h5>-->
+<!--                <img :src="formData.informedUrl">-->
+<!--              </div>-->
+<!--            </div>-->
           </el-form>
         </div>
+        <div class="user-container" v-else-if="groupId === 7">
+          <prEdit :data="{orderId:$route.query.orderId,
+            solutionId:$route.query.solutionId,
+            fileId:$route.query.fileId,
+            sampleCode:$route.query.sampleCode}"></prEdit>
+        </div>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="8">
         <div class="img-content">
           <div v-if="imagePath.indexOf('.pdf') > -1">
             <img :src="imagePath">
@@ -558,8 +551,10 @@
 </template>
 <script>
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
+import prEdit from './components/pr-edit'
 export default {
   name: 'EditInformed',
+  components: {prEdit},
   data () {
     return {
       groupId:0,
@@ -734,7 +729,7 @@ export default {
       }).then(res => {
         this.informedContent = res.data
         if(this.groupId===7){
-          this.getInformated()
+          // this.getInformated()
         }
         if (res.data.tid !== undefined) {
           this.informedContent.orderNo = res.data.tid
@@ -1304,6 +1299,10 @@ export default {
   .el-autocomplete {
     width: 100%;
   }
+  .del-box{
+    display: flex;
+    justify-content: space-between;
+  }
   .informat-detail{
     min-height: 100%;
     .title-tab{
@@ -1361,7 +1360,7 @@ export default {
     font-size: 18px;
   }
   .edit-form {
-    max-width: 500px;
+    /*max-width: 500px;*/
   }
   .width-100-p {
     width: 100%
