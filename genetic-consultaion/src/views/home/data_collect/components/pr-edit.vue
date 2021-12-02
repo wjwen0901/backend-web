@@ -53,6 +53,18 @@
       <el-form-item label="订单编号：">
         <el-input v-model="formData.orderNo"></el-input>
       </el-form-item>
+      <el-form-item label="送检项目：" prop="solutionId">
+        <el-select v-model="formData.solutionId"
+                   clearable
+                   @clear="clearProject">
+          <el-option
+            v-for="item in projects"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="样本编号：" prop="samplingVo.sampleCode">
         <el-input v-model="formData.samplingVo.sampleCode" disabled></el-input>
       </el-form-item>
@@ -519,6 +531,7 @@ export default {
     return{
       searchKey:'',
       pageNum:1,
+      projects:[],//送检项目下拉
       orderNo:'',
       pageSize:100,
       finished:false,
@@ -662,6 +675,9 @@ export default {
         }
       },
       formDataRules:{
+        solutionId:[
+          { required: true, message: '请选择送检项目', trigger: 'change' }
+        ],
         "patient.truename":[
           { required: true, message: '请输入姓名', trigger: 'blur' }
         ],
@@ -811,6 +827,7 @@ export default {
     //初始话参数处理
     this.getInformated()
     this.getOrderNo()
+    this.getProject()
     this.setCreatedParam()
     this.getHospital('',true)
     this.getDeptList()
@@ -904,6 +921,22 @@ export default {
         this.formData.familyInformations.splice(index, 1)
       }
       this.$forceUpdate()
+    },
+    /*清除送检项目*/
+    clearProject(){
+      this.formData.solutionId=''
+    },
+    /*获取送检项目下拉*/
+    getProject() {
+      this.axios.get('solution', {
+        params: {
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+        }
+      }).then(res => {
+        this.projects = res.data
+      }).catch(err => {
+        console.log(err)
+      })
     },
     /*提交接口*/
     setPost(){
@@ -1278,6 +1311,9 @@ export default {
   /*.el-input--mini .el-input__inner{*/
   /*  width: 250px;*/
   /*}*/
+  .el-select{
+    width: 100%;
+  }
   .relation-box{
     .el-input--mini .el-input__inner{
       width: 120px;

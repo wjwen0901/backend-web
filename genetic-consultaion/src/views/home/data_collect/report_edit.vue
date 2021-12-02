@@ -232,7 +232,7 @@ export default {
   destroyed () {}
 }
 </script>
-<style>
+<style scoped>
   .user-container {
     margin: 20px 0px;
     padding: 20px;
