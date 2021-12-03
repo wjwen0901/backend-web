@@ -159,7 +159,7 @@ export default {
     toAllDetail (item) {
       this.$router.push({
         name: 'InformedAll',
-        params: { sampleNo: item.sampleCode }
+        params: { sampleNo: item.sampleCode,orderId:item.orderId }
       })
     },
     toExport () {
