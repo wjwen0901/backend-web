@@ -15,7 +15,7 @@
           <el-form ref="informedForm" :model="informedContent" label-width="120px" size="mini" class="edit-form">
             <div class="del-box">
             <h4>基本信息</h4>
-            <el-button type="text" size="small" @click="$router.push({name: 'InformedAll',params: { sampleNo:$route.query.sampleCode }})">查看病理信息</el-button>
+            <el-button type="text" size="small" @click="$router.push({name: 'InformedAll',params: { sampleNo:$route.query.sampleCode,orderId:$route.query.orderId }})">查看病理信息</el-button>
             </div>
               <el-form-item label="姓名">
               <el-col :span="9">
