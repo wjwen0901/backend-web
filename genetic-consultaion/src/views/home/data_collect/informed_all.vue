@@ -48,13 +48,13 @@
                 <el-input v-model="formData.orderReceiver.address" placeholder="请输入详细地址"></el-input>
               </el-form-item>
               <h5>剩余蜡块接收地址</h5>
-              <el-form-item label="收件人" prop="waxOrderReceiver.receiver">
+              <el-form-item label="收件人">
                 <el-input v-model="formData.waxOrderReceiver.receiver" placeholder="请输入收件人姓名"></el-input>
               </el-form-item>
-              <el-form-item label="联系方式" prop="waxOrderReceiver.cellphone">
+              <el-form-item label="联系方式">
                 <el-input v-model="formData.waxOrderReceiver.cellphone" placeholder="请输入联系电话"></el-input>
               </el-form-item>
-              <el-form-item label="接收地址：" label-width="140px" prop="waxReceiverallAddress">
+              <el-form-item label="接收地址：" label-width="140px">
                 <el-cascader
                   placeholder="请选择省市区"
                   style="width: 100%"
@@ -62,7 +62,7 @@
                   :options="addressOptions"
                   @change="handleChangAddress($event,'waxOrderReceiver')"></el-cascader>
               </el-form-item>
-              <el-form-item label="详细地址" prop="waxOrderReceiver.address">
+              <el-form-item label="详细地址">
                 <el-input v-model="formData.waxOrderReceiver.address" placeholder="请输入详细地址"></el-input>
               </el-form-item>
               <div style="text-align: center">
