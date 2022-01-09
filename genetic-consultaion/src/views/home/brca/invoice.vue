@@ -297,12 +297,19 @@ export default {
           'Content-Type': 'application/json'
         }
       }).then(function (response) {
-        _this.$message({
-          message: '提交成功',
-          type: 'success'
-        })
-        _this._initData()
-        _this.dialogExpressFormVisible = false
+        if(response.data.success === true){
+            _this.$message({
+               message: '提交成功',
+              type: 'success'
+            })
+             _this._initData()
+             _this.dialogExpressFormVisible = false
+        }else{
+          _this.$message.error({
+               message: response.data,
+               type: 'error'
+            })
+        }
       })
     },
     toDetail (id) {
