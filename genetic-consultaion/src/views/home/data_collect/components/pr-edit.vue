@@ -69,11 +69,11 @@
         <el-input v-model="formData.samplingVo.sampleCode" disabled></el-input>
       </el-form-item>
       <el-form-item label="实验室样本编号：">
-        <el-input v-model="formData.samplingVo.labSampleCode"></el-input>
+        <el-input v-model="formData.labSampleCode"></el-input>
       </el-form-item>
       <el-form-item label="样本类型：" prop="sampleTypes">
         <el-checkbox-group v-model="formData.sampleTypes">
-          <el-checkbox v-for="item in sampleTypesSelectList" :label="item"></el-checkbox>
+          <el-checkbox v-for="item in sampleTypesSelectList" :label="item" :key="item"></el-checkbox>
         </el-checkbox-group>
       </el-form-item>
       <template v-if="formData.sampleTypes.includes('外周血（EDTA 采血管）')">
@@ -230,7 +230,7 @@
       </template>
       <h4>送检信息</h4>
       <el-form-item label="送检医院：" prop="inspectVo.hospitalId">
-        <el-select v-model="hospitalList.includes(formData.inspectVo.hospitalName)?formData.inspectVo.hospitalId:formData.inspectVo.hospitalName"
+        <el-select v-model="formData.inspectVo.hospitalId"
                    filterable
                    remote
                    reserve-keyword
@@ -552,6 +552,7 @@ export default {
         solutionId:0,
         orderId:0,
         groupId:0,
+        labSampleCode:'',
         sampleTypesBj:[],//补寄样本类型
         sampleTypeByOraginBj:[],//补寄组织样本类型
         orderRevceiveAllAddreaa:[],//报告接收完整地址
@@ -648,8 +649,7 @@ export default {
         samplingVo:{
           orderNo:'',//订单编号
           sampleCode:'',
-          sampleTypes:[],
-          labSampleCode:''
+          sampleTypes:[]
         },
         sampleVoBJ:{
           orderNo:'',//订单编号
@@ -660,8 +660,8 @@ export default {
           doctor:'',
           hospitalId:'',
           deptId:'',
-          hospitalName:'',
-          deptName:''
+          // hospitalName:'',
+          // deptName:''
         },
         diseaseVo:{
           pathologicalId:0,
@@ -974,6 +974,7 @@ export default {
         params: {
           sampleCode: this.data.sampleCode}
       }).then(res => {
+        this.formData.labSampleCode = res.data.labSampleCode
         this.formData.samplingVo = res.data.sampleVo ?res.data.sampleVo:{}
         this.formData.patient = res.data.patient
         this.formData.inspectVo = res.data.inspectVo

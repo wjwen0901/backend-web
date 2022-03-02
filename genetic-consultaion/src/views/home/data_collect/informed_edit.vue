@@ -128,6 +128,9 @@
             <el-form-item label="条码编号">
               <el-input v-model="informedContent.sampleCode"></el-input>
             </el-form-item>
+             <el-form-item label="实验室样本编号">
+              <el-input v-model="informedContent.labSampleCode"></el-input>
+            </el-form-item>
             <el-form-item label="样本类型">
               <el-input v-model="informedContent.sampleType"></el-input>
             </el-form-item>
