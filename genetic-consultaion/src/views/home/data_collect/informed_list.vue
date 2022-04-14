@@ -8,7 +8,7 @@
       <div>
         <el-button class="add-solution" size="small" type="primary" @click="toExport">导出</el-button>
         <div class="search-box">
-          <el-input placeholder="请输入条码编号/受检者姓名/手机号" v-model="condition" class="input-with-select">
+          <el-input placeholder="请输入条码编号/受检者姓名/手机号" size="small" v-model="condition" class="input-with-select">
             <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
           </el-input>
         </div>
@@ -16,65 +16,76 @@
       <el-table
         @selection-change="handleSelectionChange"
         :data="informedList"
-        size="mini"
+        size="small"
         border
         style="width: 100%">
         <el-table-column
           fixed
+          align="center"
           type="selection"
           width="40">
         </el-table-column>
         <el-table-column
           prop="sampleCode"
           label="条码编号"
-          width="180">
+          align="center"
+          width="140">
         </el-table-column>
         <el-table-column
           prop="truename"
+          align="center"
           label="受检者姓名"
-          width="180">
+          width="120">
         </el-table-column>
         <el-table-column
           prop="createTime"
+          align="center"
           label="上传时间"
-          width="180">
+          width="160">
           <template slot-scope="scope">
             {{scope.row.createTime | formatDate}}
           </template>
         </el-table-column>
         <el-table-column
           prop="fullName"
+          align="center"
           label="上传人姓名">
         </el-table-column>
         <el-table-column
           prop="cellphone"
+          align="center"
           label="上传人联系电话">
         </el-table-column>
         <el-table-column
           prop="group"
+          align="center"
           label="所属分组">
         </el-table-column>
         <el-table-column
           prop="solutionName"
+          align="center"
           label="检测项目">
         </el-table-column>
         <el-table-column
           prop="companyName"
+          align="center"
           label="实验室">
         </el-table-column>
         <el-table-column
           prop="state"
+          align="center"
           label="状态">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.state === 0">{{scope.row.state | stateFilter}}</el-tag>
-            <el-tag v-else-if="scope.row.state === 1" type="info">{{scope.row.state | stateFilter}}</el-tag>
-            <el-tag v-else-if="scope.row.state === 2" type="danger">{{scope.row.state | stateFilter}}</el-tag>
-            <el-tag v-else-if="scope.row.state === 3" type="success">{{scope.row.state | stateFilter}}</el-tag>
+            <el-tag v-if="scope.row.state === 0" size="small">{{scope.row.state | stateFilter}}</el-tag>
+            <el-tag v-else-if="scope.row.state === 1" size="small" type="info">{{scope.row.state | stateFilter}}</el-tag>
+            <el-tag v-else-if="scope.row.state === 2" size="small" type="danger">{{scope.row.state | stateFilter}}</el-tag>
+            <el-tag v-else-if="scope.row.state === 3" size="small" type="success">{{scope.row.state | stateFilter}}</el-tag>
           </template>
         </el-table-column>
         <el-table-column
           fixed="right"
           label="操作"
+          align="center"
           width="160">
           <template slot-scope="scope">
             <el-button @click="toDetail(scope.row.id,scope.row.groupId,scope.row.sampleCode,scope.row)" type="text" size="small">编辑</el-button>

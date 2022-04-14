@@ -178,10 +178,10 @@
         <el-form-item label="新鲜手术组织数量：">
           <el-row>
             <el-col :span="11">
-              <el-row type="flex" justify="baseline"><span style="width:100px">RNA Late</span>&nbsp;<el-input v-model="formData.doDelete.freshSurgicalNumber"></el-input>&nbsp;&nbsp;管</el-row>
+              <el-row type="flex" justify="baseline"><span>RNAlater</span>&nbsp;<el-input style="width:150px" v-model="formData.doDelete.freshSurgicalNumber"></el-input>&nbsp;&nbsp;管</el-row>
             </el-col>
             <el-col :span="11" :offset="2">
-              <el-row type="flex" justify="baseline"><span style="width:100px">福尔马林</span>&nbsp;<el-input v-model="formData.doDelete.freshSurgicalFuNumber"></el-input>&nbsp;&nbsp;管</el-row>
+              <el-row type="flex" justify="baseline"><span>10%福尔马林</span>&nbsp;<el-input style="width:150px" v-model="formData.doDelete.freshSurgicalFuNumber"></el-input>&nbsp;&nbsp;管</el-row>
             </el-col>
           </el-row>
         </el-form-item>
@@ -196,10 +196,10 @@
         <el-form-item label="新鲜穿刺组织数量：">
           <el-row>
             <el-col :span="11">
-              <el-row type="flex" justify="baseline"><span style="width:100px">RNA Late</span>&nbsp;<el-input v-model="formData.doDelete.puncturedNumber"></el-input>&nbsp;&nbsp;管</el-row>
+              <el-row type="flex" justify="baseline"><span>RNAlater</span>&nbsp;<el-input style="width:150px" v-model="formData.doDelete.puncturedNumber"></el-input>&nbsp;&nbsp;管</el-row>
             </el-col>
             <el-col :span="11" :offset="2">
-              <el-row type="flex" justify="baseline"><span style="width:100px">福尔马林</span>&nbsp;<el-input v-model="formData.doDelete.puncturedFuNumber"></el-input>&nbsp;&nbsp;管</el-row>
+              <el-row type="flex" justify="baseline"><span>10%福尔马林</span>&nbsp;<el-input style="width:150px" v-model="formData.doDelete.puncturedFuNumber"></el-input>&nbsp;&nbsp;管</el-row>
             </el-col>
           </el-row>
         </el-form-item>
@@ -377,7 +377,7 @@
             <el-date-picker type="date" value-format="timestamp" v-model="formData.doDeleteBj.sampleTimeEdta"></el-date-picker>
           </el-form-item>
         </template>
-        <template v-if="formData.sampleTypesBj.includes('外周血（Streck采血管）')">
+        <template v-if="formData.sampleTypesBj.includes('外周血（Streck 采血管）')">
           <el-form-item label="外周血（Streck采血管）数量：" label-width="250px">
             <el-row>
               <el-col :span="11">
@@ -428,7 +428,7 @@
             <el-date-picker type="date" value-format="timestamp" v-model="formData.doDeleteBj.tissueTime"></el-date-picker>
           </el-form-item>
           <el-form-item label="穿刺组织石蜡切片取样部位：" label-width="290px" prop="doDeleteBj.paraffinSamplePart">
-            <el-input v-model="formData.doDeleteBj.paraffinSamplePart"></el-input>
+            <el-input v-model="formData.doDeleteBj.tissueSamplePart"></el-input>
           </el-form-item>
         </template>
         <template v-if="formData.sampleTypeByOraginBj.includes('蜡块')">
@@ -464,10 +464,10 @@
           <el-form-item label="新鲜手术组织数量：">
             <el-row>
               <el-col :span="11">
-                <el-row type="flex" justify="baseline"><span style="width:100px">RNA Late</span>&nbsp;<el-input v-model="formData.doDeleteBj.freshSurgicalNumber"></el-input>&nbsp;&nbsp;管</el-row>
+                <el-row type="flex" justify="baseline"><span>RNAlater</span>&nbsp;<el-input style="width:150px" v-model="formData.doDeleteBj.freshSurgicalNumber"></el-input>&nbsp;&nbsp;管</el-row>
               </el-col>
               <el-col :span="11" :offset="2">
-                <el-row type="flex" justify="baseline"><span style="width:100px">福尔马林</span>&nbsp;<el-input v-model="formData.doDeleteBj.freshSurgicalFuNumber"></el-input>&nbsp;&nbsp;管</el-row>
+                <el-row type="flex" justify="baseline"><span>10%福尔马林</span>&nbsp;<el-input style="width:150px" v-model="formData.doDeleteBj.freshSurgicalFuNumber"></el-input>&nbsp;&nbsp;管</el-row>
               </el-col>
             </el-row>
           </el-form-item>
@@ -482,10 +482,10 @@
           <el-form-item label="新鲜穿刺组织数量：">
             <el-row>
               <el-col :span="11">
-                <el-row type="flex" justify="baseline"><span style="width:100px">RNA Late</span>&nbsp;<el-input v-model="formData.doDeleteBj.puncturedNumber"></el-input>&nbsp;&nbsp;管</el-row>
+                <el-row type="flex" justify="baseline"><span>RNAlater</span>&nbsp;<el-input style="width:150px" v-model="formData.doDeleteBj.puncturedNumber"></el-input>&nbsp;&nbsp;管</el-row>
               </el-col>
               <el-col :span="11" :offset="2">
-                <el-row type="flex" justify="baseline"><span style="width:100px">福尔马林</span>&nbsp;<el-input v-model="formData.doDeleteBj.puncturedFuNumber"></el-input>&nbsp;&nbsp;管</el-row>
+                <el-row type="flex" justify="baseline"><span>10%福尔马林</span>&nbsp;<el-input style="width:150px" v-model="formData.doDeleteBj.puncturedFuNumber"></el-input>&nbsp;&nbsp;管</el-row>
               </el-col>
             </el-row>
           </el-form-item>
@@ -1029,59 +1029,67 @@ export default {
         const obj = data[type].sampleTypes[i]
         switch (obj.sampleType) {
           case '外周血（EDTA 采血管）':
-            this.formData[deleteItem].peripheralBloodNumber = obj.quantity
+            this.formData[deleteItem].peripheralBloodNumber = obj.saveTypes[0].quantity
             this.formData[deleteItem].peripheralBloodCapacity = obj.capacity
             this.formData[deleteItem].sampleTimeEdta = obj.samplingDate
             break
           case '外周血（Streck 采血管）':
             this.formData[deleteItem].sampleTimeStreck = obj.samplingDate
             this.formData[deleteItem].peripheralBloodCapacityCapacityStreck = obj.capacity
-            this.formData[deleteItem].peripheralBloodCapacityStreck = obj.quantity
+            this.formData[deleteItem].peripheralBloodCapacityStreck = obj.saveTypes[0].quantity
             break
           case '口腔拭子':
-            this.formData[deleteItem].oralSwabsNumber = obj.quantity
+            this.formData[deleteItem].oralSwabsNumber = obj.saveTypes[0].quantity
             this.formData[deleteItem].oralSwabsTime = obj.samplingDate
             break
           case '手术组织石蜡切片（白片）':
-            this.formData[deleteItem].paraffinNumber = obj.quantity
+            this.formData[deleteItem].paraffinNumber = obj.saveTypes[0].quantity
             this.formData[deleteItem].paraffinTime = obj.sampleOpera
             this.formData[deleteItem].paraffinSamplePart = obj.samplingLoca
             break
           case '穿刺组织石蜡切片（白片）':
-            this.formData[deleteItem].tissueNumber = obj.quantity
-            this.formData[deleteItem].puncturedTime = obj.sampleOpera
-            this.formData[deleteItem].puncturedSamplePart = obj.samplingLoca
+            this.formData[deleteItem].tissueNumber = obj.saveTypes[0].quantity
+            this.formData[deleteItem].tissueTime = obj.sampleOpera //tissueTime
+            this.formData[deleteItem].tissueSamplePart = obj.samplingLoca //paraffinSamplePart
             break
           case '蜡块':
-            this.formData[deleteItem].blockNumber = obj.quantity
+            this.formData[deleteItem].blockNumber = obj.saveTypes[0].quantity
             this.formData[deleteItem].blockTime = obj.sampleOpera
             this.formData[deleteItem].blockSamplePart = obj.samplingLoca
-            if(obj.waxOrderReceiver) this.formData[deleteItem].isReturn = '是' || '否'
-            this.formData[reveiver] = obj.waxOrderReceiver
-            if(reveiver === 'waxOrderReceiverBj'){
+            if(Object.keys(obj.waxOrderReceiver).length !== 0) {
+              this.formData[deleteItem].isReturn = '是'
+              this.formData[reveiver] = obj.waxOrderReceiver
+              if(reveiver === 'waxOrderReceiverBj'){
               //归还地址处理
               this.addressSee(this.formData[reveiver],'waxOrderReceiverBj','allAddress')
-            }else{
+              }else{
               this.addressSee(this.formData[reveiver],'waxOrderReceiver','allAddress')
+              }
+            }else{
+              this.formData[deleteItem].isReturn = '否'
             }
             break
           case '新鲜手术组织':
             this.formData[deleteItem].freshSurgicalTime = obj.sampleOpera
             this.formData[deleteItem].freshSurgicalSamplePart = obj.samplingLoca
-            if(obj.saveType === '福尔马林'){
-              this.formData[deleteItem].freshSurgicalFuNumber = obj.quantity
-            }else if(obj.saveType === 'RNA Later'){
-              this.formData[deleteItem].freshSurgicalNumber = obj.quantity
-            }
+            obj.saveTypes.forEach(item => {
+              if(item.saveType === '10%福尔马林'){
+                this.formData[deleteItem].freshSurgicalFuNumber = item.quantity
+              }else if(item.saveType === 'RNAlater'){
+                this.formData[deleteItem].freshSurgicalNumber = item.quantity
+              }
+            });
             break
           case '新鲜穿刺组织':
             this.formData[deleteItem].puncturedTime = obj.sampleOpera
             this.formData[deleteItem].puncturedSamplePart = obj.samplingLoca
-            if(obj.saveType === '福尔马林'){
-              this.formData[deleteItem].puncturedFuNumber = obj.quantity
-            }else if(obj.saveType === 'RNA Later'){
-              this.formData[deleteItem].puncturedNumber = obj.quantity
-            }
+            obj.saveTypes.forEach(item => {
+              if(item.saveType === '10%福尔马林'){
+                this.formData[deleteItem].puncturedFuNumber = item.quantity
+              }else if(item.saveType === 'RNAlater'){
+                this.formData[deleteItem].puncturedNumber = item.quantity
+              }
+            });
             break
         }
       }
@@ -1112,7 +1120,8 @@ export default {
               sampleType:'外周血（EDTA 采血管）',
               samplingDate:this.formData[deleteItem].sampleTimeEdta,
               capacity:this.formData[deleteItem].peripheralBloodCapacity?Number(this.formData[deleteItem].peripheralBloodCapacity):'',
-              quantity:this.formData[deleteItem].peripheralBloodNumber?Number(this.formData[deleteItem].peripheralBloodNumber):'',
+              // quantity:this.formData[deleteItem].peripheralBloodNumber?Number(this.formData[deleteItem].peripheralBloodNumber):'',
+              saveTypes:[{quantity:this.formData[deleteItem].peripheralBloodNumber?Number(this.formData[deleteItem].peripheralBloodNumber):''}],
               unit:'管'
             }
             list.push(param)
@@ -1122,7 +1131,8 @@ export default {
               sampleType:'外周血（Streck 采血管）',
               samplingDate:this.formData[deleteItem].sampleTimeStreck ? new Date(this.formData[deleteItem].sampleTimeStreck).getTime():'',
               capacity:this.formData[deleteItem].peripheralBloodCapacityCapacityStreck?Number(this.formData[deleteItem].peripheralBloodCapacityCapacityStreck):'',
-              quantity:this.formData[deleteItem].peripheralBloodCapacityStreck?Number(this.formData[deleteItem].peripheralBloodCapacityStreck):'',
+              // quantity:this.formData[deleteItem].peripheralBloodCapacityStreck?Number(this.formData[deleteItem].peripheralBloodCapacityStreck):'',
+              saveTypes:[{quantity:this.formData[deleteItem].peripheralBloodCapacityStreck?Number(this.formData[deleteItem].peripheralBloodCapacityStreck):''}],
               unit:'管'
             }
             list.push(param)
@@ -1131,7 +1141,8 @@ export default {
             param = {
               sampleType:'口腔拭子',
               samplingDate:this.formData[deleteItem].oralSwabsTime ? new Date(this.formData[deleteItem].oralSwabsTime).getTime():'',
-              quantity:this.formData[deleteItem].oralSwabsNumber?Number(this.formData[deleteItem].oralSwabsNumber):'',
+              // quantity:this.formData[deleteItem].oralSwabsNumber?Number(this.formData[deleteItem].oralSwabsNumber):'',
+              saveTypes:[{quantity:this.formData[deleteItem].oralSwabsNumber?Number(this.formData[deleteItem].oralSwabsNumber):''}],
               unit:'管'
             }
             list.push(param)
@@ -1150,7 +1161,8 @@ export default {
               sampleType:'手术组织石蜡切片（白片）',
               sampleOpera:this.formData[deleteItem].paraffinTime,
               samplingLoca:this.formData[deleteItem].paraffinSamplePart,
-              quantity: this.formData[deleteItem].paraffinNumber?Number(this.formData[deleteItem].paraffinNumber):'',
+              // quantity: this.formData[deleteItem].paraffinNumber?Number(this.formData[deleteItem].paraffinNumber):'',
+              saveTypes:[{quantity:this.formData[deleteItem].paraffinNumber?Number(this.formData[deleteItem].paraffinNumber):''}],
               unit:'片'
             }
             list.push(param)
@@ -1160,7 +1172,8 @@ export default {
               sampleType:'穿刺组织石蜡切片（白片）',
               sampleOpera:this.formData[deleteItem].tissueTime,
               samplingLoca:this.formData[deleteItem].tissueSamplePart,
-              quantity:this.formData[deleteItem].tissueNumber?Number(this.formData[deleteItem].tissueNumber):'',
+              // quantity:this.formData[deleteItem].tissueNumber?Number(this.formData[deleteItem].tissueNumber):'',
+              saveTypes:[{quantity:this.formData[deleteItem].tissueNumber?Number(this.formData[deleteItem].tissueNumber):''}],
               unit:'片'
             }
             list.push(param)
@@ -1170,31 +1183,46 @@ export default {
               sampleType:'蜡块',
               sampleOpera:this.formData[deleteItem].blockTime,
               samplingLoca:this.formData[deleteItem].blockSamplePart,
-              quantity:this.formData[deleteItem].blockNumber?Number(this.formData[deleteItem].blockNumber):'',
+              // quantity:this.formData[deleteItem].blockNumber?Number(this.formData[deleteItem].blockNumber):'',
+              saveTypes:[{quantity:this.formData[deleteItem].blockNumber?Number(this.formData[deleteItem].blockNumber):''}],
               unit:'块',
               waxOrderReceiver:this.formData[deleteItem].isReturn==='是'?this.formData[receiver]:{}
             }
             list.push(param)
             break
           case '新鲜手术组织':
+            //RNAlater和福尔马林如果只填写一个另一个默认为0都需要传递
+            const arrLaterOne = []
+            arrLaterOne.push({quantity:this.formData[deleteItem].freshSurgicalNumber?Number(this.formData[deleteItem].freshSurgicalNumber):0,
+                              saveType:'RNAlater'})
+            arrLaterOne.push({quantity:this.formData[deleteItem].freshSurgicalFuNumber?Number(this.formData[deleteItem].freshSurgicalFuNumber):0,
+                              saveType:'10%福尔马林'}) 
             param = {
               sampleType:'新鲜手术组织',
               sampleOpera:this.formData[deleteItem].freshSurgicalTime,
               samplingLoca:this.formData[deleteItem].freshSurgicalSamplePart,
-              quantity:Number(this.formData[deleteItem].freshSurgicalNumber) || Number(this.formData[deleteItem].freshSurgicalFuNumber),
+              // quantity:Number(this.formData[deleteItem].freshSurgicalNumber) || Number(this.formData[deleteItem].freshSurgicalFuNumber),
+              saveTypes:arrLaterOne,
               unit:'片',
-              saveType:this.formData[deleteItem].freshSurgicalNumber?'RNA Later':'福尔马林'
+              // saveType:this.formData[deleteItem].freshSurgicalNumber?'RNA Later':'福尔马林'
             }
             list.push(param)
             break
           case '新鲜穿刺组织':
+            //RNAlater和福尔马林如果只填写一个另一个默认为0都需要传递
+            const arrLaterTwo = []
+            arrLaterTwo.push({quantity:this.formData[deleteItem].puncturedNumber?Number(this.formData[deleteItem].puncturedNumber):0,
+                              saveType:'RNAlater'})
+            arrLaterTwo.push({quantity:this.formData[deleteItem].puncturedFuNumber?Number(this.formData[deleteItem].puncturedFuNumber):0,
+                              saveType:'10%福尔马林'}) 
             param = {
               sampleType:'新鲜穿刺组织',
               sampleOpera:this.formData[deleteItem].puncturedTime,
               samplingLoca:this.formData[deleteItem].puncturedSamplePart,
-              quantity:Number(this.formData[deleteItem].puncturedNumber) ||Number(this.formData[deleteItem].puncturedFuNumber),
+              // quantity:Number(this.formData[deleteItem].puncturedNumber) ||Number(this.formData[deleteItem].puncturedFuNumber),
               unit:'片',
-              saveType:this.formData[deleteItem].freshSurgicalNumber?'RNA Later':'福尔马林'
+              saveTypes:arrLaterTwo
+              // saveType:this.formData[deleteItem].freshSurgicalNumber?'RNA Later':'福尔马林'
             }
             list.push(param)
             break

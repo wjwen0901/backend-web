@@ -31,6 +31,7 @@ export default {
 body {
   margin: 0;
   height: 100vh;
+  min-height: 100%;
 }
 *{
   list-style: none;
@@ -60,5 +61,9 @@ body {
   content: ".";
   clear: both;
   height: 0;
+}
+.el-pagination{
+  text-align: right;
+  margin-top: 20px;
 }
 </style>

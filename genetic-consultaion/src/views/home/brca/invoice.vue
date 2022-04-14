@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="invoince-box">
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>BRCA轻松检</el-breadcrumb-item>
       <el-breadcrumb-item>发票记录</el-breadcrumb-item>
@@ -7,6 +7,7 @@
     <div class="user-container">
       <div>
         <el-button class="add-user" size="small" type="primary" @click="toAdd">新增</el-button>
+        <el-button class="add-user" size="small" type="warning" @click="exportData">导出数据</el-button>
       </div>
       <el-table
         :data="list"
@@ -16,31 +17,38 @@
         <el-table-column
           prop="invoiceType"
           label="发票类型"
-          width="110">
+          align="center"
+          width="120"
+        >
         </el-table-column>
         <el-table-column
           prop="title"
           label="抬头"
-          width="160">
+          align="center"
+         >
         </el-table-column>
         <el-table-column
           prop="dutyNumber"
           label="税号"
-          width="180">
+          align="center"
+        >
         </el-table-column>
         <el-table-column
           prop="price"
           label="金额"
+          align="center"
           width="80">
         </el-table-column>
         <el-table-column
           prop="statusStr"
           label="当前状态"
+          align="center"
           width="80">
         </el-table-column>
         <el-table-column
           prop="statusStr"
-          label="接收信息">
+          label="接收信息"
+         >
           <template slot-scope="scope">
             <p>接收方式：{{scope.row.receivingMode == '0' ? '纸质发票' : '电子发票'}}</p>
             <div v-if="scope.row.receivingMode == '0' && scope.row.receiver">
@@ -54,14 +62,16 @@
         </el-table-column>
         <el-table-column
           label="申请时间"
-          width="140">
+          align="center"
+         >
           <template slot-scope="scope">
             {{scope.row.applyTime | formatDate}}
           </template>
         </el-table-column>
         <el-table-column
           label="邮寄时间"
-          width="140">
+          align="center"
+         >
           <template slot-scope="scope">
             {{scope.row.sendTime | formatDate}}
           </template>
@@ -69,7 +79,8 @@
         <el-table-column
           fixed="right"
           label="操作"
-          width="240">
+          align="center"
+          width="200">
           <template slot-scope="scope">
             <el-button @click="toConfirm(scope.row)" type="text" size="small" v-if="scope.row.status == 1">审核提醒</el-button>
             <el-button @click="toDetail(scope.row.id)" type="text" size="small">查看订单</el-button>
@@ -169,22 +180,21 @@
       <el-dialog title="审核通过" :visible.sync="dialogConfirmFormVisible">
         <div>
           <h4>开票人信息</h4>
-          <div style="padding: 0px 0px 40px 20px">
+          <div style="padding: 0px 0px 20px 20px">
             <p>抬头： {{expressItem.title}}</p>
             <p>税号： {{expressItem.dutyNumber ? expressItem.dutyNumber : '-'}}</p>
             <p>金额： {{expressItem.price}}</p>
             <p>收件人： {{expressItem.dContact}} | {{expressItem.dTel}} |  {{expressItem.dProvince}}{{expressItem.dCity}}{{expressItem.dCounty}}{{expressItem.dAddress}}</p>
           </div>
-
           <h4>输入信息，发送微信提醒给用户</h4>
           <el-form ref="form" :model="expressItem" label-width="120px">
             <el-form-item label="输入通知内容">
-              <el-input v-model="expressItem.note" placeholder="您的发票将于14个工作日内开出，请关注快递消息"></el-input>
+              <el-input  size="small" style="width:400px" v-model="expressItem.note" placeholder="您的发票将于14个工作日内开出，请关注快递消息"></el-input>
             </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="confirmInvoice">确定</el-button>
-              <el-button @click="dialogConfirmFormVisible = false">取消</el-button>
-            </el-form-item>
+            <div class="but-box">
+              <el-button type="primary" size="small" @click="confirmInvoice">确定</el-button>
+              <el-button size="small" @click="dialogConfirmFormVisible = false">取消</el-button>
+            </div>
           </el-form>
         </div>
       </el-dialog>
@@ -260,6 +270,31 @@ export default {
         this.pageSize = res.data.pageSize
         this.pageNum = res.data.pageNum
         this.totalPage = res.data.total
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    //导出数据
+    exportData(){
+       this.axios.get('invoice/export/list', {
+        params: {
+          pageNum: this.pageNum,
+          pageSize: this.pageSize,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
+        },
+        responseType: 'blob'
+      }).then(res => {
+        const blob = new Blob(
+          [res.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8' })
+        const aEle = document.createElement('a');     // 创建a标签
+        const href = window.URL.createObjectURL(blob);       // 创建下载的链接
+        aEle.href = href;
+        const today = new Date();
+        aEle.download = "发票记录" + today.getFullYear() + '-'+ (today.getMonth()+1)+ '-' + today.getDate() + ".xls";  // 下载后文件名
+        document.body.appendChild(aEle);
+        aEle.click();     // 点击下载
+        document.body.removeChild(aEle); // 下载完成移除元素
+        window.URL.revokeObjectURL(href) // 释放掉blob对象
       }).catch(err => {
         console.log(err)
       })
@@ -468,4 +503,17 @@ export default {
   .width-100-p {
     width: 100%;
   }
+  .invoince-box{
+    .but-box{
+      text-align: center;
+      margin-top: 40px;
+    }
+  }
 </style>
+<style lang="scss">
+.invoince-box{
+  .el-dialog__body{
+    min-height: 400px;
+  }
+}
+</style>>
