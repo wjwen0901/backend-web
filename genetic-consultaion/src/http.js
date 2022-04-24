@@ -14,12 +14,13 @@ axios.defaults.headers.put['Content-Type'] = 'application/json'
 // http request 拦截器
 axios.interceptors.request.use(
     config => {
-        config.headers.Authorization = window.localStorage.token
-        config.params = config.params ? config.params:{}
-        config.params.userId = window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+        // config.headers.Authorization = window.localStorage.token
+        config.headers.Authorization = 'eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJNREhDQVJFLUJBQ0tFTkQiLCJleHAiOjE2NTA5NjAyNzgsImlhdCI6MTY1MDc4NzQ3OCwidXNlcklkIjoxLCJ1c2VybmFtZSI6ImFkbWluIn0.XofphmmFoR7eV3sEtZPIXjNANMyX_k3Hn_SXkF4h0rU'
+        config.params = config.params ? config.params : {}
+        config.params.userId = window.localStorage.userId ? parseInt(window.localStorage.userId) : 0
         if (config.method === 'post' || config.method === 'put') {
             // config.data = qs.stringify(config.data)
-                // config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+            // config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
         }
         // if (store.state.token) {
         //
@@ -42,10 +43,11 @@ axios.interceptors.response.use(
                     window.localStorage.clear()
                     // wonder跳转登录
                     // window.location.href = 'https://z.mdhcare.cn/z/login.html'
+                    // window.location.href = 'https://qa.mdhcare.cn/login.html'
                     window.location.href = 'https://z.mdhcare.cn/login.html'
             }
         }
-        // console.log(JSON.stringify(error));//console : Error: Request failed with status code 402
+        console.log(JSON.stringify(error));
         return Promise.reject(error.response.data)
     })
 

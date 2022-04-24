@@ -119,7 +119,7 @@
         </el-form-item>
       </template>
       <el-form-item  v-if="formData.sampleTypes.includes('组织样本')" label="组织样本信息：" prop="sampleTypeByOragin">
-        <el-checkbox v-model="formData.sampleTypeByOragin" v-for="item in sampleTypeByOraginList" :label="item"></el-checkbox>
+        <el-checkbox v-model="formData.sampleTypeByOragin" v-for="(item,index) in sampleTypeByOraginList" :key="index" :label="item"></el-checkbox>
       </el-form-item>
       <template v-if="formData.sampleTypeByOragin.includes('手术组织石蜡切片（白片）') && formData.sampleTypes.includes('组织样本')">
         <el-form-item label="手术组织石蜡切片（白片）数量：" label-width="290px">
@@ -145,35 +145,49 @@
           <el-input v-model="formData.doDelete.tissueSamplePart"></el-input>
         </el-form-item>
       </template>
-      <template v-if="formData.sampleTypeByOragin.includes('蜡块') && formData.sampleTypes.includes('组织样本')">
-        <el-row>
-          <el-col :span="11">
-            <el-form-item label="蜡块数量：">
-              <el-row type="flex" justify="baseline"><el-input v-model="formData.doDelete.blockNumber"></el-input>&nbsp;&nbsp;块</el-row>
+        <template v-if="formData.sampleTypeByOragin.includes('蜡块（手术组织）') && formData.sampleTypes.includes('组织样本')">
+          <el-row>
+            <el-form-item label="蜡块（手术组织）数量：" label-width="180px">
+              <el-input style="width:350px" v-model="formData.doDelete.blockNumber"></el-input>&nbsp;&nbsp;块
             </el-form-item>
-          </el-col>
-          <el-col :span="8" :offset="1">
-            <el-form-item label="蜡块样本手术日期：" prop="doDelete.blockTime">
-              <el-date-picker type="date" value-format="timestamp" v-model="formData.doDelete.blockTime"></el-date-picker>
-            </el-form-item>
-          </el-col>
         </el-row>
         <el-row>
-          <el-col :span="10">
-            <el-form-item label="蜡块取样部位：" prop="doDelete.blockSamplePart">
-              <el-row type="flex" justify="baseline"><el-input v-model="formData.doDelete.blockSamplePart"></el-input></el-row>
+          <el-form-item label="蜡块（手术组织）样本手术日期：" label-width="250px" prop="doDelete.blockTime">
+              <el-date-picker type="date" value-format="timestamp" v-model="formData.doDelete.blockTime"></el-date-picker>
             </el-form-item>
-          </el-col>
-          <el-col :span="11" :offset="1">
-            <el-form-item label="是否样本归还：" prop="doDelete.isReturn">
+        </el-row>
+        <el-row>
+          <el-form-item label="蜡块（手术组织）取样部位："  label-width="250px" prop="doDelete.blockSamplePart">
+              <el-input v-model="formData.doDelete.blockSamplePart"></el-input>
+            </el-form-item>
+        </el-row>
+      </template>
+       <template v-if="formData.sampleTypeByOragin.includes('蜡块（穿刺组织）') && formData.sampleTypes.includes('组织样本')">
+          <el-row>
+            <el-form-item label="蜡块（穿刺组织）数量：" label-width="180px">
+              <el-input style="width:350px" v-model="formData.doDelete.blockPuncturedNumber"></el-input>&nbsp;&nbsp;块
+            </el-form-item>
+        </el-row>
+        <el-row>
+          <el-form-item label="蜡块（穿刺组织）样本手术日期：" label-width="250px" prop="doDelete.blockPuncturedTime">
+              <el-date-picker type="date" value-format="timestamp" v-model="formData.doDelete.blockPuncturedTime"></el-date-picker>
+            </el-form-item>
+        </el-row>
+        <el-row>
+          <el-form-item label="蜡块（穿刺组织）取样部位："  label-width="250px" prop="doDelete.blockPuncturedSamplePart">
+              <el-input v-model="formData.doDelete.blockPuncturedSamplePart"></el-input>
+            </el-form-item>
+        </el-row>
+      </template>
+        <el-row v-if="(formData.sampleTypeByOragin.includes('蜡块（手术组织）') || formData.sampleTypeByOragin.includes('蜡块（穿刺组织）')) && formData.sampleTypes.includes('组织样本')">
+           <el-form-item label="是否样本归还：" prop="doDelete.isReturn">
               <el-radio-group v-model="formData.doDelete.isReturn">
                 <el-radio :label="'是'">是</el-radio>
                 <el-radio :label="'否'">否</el-radio>
               </el-radio-group>
             </el-form-item>
-          </el-col>
         </el-row>
-      </template>
+      <!-- </template> -->
       <template v-if="formData.sampleTypeByOragin.includes('新鲜手术组织') && formData.sampleTypes.includes('组织样本')">
         <el-form-item label="新鲜手术组织数量：">
           <el-row>
@@ -210,6 +224,24 @@
           <el-input v-model="formData.doDelete.puncturedSamplePart"></el-input>
         </el-form-item>
       </template>
+      <template v-if="formData.sampleTypeByOragin.includes('胸腹水')">
+        <el-form-item label="胸腹水数量：">
+            <el-row>
+              <el-col :span="11">
+                <el-row type="flex" justify="baseline"><el-input v-model="formData.doDelete.chestWaterNumber"></el-input>&nbsp;&nbsp;瓶</el-row>
+              </el-col>
+              <el-col :span="11" :offset="2">
+                <el-row type="flex" justify="baseline"><el-input v-model="formData.doDelete.chestWaterCapacity"></el-input>&nbsp;&nbsp;ml</el-row>
+              </el-col>
+            </el-row>
+          </el-form-item>
+          <el-form-item label="胸腹水样本手术日期："  label-width="211px" prop="doDelete.chestWaterTime">
+            <el-date-picker type="date" value-format="timestamp" v-model="formData.doDelete.chestWaterTime"></el-date-picker>
+          </el-form-item>
+          <el-form-item label="胸腹水取样部位："  label-width="200px" prop="doDelete.chestWaterPart">
+            <el-input v-model="formData.doDelete.chestWaterPart"></el-input>
+          </el-form-item>
+      </template>
       <template v-if="formData.doDelete.isReturn==='是' && formData.sampleTypes.includes('组织样本')">
         <h4>剩余组织样本归还</h4>
         <el-form-item label="归还联系人：" label-width="140px" prop="waxOrderReceiver.receiver">
@@ -229,13 +261,13 @@
         </el-form-item>
       </template>
       <h4>送检信息</h4>
+      <!-- v-loadData="loadData" -->
       <el-form-item label="送检医院：" prop="inspectVo.hospitalId">
         <el-select v-model="formData.inspectVo.hospitalId"
                    filterable
                    remote
                    reserve-keyword
                    :remote-method="remoteMethod"
-                   v-loadData="loadData"
                    :loading="selectLoading"
                    clearable
                    @clear="clearQuery(true)">
@@ -304,6 +336,9 @@
           </el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="病理信息-其他：" v-if="formData.diseaseVo.pathologiclName === '其他'" prop="diseaseVo.pathologicTypesOther">
+        <el-input v-model="formData.diseaseVo.pathologicTypesOther" placeholder="请输入病理类型-其他"></el-input>
+      </el-form-item>
       <el-row>
         <el-col :span="11">
           <el-form-item label="初次确诊时间：" prop="diseaseVo.firstConfirmedDate">
@@ -322,7 +357,7 @@
       <el-row v-if="formData.diseaseVo.familyHistory === '有'">
           <el-button size="mini" type="primary" class="add-relation" @click="addRelation">新增亲属关系</el-button>
       </el-row>
-      <el-row v-for="(item,index) in formData.familyInformations" class="relation-box">
+      <el-row v-for="(item,index) in formData.familyInformations" :key="index" class="relation-box">
         <el-col :span="6">
           <el-form-item label="亲属关系：" label-width="100px"
                         :prop="'familyInformations.'+index+'.kinship'"
@@ -359,7 +394,7 @@
         </el-form-item>
         <el-form-item label="样本类型：" prop="sampleTypesBj">
           <el-checkbox-group v-model="formData.sampleTypesBj">
-            <el-checkbox v-for="item in sampleTypesSelectList" :label="item"></el-checkbox>
+            <el-checkbox v-for="(item,index) in sampleTypesSelectList" :key="index" :label="item"></el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <template v-if="formData.sampleTypesBj.includes('外周血（EDTA 采血管）')">
@@ -405,7 +440,7 @@
           </el-form-item>
         </template>
         <el-form-item  v-if="formData.sampleTypesBj.includes('组织样本')" label="组织样本信息：" prop="sampleTypeByOraginBj">
-          <el-checkbox v-model="formData.sampleTypeByOraginBj" v-for="item in sampleTypeByOraginList" :label="item"></el-checkbox>
+          <el-checkbox v-model="formData.sampleTypeByOraginBj" v-for="(item,index) in sampleTypeByOraginList" :key="index" :label="item"></el-checkbox>
         </el-form-item>
         <template v-if="formData.sampleTypeByOraginBj.includes('手术组织石蜡切片（白片）')">
           <el-form-item label="手术组织石蜡切片（白片）数量：" label-width="290px">
@@ -431,35 +466,48 @@
             <el-input v-model="formData.doDeleteBj.tissueSamplePart"></el-input>
           </el-form-item>
         </template>
-        <template v-if="formData.sampleTypeByOraginBj.includes('蜡块')">
+        <template v-if="formData.sampleTypeByOraginBj.includes('蜡块（手术组织）')">
           <el-row>
-            <el-col :span="10">
-              <el-form-item label="蜡块数量：">
-                <el-row type="flex" justify="baseline"><el-input v-model="formData.doDeleteBj.blockNumber"></el-input>&nbsp;&nbsp;块</el-row>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8" :offset="1">
-              <el-form-item label="蜡块样本手术日期：" prop="doDeleteBj.blockTime">
-                <el-date-picker type="date" value-format="timestamp" v-model="formData.doDeleteBj.blockTime"></el-date-picker>
-              </el-form-item>
-            </el-col>
-          </el-row>
+            <el-form-item label="蜡块（手术组织）数量：" label-width="180px">
+              <el-input style="width:350px" v-model="formData.doDeleteBj.blockNumber"></el-input>&nbsp;&nbsp;块
+            </el-form-item>
+        </el-row>
+        <el-row>
+          <el-form-item label="蜡块（手术组织）样本手术日期：" label-width="250px" prop="doDeleteBj.blockTime">
+              <el-date-picker type="date" value-format="timestamp" v-model="formData.doDeleteBj.blockTime"></el-date-picker>
+            </el-form-item>
+        </el-row>
+        <el-row>
+          <el-form-item label="蜡块（手术组织）取样部位："  label-width="250px" prop="doDeleteBj.blockSamplePart">
+              <el-input v-model="formData.doDeleteBj.blockSamplePart"></el-input>
+            </el-form-item>
+        </el-row>
+      </template>
+       <template v-if="formData.sampleTypeByOraginBj.includes('蜡块（穿刺组织）')">
           <el-row>
-            <el-col :span="10">
-              <el-form-item label="蜡块取样部位：" prop="doDeleteBj.blockSamplePart">
-                <el-row type="flex" justify="baseline"><el-input v-model="formData.doDeleteBj.blockSamplePart"></el-input></el-row>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11" :offset="1">
-              <el-form-item label="是否样本归还：" prop="doDeleteBj.isReturn">
-                <el-radio-group v-model="formData.doDeleteBj.isReturn">
-                  <el-radio :label="'是'">是</el-radio>
-                  <el-radio :label="'否'">否</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </template>
+            <el-form-item label="蜡块（穿刺组织）数量：" label-width="180px">
+              <el-input style="width:350px" v-model="formData.doDeleteBj.blockPuncturedNumber"></el-input>&nbsp;&nbsp;块
+            </el-form-item>
+        </el-row>
+        <el-row>
+          <el-form-item label="蜡块（穿刺组织）样本手术日期：" label-width="250px" prop="doDeleteBj.blockPuncturedTime">
+              <el-date-picker type="date" value-format="timestamp" v-model="formData.doDeleteBj.blockPuncturedTime"></el-date-picker>
+            </el-form-item>
+        </el-row>
+        <el-row>
+          <el-form-item label="蜡块（穿刺组织）取样部位："  label-width="250px" prop="doDeleteBj.blockPuncturedSamplePart">
+              <el-input v-model="formData.doDeleteBj.blockPuncturedSamplePart"></el-input>
+            </el-form-item>
+        </el-row>
+      </template>
+        <el-row v-if="formData.sampleTypeByOraginBj.includes('蜡块（手术组织）') || formData.sampleTypeByOraginBj.includes('蜡块（穿刺组织）')">
+           <el-form-item label="是否样本归还：" prop="doDeleteBj.isReturn">
+              <el-radio-group v-model="formData.doDeleteBj.isReturn">
+                <el-radio :label="'是'">是</el-radio>
+                <el-radio :label="'否'">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+        </el-row>
         <template v-if="formData.sampleTypeByOraginBj.includes('新鲜手术组织')">
           <el-form-item label="新鲜手术组织数量：">
             <el-row>
@@ -496,6 +544,24 @@
             <el-input v-model="formData.doDeleteBj.puncturedSamplePart"></el-input>
           </el-form-item>
         </template>
+        <template v-if="formData.sampleTypeByOraginBj.includes('胸腹水')">
+        <el-form-item label="胸腹水数量：">
+            <el-row>
+              <el-col :span="11">
+                <el-row type="flex" justify="baseline"><el-input v-model="formData.doDeleteBj.chestWaterNumber"></el-input>&nbsp;&nbsp;瓶</el-row>
+              </el-col>
+              <el-col :span="11" :offset="2">
+                <el-row type="flex" justify="baseline"><el-input v-model="formData.doDeleteBj.chestWaterCapacity"></el-input>&nbsp;&nbsp;ml</el-row>
+              </el-col>
+            </el-row>
+          </el-form-item>
+          <el-form-item label="胸腹水样本手术日期："  label-width="211px" prop="doDeleteBj.chestWaterTime">
+            <el-date-picker type="date" value-format="timestamp" v-model="formData.doDeleteBj.chestWaterTime"></el-date-picker>
+          </el-form-item>
+          <el-form-item label="胸腹水取样部位："  label-width="200px" prop="doDeleteBj.chestWaterPart">
+            <el-input v-model="formData.doDeleteBj.chestWaterPart"></el-input>
+          </el-form-item>
+       </template>
         <template v-if="formData.doDeleteBj.isReturn==='是'">
           <h4>补寄剩余组织样本归还</h4>
           <el-form-item label="归还联系人：" label-width="140px" prop="waxOrderReceiverBj.receiver">
@@ -542,7 +608,7 @@ export default {
       pathologicTypesList:[],//病理类型
       clinicalStagingList:['Ⅰ期','Ⅱ期','Ⅲ期','Ⅳ期'],//临床分期
       sampleTypesSelectList:['外周血（EDTA 采血管）','外周血（Streck 采血管）','口腔拭子','组织样本'],
-      sampleTypeByOraginList:['手术组织石蜡切片（白片）','穿刺组织石蜡切片（白片）','蜡块','新鲜手术组织','新鲜穿刺组织'],
+      sampleTypeByOraginList:['手术组织石蜡切片（白片）','穿刺组织石蜡切片（白片）','蜡块（手术组织）','蜡块（穿刺组织）','新鲜手术组织','新鲜穿刺组织','胸腹水'],
       addressOptions:regionData,//省市区数据
       CodeToText: CodeToText,
       TextToCode: TextToCode,
@@ -560,6 +626,13 @@ export default {
         sampleTypeByOragin:[],//组织样本信息
         familyInformations:[],//家族史
         doDeleteBj:{
+          chestWaterPart:'',//胸腹水取样部位
+          chestWaterNumber:'',//胸腹水数量
+          chestWaterCapacity:'',//胸腹水容量
+          chestWaterTime:'',//胸腹水样本手术日期
+          blockPuncturedSamplePart:'',//蜡块（穿刺组织）取样部位
+          blockPuncturedTime:'',//蜡块（穿刺组织）样本手术日期
+          blockPuncturedNumber:'',//蜡块（穿刺组织）数量
           tissueSamplePart:'',//穿刺组织石蜡切片取样部位
           tissueTime:'',//穿刺组织石蜡切片手术日期
           paraffinSamplePart:'',//手术组织石蜡切片取样部位
@@ -588,6 +661,13 @@ export default {
           isReturn:''//是否样本归还
         },
         doDelete:{
+          chestWaterPart:'',//胸腹水取样部位
+          chestWaterNumber:'',//胸腹水数量
+          chestWaterCapacity:'',//胸腹水容量
+          chestWaterTime:'',//胸腹水样本手术日期
+          blockPuncturedSamplePart:'',//蜡块（穿刺组织）取样部位
+          blockPuncturedTime:'',//蜡块（穿刺组织）样本手术日期
+          blockPuncturedNumber:'',//蜡块（穿刺组织）数量
           tissueSamplePart:'',//穿刺组织石蜡切片取样部位
           tissueTime:'',//穿刺组织石蜡切片手术日期
           paraffinSamplePart:'',//手术组织石蜡切片取样部位
@@ -671,7 +751,8 @@ export default {
           clinicalStages:'',
           firstConfirmedDate:0,
           familyHistory:'',
-          familyInformations:[]
+          familyInformations:[],
+          pathologicTypesOther:''
         }
       },
       formDataRules:{
@@ -713,8 +794,17 @@ export default {
         sampleTypeByOragin:[
           { required: true, message: '请选择组织样本信息', trigger: 'change' }
         ],
+        "doDelete.chestWaterTime":[
+           { required: true, message: '请选择胸腹水样本手术日期', trigger: 'change' }
+        ],
+        "doDelete.chestWaterPart":[
+           { required: true, message: '请输入胸腹水取样部位', trigger: 'blur' }
+        ],
         "doDelete.paraffinTime":[
           { required: true, message: '请选择手术组织石蜡切片（白片）手术日期', trigger: 'change' }
+        ],
+        "doDelete.blockPuncturedTime":[
+          { required: true, message: '请选择蜡块（穿刺组织）手术日期', trigger: 'change' }
         ],
         "doDelete.paraffinSamplePart":[
           { required: true, message: '请输入手术组织石蜡切片取样部位', trigger: 'blur' }
@@ -727,6 +817,9 @@ export default {
         ],
         "doDelete.blockTime":[
           { required: true, message: '请选择蜡块样本手术日期', trigger: 'change' }
+        ],
+        "doDelete.blockPuncturedSamplePart":[
+          { required: true, message: '请输入蜡块（穿刺组织）取样部位', trigger: 'blur' }
         ],
         "doDelete.blockSamplePart":[
           { required: true, message: '请输入蜡块样本取样部位', trigger: 'blur' }
@@ -777,6 +870,9 @@ export default {
         "diseaseVo.familyHistory":[
           { required: true, message: '请选择是否有癌症家族史', trigger: 'change' }
         ],
+        "diseaseVo.pathologicTypesOther":[
+          { required: true, message: '请输入病理类型-其他', trigger: 'blur' }
+        ],
         "samplingVo.orderNo":[
           { required: true, message: '请输入订单编号', trigger: 'blur' }
         ],
@@ -825,13 +921,13 @@ export default {
   },
   mounted() {
     //初始话参数处理
+    this.getTumorTypesList()
     this.getInformated()
     this.getOrderNo()
     this.getProject()
     this.setCreatedParam()
     this.getHospital('',true)
     this.getDeptList()
-    this.getTumorTypesList()
   },
   methods:{
     /*提交*/
@@ -879,10 +975,15 @@ export default {
         this.formData[deleteItem].tissueTime = ''
         this.formData[deleteItem].tissueSamplePart = ''
       }
-      if(!this.formData[orangeType].includes('蜡块')){
+      if(!this.formData[orangeType].includes('蜡块（手术组织）')){
         this.formData[deleteItem].blockNumber = ''
         this.formData[deleteItem].blockTime = ''
         this.formData[deleteItem].blockSamplePart = ''
+      }
+      if(!this.formData[orangeType].includes('蜡块（穿刺组织）')){
+        this.formData[deleteItem].blockPuncturedNumber = ''
+        this.formData[deleteItem].blockPuncturedTime = ''
+        this.formData[deleteItem].blockPuncturedSamplePart = ''
       }
       if(!this.formData[orangeType].includes('新鲜手术组织')){
         this.formData[deleteItem].freshSurgicalNumber = ''
@@ -893,6 +994,11 @@ export default {
         this.formData[deleteItem].puncturedNumber = ''
         this.formData[deleteItem].puncturedTime = ''
         this.formData[deleteItem].puncturedSamplePart = ''
+      }
+      if(!this.formData[orangeType].includes('胸腹水')){
+        this.formData[deleteItem].chestWaterNumber = ''
+        this.formData[deleteItem].chestWaterTime = ''
+        this.formData[deleteItem].chestWaterCapacity = ''
       }
       this.formData.samplingVo.sampleTypes =  this.samplingVoParam('sampleTypes','doDelete').concat(this.samplingVoParamSub('sampleTypeByOragin','doDelete','waxOrderReceiver'))
       if(this.formData.sampleVoBJ){
@@ -1052,10 +1158,27 @@ export default {
             this.formData[deleteItem].tissueTime = obj.sampleOpera //tissueTime
             this.formData[deleteItem].tissueSamplePart = obj.samplingLoca //paraffinSamplePart
             break
-          case '蜡块':
+          case '蜡块（手术组织）':
             this.formData[deleteItem].blockNumber = obj.saveTypes[0].quantity
             this.formData[deleteItem].blockTime = obj.sampleOpera
             this.formData[deleteItem].blockSamplePart = obj.samplingLoca
+            if(Object.keys(obj.waxOrderReceiver).length !== 0) {
+              this.formData[deleteItem].isReturn = '是'
+              this.formData[reveiver] = obj.waxOrderReceiver
+              if(reveiver === 'waxOrderReceiverBj'){
+              //归还地址处理
+              this.addressSee(this.formData[reveiver],'waxOrderReceiverBj','allAddress')
+              }else{
+              this.addressSee(this.formData[reveiver],'waxOrderReceiver','allAddress')
+              }
+            }else{
+              this.formData[deleteItem].isReturn = '否'
+            }
+            break
+          case '蜡块（穿刺组织）':
+            this.formData[deleteItem].blockPuncturedNumber = obj.saveTypes[0].quantity
+            this.formData[deleteItem].blockPuncturedTime = obj.sampleOpera
+            this.formData[deleteItem].blockPuncturedSamplePart = obj.samplingLoca
             if(Object.keys(obj.waxOrderReceiver).length !== 0) {
               this.formData[deleteItem].isReturn = '是'
               this.formData[reveiver] = obj.waxOrderReceiver
@@ -1090,6 +1213,12 @@ export default {
                 this.formData[deleteItem].puncturedNumber = item.quantity
               }
             });
+            break
+          case '胸腹水':
+            this.formData[deleteItem].chestWaterTime = obj.sampleOpera
+            this.formData[deleteItem].chestWaterPart = obj.samplingLoca
+            this.formData[deleteItem].chestWaterNumber = obj.saveTypes[0].quantity
+            this.formData[deleteItem].chestWaterCapacity = obj.capacity
             break
         }
       }
@@ -1178,13 +1307,25 @@ export default {
             }
             list.push(param)
             break
-          case '蜡块':
+          case '蜡块（手术组织）':
             param = {
-              sampleType:'蜡块',
+              sampleType:'蜡块（手术组织）',
               sampleOpera:this.formData[deleteItem].blockTime,
               samplingLoca:this.formData[deleteItem].blockSamplePart,
               // quantity:this.formData[deleteItem].blockNumber?Number(this.formData[deleteItem].blockNumber):'',
               saveTypes:[{quantity:this.formData[deleteItem].blockNumber?Number(this.formData[deleteItem].blockNumber):''}],
+              unit:'块',
+              waxOrderReceiver:this.formData[deleteItem].isReturn==='是'?this.formData[receiver]:{}
+            }
+            list.push(param)
+            break
+          case '蜡块（穿刺组织）':
+            param = {
+              sampleType:'蜡块（穿刺组织）',
+              sampleOpera:this.formData[deleteItem].blockPuncturedTime,
+              samplingLoca:this.formData[deleteItem].blockPuncturedSamplePart,
+              // quantity:this.formData[deleteItem].blockNumber?Number(this.formData[deleteItem].blockNumber):'',
+              saveTypes:[{quantity:this.formData[deleteItem].blockPuncturedNumber?Number(this.formData[deleteItem].blockPuncturedNumber):''}],
               unit:'块',
               waxOrderReceiver:this.formData[deleteItem].isReturn==='是'?this.formData[receiver]:{}
             }
@@ -1226,13 +1367,24 @@ export default {
             }
             list.push(param)
             break
+          case '胸腹水':
+             param = {
+              sampleType:'胸腹水',
+              sampleOpera:this.formData[deleteItem].chestWaterTime ? new Date(this.formData[deleteItem].chestWaterTime).getTime():'',
+              samplingLoca:this.formData[deleteItem].chestWaterPart,
+              capacity:this.formData[deleteItem].chestWaterCapacity?Number(this.formData[deleteItem].chestWaterCapacity):'',
+              saveTypes:[{quantity:this.formData[deleteItem].chestWaterNumber?Number(this.formData[deleteItem].chestWaterNumber):''}],
+              unit:'瓶'
+            }
+              list.push(param)
+              break
         }
       }
       return list
     },
     /*获取肿瘤类型*/
     getTumorTypesList(){
-      this.axios.get('/tumor/pathologicy/'+7).then(res => {
+      this.axios.get('/tumor/pathologicy/7').then(res => {
         this.tumorTypesList = res.data.data
         const subSelectItem = this.tumorTypesList.find((item)=>{
           if(item.desc === this.formData.diseaseVo.tumorName){
@@ -1242,6 +1394,7 @@ export default {
         this.pathologicTypesList = subSelectItem?subSelectItem.subSelect:[]
         //病理类型
       }).catch(function (err) {
+        console.log(err)
       })
     },
     /*省市区级联*/
