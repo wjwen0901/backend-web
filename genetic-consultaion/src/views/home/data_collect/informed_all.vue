@@ -72,7 +72,7 @@
             <div class="brief">
               <h5>病理信息</h5>
               <p>癌种：{{informed.informed ? informed.informed.cancerType:'-'}}</p>
-              <p v-for="info in moreInfo">{{info.key}}：{{info.value}}</p>
+              <p v-for="(info,index) in moreInfo" :key="index">{{info.key}}：{{info.value}}</p>
             </div>
 
           </div>
@@ -86,7 +86,7 @@
           </div>
           <div class="brief">
             <h5>病理报告文件</h5>
-            <div v-for="img in informed.pathologicFiles">
+            <div v-for="(img,index) in informed.pathologicFiles" :key="index">
               <img :src="img">
             </div>
           </div>

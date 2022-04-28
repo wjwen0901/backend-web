@@ -5,9 +5,12 @@
       <el-breadcrumb-item>发票记录</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="user-container">
-      <div>
-        <el-button class="add-user" size="small" type="primary" @click="toAdd">新增</el-button>
-        <el-button class="add-user" size="small" type="warning" @click="exportData">导出数据</el-button>
+      <div class="select-box">
+        <div>
+          <el-button class="add-user" size="small" type="primary" @click="toAdd">新增</el-button>
+          <el-button class="add-user" size="small" type="warning" @click="exportData">导出数据</el-button>
+        </div>
+        <el-input size="small" style="width:300px" v-model="keyword" placeholder="请输入发票抬头" @input="getData(true)"></el-input>
       </div>
       <el-table
         :data="list"
@@ -209,6 +212,7 @@ export default {
   name: 'UserList',
   data () {
     return {
+      keyword:'',
       list: [],
       pageNum: 1,
       pageSize: 20,
@@ -256,14 +260,18 @@ export default {
     _initData () {
       this.getData()
     },
-    getData () {
+    getData (flag) {
+      if(flag){
+        this.pageNum=1
+        this.pageSize = 20
+      }
       this.resourceList = []
       this.axios.get('invoice/list', {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-          condition: this.condition
+          condition: this.keyword
         }
       }).then(res => {
         this.list = res.data.list
@@ -281,6 +289,7 @@ export default {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
+          condition:this.keyword
         },
         responseType: 'blob'
       }).then(res => {
@@ -476,7 +485,11 @@ export default {
     margin: 20px 0px;
     padding: 20px;
     background: #ffffff;
-    .search-box {
+    .select-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
     }
     .opera-box {
       padding-bottom: 20px;
