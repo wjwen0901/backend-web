@@ -14,40 +14,35 @@ axios.defaults.headers.put['Content-Type'] = 'application/json'
 // http request 拦截器
 axios.interceptors.request.use(
     config => {
-        // config.headers.Authorization = window.localStorage.token
-        config.headers.Authorization = 'eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJNREhDQVJFLUJBQ0tFTkQiLCJleHAiOjE2NTA5NjAyNzgsImlhdCI6MTY1MDc4NzQ3OCwidXNlcklkIjoxLCJ1c2VybmFtZSI6ImFkbWluIn0.XofphmmFoR7eV3sEtZPIXjNANMyX_k3Hn_SXkF4h0rU'
+        config.headers.Authorization = window.localStorage.token || ''
         config.params = config.params ? config.params : {}
         config.params.userId = window.localStorage.userId ? parseInt(window.localStorage.userId) : 0
-        if (config.method === 'post' || config.method === 'put') {
+        // if (config.method === 'post' || config.method === 'put') {
             // config.data = qs.stringify(config.data)
             // config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-        }
-        // if (store.state.token) {
-        //
         // }
+        // if(!config.headers.Authorization) return false
         return config
     },
     err => {
         return Promise.reject(err)
     })
-
+// production
+const linkUrl =  process.env.NODE_ENV === 'production' ? 'https://z.mdhcare.cn/login.html':'https://qa.mdhcare.cn/website/login.html'
 axios.interceptors.response.use(
     response => {
         return response
     },
     error => {
-        if (error.response) {
+        if (error && error.response) {
             switch (error.response.status) {
                 case 401:
-                    // 401 清除token信息并跳转到登录页面
                     window.localStorage.clear()
-                    // wonder跳转登录
-                    // window.location.href = 'https://z.mdhcare.cn/z/login.html'
-                    // window.location.href = 'https://qa.mdhcare.cn/login.html'
-                    window.location.href = 'https://z.mdhcare.cn/login.html'
+                    window.location.href = linkUrl
             }
+        }else{
+            window.location.href = linkUrl
         }
-        console.log(JSON.stringify(error));
         return Promise.reject(error.response.data)
     })
 
