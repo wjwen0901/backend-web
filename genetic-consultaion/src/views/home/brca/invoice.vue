@@ -9,6 +9,25 @@
         <div>
           <el-button class="add-user" size="small" type="primary" @click="toAdd">新增</el-button>
           <el-button class="add-user" size="small" type="warning" @click="exportData">导出数据</el-button>
+          <el-popover
+            placement="right"
+            width="400"
+            v-model="validateSatus">
+            <div class="groupTitle">
+            <i class="el-icon-s-opportunity"></i>
+            <p>请选择需要设置的发票状态</p>
+            </div>
+            <div class="groupRadio">
+            <el-radio-group v-model="setStatus" size="small">
+              <el-radio-button v-for="(item,index) in radioList" :key="index" :label="item.id">{{item.name}}</el-radio-button>
+            </el-radio-group>
+            </div>
+            <div class="groupSet">
+              <el-button size="mini" type="text" @click="setStatus = setStatusCopy,validateSatus = false">取消</el-button>
+              <el-button type="primary" size="mini" @click="confirmStatus">确定</el-button>
+            </div>
+            <el-button slot="reference" size="small" type="success" >设置发票状态</el-button>
+          </el-popover>
         </div>
         <el-input size="small" style="width:300px" v-model="keyword" placeholder="请输入发票抬头" @input="getData(true)"></el-input>
       </div>
@@ -212,6 +231,10 @@ export default {
   name: 'UserList',
   data () {
     return {
+      radioList:[],//发票状态列表
+      setStatus:'',//发票状态
+      setStatusCopy:'',
+      validateSatus:false,
       keyword:'',
       list: [],
       pageNum: 1,
@@ -257,6 +280,36 @@ export default {
     }
   },
   methods: {
+    //设置发票状态
+    confirmStatus(){
+      this.axios.put('invoice/setting?val='+this.setStatus).then(res => {
+        if(res.data.message === '成功'){
+          this.setStatusCopy = this.setStatus
+          this.$message({message: '设置成功', type: 'success'})
+        }else{
+          this.$message({message: '设置失败', type: 'warning'})
+        }
+        this.validateSatus = false
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    //获取当前发票状态
+    getStatus(){
+       this.axios.get('invoice/setting').then(res => {
+        res.data.data.proValRange.split('，').map(item => {
+          const obj = {
+            id: item.split('-')[0],
+            name: item.split('-')[1]
+          }
+          this.radioList.push(obj)
+        })
+        this.setStatus = res.data.data.valDefault
+        this.setStatusCopy = this.setStatus
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     _initData () {
       this.getData()
     },
@@ -445,6 +498,12 @@ export default {
         this.roleCode = this.$route.params.role
         this.getData()
       }
+    },
+    validateSatus(newVal,oldVal){
+      
+      if(!newVal){
+        this.setStatus = this.setStatusCopy
+      }
     }
   },
   filters: {
@@ -473,6 +532,7 @@ export default {
       background: 'rgba(0, 0, 0, 0.7)'
     })
     this._initData()
+    this.getStatus()
     loading.close()
   },
   mounted () {
@@ -520,6 +580,26 @@ export default {
     .but-box{
       text-align: center;
       margin-top: 40px;
+    }
+  }
+  .groupRadio{
+      margin-bottom: 20px;
+      text-align: center;
+      margin-top: 10px;
+  }
+  .groupSet{
+    text-align: right;
+    margin: 0;
+  }
+  .groupTitle{
+    display: flex;
+    align-items: baseline;
+    p{
+      margin-left: 5px;
+    }
+    i{
+      color: gold;
+      font-size:15px;
     }
   }
 </style>

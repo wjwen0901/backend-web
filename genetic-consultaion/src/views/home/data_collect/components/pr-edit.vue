@@ -87,7 +87,7 @@
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="外周血（EDTA采血管）采样日期：" label-width="250px">
+        <el-form-item label="外周血（EDTA采血管）采样日期：" label-width="250px" prop="doDelete.sampleTimeEdta">
           <el-date-picker type="date" value-format="timestamp" v-model="formData.doDelete.sampleTimeEdta"></el-date-picker>
         </el-form-item>
       </template>
@@ -102,7 +102,7 @@
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="外周血（Streck采血管）采样日期：" label-width="250px">
+        <el-form-item label="外周血（Streck采血管）采样日期：" label-width="250px" prop="doDelete.sampleTimeStreck">
           <el-date-picker type="date" value-format="timestamp" v-model="formData.doDelete.sampleTimeStreck"></el-date-picker>
         </el-form-item>
       </template>
@@ -758,6 +758,12 @@ export default {
       formDataRules:{
         solutionId:[
           { required: true, message: '请选择送检项目', trigger: 'change' }
+        ],
+        "doDelete.sampleTimeEdta":[
+          { required: true, message: '请选择外周血（EDTA采血管）采样日期', trigger: 'change' }
+        ],
+        "doDelete.sampleTimeStreck":[
+          { required: true, message: '请选择外周血（Streck采血管）采样日期', trigger: 'change' }
         ],
         "patient.truename":[
           { required: true, message: '请输入姓名', trigger: 'blur' }
