@@ -56,6 +56,7 @@
       <el-form-item label="送检项目：" prop="solutionId">
         <el-select v-model="formData.solutionId"
                    clearable
+                   filterable
                    @clear="clearProject">
           <el-option
             v-for="item in projects"
