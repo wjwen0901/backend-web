@@ -109,8 +109,8 @@
 <!--            <el-button @click="showExpress(scope.row.id)" type="text" size="small" v-if="scope.row.status >= 2">查看物流</el-button>-->
             <el-button @click="toExpress(scope.row)" type="text" size="small" v-if="scope.row.status == 1 || scope.row.status == 2">邮寄单据</el-button>
             <el-button @click="toExpress(scope.row)" type="text" size="small" v-if="scope.row.status == 3">重新邮寄单据</el-button>
-            <el-button @click="toEmail(scope.row)" type="text" size="small" v-if="scope.row.receivingMode == '1'">发送电子邮件</el-button>
-
+            <el-button @click="toPdf(scope.row)" type="text" size="small" v-if="scope.row.receivingMode == '1'">发送电子邮件</el-button>
+            <el-button v-if="scope.row.invoiceFiles && scope.row.invoiceFiles.length !== 0" type="text" size="small" @click="downloadEmail(scope.row)">下载邮件附件</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -220,6 +220,41 @@
           </el-form>
         </div>
       </el-dialog>
+
+      <!-- 上传pdf弹窗 -->
+      <el-dialog title="发送电子邮件" :visible.sync="dialogPdfVisible">
+        <div class="upload-email">
+          <el-upload
+            ref="upload"
+            action=""
+            drag
+            multiple
+            accept=".pdf"
+            :before-upload="beforeUpload"
+            :file-list="fileData"
+            :http-request="getOss"
+            :on-remove="handelRemove"
+            :on-success="handelSuccess"
+            :on-error="handelError"
+            >
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            <div class="el-upload__tip" slot="tip">* 请上传pdf文件</div>
+          </el-upload>
+          <el-button type="primary" size="small" @click="send" class="send" :disabled="buttonDisable" :loading="buttonLoad">发送</el-button>
+        </div>
+      </el-dialog>
+
+      <!-- 下载弹窗-->
+      <el-dialog title="请选择要下载的文件" :visible.sync="dialogDownloadVisible" class="email-table">
+        <div class="email-but">
+          <el-button type="warning" icon="el-icon-download" size="small" :disabled="emilPathList.length===0" @click="downloadBatchEmail">下载文件</el-button>
+        </div>
+        <el-table ref="multipleTable" :row-class-name="tableRowClassName" :header-cell-style="{background:'#00c2a9',color:'white'}" border :data="downloadFileList" @selection-change="handleSelectionChange" :row-key="handleReserve">
+          <el-table-column align="center" type="selection" width="80"></el-table-column>
+          <el-table-column align="center" label="文件名称" prop="fileName"></el-table-column>
+        </el-table>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -231,6 +266,10 @@ export default {
   name: 'UserList',
   data () {
     return {
+      downloadFileList:[],//需要下载文件列表
+      dialogDownloadVisible:false,
+      fileData:[],
+      dialogPdfVisible:false,
       radioList:[],//发票状态列表
       setStatus:'',//发票状态
       setStatusCopy:'',
@@ -277,9 +316,175 @@ export default {
       regionData: regionData,
       CodeToText: CodeToText,
       TextToCode: TextToCode,
+      fileList:[],
+      invoiceId:'',
+      progressFlag :false,
+      loadProgress:0,
+      successFileNum:0,
+      fileTotal:0,//上传文件的总数目
+      buttonDisable: true,
+      buttonLoad: false,
+      emilPathList:[]
     }
   },
   methods: {
+    //设置弹窗表格颜色
+    tableRowClassName({row, rowIndex}){
+      if (rowIndex%2 === 1) {
+          return 'warning-row';
+        } else {
+          return 'success-row';
+        }
+    },
+    //批量下载
+    downloadBatchEmail(){
+      this.emilPathList.forEach(item => {
+        this.downloadApi(item.path,item.fileName)
+      })  
+    },
+    //下载弹窗复选框
+    handleSelectionChange(val){
+      this.emilPathList = val
+      console.log(val)
+    },
+    //下载弹窗表格唯一ID
+    handleReserve(row){
+      return row.path
+    },
+    //邮件文件下载
+    downloadEmail(data){
+      this.dialogDownloadVisible = true  
+      this.downloadFileList = data.invoiceFiles 
+    },
+    //下载接口
+    downloadApi(url, name){
+       this.axios.get('oss/upload/show', {
+          params: {
+            objectKey: url
+          }
+        }).then(res => {
+            fetch(res.data).then((r) => {
+              r.blob().then((blob) => {//普通a标签无法下载，需要转成blob
+                const fileUrl = window.URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = fileUrl
+                a.download = name;
+                a.click()
+                window.URL.revokeObjectURL(fileUrl)
+                })
+            })
+        }).catch(err => {
+          console.log(err)
+        })
+    },
+    //文件上传失败
+    handelError(err, file, fileList){
+      this.$message.error("文件上传失败，请联系工作人员！")
+    },
+    //文件上传成功
+    handelSuccess(response, file, fileList){
+      this.fileTotal = fileList.length
+      if(file.status === 'success'){
+        this.successFileNum ++ //记录文件上传成功的次数
+      }
+    },
+    //移除文件
+    handelRemove(file,fileArr){
+     this.fileTotal = fileArr.length
+     const list = this.fileList.filter(item => {
+       return item.fileName !== file.name
+      })
+     this.fileList = list
+    },
+    //上传文件前的校验
+    beforeUpload(file){
+      const fileSuffix = file.name.substring(file.name.lastIndexOf(".") + 1);
+      const whiteList = ["pdf"];
+      if (whiteList.indexOf(fileSuffix) === -1) {
+        this.$message.error('上传文件只能是 pdf格式');
+        return false;
+      }
+      const isLt2M = file.size / 1024 / 1024 < 10;
+      if (!isLt2M) {//此处上传多个文件会出现多个弹窗，有时间需要优化
+        this.$message.error('上传文件大小不能超过 10MB');
+        return false;
+      }
+    },
+    //发送电子邮箱
+    send(){
+      this.buttonLoad = true
+      let loading = this.$loading({
+      lock: true,
+      text: '发送邮件中，请稍后',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)'
+      })
+      this.axios.post('/email/invoice',{
+        invoiceId:this.invoiceId.toString(),
+        invoiceFiles:this.fileList
+      }).then(res => {
+        if(res.data.status === "success"){
+          this.$message.success("发送成功")
+          this.getData()
+        }else{
+          this.$message.warning("发送失败")
+        }
+        this.buttonLoad = false
+        this.dialogPdfVisible = false
+        loading.close()
+      }).catch(err => {
+        loading.close()
+        this.buttonLoad = false
+        console.log(err)
+      })
+    },
+    //上传oss
+    getOss(file){
+      this.progressFlag = true
+       this.axios.get('/oss/upload/policy/invoice')
+            .then(res => {
+              if (res) {
+                  const data = res.data
+                  const obj = new FormData()
+                  obj.append('OSSAccessKeyId',data.accessid)
+                  obj.append('policy',data.policy)
+                  obj.append('signature',data.signature)
+                  obj.append('key',data.dir + data.uniqueKey + '.pdf')
+                  obj.append('success_action_status','200')
+                  obj.append('uniqueKey',data.uniqueKey)
+                  obj.append('file',file.file)
+                  this.axios.post('https://mdhcare.oss-cn-beijing.aliyuncs.com/',obj,{
+                    onUploadProgress: progress => {
+                    if (progress.lengthComputable) {
+                      let num = (progress.loaded / progress.total).toFixed(2) * 100 //上传进度条
+                      file.onProgress({percent: num})
+                    }
+                  },
+                })
+               .then(res => {
+                  const objOne = {
+                  path:data.dir + data.uniqueKey + '.pdf',
+                  fileName:file.file.name,
+                  size:file.file.size
+                 }
+                 this.fileList.push(objOne)
+                 file.onSuccess();//上传成功时候的勾号小图标
+                }).catch(reason => {
+                 file.onError();
+                })
+              }
+            })
+            .catch(reason => {
+              file.onError();
+            })
+    },
+    //上传pdf弹窗
+    toPdf(row){
+      this.dialogPdfVisible = true
+      this.invoiceId = row.id
+      this.fileData = []
+      this.fileList = []
+    },
     //设置发票状态
     confirmStatus(){
       this.axios.put('invoice/setting?val='+this.setStatus).then(res => {
@@ -499,10 +704,31 @@ export default {
         this.getData()
       }
     },
-    validateSatus(newVal,oldVal){
-      
+    dialogDownloadVisible(val){
+      if(!val){
+        this.$refs.multipleTable.clearSelection();
+        this.emilPathList = []
+      }
+    },
+    validateSatus(newVal,oldVal){   
       if(!newVal){
         this.setStatus = this.setStatusCopy
+      }
+    },
+    //监听上传文件成功的数目,全部上传成功才可以点击发送按钮
+    successFileNum(val){
+      if(this.fileTotal === val){
+        this.buttonDisable = false
+      }else{
+        this.buttonDisable = true
+      }
+    },
+    //监听数组长度
+    fileList(val){
+      if(val.length === 0) {
+        this.buttonDisable = true
+      }else{
+        this.buttonDisable = false
       }
     }
   },
@@ -554,6 +780,23 @@ export default {
     .opera-box {
       padding-bottom: 20px;
     }
+  }
+  .upload-email{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .send{
+      width: 80px;
+      margin-top: 150px;
+    }
+    .el-progress{
+      width: 40%;
+    }
+  }
+  .email-but{
+    text-align: right;
+    margin-bottom: 20px;
   }
   .is-parent {
     margin-bottom: 5px;
@@ -609,4 +852,23 @@ export default {
     min-height: 400px;
   }
 }
-</style>>
+.upload-email{
+  .el-upload-list__item-name{
+    display: flex;
+    justify-content: flex-start;
+  }
+}
+.email-table{
+  .el-table .warning-row {
+    background: #f2f9f8;
+  }
+
+  .el-table .success-row {
+    background: #e3f2f0;
+  }
+  .el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner{
+    background-color: rgb(0, 194, 169);
+    border-color: white;
+  }
+}
+</style>

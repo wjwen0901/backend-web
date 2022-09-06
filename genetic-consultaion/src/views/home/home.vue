@@ -217,7 +217,7 @@ export default {
     height: 100%;
   }
   .el-header {
-    background-color: #00c2a9;
+    background-color: #117e73; //#00c2a9;
     color: #fff;
     text-align: center;
     line-height: 60px;

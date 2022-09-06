@@ -1,8 +1,8 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>BRCA轻松检</el-breadcrumb-item>
-      <el-breadcrumb-item>发票记录</el-breadcrumb-item>
+      <el-breadcrumb-item>维汝健</el-breadcrumb-item>
+      <el-breadcrumb-item>快递查询</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="user-container">
       <div>

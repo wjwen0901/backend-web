@@ -1,0 +1,46 @@
+
+ .el-pagination.is-background .el-pager li:not(.disabled).active {
+    background-color: #14a495;
+    color: #fff;
+  }
+  .el-pager li.active{
+    color: #14a495;
+  }
+  .el-radio-button__orig-radio:checked+.el-radio-button__inner {
+    background-color: #14a495;
+    border-color: #14a495;
+  }
+  .el-radio-button__inner:hover{
+    color:#14a495;
+  }
+ .el-button--text {
+    color: #01806f;
+ }
+ .el-button--success {
+    background: #14a495 !important;
+    border-color: #14a495 !important;
+    }
+ .el-button--success:hover {
+    background: #14a495 !important;
+    border-color: #14a495 !important;
+    color: #FFF !important;
+ }
+ .el-button--warning{
+    background: #14a495 !important;
+    border-color: #14a495 !important; 
+}
+ .el-button--warning:hover {
+    background: #14a495 !important;
+    border-color: #14a495 !important;
+    color: #FFF !important;
+}
+.el-button--primary{
+    background: #14a495 !important;
+    border-color: #14a495 !important; 
+  }
+.el-button--primary:hover {
+    background: #14a495 !important;
+    border-color: #14a495 !important;
+    color: #FFF !important;
+}
+ 
