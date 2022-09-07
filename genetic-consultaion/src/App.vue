@@ -43,6 +43,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: #333333;
   height: 100%;
+  overflow-y: auto;
 }
 .el-menu-item, .el-submenu__title {
   text-align: left;

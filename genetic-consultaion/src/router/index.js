@@ -66,8 +66,13 @@ export default new Router({
                 {
                   path: '/brca/express',
                   name: 'Express',
-                  component: resolve => require(['@/views/home/brca/express'], resolve)
+                  component: resolve => require(['@/views/home/brca/expressNew'], resolve)
                 },
+                // {
+                //     path: '/brca/express1',
+                //     name: 'Express1',
+                //     component: resolve => require(['@/views/home/brca/expressNew'], resolve)
+                //   },
                 {
                   path: '/brca/exchange',
                   name: 'Exchange',
@@ -103,13 +108,13 @@ export default new Router({
                 {
                   path: '/wrj/express',
                   name: 'WrjExpress',
-                  component: resolve => require(['@/views/home/wrj/express'], resolve)
+                  component: resolve => require(['@/views/home/wrj/expressNew'], resolve)
                 },
-                {
-                    path: '/wrj/express1',
-                    name: 'WrjExpress1',
-                    component: resolve => require(['@/views/home/wrj/expressNew'], resolve)
-                  },
+                // {
+                //     path: '/wrj/express1',
+                //     name: 'WrjExpress1',
+                //     component: resolve => require(['@/views/home/wrj/expressNew'], resolve)
+                //   },
                 {
                   path: '/wrj/paper/report',
                   name: 'WrjPaperReport',

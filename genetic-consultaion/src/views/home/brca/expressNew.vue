@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-breadcrumb separator-class="el-icon-arrow-right">
-            <el-breadcrumb-item>维汝健</el-breadcrumb-item>
+            <el-breadcrumb-item>BRCA轻松检</el-breadcrumb-item>
             <el-breadcrumb-item>快递查询</el-breadcrumb-item>
         </el-breadcrumb>
         <div class="express-box">
@@ -233,8 +233,8 @@ export default {
             text-align: center;
             table-layout:fixed;
             font-size: 13px;
-            border-collapse:collapse;
             color: #5c5c5c;
+            border-collapse:collapse;
             svg{
                 transform: translateY(2px);
             }

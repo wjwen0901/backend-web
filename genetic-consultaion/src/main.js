@@ -1,5 +1,15 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+
+
+// const Vue = require('vue')
+// const ElementUI = require('element-ui')
+// const axios = require('./http')
+// const router = require('vue-router')
+// const vSelect = require('vue-select2')
+// const VCharts = require('v-charts')
+// const VueJsonp = require('vue-jsonp')
+// const VueQuillEditor = require('vue-quill-editor')
 import Vue from 'vue'
 import axios from './http.js'
 import ElementUI from 'element-ui'
@@ -13,7 +23,7 @@ import VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
-
+import './assets/css/normal.css'
 
 Vue.use(VueQuillEditor)
 Vue.use(VueJsonp)
@@ -34,7 +44,7 @@ Vue.prototype.axios = axios
 Vue.component('v-select', vSelect)
 
 Vue.filter('formatDate', function (time) {
-  if (!time) return ''
+  if (!time) return '-'
   let date = new Date(time)
   let fmt = 'yyyy-MM-dd hh:mm:ss'
   if (/(y+)/.test(fmt)) {
@@ -80,7 +90,7 @@ zhiManager.on('load', function () {
 })
 // zhiManager.set('color','09aeb0'); //API示例，格式为 0-9 a-f 之间的六位有效字符 不用加#
 
-zhiManager.set('color', 'E9AE47') // 格式为 0-9 a-f 之间的六位有效字符 不用加#
+zhiManager.set('color', '117e73') // 格式为 0-9 a-f 之间的六位有效字符 不用加#
 zhiManager.set('title', '联系我') // 建议长度为 8 个字符之内，文案仅对 PC组件有效，移动端没有文案
 // 若传入 1 ，按钮将显示在右下角 默认显示在右下角
 // 若传入 2 ，按钮将显示在左下角
