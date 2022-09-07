@@ -36,7 +36,7 @@ router.beforeEach((to, from, next) => {
   }
   next()
 })
-
+ElementUI.Dialog.props.lockScroll.default = false; //弹窗防抖动
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 // 将axios挂载到prototype上，在组件中可以直接使用this.axios访问

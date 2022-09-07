@@ -32,6 +32,13 @@ body {
   margin: 0;
   height: 100vh;
   min-height: 100%;
+  padding: 0;
+}
+/**防止因BRCA发票页面缩小而引起的滚抖动 */
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 *{
   list-style: none;

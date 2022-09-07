@@ -242,7 +242,7 @@ export default {
     text-align: center;
     line-height: 200px;
     overflow: hidden;
-    height: 100%;
+    // height: 100%;
   }
 
   .el-main {

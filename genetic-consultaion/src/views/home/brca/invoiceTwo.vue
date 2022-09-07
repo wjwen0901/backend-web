@@ -31,7 +31,7 @@
                 </div>
         </div>
         <div class="invoince-table">
-            <table class="i-table">
+            <table class="i-table"  v-cloak>
                 <tr class="i-title">
                     <th>抬头</th>
                     <th>税号</th>
@@ -137,30 +137,30 @@
             :data="invoiceDetail"
             size="mini"
             border
-            style="width: 100%">
+           >
             <el-table-column
               prop="orderNo"
               label="订单编号"
-              width="180">
+              >
             </el-table-column>
             <el-table-column
               prop="productName"
               label="检测产品"
-              width="180">
+              >
             </el-table-column>
             <el-table-column
               prop="hospitalName"
               label="送检医院"
-              width="180">
+              >
             </el-table-column>
             <el-table-column
               prop="orderPrice"
               label="订单金额"
-              width="100">
+              >
             </el-table-column>
             <el-table-column
               label="下单时间"
-              width="140">
+              >
               <template slot-scope="scope">
                 {{scope.row.create_time | formatDate}}
               </template>
@@ -329,11 +329,22 @@ export default {
             }
         }
     },
+    beforeDestroy() {
+        window.addEventListener("resize", this.setScrollBar);
+        document.body.style.zoom = 1
+        // 移除绑定的onResize事件监听
+    },
     mounted(){
+        this.onResize()
+        window.addEventListener('resize', this.onResize);
         this.getInvoiceList()
         this.getStatus()
     },
     methods:{
+        /**设置窗口自动缩小80% */
+        onResize() {
+            document.body.style.zoom = 0.8
+        },
         /**设置弹窗表格颜色 */
         tableRowClassName({row, rowIndex}){
             if (rowIndex%2 === 1) {
