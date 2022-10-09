@@ -43,4 +43,7 @@
     border-color: #14a495 !important;
     color: #FFF !important;
 }
- 
+.el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  background-color: #01806f;
+  border-color: #01806f;
+}

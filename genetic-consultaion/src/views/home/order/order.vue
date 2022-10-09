@@ -6,7 +6,7 @@
     <div class="user-container">
       <div class="search-box">
         <el-button class="but" type="warning" size="small" @click="exportData">导出</el-button>
-        <el-input placeholder="请输入下单人姓名/手机号/检测项目" v-model="condition" class="input-with-select" style="width:400px">
+        <el-input placeholder="请输入下单人姓名/手机号/检测项目" v-model="condition" size="small" class="input-with-select" style="width:400px">
           <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
         </el-input>
       </div>
@@ -15,7 +15,7 @@
         ref="multipleTable"
         :row-key="getRowKeys"
         :data="orderList"
-        size="mini"
+        size="small"
         border
         @selection-change="handleSelectionChange"
         style="width: 100%">
@@ -100,10 +100,10 @@
           label="操作"
           width="200">
           <template slot-scope="scope">
-            <el-button type="text" size="medium" @click="toUploadInformed(scope.row.id)">上传知情</el-button>
-            <el-button type="text" size="medium" @click="toUploadReport(scope.row.id)"
+            <el-button type="text" size="small" @click="toUploadInformed(scope.row.id)">上传知情</el-button>
+            <el-button type="text" size="small" @click="toUploadReport(scope.row.id)"
                        v-if="scope.row.reportNum === 0 && roleCode === 'manager'">上传报告</el-button>
-            <el-button type="text" size="medium" @click="toInformedDetail(scope.row.id,scope.row.expressCode,scope.row.expressId)">查看</el-button>
+            <el-button type="text" size="small" @click="toInformedDetail(scope.row.id,scope.row.expressCode,scope.row.expressId)">查看</el-button>
             <!--<el-button type="text" size="medium" @click="toEdit">编辑</el-button>-->
             <!--<el-button type="text" size="medium" @click="toUploadInformed(scope.id)" v-if="ro">删除</el-button>-->
           </template>

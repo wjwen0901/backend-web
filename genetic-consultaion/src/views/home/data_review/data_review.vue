@@ -7,17 +7,19 @@
       <div class="search-box">
         <el-form :inline="true" label-width="80px" label-position="left">
           <el-form-item>
-            <el-button type="primary" @click="toSendEmail" :disabled="this.multipleSelection.length == 0">邮件发送报告</el-button>
+            <el-button type="primary" @click="toSendEmail" size="small" :disabled="this.multipleSelection.length == 0">邮件发送报告</el-button>
           </el-form-item>
-          <el-form-item class="fl-right" label="选择公司">
+          <el-form-item class="fl-right">
             <el-select class="width-100-p"
                        v-model="companyId"
                        filterable
+                       style="width:300px"
                        remote
+                       size="small"
                        reserve-keyword
                        allow-create
                        default-first-option
-                       placeholder="请输入关键词"
+                       placeholder="请选择公司"
                        @change="getData"
                        :remote-method="getCompanyList"
                        :loading="companySelLoading">
@@ -39,21 +41,28 @@
         @selection-change="handleSelectionChange">
         <el-table-column
           type="selection"
+          align="center"
           width="55">
         </el-table-column>
         <el-table-column
           prop="sampleCode"
           label="编号"
+          align="center"
           width="120">
         </el-table-column>
         <el-table-column
           prop="solutionName"
           label="项目"
-          width="180">
+          align="center"
+         >
+         <template slot-scope="scope">
+          {{scope.row.solutionName || '——'}}
+         </template>
         </el-table-column>
         <el-table-column
           prop="createTime"
           label="报告时间"
+          align="center"
           width="160">
           <template slot-scope="scope">
             {{scope.row.createTime | formatDate}}
@@ -61,34 +70,37 @@
         </el-table-column>
         <el-table-column
           prop="state"
-          label="比较">
+          label="比较"
+          width="180"
+          align="center">
           <template slot-scope="scope">
-            <el-button type="success" size="mini" plain v-if="scope.row.recheckState === 0">
-              {{scope.row.recheckState | stateFilter}}</el-button>
-            <el-button type="warning" size="mini" plain v-else-if="scope.row.recheckState === 1"
-                       @click="toRecheck(scope.row.id, scope.row.informedId)">
-              {{scope.row.recheckState | stateFilter}}</el-button>
-            <el-button type="danger" size="mini" plain v-else-if="scope.row.id && !scope.row.informedId"
-                       @click="toEditReport(scope.row.id, scope.row.informedId)">人工检验</el-button>
-            <el-button type="danger" size="mini" plain v-else-if="!scope.row.id && scope.row.informedId"
-                       @click="toEditInformed(scope.row.id, scope.row.informedId)">人工检验</el-button>
+            <el-tag effect="plain" type="success" size="small" v-if="scope.row.recheckState === 0">{{scope.row.recheckState | stateFilter}}</el-tag>
+            <el-tag effect="plain" type="warning" size="small" v-else-if="scope.row.recheckState === 1"  @click="toRecheck(scope.row.id, scope.row.informedId)">{{scope.row.recheckState | stateFilter}}</el-tag>
+            <el-tag effect="plain" type="danger" size="small" v-else-if="scope.row.id && !scope.row.informedId"  @click="toEditReport(scope.row.id, scope.row.informedId)">人工检验</el-tag>
+            <el-tag effect="plain" type="danger" size="small" v-else-if="!scope.row.id && scope.row.informedId" @click="toEditInformed(scope.row.id, scope.row.informedId)">人工检验</el-tag>
           </template>
         </el-table-column>
         <el-table-column
           label="受检者"
+          align="center"
           width="180">
           <template slot-scope="scope">
-            {{scope.row.patientCellphone }}
+            {{scope.row.patientCellphone || '——'}}
           </template>
         </el-table-column>
         <el-table-column
           prop="salesmanCellphone"
           label="知情来源"
+          align="center"
           width="180">
+          <template slot-scope="scope">
+          {{scope.row.salesmanCellphone || '——'}}
+         </template>
         </el-table-column>
         <el-table-column
           fixed="right"
           label="对照"
+          align="center"
           width="60">
           <template slot-scope="scope">
             <el-button type="text" size="small" v-if="scope.row.id && scope.row.informedId"
@@ -389,7 +401,6 @@ export default {
   }
   .search-box {
     min-height: 30px;
-    padding-bottom: 10px;
   }
   .el-col {
     border-radius: 4px;

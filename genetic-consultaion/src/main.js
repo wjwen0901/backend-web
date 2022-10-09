@@ -1,15 +1,5 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-
-
-// const Vue = require('vue')
-// const ElementUI = require('element-ui')
-// const axios = require('./http')
-// const router = require('vue-router')
-// const vSelect = require('vue-select2')
-// const VCharts = require('v-charts')
-// const VueJsonp = require('vue-jsonp')
-// const VueQuillEditor = require('vue-quill-editor')
 import Vue from 'vue'
 import axios from './http.js'
 import ElementUI from 'element-ui'
@@ -29,13 +19,6 @@ Vue.use(VueQuillEditor)
 Vue.use(VueJsonp)
 Vue.use(VCharts)
 
-router.beforeEach((to, from, next) => {
-  /* 路由发生变化修改页面title */
-  if (to.meta.title) {
-    document.title = to.meta.title
-  }
-  next()
-})
 ElementUI.Dialog.props.lockScroll.default = false; //弹窗防抖动
 Vue.use(ElementUI)
 Vue.config.productionTip = false
