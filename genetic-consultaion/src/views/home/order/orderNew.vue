@@ -249,7 +249,8 @@ export default {
         changePriceApi(){
             this.axios.post('order/edit',{
                 id:this.orderId,
-                payment:this.afterPrice
+                payment:this.afterPrice,
+                orderDiscountFee:this.addPrice
             }).then(res => {
                 if (res.data === 'success') {
                 this.$message({message: '改价成功', type: 'success'})
