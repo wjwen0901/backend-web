@@ -110,8 +110,8 @@
                 </el-col>
                 <el-col :span="2">
                     <div class="priceBox">
-                        <span class="priceTitle">+</span>
-                        <span class="linerText">+</span>
+                        <span class="priceTitle">-</span>
+                        <span class="linerText">-</span>
                     </div>
                 </el-col>
                 <el-col :span="6">
@@ -217,8 +217,9 @@ export default {
                 return
             }
             this.priceBut = false
-            if(val && val.charAt(1)){
-                this.afterPrice = NP.plus(this.addPrice,this.nowPrice)//减法
+            if(val){
+                // this.afterPrice = NP.plus(this.addPrice,this.nowPrice)//加法
+                this.afterPrice = NP.minus(this.nowPrice,this.addPrice)//减法
             }else{
                 this.afterPrice = this.nowPrice
             }
