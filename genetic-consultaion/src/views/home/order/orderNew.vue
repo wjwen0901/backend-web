@@ -253,10 +253,10 @@ export default {
                 payment:this.afterPrice,
                 orderDiscountFee:this.addPrice
             }).then(res => {
-                if (res.data === 'success') {
+                if (res.data.code == 200) {
                 this.$message({message: '改价成功', type: 'success'})
                 this.visiablePrice = false
-                this.getList()
+                this.getData()
                 } else {
                 this.$message({message: '改价失败', type: 'warning'})
                 }

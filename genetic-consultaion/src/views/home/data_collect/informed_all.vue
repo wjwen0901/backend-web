@@ -36,7 +36,7 @@
               <el-form-item label="联系方式" prop="orderReceiver.cellphone">
                 <el-input v-model="formData.orderReceiver.cellphone" placeholder="请输入联系电话"></el-input>
               </el-form-item>
-              <el-form-item label="报告邮寄地址：" prop="receiverallAddress" label-width="140px">
+              <el-form-item label="报告邮寄地址：" prop="receiverallAddress" label-width="140px" v-if="addressOne">
                 <el-cascader
                   placeholder="请选择省市区"
                   style="width: 100%"
@@ -102,6 +102,7 @@ export default {
   data () {
     return {
       smsStatus: 1,
+      addressOne: true,
       informed: {
         patient:{
           birthday:''
@@ -201,6 +202,10 @@ export default {
     addressSee(data,type,address){
       if(!data.province) return
       const orderProvince = TextToCode[data.province].code
+      if(!data.city){
+        this.addressOne = false
+        return
+      }
       const orderCityTemp = data.province === data.city?'市辖区':data.city
       const orderCity = this.TextToCode[data.province][orderCityTemp].code
       const orderCounty = this.TextToCode[data.province][orderCityTemp][data.county].code
@@ -225,9 +230,10 @@ export default {
           this.formData.waxOrderReceiver = this.informed.waxReceiver
           this.addressSee(res.data.waxReceiver,'waxOrderReceiver','waxReceiverallAddress')
         }
-      }).catch(err => {
-        console.log(err)
       })
+      // .catch(err => {
+      //   console.log(err)
+      // })
 
       this.axios.get('solution', {
         params: {
