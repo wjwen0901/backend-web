@@ -210,6 +210,17 @@ const routes = [{
             name: 'OrderDetail',
             component: resolve => require(['@/views/home/order/detail'], resolve)
         },
+        // 积分管理
+        {
+            path: '/points',
+            name: 'Points',
+            component: resolve => require(['@/views/home/points/points'], resolve)
+        },
+        {
+            path: '/points/:id',
+            name: 'PointsDetail',
+            component: resolve => require(['@/views/home/points/detail'], resolve)
+        },
         {
             path: '/customer',
             name: 'CustomerList',
@@ -725,7 +736,7 @@ const router = new Router({
     //   return { x: 0, y: 0 }
     // }
   });
-  
+
 //   router.beforeEach((to,from,next) => {
 //     document.body.scrollTop = 0 //置顶失效2022-09-07待修改
 //     next()

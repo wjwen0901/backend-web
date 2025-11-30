@@ -83,6 +83,12 @@
               <span slot="title">订单管理</span>
             </template>
           </el-menu-item>
+          <el-menu-item index="/points">
+            <template slot="title">
+              <i class="el-icon-document"></i>
+              <span slot="title">积分管理</span>
+            </template>
+          </el-menu-item>
           <el-menu-item index="/patient/list" v-if="sec.includes('patient:list')">
             <template slot="title">
               <i class="el-icon-s-custom"></i>
