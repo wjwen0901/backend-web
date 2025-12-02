@@ -197,7 +197,7 @@
       </span>
     </el-dialog>
     <el-dialog title="分配积分" :visible.sync="visiableToken" center width="40%">
-      <el-form :model="tokenForm">
+      <el-form :model="tokenForm" label-width="100px">
         <el-form-item label="订单编号">
           <span>{{ tokenForm.orderId }}</span>
         </el-form-item>
@@ -205,7 +205,7 @@
           <span>{{ tokenForm.userId }}</span>
         </el-form-item>
         <el-form-item label="分配积分">
-          <el-input-number v-model="tokenForm.tokenNum" placeholder="请输入积分" />
+          <el-input-number v-model="tokenForm.tokenNum" :min="0" placeholder="请输入积分" />
         </el-form-item>
         <el-form-item label="描述">
           <el-input v-model="tokenForm.description" placeholder="分配积分" />
@@ -347,7 +347,7 @@ export default {
         orderId: this.tokenForm.orderId,
         description: this.tokenForm.description
       }).then(res => {
-        if (res.data.code === 200) {
+        if (res.data && res.data.data === 'sucess') {
           this.$message({ message: '分配成功', type: 'success' })
           this.visiableToken = false
           this.getData()

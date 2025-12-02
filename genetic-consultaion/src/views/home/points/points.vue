@@ -76,8 +76,8 @@ export default {
     },
     viewDetail (row) {
       this.$router.push({
-        path: '/home/points/detail',
-        query: { id: row.id }
+        path: '/points/detail',
+        query: { userId: row.userId }
       })
     }
   }
