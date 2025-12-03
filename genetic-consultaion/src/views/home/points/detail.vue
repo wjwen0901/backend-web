@@ -6,10 +6,11 @@
     <div class="points-box">
       <div class="points-table">
         <el-table :data="pointsDetailList" style="width: 100%">
-          <el-table-column prop="orderUserName" label="订单用户" width="180" />
-          <el-table-column prop="patientName" label="患者姓名" width="180" />
-          <el-table-column prop="userId" label="用户ID" width="120" />
-          <el-table-column prop="orderId" label="订单编号" width="120" />
+          <el-table-column prop="itemTitle" label="订单" min-width="300" />
+          <el-table-column prop="orderNo" label="订单编号" width="210" />
+          <el-table-column prop="sampleCode" label="样本编码" width="210" />
+          <el-table-column prop="userName" label="用户" width="120" />
+          <el-table-column prop="patientName" label="患者姓名" width="120" />
           <el-table-column prop="amount" label="积分余额" width="120" />
           <el-table-column prop="tokenNum" label="分配积分" width="120" />
           <el-table-column prop="tokenTime" label="分配时间" width="180" >
@@ -35,10 +36,10 @@
     <el-dialog title="修改积分" :visible.sync="visiableToken" center width="40%">
       <el-form :model="tokenForm" label-width="100px">
         <el-form-item label="订单编号">
-          <span>{{ tokenForm.orderId }}</span>
+          <span>{{ tokenForm.orderNo }}</span>
         </el-form-item>
-        <el-form-item label="用户ID">
-          <span>{{ tokenForm.userId }}</span>
+        <el-form-item label="用户名">
+          <span>{{ tokenForm.userName }}</span>
         </el-form-item>
         <el-form-item label="旧积分数量">
           <span>{{ tokenForm.oldTokenNum || '- -'}}</span>
@@ -58,7 +59,6 @@
   </div>
 </template>
 <script>
-import NP from 'number-precision'
 export default {
   data () {
     return {
@@ -68,7 +68,9 @@ export default {
         newTokenNum: '',
         oldTokenNum: '',
         orderId: '',
-        description: '重新分配积分'
+        description: '重新分配积分',
+        orderNo: '',
+        userName: ''
       },
       pointsDetailList: [],
       pageNum: 1,
@@ -90,7 +92,9 @@ export default {
         newTokenNum: '',
         oldTokenNum: item.tokenNum,
         orderId: item.orderId || '',
-        description: '重新分配积分'
+        description: '重新分配积分',
+        orderNo: item.orderNo || '',
+        userName: item.userName || ''
       }
       this.visiableToken = true
     },

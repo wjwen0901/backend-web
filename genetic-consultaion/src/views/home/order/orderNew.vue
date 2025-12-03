@@ -199,10 +199,10 @@
     <el-dialog title="分配积分" :visible.sync="visiableToken" center width="40%">
       <el-form :model="tokenForm" label-width="100px">
         <el-form-item label="订单编号">
-          <span>{{ tokenForm.orderId }}</span>
+          <span>{{ tokenForm.orderNo }}</span>
         </el-form-item>
-        <el-form-item label="用户ID">
-          <span>{{ tokenForm.userId }}</span>
+        <el-form-item label="用户名">
+          <span>{{ tokenForm.userName }}</span>
         </el-form-item>
         <el-form-item label="分配积分">
           <el-input-number v-model="tokenForm.tokenNum" :min="0" placeholder="请输入积分" />
@@ -234,8 +234,10 @@ export default {
       visiableToken: false,
       tokenForm: {
         userId: '',
+        userName: '',
         tokenNum: '',
         orderId: '',
+        orderNo: '',
         description: '分配积分'
       },
       isIndeterminate: false,
@@ -329,8 +331,10 @@ export default {
       console.log(item)
       this.tokenForm = {
         userId: item.userId || '',
+        userName: item.fullName || '',
         tokenNum: '',
         orderId: item.id || '',
+        orderNo: item.orderNo || '',
         description: '分配积分'
       }
       this.visiableToken = true
