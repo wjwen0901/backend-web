@@ -5,7 +5,7 @@
     </el-breadcrumb>
     <div class="points-box">
       <div class="operate">
-        <el-input placeholder="请输入姓名/手机号" v-model="condition" size="small" style="width:300px">
+        <el-input placeholder="请输入手机号" v-model="condition" size="small" style="width:300px">
           <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
         </el-input>
       </div>
