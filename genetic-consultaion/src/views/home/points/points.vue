@@ -4,11 +4,11 @@
       <el-breadcrumb-item>积分管理</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="points-box">
-      <!-- <div class="operate">
+      <div class="operate">
         <el-input placeholder="请输入姓名/手机号" v-model="condition" size="small" style="width:300px">
           <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
         </el-input>
-      </div> -->
+      </div>
       <div class="points-table">
         <el-table :data="pointsList" style="width: 100%">
           <el-table-column prop="orderUserName" label="姓名" width="220" />
@@ -34,7 +34,7 @@
 export default {
   data () {
     return {
-      // condition: '',
+      condition: '',
       pointsList: [],
       pageNum: 1,
       pageSize: 20,
@@ -48,8 +48,11 @@ export default {
     getData () {
       // 请求积分列表数据
       this.axios.get('manage/token/list', {
-        params: {
-        // condition: this.condition,
+        params: this.condition ? {
+          condition: this.condition,
+          pageNum: this.pageNum,
+          pageSize: this.pageSize
+        } : {
           pageNum: this.pageNum,
           pageSize: this.pageSize
         }

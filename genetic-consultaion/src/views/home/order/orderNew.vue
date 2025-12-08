@@ -21,6 +21,7 @@
             <th>受检者</th>
             <th>下单人</th>
             <th>订单状态</th>
+            <th>积分</th>
             <th colspan="2" width="200px">操作</th>
           </tr>
           <br />
@@ -48,7 +49,7 @@
                   </svg>
                   报告时间：{{ item.createTime | formatDate }}
                 </td>
-                <td colspan="2"></td>
+                <td colspan="3"></td>
                 <td class="detail">
                   <el-button type="text" size="small"
                     @click="toInformedDetail(item.id, item.expressCode, item.expressId)">查看详情</el-button>
@@ -75,11 +76,13 @@
                 <td>{{ item.fullName || '-' }}</td>
                 <td class="price-box">
                   <el-tag size="small" effect="plain"
-                    :style="{ color: getColor(item.statusStr), borderColor: getColor(item.statusStr) }">{{ item.statusStr ||
-                    '——'}}</el-tag>
+                    :style="{ color: getColor(item.statusStr), borderColor: getColor(item.statusStr) }">{{
+                      item.statusStr ||
+                      '——' }}</el-tag>
                   <el-button v-if="item.statusStr === '收款码待付款'" type="text" size="small" class="priceText"
                     @click="changePrice(item.payment, item.orderNo, item.itemTitle, item.id)">改价</el-button>
                 </td>
+                <td>{{ item.tokenNu || '-' }}</td>
                 <td colspan="2">
                   <el-button type="text" size="small" @click="toUploadInformed(item.id)">上传知情</el-button>
                   <el-button type="text" size="small" @click="toUploadReport(item.id)"
@@ -204,11 +207,26 @@
         <el-form-item label="用户名">
           <span>{{ tokenForm.userName }}</span>
         </el-form-item>
+        <el-form-item label="产品价格">
+          <span>{{ tokenForm.directPrice || '- -' }}</span>
+        </el-form-item>
         <el-form-item label="分配积分">
-          <el-input-number v-model="tokenForm.tokenNum" :min="0" placeholder="请输入积分" />
+          <div style="display: flex; align-items: center;">
+            <el-input-number size="small" v-model="tokenForm.tokenNum" :min="0" placeholder="请输入积分" style="margin-right: 12px;" />
+            <el-button-group size="small">
+              <el-button size="small"  @click="setTokenByRatio(35)">35%</el-button>
+              <el-button size="small"  @click="setTokenByRatio(50)">50%</el-button>
+              <el-button size="small"  @click="setTokenByRatio(65)">65%</el-button>
+            </el-button-group>
+            <span style="margin: 0 8px;">自定义比例</span>
+            <el-input-number size="small" v-model="customRatio" :min="0" :max="100"  style="width: 140px;">
+            </el-input-number>
+            <span style="margin: 0 8px;">%</span>
+            <el-button type="primary" @click="setTokenByRatio(customRatio)" size="small">计算</el-button>
+          </div>
         </el-form-item>
         <el-form-item label="描述">
-          <el-input v-model="tokenForm.description" placeholder="分配积分" />
+          <el-input size="small" v-model="tokenForm.description" placeholder="分配积分" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -238,8 +256,10 @@ export default {
         tokenNum: '',
         orderId: '',
         orderNo: '',
-        description: '分配积分'
+        description: '分配积分',
+        directPrice: '' // 产品价格
       },
+      customRatio: null,
       isIndeterminate: false,
       checkAll: false, // 全选
       checkIs: false,
@@ -326,6 +346,18 @@ export default {
     }
   },
   methods: {
+    // 根据比例设置积分
+    setTokenByRatio (ratio) {
+      if (!this.tokenForm.directPrice || isNaN(this.tokenForm.directPrice)) {
+        this.$message({ message: '产品价格无效', type: 'warning' })
+        return
+      }
+      if (!ratio || isNaN(ratio)) {
+        this.$message({ message: '比例无效', type: 'warning' })
+        return
+      }
+      this.tokenForm.tokenNum = Math.floor(this.tokenForm.directPrice * ratio / 100)
+    },
     // 分配积分弹窗
     openTokenDialog (item) {
       console.log(item)
@@ -335,7 +367,8 @@ export default {
         tokenNum: '',
         orderId: item.id || '',
         orderNo: item.orderNo || '',
-        description: '分配积分'
+        description: '分配积分',
+        directPrice: item.directPrice || '' // 产品价格
       }
       this.visiableToken = true
     },
