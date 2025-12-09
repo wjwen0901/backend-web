@@ -82,7 +82,7 @@
                   <el-button v-if="item.statusStr === '收款码待付款'" type="text" size="small" class="priceText"
                     @click="changePrice(item.payment, item.orderNo, item.itemTitle, item.id)">改价</el-button>
                 </td>
-                <td>{{ item.tokenNu || '-' }}</td>
+                <td>{{ item.tokenNum || '-' }}</td>
                 <td colspan="2">
                   <el-button type="text" size="small" @click="toUploadInformed(item.id)">上传知情</el-button>
                   <el-button type="text" size="small" @click="toUploadReport(item.id)"
@@ -211,18 +211,28 @@
           <span>{{ tokenForm.directPrice || '- -' }}</span>
         </el-form-item>
         <el-form-item label="分配积分">
-          <div style="display: flex; align-items: center;">
-            <el-input-number size="small" v-model="tokenForm.tokenNum" :min="0" placeholder="请输入积分" style="margin-right: 12px;" />
-            <el-button-group size="small">
-              <el-button size="small"  @click="setTokenByRatio(35)">35%</el-button>
-              <el-button size="small"  @click="setTokenByRatio(50)">50%</el-button>
-              <el-button size="small"  @click="setTokenByRatio(65)">65%</el-button>
-            </el-button-group>
-            <span style="margin: 0 8px;">自定义比例</span>
-            <el-input-number size="small" v-model="customRatio" :min="0" :max="100"  style="width: 140px;">
-            </el-input-number>
-            <span style="margin: 0 8px;">%</span>
-            <el-button type="primary" @click="setTokenByRatio(customRatio)" size="small">计算</el-button>
+          <div style="display: flex; flex-direction: column;gap:12px">
+            <el-input-number size="small" v-model="tokenForm.tokenNum" :min="0" placeholder="请输入积分"
+              style="width: 100%;" />
+            <div class="tokenRatio">
+              <div style="display: flex; align-items: center;">
+                <span style="margin: 0 8px;">使用常用比例</span>
+                <el-button-group size="small" style="flex:1">
+                  <el-button style="width: calc(100% / 3);" size="small" @click="setTokenByRatio(35)">35%</el-button>
+                  <el-button style="width: calc(100% / 3);" size="small" @click="setTokenByRatio(50)">50%</el-button>
+                  <el-button style="width: calc(100% / 3);" size="small" @click="setTokenByRatio(65)">65%</el-button>
+                </el-button-group>
+              </div>
+
+              <div style="display: flex; align-items: center;">
+                <span style="margin: 0 8px;">自定义比例</span>
+                <el-input-number style="flex:1" size="small" v-model="customRatio" :min="0" :max="100">
+                </el-input-number>
+                <span style="margin: 0 8px;">%</span>
+                <el-button type="primary" @click="setTokenByRatio(customRatio)" size="small">计算</el-button>
+
+              </div>
+            </div>
           </div>
         </el-form-item>
         <el-form-item label="描述">
@@ -239,7 +249,7 @@
 <script>
 import NP from 'number-precision'
 export default {
-  data () {
+  data() {
     return {
       orderId: '',
       itemTitle: '',
@@ -283,19 +293,19 @@ export default {
       userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
     }
   },
-  mounted () {
+  mounted() {
     this.getData()
     this.getCompanyList()
   },
-  created () {
+  created() {
 
   },
-  destroyed () {
+  destroyed() {
     window.sessionStorage.removeItem('checkPage')
   },
   watch: {
     orderList: { // 监听事件,监听复选框是否全部选中,全部选中则全选的复选框勾选上
-      handler (val) {
+      handler(val) {
         var i = 0
         this.orderList.forEach(item => {
           if (item.isChecked === true) {
@@ -311,7 +321,7 @@ export default {
       deep: true
     },
     // 计算
-    addPrice (val) {
+    addPrice(val) {
       if (val && !/^(\-|\+)?\d+(\.\d+)?$/.test(val)) {
         this.priceBut = true
         return
@@ -324,20 +334,20 @@ export default {
         this.afterPrice = this.nowPrice
       }
     },
-    afterPrice (val) {
+    afterPrice(val) {
       if (val < 0) {
         this.priceBut = true
         return
       }
       this.priceBut = false
     },
-    pageNum (newNum, oldNum) {
+    pageNum(newNum, oldNum) {
       const arrId = window.sessionStorage.getItem('checkPage')
       const obj = JSON.parse(arrId)
       let newSeesion = Object.assign({}, obj, { [oldNum]: { data: this.orderList } })
       window.sessionStorage.setItem('checkPage', JSON.stringify(newSeesion))
     },
-    checkIds (val) {
+    checkIds(val) {
       if (val && val.length !== 0) {
         this.isIndeterminate = true
       } else {
@@ -347,7 +357,7 @@ export default {
   },
   methods: {
     // 根据比例设置积分
-    setTokenByRatio (ratio) {
+    setTokenByRatio(ratio) {
       if (!this.tokenForm.directPrice || isNaN(this.tokenForm.directPrice)) {
         this.$message({ message: '产品价格无效', type: 'warning' })
         return
@@ -359,7 +369,7 @@ export default {
       this.tokenForm.tokenNum = Math.floor(this.tokenForm.directPrice * ratio / 100)
     },
     // 分配积分弹窗
-    openTokenDialog (item) {
+    openTokenDialog(item) {
       console.log(item)
       this.tokenForm = {
         userId: item.userId || '',
@@ -373,7 +383,7 @@ export default {
       this.visiableToken = true
     },
     // 分配积分接口
-    allocateToken () {
+    allocateToken() {
       if (!this.tokenForm.tokenNum) {
         this.$message({ message: '请输入积分', type: 'warning' })
         return
@@ -396,7 +406,7 @@ export default {
       })
     },
     // 改价接口
-    changePriceApi () {
+    changePriceApi() {
       this.axios.post('order/edit', {
         id: this.orderId,
         payment: this.afterPrice,
@@ -414,7 +424,7 @@ export default {
       })
     },
     // 价格弹窗
-    changePrice (val, orderNo, itemTitle, id) {
+    changePrice(val, orderNo, itemTitle, id) {
       this.orderId = id
       this.nowPrice = val
       this.orderNo = orderNo
@@ -424,7 +434,7 @@ export default {
       this.visiablePrice = true
     },
     // 复选框
-    handelCheckIs (val, item) {
+    handelCheckIs(val, item) {
       item.isChecked = val
       if (val) {
         this.checkIds.push(item.id)
@@ -438,7 +448,7 @@ export default {
       this.$forceUpdate()
     },
     // 全选
-    handleAllCheck (val) {
+    handleAllCheck(val) {
       let arrId = []
       this.orderList.map(item => {
         item.isChecked = val
@@ -456,7 +466,7 @@ export default {
       console.log(this.checkIds)
     },
     // 标签颜色
-    getColor (val) {
+    getColor(val) {
       const map = {
         '待采样': '#14a495',
         '待回寄': '#202020',
@@ -468,11 +478,11 @@ export default {
       }
       return map[val]
     },
-    headerClassName ({ row, rowIndex }) {
+    headerClassName({ row, rowIndex }) {
       return 'header-row'
     },
     // 导出
-    exportData () {
+    exportData() {
       // 处理选中ID
       if (this.checkIds.length !== 0) {
         console.log('&&&' + this.checkIds)
@@ -490,7 +500,7 @@ export default {
       }
     },
     // 导出数据后台接口
-    exportPutData (val) {
+    exportPutData(val) {
       this.axios.get('order/user/export', {
         params: {
           userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
@@ -514,7 +524,7 @@ export default {
         console.log(err)
       })
     },
-    getData () {
+    getData() {
       this.loading = true
       this.axios.get('order/user', {
         params: {
@@ -544,7 +554,7 @@ export default {
         this.loading = false
       })
     },
-    getCompanyList () {
+    getCompanyList() {
       this.axios.get('company/CustCompany', {
         params: {
           userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
@@ -556,17 +566,17 @@ export default {
         console.log(err)
       })
     },
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.pageSize = val
       window.sessionStorage.orderPageSize = val
       this.getData()
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.pageNum = val
       window.sessionStorage.orderPageNum = val
       this.getData()
     },
-    toRecheck (reportId, informedId) {
+    toRecheck(reportId, informedId) {
       this.axios.get('report/recheck/' + reportId, {
         params: {
           informedId: informedId,
@@ -580,13 +590,13 @@ export default {
         console.log(err)
       })
     },
-    toUploadInformed (id) {
+    toUploadInformed(id) {
       this.$router.push({ path: '/informed/upload', query: { orderId: id } })
     },
-    toUploadReport (id) {
+    toUploadReport(id) {
       this.$router.push({ path: '/report/upload', query: { orderId: id } })
     },
-    toInformedDetail (id, expressCode, expressId) {
+    toInformedDetail(id, expressCode, expressId) {
       this.$router.push({ path: '/order/' + id, query: { expressCode: expressCode, expressId: expressId } })
     }
   }
@@ -726,6 +736,12 @@ export default {
     color: rgb(16, 31, 251);
     text-decoration: underline;
   }
+}
+
+.tokenRatio {
+  background-color: #f5f6f9;
+  padding: 12px;
+  border-radius: 8px;
 }
 </style>
 <style lang="scss">
