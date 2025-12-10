@@ -77,7 +77,7 @@
           <span>{{ tokenForm.oldTokenNum || '- -' }}</span>
         </el-form-item>
         <el-form-item label="新积分数量">
-          <el-input-number size="small" v-model="tokenForm.newTokenNum" :min="1" placeholder="请输入积分" />
+          <el-input-number size="small" v-model="tokenForm.newTokenNum" :min="0" placeholder="请输入积分" />
         </el-form-item>
         <el-form-item label="描述">
           <el-input size="small" v-model="tokenForm.description" placeholder="分配积分" />
@@ -156,10 +156,6 @@ export default {
     },
     // 分配积分接口
     allocateToken() {
-      if (!this.tokenForm.newTokenNum) {
-        this.$message({ message: '请输入积分', type: 'warning' })
-        return
-      }
       this.axios.post('/manage/token/change', {
         userId: this.tokenForm.userId,
         newTokenNum: this.tokenForm.newTokenNum,
