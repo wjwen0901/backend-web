@@ -29,6 +29,7 @@ axios.interceptors.request.use(
     })
 // production
 const linkUrl =  process.env.NODE_ENV === 'production' ? 'https://z.mdhcare.cn/login.html':'https://qa.mdhcare.cn/website/login.html'
+// const linkUrl =  'http://47.113.112.104:9101/login.html'
 axios.interceptors.response.use(
     response => {
         return response
