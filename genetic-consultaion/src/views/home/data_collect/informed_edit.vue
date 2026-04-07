@@ -1038,14 +1038,24 @@ export default {
   computed: {
     areaInfo: {
       get: function () {
-        if (this.informedContent.county === undefined || this.informedContent.county === '' || this.informedContent.county === null) {
+        const c = this.informedContent
+        if (c.county === undefined || c.county === '' || c.county === null) {
           return []
         }
-        let province = this.TextToCode[this.informedContent.province].code
-        let cityTemp = this.informedContent.city === this.informedContent.province ? '市辖区' : this.informedContent.city
-        let city = this.TextToCode[this.informedContent.province][cityTemp].code
-        let county = this.TextToCode[this.informedContent.province][cityTemp][this.informedContent.county].code
-        return [province, city, county]
+        try {
+          // 直辖市兼容：历史 C 端写入 province===city，新 C 端对齐 element-china-area-data 后会写入"市辖区"
+          const cityTemp = c.city === c.province ? '市辖区' : c.city
+          const provNode = this.TextToCode[c.province]
+          if (!provNode) return []
+          const cityNode = provNode[cityTemp]
+          if (!cityNode) return []
+          const countyNode = cityNode[c.county]
+          if (!countyNode) return []
+          return [provNode.code, cityNode.code, countyNode.code]
+        } catch (e) {
+          console.warn('[informed_edit] 省市区回显失败', c.province, c.city, c.county, e)
+          return []
+        }
       },
       set: function () {
       }

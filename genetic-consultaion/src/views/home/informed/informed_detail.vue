@@ -78,6 +78,11 @@
                 v-model="areaInfo"
                 @change="addressHandleChange">
               </el-cascader>
+              <div v-if="informedContent.province && areaInfo.length === 0"
+                   style="color: #e6a23c; font-size: 12px; line-height: 1.4; margin-top: 4px;">
+                当前存储值：{{ informedContent.province }} / {{ informedContent.city }} / {{ informedContent.county }}
+                （未在最新地区库中匹配，请重新选择并保存即可自动修正）
+              </div>
             </el-form-item>
             <el-form-item label="详细地址">
               {{informedContent.address}}
@@ -241,10 +246,25 @@ export default {
   computed: {
     areaInfo: {
       get: function () {
-        if (this.informedContent.county === undefined || this.informedContent.county === '' || this.informedContent.county === null) {
+        const c = this.informedContent
+        if (c.county === undefined || c.county === '' || c.county === null) {
           return []
         }
-        return [this.TextToCode[this.informedContent.province].code, this.TextToCode[this.informedContent.province][this.informedContent.city].code, this.TextToCode[this.informedContent.province][this.informedContent.city][this.informedContent.county].code]
+        try {
+          // 直辖市兼容：历史 C 端写入 province===city（如"北京市/北京市/朝阳区"），
+          // 新 C 端对齐 element-china-area-data 后会写入"市辖区"，两种都能回显。
+          const cityTemp = c.city === c.province ? '市辖区' : c.city
+          const provNode = this.TextToCode[c.province]
+          if (!provNode) return []
+          const cityNode = provNode[cityTemp]
+          if (!cityNode) return []
+          const countyNode = cityNode[c.county]
+          if (!countyNode) return []
+          return [provNode.code, cityNode.code, countyNode.code]
+        } catch (e) {
+          console.warn('[informed_detail] 省市区回显失败', c.province, c.city, c.county, e)
+          return []
+        }
       },
       set: function () {
       }

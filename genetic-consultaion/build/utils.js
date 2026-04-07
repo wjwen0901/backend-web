@@ -34,6 +34,11 @@ exports.cssLoaders = function (options) {
     const loaders = options.usePostCSS ? [cssLoader, postcssLoader] : [cssLoader]
 
     if (loader) {
+      // node-sass@4.13 在 Apple Silicon / 新 Node 上装不上 native binding。
+      // 安装时通过 npm alias 把 "node-sass" 包替换为 sass (dart-sass) 1.x 实现：
+      //   npm install node-sass@npm:sass@1.26.5 --no-save
+      // sass-loader 7.0.3 默认 require('node-sass')，alias 后拿到的是 sass 包，
+      // 调用 renderSync API 兼容（dart sass 与 node-sass API 95%+ 一致）。
       loaders.push({
         loader: loader + '-loader',
         options: Object.assign({}, loaderOptions, {
