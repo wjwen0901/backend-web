@@ -376,7 +376,7 @@ export default {
               console.log(up)
               console.log(file.mime_types)
               const param = {
-                userId: window.localStorage.userId,
+                userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
                 name: this.informedConsent.name,
                 cellphone: this.informedConsent.cellphone,
                 doctor: this.informedConsent.doctor,
@@ -407,7 +407,9 @@ export default {
               }
               window.localStorage.doctor = this.informedConsent.doctor
               let _this = this
-              this.axios.post('informed/upload', param).then(res => {
+              this.axios.post('informed/upload',param, {
+                params: param
+              }).then(res => {
                 _this.$notify({
                   message: '上传成功',
                   type: 'success',

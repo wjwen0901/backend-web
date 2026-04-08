@@ -13,15 +13,15 @@
         <div class="drug-container">
           <el-form ref="solutionForm"  label-width="100px" size="mini" class="edit-form clearfix">
             <div class="form-left">
-              <el-form-item label="中文标题*"> 
+              <el-form-item label="中文标题*">
                 <span>{{datas.title}}</span>
               </el-form-item>
               <el-form-item label="制定者*">
                 <span v-for="(item,index) in datas.framers" :key='index'>{{item}}</span>
               </el-form-item>
-              <el-form-item label="发布日期*"> 
+              <el-form-item label="发布日期*">
                   <span v-for="(item,index) in datas.publishDate" :key="index">{{item}}</span>
-              </el-form-item> 
+              </el-form-item>
               <el-form-item label="检测产品">
                 <span v-for="(item,index) in Name.products" :key="index">{{item.productName}}&nbsp;&nbsp;</span>
               </el-form-item>
@@ -32,11 +32,11 @@
               </el-form-item>
               <el-form-item label="出处*">
                 <span v-for="(item,index) in datas.provenance" :key="index">{{item}}&nbsp;&nbsp;</span>
-              </el-form-item> 
-              <el-form-item label="相关疾病"> 
+              </el-form-item>
+              <el-form-item label="相关疾病">
                 <span v-for="(item,index) in Name.diseases" :key="index">{{item.diseaseName}}&nbsp;&nbsp;</span>
               </el-form-item>
-              <el-form-item label="相关基因"> 
+              <el-form-item label="相关基因">
                 <span v-for="(item,index) in Name.genes" :key="index">{{item.geneName}}&nbsp;&nbsp;</span>
               </el-form-item>
             </div>
@@ -44,18 +44,18 @@
               <ul class="form-list" >
                 <li v-for="(item,index) in list" :key="index" @click="cur=index" :class="{active:cur==index}">
                  {{item.id}}.{{item.name}}
-                </li> 
+                </li>
               </ul>
-              <div class="from-contents" v-show="cur==0">  
-                <span v-for="(item,index) in datas.files" :key="index" class="path" @click="openPath(item.path)">  
+              <div class="from-contents" v-show="cur==0">
+                <span v-for="(item,index) in datas.files" :key="index" class="path" @click="openPath(item.path)">
                   {{item.file_source}}
                 </span>
               </div>
-              <div class="from-contents" v-show="cur==1"> 
+              <div class="from-contents" v-show="cur==1">
                 <p v-html="datas.other"></p>
               </div>
-               <div class="from-select"> 
-              </div> 
+               <div class="from-select">
+              </div>
             </div>
           </el-form>
         </div>
@@ -78,35 +78,40 @@ export default {
     };
   },
   props: {},
-  methods: { 
+  methods: {
     getDatas() {
       this.axios({
         url: "guideManage/byId",
         params: {
           id: this.$route.query.id,
-          state: this.$route.query.state
+          state: this.$route.query.state,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         console.log(res.data)
         this.datas = res.data.guide;
-        this.Name = res.data;  
+        this.Name = res.data;
       });
     },
-    openPath(val){  
+    openPath(val){
        this.axios({
           url: "oss/upload/show",
           params: {
             objectKey: val,
-            bucket: "mdhcare"
+            bucket: "mdhcare",
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
-        }).then(res => {  
-          window.open(res.data) 
+        }).then(res => {
+          window.open(res.data)
         });
     },
     _initData() {
       if (this.$route.params.id !== undefined) {
-        this.axios
-          .get("drug/" + this.$route.params.id)
+        this.axios.get("drug/" + this.$route.params.id, {
+            params: {
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+            }
+          })
           .then(res => {
             this.drug = res.data;
             this.sampleMeta = res.data.sampleMeta;
@@ -133,7 +138,11 @@ export default {
           });
       }
       this.axios
-        .get("hospital-dept")
+        .get("hospital-dept", {
+          params: {
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+          }
+        })
         .then(res => {
           this.deptList = res.data;
         })
@@ -153,11 +162,14 @@ export default {
         instance({
           method: "post",
           url: "drug",
+          params: {
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+          },
           data: {
             drug: this.drug,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             "X-Requested-With": "XMLHttpRequest",
@@ -195,12 +207,15 @@ export default {
         instance({
           method: "put",
           url: "drug/" + this.$route.params.id,
+          params: {
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+          },
           data: {
             drug: this.drug,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
             solutionExpands: this.expandParams,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             "X-Requested-With": "XMLHttpRequest",

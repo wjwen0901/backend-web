@@ -169,7 +169,7 @@ export default {
     getCompanyList () {
       this.axios.get('company/CustCompany', {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.companyList = res.data

@@ -129,7 +129,7 @@ export default {
           url: 'hospital',
           data: hospitalInfo,
           params: {
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',

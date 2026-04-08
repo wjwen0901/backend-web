@@ -2,7 +2,7 @@
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>BRCA轻松检</el-breadcrumb-item>
-      <el-breadcrumb-item>佣金记录</el-breadcrumb-item>
+      <el-breadcrumb-item>佣金账户</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="user-container">
       <div>
@@ -12,6 +12,10 @@
             <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
           </el-input>
         </div>
+        <el-alert
+          title="仅显示分配过订单的账户"
+          type="info">
+        </el-alert>
       </div>
       <el-table
         :data="list"
@@ -154,7 +158,7 @@
         qrCode: {},
         eleInformed: {},
         withdrawCash: {},
-        userId: window.localStorage.userId
+        userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
       }
     },
     methods: {
@@ -167,7 +171,7 @@
           params: {
             pageNum: this.pageNum,
             pageSize: this.pageSize,
-            userId: window.localStorage.userId,
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
             condition: this.condition
           }
         }).then(res => {

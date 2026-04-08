@@ -6,42 +6,44 @@ import axios from 'axios'
 import qs from 'qs'
 
 axios.defaults.baseURL = process.env.BASE_URL
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
-axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded'
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+// axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded'
+axios.defaults.headers.post['Content-Type'] = 'application/json'
+axios.defaults.headers.put['Content-Type'] = 'application/json'
 
 // http request 拦截器
 axios.interceptors.request.use(
     config => {
-        config.headers.Authorization = window.localStorage.token
-        if (config.method === 'post' || config.method === 'put') {
-            config.data = qs.stringify(config.data)
-                // config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-        }
-        // if (store.state.token) {
-        //
+        config.headers.Authorization = window.localStorage.token || ''
+        config.params = config.params ? config.params : {}
+        config.params.userId = window.localStorage.userId ? parseInt(window.localStorage.userId) : 0
+        // if (config.method === 'post' || config.method === 'put') {
+            // config.data = qs.stringify(config.data)
+            // config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
         // }
+        // if(!config.headers.Authorization) return false
         return config
     },
     err => {
         return Promise.reject(err)
     })
-
+// production
+const linkUrl =  process.env.NODE_ENV === 'production' ? 'https://z.mdhcare.cn/login.html':'https://qa.mdhcare.cn/website/login.html'
+// const linkUrl =  'http://47.113.112.104:9101/login.html'
 axios.interceptors.response.use(
     response => {
         return response
     },
     error => {
-        if (error.response) {
+        if (error && error.response) {
             switch (error.response.status) {
                 case 401:
-                    // 401 清除token信息并跳转到登录页面
                     window.localStorage.clear()
-                    // wonder跳转登录
-                    // window.location.href = 'https://z.mdhcare.cn/z/login.html'
-                    window.location.href = 'https://z.mdhcare.cn/login.html'
+                    window.location.href = linkUrl
             }
+        }else{
+            window.location.href = linkUrl
         }
-        // console.log(JSON.stringify(error));//console : Error: Request failed with status code 402
         return Promise.reject(error.response.data)
     })
 

@@ -65,7 +65,8 @@ export default {
           openid: this.$route.query.openid,
           orderId: this.$route.query.orderId,
           condition: this.condition,
-          resource: parseInt(this.activeIndex)
+          resource: parseInt(this.activeIndex),
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.reportList = res.data.list
@@ -77,11 +78,16 @@ export default {
       })
     },
     toReportDetail (id) {
-      this.axios.get('report/' + id).then(res => {
+      this.axios.get('report/' + id, {
+        params: {
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+        }
+      }).then(res => {
         this.report = res.data
         this.axios.get('oss/upload/show', {
           params: {
-            objectKey: res.data.path
+            objectKey: res.data.path,
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
         }).then(res1 => {
           this.$router.push({path: '/report/view/', query: {path: res1.data, printId: this.$route.query.printId}})
@@ -107,7 +113,8 @@ export default {
         params: {
           printId: this.$route.query.printId,
           openId: this.$route.query.openid,
-          reportId: reportId
+          reportId: reportId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         if (res.data === 'no report') {

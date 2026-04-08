@@ -282,7 +282,7 @@ export default {
       serviceUserList: [],
       roleCode: window.localStorage.role,
       condition: null,
-      userId: window.localStorage.userId,
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
       dialogDistributionVisible: false,
       dialogDistributionSalesVisible: false,
     }
@@ -300,7 +300,7 @@ export default {
     getData () {
       this.axios.get('order/brca/page', {
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           hospitalId: this.searchForm.hospitalId,
           deptId: this.searchForm.deptId,
           doctor: this.searchForm.doctor,
@@ -325,7 +325,7 @@ export default {
     getCompanyList () {
       this.axios.get('company/CustCompany', {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.companyList = res.data

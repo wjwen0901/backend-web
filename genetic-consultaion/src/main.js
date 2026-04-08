@@ -13,20 +13,13 @@ import VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
-
+import './assets/css/normal.css'
 
 Vue.use(VueQuillEditor)
 Vue.use(VueJsonp)
 Vue.use(VCharts)
 
-router.beforeEach((to, from, next) => {
-  /* 路由发生变化修改页面title */
-  if (to.meta.title) {
-    document.title = to.meta.title
-  }
-  next()
-})
-
+ElementUI.Dialog.props.lockScroll.default = false; //弹窗防抖动
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 // 将axios挂载到prototype上，在组件中可以直接使用this.axios访问
@@ -34,7 +27,7 @@ Vue.prototype.axios = axios
 Vue.component('v-select', vSelect)
 
 Vue.filter('formatDate', function (time) {
-  if (!time) return ''
+  if (!time) return '-'
   let date = new Date(time)
   let fmt = 'yyyy-MM-dd hh:mm:ss'
   if (/(y+)/.test(fmt)) {
@@ -80,7 +73,7 @@ zhiManager.on('load', function () {
 })
 // zhiManager.set('color','09aeb0'); //API示例，格式为 0-9 a-f 之间的六位有效字符 不用加#
 
-zhiManager.set('color', 'E9AE47') // 格式为 0-9 a-f 之间的六位有效字符 不用加#
+zhiManager.set('color', '117e73') // 格式为 0-9 a-f 之间的六位有效字符 不用加#
 zhiManager.set('title', '联系我') // 建议长度为 8 个字符之内，文案仅对 PC组件有效，移动端没有文案
 // 若传入 1 ，按钮将显示在右下角 默认显示在右下角
 // 若传入 2 ，按钮将显示在左下角

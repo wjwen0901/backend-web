@@ -85,13 +85,14 @@
               <div class="to" v-if="express.receiver">{{express.receiver.city}}</div>
               <div class="state" v-if="!express.route">等待快递小哥接单</div>
             </div>
-            <div class="infos" v-if="express.route && express.route.mailno">
+            <!--  && express.route.mailno-->
+            <div class="infos" v-if="express.route">
               <div class="title">运单编号： {{express.route.mailno}}</div>
               <el-timeline :reverse="reverse">
                 <el-timeline-item
-                  v-for="(item, index) in express.route.Route"
+                  v-for="(item, index) in routeList"
                   :key="index"
-                  :timestamp="item.accept_time">
+                  :timestamp="item.acceptTime">
                   {{item.remark}}
                 </el-timeline-item>
               </el-timeline>
@@ -107,19 +108,22 @@
 <script>
 
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
+import {compareDate} from '../../../utils/sortDate'
+
 export default {
   components: {},
   name: 'UserList',
   data () {
     return {
       list: [],
+      routeList:[],
       pageNum: 1,
       pageSize: 20,
       totalPage: 0,
       express: {},
       dialogEditFormVisible: false,
       condition: null,
-      userId: window.localStorage.userId,
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
       reverse: true,
     }
   },
@@ -133,7 +137,7 @@ export default {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           condition: this.condition
         }
       }).then(res => {
@@ -157,20 +161,23 @@ export default {
       this.axios.get('/sf/route', {
         params: {
           mailno: express.express.expressCode,
-          subPhone: express.receiver.cellphone.substr(express.receiver.cellphone.length-4,4)
+          subPhone: express.receiver.cellphone.substr(express.receiver.cellphone.length-4,4),
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         }
       }).then(res => {
         this.express = res.data
         this.express.route = JSON.parse(res.data.route)
-        if (this.express.route.Head === 'OK') {
-          if (JSON.stringify(this.express.route.Body.RouteResponse).indexOf('[') == -1) {
-            let routes = []
-            routes.push(this.express.route.Body.RouteResponse.Route)
-            console.log(routes)
-            this.express.route.Body.RouteResponse.Route = routes
-          }
-          this.express.route = this.express.route.Body.RouteResponse
-        }
+        const mailTemp = (res.data.route.routeResps)[0].routes
+        this.routeList = mailTemp.sort(compareDate('acceptTime', 'inverted'))
+        // if (this.express.route.Head === 'OK') {
+        //   if (JSON.stringify(this.express.route.Body.RouteResponse).indexOf('[') == -1) {
+        //     let routes = []
+        //     routes.push(this.express.route.Body.RouteResponse.Route)
+        //     console.log(routes)
+        //     this.express.route.Body.RouteResponse.Route = routes
+        //   }
+        //   this.express.route = this.express.route.Body.RouteResponse
+        // }
       })
       this.dialogEditFormVisible = true
     },
@@ -178,7 +185,8 @@ export default {
       let that = this
       that.axios.delete('/sf/order', {
         params: {
-          expressNo: expressNo
+          expressNo: expressNo,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         }
       }).then(res => {
         if (res.data == 'failure') {

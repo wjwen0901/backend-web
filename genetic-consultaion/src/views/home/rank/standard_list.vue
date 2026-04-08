@@ -175,7 +175,8 @@ export default {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          condition: this.condition
+          condition: this.condition,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.standardList = res.data
@@ -211,7 +212,7 @@ export default {
         url: 'term',
         data: _this.standard,
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
@@ -242,6 +243,9 @@ export default {
         method: 'put',
         url: 'term',
         data: _this.standard,
+        params: {
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+        },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
@@ -268,6 +272,9 @@ export default {
         method: 'put',
         url: 'term/piece',
         data: standardPiece,
+        params: {
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+        },
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
@@ -284,7 +291,11 @@ export default {
     toPiece (id, name) {
       this.standard.id = id
       this.standard.name = name
-      this.axios.get('term/piece/' + id).then(res => {
+      this.axios.get('term/piece/' + id, {
+        params: {
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+        }
+      }).then(res => {
         this.standardPieces = res.data
       }).catch(err => {
         console.log(err)
@@ -313,6 +324,9 @@ export default {
             method: 'post',
             url: 'term/piece',
             data: value,
+            params: {
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+            },
             headers: {
               'X-Requested-With': 'XMLHttpRequest',
               'Content-Type': 'application/json'
@@ -334,7 +348,11 @@ export default {
     toDelete (id) {
       this.$confirm('确认删除？')
         .then(_ => {
-          this.axios.delete('term/' + id).then(res => {
+          this.axios.delete('term/' + id, {
+            params: {
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+            }
+          }).then(res => {
             this.getData()
             this.$message({
               message: '删除成功',

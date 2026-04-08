@@ -63,7 +63,7 @@
           </ul>
           <div id="container"></div>
         </div>
-      </div> 
+      </div>
       <!-- <input type="file" @change="fileChangeBtn"> -->
 
       <div class="btn-row">
@@ -425,7 +425,8 @@ export default {
               instance({
                 method: 'post',
                 url: 'informed/upload',
-                params: param
+                params: param,
+                data: param
               }).then(function (res) {
                 that.$notify({
                   message: '上传成功',
@@ -440,10 +441,10 @@ export default {
                         // window.location.href('weixin://dl/business/?ticket=t852de9efd9b540df8b355699d4f2ed63');
                         let url=window.location.href;
                         that.$router.push({path: '/wechat/browser/upload', query: {num:that.fileNum,path: url}})
-                    } 
+                    }
                   }
                 })
-                
+
 
               }).catch(err => {
                 that.$notify({

@@ -85,7 +85,11 @@ export default {
   methods: {
     _initData () {
       if (this.$route.params.id !== undefined) {
-        this.axios.get('hospital/' + this.$route.params.id).then(res => {
+        this.axios.get('hospital/' + this.$route.params.id, {
+          params: {
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+          }
+        }).then(res => {
           this.hospital = res.data
         }).catch(err => {
           console.log(err)
@@ -105,6 +109,9 @@ export default {
           method: 'post',
           url: 'hospital?userId=' + window.localStorage.userId,
           data: this.hospital,
+          params: {
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+          },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json'
@@ -133,6 +140,9 @@ export default {
           method: 'put',
           url: 'hospital/' + this.$route.params.id,
           data: this.hospital,
+          params: {
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+          },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json'

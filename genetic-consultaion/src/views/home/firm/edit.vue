@@ -54,7 +54,11 @@ export default {
   methods: {
     _initData () {
       if (this.$route.params.id !== undefined) {
-        this.axios.get('company/' + this.$route.params.id).then(res => {
+        this.axios.get('company/' + this.$route.params.id, {
+          params: {
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+          }
+        }).then(res => {
           this.company = res.data
         }).catch(err => {
           console.log(err)
@@ -76,7 +80,7 @@ export default {
           url: 'company',
           data: this.company,
           params: {
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',

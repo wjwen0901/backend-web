@@ -10,7 +10,7 @@
     </el-row>
     <el-row>
       <el-col :span="24">
-        <div class="gene-container"> 
+        <div class="gene-container">
           <el-form ref="solutionForm" :model="gene" label-width="80px" size="mini" class="edit-form clearfix">
             <div class="left">
             <el-form-item label="基因*">
@@ -24,35 +24,35 @@
             </el-form-item>
             <el-form-item label="内含子数">
               <span>{{datas.intron}}</span>
-            </el-form-item> 
+            </el-form-item>
           </div>
           <div class="right">
             <el-form-item label="NM号">
               <span>{{datas.nm}}</span>
-            </el-form-item> 
+            </el-form-item>
             <el-form-item label="相关疾病">
               <span v-for="(item,index) in Name.diseases" :key="index">{{item.diseaseName}} </span>
-            </el-form-item>  
+            </el-form-item>
             <el-form-item label="靶向用药">
               <span v-for="(item,index) in Name.druggerys" :key="index">{{item.druggeryName}} </span>
             </el-form-item>
             <el-form-item label="检测产品">
               <span v-for="(item,index) in Name.products" :key="index">{{item.productName}} </span>
             </el-form-item>
-          </div>   
+          </div>
           </el-form>
           <ul class="gene-list" >
             其他
-          </ul> 
-          <div class="gene-contents"> 
+          </ul>
+          <div class="gene-contents">
               <p class="title">标题：<span>其他</span> </p>
               <p v-html="datas.other"></p>
 
           </div>
           <div class="gene-select">
-            
+
           </div>
-        </div> 
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -61,12 +61,12 @@
 export default {
   name: 'GeneEdit',
   data () {
-    return {  
+    return {
       source:'',
       source1:'',
       testproduct:'',
       targeting:'',
-      content:'', 
+      content:'',
       proDepts: [],
       list:[{name:'其他',id:1}],
       cur:0,
@@ -84,20 +84,20 @@ export default {
       medicaOption: [],
       medicaList: [],
       medicaLoading: false,
-      medicaState: [], 
+      medicaState: [],
       //检测产品
       productId:[],
       productOption: [],
       productList: [],
       productLoading: false,
-      productState: [], 
+      productState: [],
       datas:{}
     }
-  }, 
-  mounted () { 
+  },
+  mounted () {
     this.getData()
   },
-  methods: { 
+  methods: {
     getData(){
       this.axios({
         url:"gene/byId",
@@ -113,7 +113,11 @@ export default {
     },
     _initData () {
       if (this.$route.params.id !== undefined) {
-        this.axios.get('gene/' + this.$route.params.id).then(res => {
+        this.axios.get('gene/' + this.$route.params.id, {
+          params: {
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+          }
+        }).then(res => {
           this.gene = res.data
           this.sampleMeta = res.data.sampleMeta
           this.proDepts = res.data.deptName
@@ -156,7 +160,10 @@ export default {
             gene: this.gene,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+          },
+          params: {
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
@@ -197,7 +204,10 @@ export default {
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
             solutionExpands: this.expandParams,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+          },
+          params: {
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
@@ -264,7 +274,7 @@ export default {
     this._initData()
     loading.close()
   },
-  
+
   destroyed () {}
 }
 </script>
@@ -284,15 +294,15 @@ export default {
     display: flex;
     justify-content: space-around;
   }
-  .title{ 
+  .title{
       background: #f3f3f3;
       padding-left: 5px;
         input{
           width: 93%;
           border:0;
           outline: none;
-          height: 28px;      
-          background: #f3f3f3; 
+          height: 28px;
+          background: #f3f3f3;
         }
     }
   .gene-list{

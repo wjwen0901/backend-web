@@ -332,7 +332,7 @@ export default {
               console.log(up)
               console.log(file.mime_types)
               const param = {
-                userId: window.localStorage.userId,
+                userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
                 fileName: file.name,
                 size: file.size,
                 mimeType: file.type,

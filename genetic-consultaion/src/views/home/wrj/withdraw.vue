@@ -166,7 +166,7 @@ export default {
       qrCode: {},
       eleInformed: {},
       withdrawCash: {},
-      userId: window.localStorage.userId
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
     }
   },
   methods: {
@@ -179,7 +179,7 @@ export default {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           condition: this.condition
         }
       }).then(res => {

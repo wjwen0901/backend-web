@@ -95,7 +95,7 @@
       <div>
         <el-form ref="form" :model="userResource" label-width="80px">
           <el-form-item label="姓名">
-            <el-input v-model="userResource.fullName"></el-input> 
+            <el-input v-model="userResource.fullName"></el-input>
           </el-form-item>
           <el-form-item label="手机号码">
             <el-input type="tel" v-model="userResource.cellphone"></el-input>
@@ -370,7 +370,7 @@ export default {
         text: 'name2',
         value: 'value2'
       }],
-      userId: window.localStorage.userId
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
     }
   },
   methods: {
@@ -420,7 +420,7 @@ export default {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           role: this.roleCode,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           condition: this.condition
         }
       }).then(res => {
@@ -433,7 +433,7 @@ export default {
       })
       this.axios.get('solution', {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.solutionList = res.data
@@ -489,6 +489,9 @@ export default {
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
+        },
+        params: {
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         }
       }).then(function (response) {
         _this.$message({
@@ -547,6 +550,9 @@ export default {
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
+        },
+        params: {
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         }
       }).then(function (response) {
         _this.$message({
@@ -563,7 +569,11 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.axios.delete('user/' + id).then(res => {
+        this.axios.delete('user/' + id, {
+          params: {
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
+          }
+        }).then(res => {
           this._initData()
           this.$message({
             type: 'success',
@@ -584,6 +594,7 @@ export default {
       // 获取权限列表
       this.axios.get('user/secs', {
         params: {
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           role: val
         }
       }).then(res => {
@@ -632,7 +643,7 @@ export default {
       this.name = name
       this.axios.get('solution', {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.solutionList = res.data
@@ -662,7 +673,8 @@ export default {
         params: {
           pageNum: 1, // 页码
           pageSize: 8, // 每页长度
-          keywords: queryString
+          keywords: queryString,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         }
       }).then(res => {
         console.log(res.data)
@@ -732,6 +744,7 @@ export default {
         method: 'post',
         url: 'barcode/payCode/' + this.userId,
         params: {
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           alias: this.qrCode.selSolution.yzAlias
         },
         data: {
@@ -773,6 +786,9 @@ export default {
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json'
+        },
+        params: {
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
         }
       }).then(function (res) {
         window.open(_this.axios.defaults.baseURL + '/barcode/down?isPatientCode=false&filename=' + res.data + '&Authorization=' + window.localStorage.token)
@@ -793,6 +809,7 @@ export default {
         method: 'post',
         url: 'barcode/elecInformed',
         params: {
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           salesmanId: this.userId,
           solutionId: this.eleInformed.selSolution.id,
           solutionName: this.eleInformed.selSolution.name,

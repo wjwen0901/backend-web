@@ -6,8 +6,8 @@
     </el-breadcrumb>
     <div class="order-container">
       <el-row :gutter="20">
-        <el-button style="float: right;margin-right: 20px;" type="primary" @click="editPay" v-if="order.statusStr != '已完成'">确认支付</el-button>
-        <el-col :span="8">
+        <el-button style="float: right;margin-right: 20px;" size="small" type="primary" @click="editPay" v-if="order.statusStr != '已完成'">确认支付</el-button>
+        <el-col :span="14">
           <el-row class="order-detail">
             <span class="order-detail-title">订单编号:</span>
             <span>{{order.orderNo}}</span>
@@ -50,7 +50,7 @@
               :data="informedList"
               size="mini"
               border
-              style="width: 100%">
+              style="width: 100%;margin-top:20px;">
               <el-table-column
                 label="操作"
                 width="180">
@@ -114,12 +114,20 @@ export default {
       this.getData()
     },
     getData () {
-      this.axios.get('order/' + this.$route.params.id).then(res => {
+      this.axios.get('order/' + this.$route.params.id, {
+        params: {
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+        },
+      }).then(res => {
         this.order = res.data
         this.order.expressCode = this.$route.query.expressCode
         this.skuPropertiesName = JSON.parse(this.order.skuPropertiesName)
         if (this.$route.query.expressId !== undefined) {
-          this.axios.get('express/' + this.$route.query.expressId).then(resExp => {
+          this.axios.get('express/' + this.$route.query.expressId, {
+            params: {
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+            },
+          }).then(resExp => {
             this.order.expressCode = resExp.data.expressOrder.expressCode
             this.order.expressPath = resExp.data.expressOrder.path
           }).catch(err => {
@@ -131,8 +139,9 @@ export default {
       })
       this.axios.get('informed/order', {
         params: {
-          orderId: this.$route.params.id
-        }
+          orderId: this.$route.params.id,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+        },
       }).then(res => {
         this.informedList = res.data
       }).catch(err => {
@@ -142,45 +151,42 @@ export default {
     imgPath (path) {
       this.axios.get('oss/upload/show', {
         params: {
-          objectKey: path
-        }
+          objectKey: path,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+        },
       }).then(res1 => {
         window.open(res1.data)
       }).catch(err => {
         console.log(err)
       })
     },
-    editPay () {
-      this.$alert('一定要确认客户已支付哦！！！', '确认已付款', {
-        confirmButtonText: '确定',
-        callback: action => {
-          this.order.statusStr = '已付款'
-          this.order.payTime = new Date()
-          var instance = this.axios.create({
-            headers: {
-              'Authorization': window.localStorage.token,
-              'Content-Type': 'application/json'
+    editPay(){
+      this.$confirm('一定要确认客户已支付哦！！！', '确认已付款', {
+          confirmButtonText: '确定',
+          type: 'warning',
+          showCancelButton:false
+        }).then(() => {
+           this.axios.get('order/confirm', {
+            params: {
+              orderId: this.$route.params.id,
+              userId: this.userId
             }
-          })
-          let _this = this
-          instance({
-            method: 'put',
-            url: 'order',
-            data: this.order,
-            headers: {
-              'X-Requested-With': 'XMLHttpRequest',
-              'Content-Type': 'application/json'
+          }).then(res => {
+            if (res.data == 'success') {
+              this.$message({
+                message: '确认成功',
+                type: 'success'
+              })
             }
-          }).then(function (response) {
-            _this.$message({
-              message: '修改成功',
-              type: 'success'
-            })
-            _this._initData()
+          }).catch(err => {
+            console.log(err)
           })
-        }
-      });
-
+        }).catch(() => {
+          // this.$message({
+          //   type: 'info',
+          //   message: '已取消删除'
+          // });          
+        });
     }
   },
   filters: {
@@ -210,6 +216,7 @@ export default {
     margin: 20px 0px;
     padding: 20px;
     background: #ffffff;
+    height: 100%;
   }
   .order-container .header {
     margin-bottom: 20px;

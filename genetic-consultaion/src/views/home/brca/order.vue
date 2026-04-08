@@ -92,6 +92,7 @@
           <el-button type="primary" size="small" @click="toDistribution">分配解读费用</el-button>
           <el-button type="primary" size="small" @click="toDistributionSalesman">分配市场费用</el-button>
           <el-button type="success" size="small" @click="confirmMoney">确认到帐</el-button>
+          <el-button type="success" size="small" @click="exportOrder">导出订单</el-button>
         </el-row>
       </div>
       <el-table
@@ -297,7 +298,7 @@ export default {
       serviceUserList: [],
       roleCode: window.localStorage.role,
       condition: null,
-      userId: window.localStorage.userId,
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
       dialogDistributionVisible: false,
       dialogDistributionSalesVisible: false,
     }
@@ -315,7 +316,7 @@ export default {
     getData () {
       this.axios.get('order/brca/page', {
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           hospitalId: this.searchForm.hospitalId,
           deptId: this.searchForm.deptId,
           doctor: this.searchForm.doctor,
@@ -340,7 +341,7 @@ export default {
     getCompanyList () {
       this.axios.get('company/CustCompany', {
         params: {
-          userId: window.localStorage.userId
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
         }
       }).then(res => {
         this.companyList = res.data
@@ -540,6 +541,37 @@ export default {
         }).catch(err => {
           console.log(err)
         })
+      })
+    },
+    exportOrder () {
+      let ids = '';
+      this.multipleSelection.forEach((item,index) => {
+        ids += item.orderId
+        if (index < this.multipleSelection.length-1) {
+          ids += ','
+        }
+      });
+
+      this.axios.get('saas/trade/export', {
+        params: {
+          ids: ids,
+          userId: this.userId
+        },
+        responseType: 'blob'
+      }).then(response => {
+        const blob = new Blob(
+          [response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8' })
+        const aEle = document.createElement('a');     // 创建a标签
+        const href = window.URL.createObjectURL(blob);       // 创建下载的链接
+        aEle.href = href;
+        const today = new Date();
+        aEle.download = "订单列表-" + today.getFullYear() + '-'+ (today.getMonth()+1)+ '-' + today.getDate() + ".xls";  // 下载后文件名
+        document.body.appendChild(aEle);
+        aEle.click();     // 点击下载
+        document.body.removeChild(aEle); // 下载完成移除元素
+        window.URL.revokeObjectURL(href) // 释放掉blob对象
+      }).catch(err => {
+        console.log(err)
       })
     }
   },

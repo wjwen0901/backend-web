@@ -5,9 +5,9 @@
     </el-breadcrumb>
     <div class="product-container">
       <div>
-        <el-button class="add-solution" size="small" type="primary" @click="toAdd">新增</el-button>
+        <el-button class="add-solution" size="small" type="primary" @click="toAdd" style="width: 80px">新增</el-button>
         <div class="search-box">
-          <el-input placeholder="请输入产品名称/适用科室" v-model="condition" class="input-with-select">
+          <el-input placeholder="请输入产品名称/适用科室" size="small" v-model="condition" class="input-with-select">
             <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
           </el-input>
         </div>
@@ -20,16 +20,16 @@
         <el-table-column
           prop="id"
           label="编号"
-          width="80">
+          width="80"
+          align="center">
         </el-table-column>
         <el-table-column
           prop="name"
-          label="产品名称">
-          label="产品名称">
+          label="产品名称"
+          align="center">
         </el-table-column>
-        <el-table-column
-          prop="deptName"
-          label="适用科室">
+        <el-table-column prop="deptName" label="适用科室" align="center">
+          <template slot-scope="{row}">{{row.deptName || '-'}}</template>
         </el-table-column>
         <!--<el-table-column-->
           <!--prop="name"-->
@@ -39,7 +39,7 @@
         <el-table-column
           prop="period"
           label="检测周期"
-          width="100">
+          align="center">
           <template slot-scope="scope" v-if="scope.row.period !== undefined">
             {{scope.row.period}}个工作日
           </template>
@@ -52,7 +52,7 @@
         <el-table-column
           prop="create_time"
           label="创建日期"
-          width="180">
+          align="center">
           <template slot-scope="scope">
             {{scope.row.create_time | formatDate}}
           </template>
@@ -60,7 +60,8 @@
         <el-table-column
           fixed="right"
           label="操作"
-          width="100">
+          width="200"
+          align="center">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="toDetail(scope.row.id)">编辑</el-button>
             <el-button type="text" size="small" @click="toDelete(scope.row.id)">删除</el-button>
@@ -68,6 +69,7 @@
         </el-table-column>
       </el-table>
       <el-pagination
+        style="text-align: right;margin: 20px 0"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="pageNum"
@@ -97,12 +99,13 @@ export default {
     _initData () {
       this.getData()
     },
+    // userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
     getData () {
-      this.axios.get('solution/page', {
-        params: {
+      const user = window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+      this.axios.get('solution/page?userId='+user, {
+        params:{
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          userId: window.localStorage.userId,
           condition: this.condition
         }
       }).then(res => {
@@ -137,7 +140,11 @@ export default {
     toDelete (id) {
       this.$confirm('确认删除？')
         .then(_ => {
-          this.axios.delete('solution/' + id).then(res => {
+          this.axios.delete('solution/' + id, {
+            params: {
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+            }
+          }).then(res => {
             this.getData()
             this.$message({
               message: '删除成功',

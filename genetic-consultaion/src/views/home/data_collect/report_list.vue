@@ -102,7 +102,7 @@ export default {
     getData () {
       this.axios.get('report', {
         params: {
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           searchCondition: this.condition

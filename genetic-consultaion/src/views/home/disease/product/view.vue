@@ -10,7 +10,7 @@
     </el-row>
     <el-row>
       <el-col :span="24">
-        <div class="gene-container"> 
+        <div class="gene-container">
           <el-form ref="solutionForm" label-width="80px" size="mini" class="edit-form clearfix">
             <div class="left">
             <el-form-item label="产品名称*">
@@ -22,7 +22,7 @@
             <el-form-item label="适用阶段">
               <span v-for="(item,index) in screening" :key="index">{{item}}&nbsp;&nbsp;</span>
             </el-form-item>
-            <el-form-item label="适用科室"> 
+            <el-form-item label="适用科室">
               <span v-for="(item,index) in departs" :key="index">{{item}}&nbsp;&nbsp;</span>
             </el-form-item>
             <el-form-item label="检测内容*">
@@ -30,16 +30,16 @@
             </el-form-item>
             <el-form-item label="临床意义">
                <span>{{datas.purpose}}</span>
-            </el-form-item> 
-          </div>  
+            </el-form-item>
+          </div>
           <div class="chang">
             检测厂商
           </div>
           </el-form>
-          <div class="gene-select"> 
-            <p v-for="(item,index) in changName" :key="index">{{item}}&nbsp;&nbsp;&nbsp;</p> 
-          </div> 
-        </div> 
+          <div class="gene-select">
+            <p v-for="(item,index) in changName" :key="index">{{item}}&nbsp;&nbsp;&nbsp;</p>
+          </div>
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -49,14 +49,14 @@ import Input from '../../../../components/inputs'
 export default {
   name: 'GeneEdit',
   data () {
-    return {  
+    return {
       Significance:'',
       name:'',
       content:'',
       products:'',
       manufacturer:'',
       openIsDisabled:false,
-      options: [], 
+      options: [],
       sum:1,
       list:[],
       department:'',
@@ -76,29 +76,30 @@ export default {
   methods: {
     disableds(){
       this.openIsDisabled = !this.openIsDisabled
-    },    
+    },
     getData(){
       this.axios({
         url:'product/productById',
         params:{
           id:this.$route.query.id,
-          state:this.$route.query.state
-        }
+          state:this.$route.query.state,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+        },
       }).then(res=>{
-        this.datas = res.data.product; 
-        console.log(res.data) 
+        this.datas = res.data.product;
+        console.log(res.data)
         this.departs = res.data.depts.map((item,index)=>{
-          return  item.name 
-        })  
+          return  item.name
+        })
         this.screening = res.data.screenings.map((item,index)=>{
           return item.screeningName
-        }) 
+        })
         this.changName = res.data.solutions.map((item,index)=>{
           return item.name
-        }) 
+        })
       })
-    } 
-  }, 
+    }
+  },
    mounted(){
      this.getData()
    }
@@ -111,7 +112,7 @@ export default {
   //   })
   //   this._initData()
   //   loading.close()
-  // }, 
+  // },
 }
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
@@ -133,7 +134,7 @@ export default {
       margin-left: 100px;
     }
   }
-  .add{ 
+  .add{
     position: absolute;
     top:10%;
     left:30%;
@@ -174,7 +175,7 @@ export default {
       width: 100%;
       float: left;
       height: 100%;
-    } 
+    }
     .el-input {
       width: 100%;
     }

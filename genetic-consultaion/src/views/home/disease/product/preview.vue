@@ -10,7 +10,7 @@
     </el-row>
     <el-row>
       <el-col :span="24">
-        <div class="gene-container"> 
+        <div class="gene-container">
           <el-form ref="solutionForm" label-width="80px" size="mini" class="edit-form clearfix">
             <div class="left">
             <el-form-item label="产品名称*">
@@ -23,28 +23,28 @@
                <span v-for="(item,index) in sessionData.screenings" :key="index">{{item.screeningName}}&nbsp;&nbsp;</span>
                <!-- <span>{{sessionData.screenings}}</span> -->
             </el-form-item>
-            <el-form-item label="适用科室"> 
+            <el-form-item label="适用科室">
               <span v-for="(item,index) in sessionData.deptIds" :key="index">{{item.name}}&nbsp;&nbsp;</span>
             </el-form-item>
             <el-form-item label="检测内容*">
                <span>{{sessionData.brief}}</span>
             </el-form-item>
-            <el-form-item label="临床意义"> 
+            <el-form-item label="临床意义">
               <span>{{sessionData.purpose}}</span>
-            </el-form-item> 
-          </div>  
+            </el-form-item>
+          </div>
           <div class="chang">
-            检测厂商 
+            检测厂商
           </div>
           </el-form>
-          <div class="gene-select">  
+          <div class="gene-select">
             <p v-for="(item,index) in sessionData.solutionIds" :key="index">{{item.name}}</p>
-          </div> 
+          </div>
           <div class="gene-btns">
                 <el-button type="primary" @click="addData" >保存</el-button>
-                <el-button @click="cancel" >取消</el-button> 
+                <el-button @click="cancel" >取消</el-button>
            </div>
-        </div> 
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -82,24 +82,25 @@ export default {
   methods: {
     cancel(){
       this.$router.go(-1)
-    }, 
+    },
     getData() {
       this.axios({
         url: "product/productById",
         params: {
           id: this.$route.query.id,
-          state: this.$route.query.state
-        }
+          state: this.$route.query.state,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+        },
       }).then(res => {
         this.id = res.data.product.id;
         this.productId = res.data.product.id;
-        this.datas = res.data.product; 
+        this.datas = res.data.product;
         this.departs = res.data.depts.map((item, index) => {
           return item.name;
         });
         this.screening = res.data.screenings.map((item, index) => {
           return item.screeningName;
-        });  
+        });
       });
     },
     //保存
@@ -110,7 +111,7 @@ export default {
       var sessionId = this.sessionData.solutionIds.map(item=>{
         return item.id
       })
-      if(this.$route.query.id == undefined) { 
+      if(this.$route.query.id == undefined) {
           let instance = this.axios.create({
             headers: {
               Authorization: window.localStorage.token,
@@ -124,6 +125,9 @@ export default {
             headers: {
               "Content-Type": "application/json",
               "X-Requested-With": "XMLHttpRequest"
+            },
+            params: {
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
             },
             data: {
               name: _this.sessionData.name,
@@ -143,7 +147,7 @@ export default {
             })
             .catch(err => {
               _this.$message(JSON.parse(err.request.response).msg);
-            }); 
+            });
       } else {
         if (this.state == 0) {
           let instance = this.axios.create({
@@ -159,6 +163,9 @@ export default {
             headers: {
               "Content-Type": "application/json",
               "X-Requested-With": "XMLHttpRequest"
+            },
+            params: {
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
             },
             data: {
               id: _this.id,
@@ -194,7 +201,8 @@ export default {
                 "X-Requested-With": "XMLHttpRequest"
               },
               params: {
-                temId: _this.id
+                temId: _this.id,
+                userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
               },
               data: {
                 name: _this.sessionData.name,
@@ -227,7 +235,8 @@ export default {
                 "X-Requested-With": "XMLHttpRequest"
               },
               params: {
-                temId: _this.id
+                temId: _this.id,
+                userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
               },
               data: {
                 id: _this.productId,
@@ -248,11 +257,11 @@ export default {
               });
           }
         }
-      }  
+      }
     }
   },
   mounted() {
-    this.getData(); 
+    this.getData();
     this.sessionData = JSON.parse(window.sessionStorage.getItem("pro"));
     this.state = this.$route.query.state;
     this.productId = this.sessionData.productId

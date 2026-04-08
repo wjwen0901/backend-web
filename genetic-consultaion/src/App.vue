@@ -31,6 +31,14 @@ export default {
 body {
   margin: 0;
   height: 100vh;
+  min-height: 100%;
+  padding: 0;
+}
+/**防止因BRCA发票页面缩小而引起的滚抖动 */
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 *{
   list-style: none;
@@ -42,6 +50,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: #333333;
   height: 100%;
+  overflow-y: auto;
 }
 .el-menu-item, .el-submenu__title {
   text-align: left;
@@ -60,5 +69,9 @@ body {
   content: ".";
   clear: both;
   height: 0;
+}
+.el-pagination{
+  text-align: right;
+  margin-top: 20px;
 }
 </style>

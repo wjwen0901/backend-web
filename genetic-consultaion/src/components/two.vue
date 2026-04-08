@@ -1,4 +1,4 @@
-<template> 
+<template>
       <div class="ap-upload">
         <div class="u-select">
         <p class="form-group-title">选择文件</p>
@@ -32,7 +32,7 @@ import qs from 'qs'
 export default {
     data(){
         return{
-      userId: window.localStorage.userId,
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
       report: {
         fullName: window.localStorage.fullName === undefined ? '' : window.localStorage.fullName,
         cellphone: window.localStorage.cellphone === undefined ? '' : window.localStorage.cellphone,
@@ -63,8 +63,8 @@ export default {
       uploader: {},
       hasUserInfo: false,
       projects:[],
-      companyList:[], 
-    
+      companyList:[],
+
         }
     },
     mounted () {
@@ -76,38 +76,38 @@ export default {
       this.initData()
   },
   methods: {
-      initData () { 
+      initData () {
         this.$axios({
         url:'https://qa.mdhcare.cn/mdhcare-backend/solution',
         params: {
           userId: this.userId
         }
       }).then(res => {
-        this.projects = res.data; 
+        this.projects = res.data;
       }).catch(err => {
         console.log(err)
       })
-      
+
        this.$axios({
         url:'https://qa.mdhcare.cn/mdhcare-backend/company/CustCompany',
         params: {
           userId: this.userId
         }
       }).then(res => {
-        this.companyList = res.data; 
+        this.companyList = res.data;
       }).catch(err => {
         console.log(err)
       })
     },
-    toUpload () { 
+    toUpload () {
         this.setUploadParam(this.uploader, '', false)
     },
     sendRequest() {
       const xmlhttp = new XMLHttpRequest();
-      const param = this.userId > 0 ? "?userId=" + this.userId : ""; 
-      const serverUrl ="https://qa.mdhcare.cn/mdhcare-backend/oss/upload/policy/literature"+param; 
+      const param = this.userId > 0 ? "?userId=" + this.userId : "";
+      const serverUrl ="https://qa.mdhcare.cn/mdhcare-backend/oss/upload/policy/literature"+param;
       xmlhttp.open("GET", serverUrl, false);
-      xmlhttp.setRequestHeader("Authorization", window.localStorage.token); 
+      xmlhttp.setRequestHeader("Authorization", window.localStorage.token);
       xmlhttp.send();
       return xmlhttp.responseText;
     },
@@ -230,9 +230,9 @@ export default {
           FileUploaded: (up, file, info) => {
             const d = document.getElementById(file.id)
             if (info.status === 200) {
-              d.setAttribute('class', 'el-upload-list__item is-success') 
+              d.setAttribute('class', 'el-upload-list__item is-success')
               const param = {
-                userId: this.userId, 
+                userId: this.userId,
                 fileName: file.name,
                 name: this.report.fullName,
                 cellphone: this.report.cellphone,
@@ -248,7 +248,7 @@ export default {
                var arr=[]
                arr.push(param)
                console.log(arr)
-            
+
             } else {
               d.setAttribute('class', 'el-upload-list__item is-warning')
             }
@@ -290,7 +290,7 @@ export default {
   filters: {
     formatSize (fileSize) {
       return plupload.formatSize(fileSize)
-    } 
+    }
 }
 }
 </script>

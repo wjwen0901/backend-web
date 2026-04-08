@@ -10,7 +10,7 @@
     </el-row>
     <el-row>
       <el-col :span="24">
-        <div class="gene-container"> 
+        <div class="gene-container">
           <el-form ref="solutionForm" :model="gene" label-width="80px" size="mini" class="edit-form clearfix">
             <div class="left">
             <el-form-item label="基因*">
@@ -24,12 +24,12 @@
             </el-form-item>
             <el-form-item label="内含子数">
               <el-input v-model="gene.intron" :disabled="introns" placeholder="请输入"></el-input>
-            </el-form-item> 
+            </el-form-item>
           </div>
           <div class="right">
             <el-form-item label="NM号">
               <el-input v-model="gene.nm" :disabled="nms" placeholder="请输入"></el-input>
-            </el-form-item> 
+            </el-form-item>
              <el-form-item label="相关疾病">
                  <el-select
                   v-model="diseaseIds"
@@ -39,7 +39,7 @@
                   style="width:390px"
                   filterable
                   remote
-                  reserve-keyword 
+                  reserve-keyword
                   placeholder="请选择"
                   :remote-method="diseaseRemote"
                   :loading="diseaseLoading">
@@ -50,7 +50,7 @@
                     :value="item">
                   </el-option>
                 </el-select>
-              </el-form-item> 
+              </el-form-item>
               <el-form-item label="靶向用药">
                  <el-select
                   v-model="meda"
@@ -73,7 +73,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="检测产品">
-               <el-select 
+               <el-select
                   v-model="newProduct"
                   :disabled="productIds"
                   value-key="name"
@@ -93,30 +93,30 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-          </div>   
+          </div>
           </el-form>
           <ul class="gene-list" >
             其他
-          </ul> 
-          <div class="gene-contents"> 
+          </ul>
+          <div class="gene-contents">
               <p class="title">标题：<span>其他</span> </p>
           </div>
           <div class="edit_container">
-              <quill-editor 
+              <quill-editor
               :disabled="content1"
-                v-model="content" 
-                ref="myQuillEditor" 
+                v-model="content"
+                ref="myQuillEditor"
                 @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
                 @change="onEditorChange($event)">
-              </quill-editor> 
-          </div> 
+              </quill-editor>
+          </div>
            <div class="gene-btns">
                 <el-button type="primary" @click="addData" :disabled = "openIsDisabled">发布</el-button>
                 <el-button type="primary" @click="preview" :disabled = "openIsDisabled ">预览</el-button>
                 <el-button type="primary" @click="disableds">暂存</el-button>
-                <el-button @click="cancel" :disabled = " openIsDisabled ">取消</el-button> 
+                <el-button @click="cancel" :disabled = " openIsDisabled ">取消</el-button>
            </div>
-        </div> 
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -130,7 +130,7 @@ export default {
         source: {}
       },
       newProduct: [],
-      diseaseIds: [], 
+      diseaseIds: [],
       diseaseOption:[],
       meda: [],
       menuInfo: this.$route.query.id === undefined ? "新增" : "编辑",
@@ -254,7 +254,7 @@ export default {
       }).then(res => {
         console.log(res.data);
         this.gene = res.data.gene;
-        this.geneId = res.data.gene.geneId; 
+        this.geneId = res.data.gene.geneId;
         this.id = res.data.gene.id;
         this.content = res.data.gene.other;
         this.newProduct = res.data.products == undefined ? [] :  res.data.products.map(item => {
@@ -269,8 +269,8 @@ export default {
         });
         this.meda = res.data.druggerys == undefined ? [] : res.data.druggerys.map(item=>{
             this.medicaOption.push({id:item.druggeryId,name:item.druggeryName})
-            return {id:item.druggeryId,name:item.druggeryName} 
-          })  
+            return {id:item.druggeryId,name:item.druggeryName}
+          })
        this.diseaseIds = res.data.diseases == undefined ? [] : res.data.diseases.map(item => {
           this.diseaseOption.push({
             id:item.diseaseId,
@@ -464,7 +464,7 @@ export default {
       }
     },
     //预览
-    preview() { 
+    preview() {
       var obj = {};
       (obj.gene = this.gene.gene),
       (obj.exon = this.gene.exon),
@@ -523,7 +523,7 @@ export default {
       } else {
         this.diseaseOption = [];
       }
-    }, 
+    },
     //靶向用药
     medicaGetdata(medica) {
       this.axios({
@@ -593,13 +593,13 @@ export default {
     },
     //暂存按钮
     disableds() {
-     var newProduct = this.newProduct.map(item => {  
+     var newProduct = this.newProduct.map(item => {
           return item.id
         });
-        var meda = this.meda.map(item=>{  
+        var meda = this.meda.map(item=>{
             return item.id
-          })  
-       var diseaseIds = this.diseaseIds.map(item => {  
+          })
+       var diseaseIds = this.diseaseIds.map(item => {
              return item.id
         });
       this.openIsDisabled = !this.openIsDisabled;
@@ -800,7 +800,7 @@ export default {
             gene: this.gene,
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             "X-Requested-With": "XMLHttpRequest",
@@ -843,7 +843,7 @@ export default {
             deptId: this.proDepts,
             sampleMetaId: this.sampleMeta,
             solutionExpands: this.expandParams,
-            userId: window.localStorage.userId
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           },
           headers: {
             "X-Requested-With": "XMLHttpRequest",

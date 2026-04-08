@@ -24,11 +24,11 @@
         <el-table-column
           prop="nameEn"
           label="英文名称">
-        </el-table-column> 
+        </el-table-column>
         <el-table-column
           prop="createTime"
-          label="创建时间" 
-          width="180"> 
+          label="创建时间"
+          width="180">
           <template slot-scope="scope">
         <span>{{timestampToTime(scope.row.createTime)}}</span>
         </template>
@@ -54,7 +54,7 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="pageNum"  
+        :current-page="pageNum"
         layout="total, sizes, prev, pager, next, jumper"
         :total="totalPage">
       </el-pagination>
@@ -69,16 +69,16 @@ export default {
     return {
       proList: [],
       pageNum: 1,
-      pageSize: 10, 
+      pageSize: 10,
       paramSelect: '',
       condition: '',
       totalPage: 0
     }
   },
   methods: {
-     timestampToTime(timestamp) {  
-        var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000 
-        var Y = date.getFullYear() + '-'; 
+     timestampToTime(timestamp) {
+        var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        var Y = date.getFullYear() + '-';
         var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
         var D = (date.getDate() < 10 ? '0'+date.getDate() : date.getDate()) + ' ';
         var h = (date.getHours() < 10 ? '0'+date.getHours() : date.getHours()) + ':';
@@ -94,20 +94,21 @@ export default {
         params:{
           keyWord: this.condition,
           pageSize: this.pageSize,
-          pageNum: this.pageNum
-        }
+          pageNum: this.pageNum,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+        },
       }).then(res => {
         this.proList = res.data.products
         this.totalPage = res.data.totalNum
       }).catch(err => {
       })
     },
-    handleSizeChange (val) { 
-      this.pageSize = val 
+    handleSizeChange (val) {
+      this.pageSize = val
       this.getData()
     },
     handleCurrentChange (val) {
-      this.pageNum = val 
+      this.pageNum = val
       this.getData()
     },
     toEdit (id,state) {
@@ -120,7 +121,7 @@ export default {
         }
       })
     },
-    toDetail (id,state) { 
+    toDetail (id,state) {
       this.$router.push({
         name: 'ProductClView',
         params: {'id': id},
@@ -142,8 +143,10 @@ export default {
             url:'product',
             method:"delete",
             params:{
-              productId:id,state
-            }
+              productId:id,
+              state,
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+            },
           }).then(res => {
             this.getData()
             this.$message({
@@ -158,7 +161,7 @@ export default {
             })
           })
         })
-        .catch(_ => {}) 
+        .catch(_ => {})
     }
   },
   filters: {
@@ -191,6 +194,6 @@ export default {
       width: 400px;
       float: right;
       margin-bottom: 10px;
-    } 
+    }
   }
 </style>

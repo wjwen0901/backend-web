@@ -102,7 +102,7 @@ export default {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           condition: this.condition
         }
       }).then(res => {
@@ -137,7 +137,11 @@ export default {
     toDelete (id) {
       this.$confirm('确认删除？')
         .then(_ => {
-          this.axios.delete('solution/' + id).then(res => {
+          this.axios.delete('solution/' + id,{
+            params: {
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+            }
+          }).then(res => {
             this.getData()
             this.$message({
               message: '删除成功',

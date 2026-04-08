@@ -232,7 +232,7 @@ export default {
         value: 'value2'
       }],
       bankInfo: [],
-      userId: window.localStorage.userId
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
     }
   },
   methods: {
@@ -255,7 +255,7 @@ export default {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          userId: window.localStorage.userId,
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           condition: this.condition
         }
       }).then(res => {
@@ -287,6 +287,9 @@ export default {
     },
     toExcel () {
       this.axios.get('/white/export',{
+        params: {
+          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
+        },
         responseType:"blob"
       }).then(response => {
         const blob = new Blob(

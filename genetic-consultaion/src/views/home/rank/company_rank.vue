@@ -115,13 +115,18 @@ export default {
         this.companyId = this.$route.params.id ? this.$route.params.id : this.companyId
         this.axios.get('term', {
           params: {
-            condition: this.condition
-          }
+            condition: this.condition,
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+          },
         }).then(res => {
           const rankTemp = res.data
           const _this = this
           _this.terms = []
-          this.axios.get('assess/company/' + this.companyId).then(res => {
+          this.axios.get('assess/company/' + this.companyId, {
+            params: {
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+            }
+          }).then(res => {
             _this.rankList = res.data
             rankTemp.forEach((value) => {
               _this.rankList.some((value1) => {
@@ -143,14 +148,19 @@ export default {
       } else {
         this.axios.get('term', {
           params: {
-            condition: this.condition
-          }
+            condition: this.condition,
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+          },
         }).then(res => {
           this.terms = res.data
         }).catch(err => {
           console.log(err)
         })
-        this.axios.get('company').then(res => {
+        this.axios.get('company', {
+          params: {
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+          }
+        }).then(res => {
           this.companyList = res.data
         }).catch(err => {
           console.log(err)
@@ -166,7 +176,8 @@ export default {
         this.axios.get('assess/piece', {
           params: {
             termId: id,
-            companyId: this.companyId
+            companyId: this.companyId,
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
         }).then(res1 => {
           let p = res1.data
@@ -219,6 +230,9 @@ export default {
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json'
+          },
+          params: {
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
         }).then(function (response) {
           _this.$message({
@@ -251,6 +265,9 @@ export default {
           headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json'
+          },
+          params: {
+            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
           }
         }).then(function (response) {
           _this.$message({
