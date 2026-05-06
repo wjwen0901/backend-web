@@ -362,6 +362,22 @@
   color: #fff !important;
 }
 
+/* disabled 态：让 !important 覆盖也能看出是禁用 */
+#app .el-button.is-disabled:not(.el-button--text),
+#app .el-button.is-disabled:not(.el-button--text):hover,
+#app .el-button.is-disabled:not(.el-button--text):focus {
+  background: var(--pc-ink-100) !important;
+  border-color: var(--pc-ink-200) !important;
+  color: var(--pc-ink-400) !important;
+  cursor: not-allowed;
+}
+#app .el-button--text.is-disabled,
+#app .el-button--text.is-disabled:hover {
+  color: var(--pc-ink-400) !important;
+  background: transparent !important;
+  cursor: not-allowed;
+}
+
 /* ===== input / select ===== */
 #app .el-input__inner {
   border-radius: var(--pc-r-4);
