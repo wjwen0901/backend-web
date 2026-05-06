@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-06T08:13:46Z",
+  "title": "Design System: 易得好康 后台",
+  "extensions": {
+    "colorMeta": {
+      "pc-primary-600": {
+        "role": "primary",
+        "displayName": "Operations Forest",
+        "canonical": "oklch(50% 0.06 175)",
+        "tonalRamp": ["#04332D", "#08594F", "#0E7A6E", "#119084", "#3FA89E", "#6CC2BA", "#A1D9D2", "#D0E8E4"]
+      },
+      "pc-accent-600": {
+        "role": "secondary",
+        "displayName": "Brand Teal",
+        "canonical": "oklch(64% 0.085 180)",
+        "tonalRamp": ["#053730", "#0F8B7E", "#14A495", "#2EBDAE", "#5DD0C3", "#8DDED5", "#BCEBE5", "#E6F4F2"]
+      },
+      "pc-accent-ink": {
+        "role": "tertiary",
+        "displayName": "Deep Ink Teal",
+        "canonical": "oklch(31% 0.04 215)",
+        "tonalRamp": ["#051F26", "#0B3B47", "#0F4A56", "#143A45", "#1F5A6A", "#356F7E", "#5C8B96", "#A4BBC2"]
+      },
+      "pc-warn-600": {
+        "role": "status-warn",
+        "displayName": "Amber Warn",
+        "canonical": "oklch(70% 0.16 60)",
+        "tonalRamp": ["#5C2705", "#92400E", "#B45309", "#D97706", "#F59E0B", "#FBBF24", "#FCD34D", "#FEF3C7"]
+      },
+      "pc-info-600": {
+        "role": "status-info",
+        "displayName": "Cobalt Info",
+        "canonical": "oklch(58% 0.22 260)",
+        "tonalRamp": ["#0A1F5C", "#1E3A8A", "#1D4ED8", "#2563EB", "#3B82F6", "#60A5FA", "#93C5FD", "#DBEAFE"]
+      },
+      "pc-prog-600": {
+        "role": "status-progress",
+        "displayName": "Violet Progress",
+        "canonical": "oklch(58% 0.22 295)",
+        "tonalRamp": ["#2E1065", "#5B21B6", "#6D28D9", "#7C3AED", "#8B5CF6", "#A78BFA", "#C4B5FD", "#EDE9FE"]
+      },
+      "pc-succ-600": {
+        "role": "status-success",
+        "displayName": "Emerald Success",
+        "canonical": "oklch(63% 0.16 160)",
+        "tonalRamp": ["#022C22", "#065F46", "#047857", "#059669", "#10B981", "#34D399", "#6EE7B7", "#D1FAE5"]
+      },
+      "pc-pos-600": {
+        "role": "status-positive",
+        "displayName": "Vermillion Positive (Medical High-Alert)",
+        "canonical": "oklch(58% 0.22 25)",
+        "tonalRamp": ["#450A0A", "#7F1D1D", "#B91C1C", "#DC2626", "#EF4444", "#F87171", "#FCA5A5", "#FEE2E2"]
+      },
+      "pc-neg-600": {
+        "role": "status-negative",
+        "displayName": "Jade Negative (Medical Safe)",
+        "canonical": "oklch(64% 0.18 145)",
+        "tonalRamp": ["#052E16", "#14532D", "#166534", "#16A34A", "#22C55E", "#4ADE80", "#86EFAC", "#DCFCE7"]
+      },
+      "pc-ink-700": {
+        "role": "neutral-text",
+        "displayName": "Slate (default body)",
+        "canonical": "oklch(40% 0.015 245)",
+        "tonalRamp": ["#1F2937", "#2A3340", "#374151", "#4B5563", "#6B7280", "#9CA3AF", "#D1D5DB", "#F9FAFB"]
+      },
+      "pc-ink-50": {
+        "role": "neutral-surface",
+        "displayName": "Surface 1 (main bg)",
+        "canonical": "oklch(98% 0.005 245)",
+        "tonalRamp": ["#1F2937", "#374151", "#6B7280", "#9CA3AF", "#D1D5DB", "#E5E7EB", "#F3F4F6", "#F9FAFB"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display (KPI Big-Number)", "purpose": "仅用于仪表盘 KPI 大数 (28px, 700)。其他位置严禁。" },
+      "title": { "displayName": "Title", "purpose": "页面主标题 pc-page-title h2 (18px, 600)。每页一个。" },
+      "body": { "displayName": "Body", "purpose": "全局正文、表单、菜单 (13px, 400)。" },
+      "body-table": { "displayName": "Body Table", "purpose": "表格内容 (12.5px, 400)。比 body 小 0.5px 多塞 18 行。" },
+      "label": { "displayName": "Label", "purpose": "Tag、segmented count、KPI label、菜单 group (11.5px, 500, letter-spacing 0.3px)。" },
+      "mono": { "displayName": "Mono Tabular", "purpose": "订单号 / 样本编号 / KPI 数字 / 接口路径。启用 tnum 等宽数字。" }
+    },
+    "shadows": [
+      { "name": "pc-sh-1", "value": "0 1px 2px rgba(15,23,42,.04)", "purpose": "卡片 / KPI tile 默认。极轻，打破完全平铺。" },
+      { "name": "pc-sh-2", "value": "0 2px 6px rgba(15,23,42,.06)", "purpose": "顶栏 pc-header 下沿。shell 与内容区分界。" },
+      { "name": "pc-sh-3", "value": "0 6px 16px rgba(15,23,42,.08)", "purpose": "卡片 hover 上升、KPI 上扬交互态。" },
+      { "name": "pc-sh-4", "value": "0 12px 32px rgba(15,23,42,.12)", "purpose": "弹层 / dropdown / dialog 最上层。" }
+    ],
+    "motion": [
+      { "name": "pc-dur-1", "value": "120ms", "purpose": "微交互（icon 颜色切换、tag hover）。" },
+      { "name": "pc-dur-2", "value": "200ms", "purpose": "标准 state transition（按钮、菜单激活、batchbar 出现）。" },
+      { "name": "pc-dur-3", "value": "320ms", "purpose": "复杂动画（segmented underline 滑动、stagger 行动画）。" },
+      { "name": "pc-ease", "value": "cubic-bezier(.22, 1, .36, 1)", "purpose": "默认缓动 ease-out-quint，所有 transition 一律用这个。" }
+    ],
+    "breakpoints": [
+      { "name": "min", "value": "1200px", "purpose": "PC only 系统，最小宽度 1200px。无 mobile / tablet 响应式。" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "主按钮，4px 圆角，32px 高，用 !important 压住遗留 normal.css 的 #14a495 强制色。",
+      "html": "<button class=\"ds-btn-primary\">提交</button>",
+      "css": ".ds-btn-primary { background: var(--pc-primary-600); color: #fff; height: 32px; padding: 0 16px; border: 1px solid var(--pc-primary-600); border-radius: 4px; font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; font-size: 13px; font-weight: 500; line-height: 1; cursor: pointer; transition: background 200ms cubic-bezier(.22,1,.36,1), border-color 200ms cubic-bezier(.22,1,.36,1); } .ds-btn-primary:hover, .ds-btn-primary:focus-visible { background: var(--pc-primary-700); border-color: var(--pc-primary-700); outline: none; box-shadow: 0 0 0 3px rgba(14,122,110,.12); }"
+    },
+    {
+      "name": "Status Tag (Vermillion Positive)",
+      "kind": "chip",
+      "refersTo": "tag-pos",
+      "description": "医学阳性 = 高警示红，全圆 22px 高 11.5px label。",
+      "html": "<span class=\"ds-tag-pos\">阳性</span>",
+      "css": ".ds-tag-pos { display: inline-flex; align-items: center; height: 22px; line-height: 20px; padding: 0 10px; background: var(--pc-pos-100); color: var(--pc-pos-700); border: 1px solid var(--pc-pos-100); border-radius: 999px; font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; font-size: 11.5px; font-weight: 500; letter-spacing: 0.3px; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "卡片容器 6px 圆角 + 1px hairline + 极轻阴影。hover 升 sh-3。",
+      "html": "<section class=\"ds-card\"><h3 class=\"ds-card-title\">报告内容</h3><p class=\"ds-card-body\">本月共出报告 45,011 份。</p></section>",
+      "css": ".ds-card { background: #fff; border: 1px solid var(--pc-ink-200); border-radius: 6px; padding: 16px 20px; box-shadow: 0 1px 2px rgba(15,23,42,.04); transition: box-shadow 200ms cubic-bezier(.22,1,.36,1); } .ds-card:hover { box-shadow: 0 6px 16px rgba(15,23,42,.08); } .ds-card-title { margin: 0 0 12px; font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; font-size: 13px; font-weight: 600; color: var(--pc-ink-900); } .ds-card-body { margin: 0; font-size: 13px; line-height: 1.5; color: var(--pc-ink-600); }"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "32px 高度（与按钮等高），4px 圆角，focus 时 primary 浅扩散 ring。",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"请输入下单人姓名 / 手机号 / 检测项目\" />",
+      "css": ".ds-input { width: 320px; height: 32px; padding: 0 12px; background: #fff; color: var(--pc-ink-700); border: 1px solid var(--pc-ink-300); border-radius: 4px; font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; font-size: 13px; line-height: 32px; transition: border-color 200ms cubic-bezier(.22,1,.36,1), box-shadow 200ms cubic-bezier(.22,1,.36,1); outline: none; } .ds-input::placeholder { color: var(--pc-ink-400); } .ds-input:focus, .ds-input:focus-visible { border-color: var(--pc-primary-600); box-shadow: 0 0 0 3px rgba(14,122,110,.12); }"
+    },
+    {
+      "name": "Page Title",
+      "kind": "custom",
+      "refersTo": "pc-page-title",
+      "description": "每页第一行：18px 主标 + 12px 描述，baseline 对齐。",
+      "html": "<header class=\"ds-page-title\"><h2>订单管理</h2><span class=\"ds-page-desc\">共 79,481 单 · 当前页 20 单</span></header>",
+      "css": ".ds-page-title { display: flex; align-items: baseline; gap: 12px; margin: 4px 0 14px; } .ds-page-title h2 { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; font-size: 18px; font-weight: 600; color: var(--pc-ink-900); } .ds-page-desc { font-size: 12px; color: var(--pc-ink-500); }"
+    },
+    {
+      "name": "Segmented Tabs",
+      "kind": "nav",
+      "refersTo": "pc-seg",
+      "description": "Tab 状态分段 + 下方 2px accent underline 跟随滑动。每项末尾带 count 徽章。",
+      "html": "<nav class=\"ds-seg\"><button class=\"ds-seg-item is-active\">全部 <span class=\"ds-seg-count\">79481</span></button><button class=\"ds-seg-item\">待采样 <span class=\"ds-seg-count\">16</span></button><button class=\"ds-seg-item\">已取消 <span class=\"ds-seg-count\">2</span></button><span class=\"ds-seg-bar\"></span></nav>",
+      "css": ".ds-seg { display: flex; gap: 0; border-bottom: 1px solid var(--pc-ink-200); margin: 4px 0 16px; position: relative; } .ds-seg-item { padding: 10px 14px; background: none; border: none; font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; font-size: 13px; color: var(--pc-ink-500); cursor: pointer; transition: color 200ms cubic-bezier(.22,1,.36,1); } .ds-seg-item:hover { color: var(--pc-ink-800); } .ds-seg-item.is-active { color: var(--pc-accent-700); font-weight: 600; } .ds-seg-count { display: inline-block; margin-left: 6px; padding: 0 6px; background: var(--pc-ink-100); color: var(--pc-ink-600); font-size: 11px; line-height: 16px; border-radius: 999px; vertical-align: 1px; } .ds-seg-item.is-active .ds-seg-count { background: var(--pc-primary-100); color: var(--pc-primary-700); } .ds-seg-bar { position: absolute; bottom: -1px; left: 0; width: 56px; height: 2px; background: var(--pc-accent-500); transition: transform 320ms cubic-bezier(.22,1,.36,1), width 320ms cubic-bezier(.22,1,.36,1); }"
+    },
+    {
+      "name": "KPI Tile",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "仪表盘 KPI tile，大数 28px tnum + label + delta + 右上角 sparkline。",
+      "html": "<article class=\"ds-kpi\"><div class=\"ds-kpi-label\">已出报告（累计）</div><div class=\"ds-kpi-value\">45,011</div><div class=\"ds-kpi-delta\"><svg width=\"10\" height=\"10\" viewBox=\"0 0 10 10\" fill=\"none\"><path d=\"M5 2 L8 6 H2 Z\" fill=\"currentColor\"/></svg> +4.1% · 较上周</div><svg class=\"ds-kpi-spark\" viewBox=\"0 0 92 36\" preserveAspectRatio=\"none\"><polyline points=\"0,28 9,26 18,22 27,18 36,20 45,14 54,16 63,10 72,12 81,8 92,4\" fill=\"none\" stroke=\"var(--pc-accent-600)\" stroke-width=\"1.5\"/></svg></article>",
+      "css": ".ds-kpi { position: relative; background: #fff; border: 1px solid var(--pc-ink-200); border-radius: 6px; padding: 16px 18px; box-shadow: 0 1px 2px rgba(15,23,42,.04); overflow: hidden; transition: box-shadow 200ms cubic-bezier(.22,1,.36,1); } .ds-kpi:hover { box-shadow: 0 6px 16px rgba(15,23,42,.08); } .ds-kpi-label { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; font-size: 12px; color: var(--pc-ink-500); margin-bottom: 6px; } .ds-kpi-value { font-family: 'SF Mono', 'JetBrains Mono', Menlo, monospace; font-size: 28px; font-weight: 700; line-height: 1.1; color: var(--pc-ink-900); font-feature-settings: 'tnum'; } .ds-kpi-delta { display: flex; align-items: center; gap: 4px; margin-top: 8px; font-size: 11.5px; color: var(--pc-succ-600); } .ds-kpi-spark { position: absolute; right: 12px; top: 14px; width: 92px; height: 36px; opacity: .9; }"
+    },
+    {
+      "name": "Capsule Menu Item",
+      "kind": "nav",
+      "refersTo": "menu-item-active",
+      "description": "侧栏菜单项激活态：全宽 8px 圆角胶囊 + primary-50 底 + primary-700 文字。禁止用左侧色条。",
+      "html": "<a class=\"ds-menu-item is-active\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\"/><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\"/></svg><span>运营总览</span></a>",
+      "css": ".ds-menu-item { display: flex; align-items: center; gap: 10px; padding: 0 10px; height: 38px; border-radius: 8px; margin: 2px 8px; font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; font-size: 13px; color: var(--pc-ink-700); text-decoration: none; transition: background 200ms cubic-bezier(.22,1,.36,1), color 200ms cubic-bezier(.22,1,.36,1); } .ds-menu-item svg { color: var(--pc-ink-400); flex-shrink: 0; } .ds-menu-item:hover { background: var(--pc-ink-50); color: var(--pc-ink-900); } .ds-menu-item:hover svg { color: var(--pc-ink-700); } .ds-menu-item.is-active { background: var(--pc-primary-50); color: var(--pc-primary-700); font-weight: 500; box-shadow: inset 0 0 0 1px rgba(8,89,79,.08); } .ds-menu-item.is-active svg { color: var(--pc-primary-700); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Operations Reading Room",
+    "overview": "把日常做的事情想成在\"运营阅览室\"里坐 6 小时的工作：信息密度高（订单 79K、报告 45K、医院 22K、客户 88K 同屏可读），但环境是克制的、有节奏的、可以信赖的。一线运营 / 客服 / 实验室主管在 PC 端长时段工作，一边扫一眼定位、一边逐行精读。这套设计系统的本职是让他们在第 6 小时仍然觉得\"这工具懂我\"，而不是\"这又是一个我必须忍受的内部系统\"。\n\n系统服务多品牌（BRCA轻松检 / 维汝健 / 安易筛 / 易见康 / 诠见康 / 吉因加 / 见山会诊），通过菜单 IA 区分入口而不是为每个品牌单独定制 UI ── 一套交互骨架承载所有产品线。视觉血统三参照：Linear（密度 + 克制）、Stripe Dashboard（清晰信息层级）、Apple Health（医疗专业但不冷）。\n\n明确拒绝的方向（PRODUCT.md 已锁三类）：AI slop（暗底霓虹紫蓝渐变 / 玻璃拟态 / 渐变文字 / cyber 风）、花哨彩色（彩虹色调 + 大圆图标 + 厚重阴影 + 6+ 主色平铺）、老式 ERP / 政务（密密麻麻无气孔表格 + 灰底蓝标题 + 硬色边框）。",
+    "keyCharacteristics": [
+      "双主色 D2：functional primary（teal 深绿）+ identity accent（teal 翠青）拆分使用",
+      "6 类语义色 D3：所有 11 业务状态码必须命中其中之一，禁止自定义状态色",
+      "Light only：医疗 SaaS 长时段使用，白底 ink-700 文字，比深色更降眼疲劳",
+      "36px 表格行高、22px Tag、32px 按钮：信息密度服务于业务，不为视觉宽敞牺牲",
+      "顶栏深墨青 #0B3B47 而非品牌绿，放下\"厂商首页\"包袱",
+      "mono tnum 等宽用于订单号、样本编号、接口路径、KPI 大数"
+    ],
+    "rules": [
+      { "name": "The D2 Separation Rule", "body": "Primary（#0E7A6E）和 Accent（#14A495）是两种不同的工作：Primary 服务功能（按钮、focus、链接），Accent 服务品牌识别（Tab、KPI、品牌图）。严禁互换，否则品牌与功能的语义会塌陷。", "section": "colors" },
+      { "name": "The D3 Six-Class Rule", "body": "业务状态色必须命中 6 类语义之一（warn / info2 / prog / succ / pos / neg）。新增状态先决定它属于哪一类，再决定 Tag 文案 ── 不允许自定义十六进制色作为状态色。", "section": "colors" },
+      { "name": "The Pos-Is-Red Rule", "body": "医学\"阳性\"用红色高警示（#DC2626），不是\"成功色\"。这与互联网\"绿=成功\"惯性反向，必须坚持，因为业务语义是\"需要优先寄出 / 通知\"。", "section": "colors" },
+      { "name": "The Tnum Rule", "body": "所有\"数字密集\"位置必须 mono + tnum：订单号 / 样本编号 / 金额 / 计数 / 时间戳。让\"对齐扫读\"成立。", "section": "typography" },
+      { "name": "The 12.5px Table Rule", "body": "表格 body 是 12.5px 不是 13px。差 0.5px 看似无关紧要，但 360 行的列表上能多塞 18 行可见，这是后台的尊严。", "section": "typography" },
+      { "name": "The Capslock Embargo", "body": "长正文严禁全大写。仅 label / Tag / segmented count 这种\"短到 ≤ 8 字符\"的标签可以用 letter-spacing 0.3px 的中度大写。", "section": "typography" },
+      { "name": "The 1px Hairline Rule", "body": "边框宽度永远是 1px。pc-bd-hair 是默认弱边，pc-bd-strong 用于需要稍强分隔的位置。禁止 ≥ 2px 的彩色边框（impeccable BAN 1）。", "section": "elevation" },
+      { "name": "The Whisper Hover Rule", "body": "表格行 hover 不抬阴影，只把背景换成 pc-primary-50（极轻 wash）。\"想知道我在哪一行\"不需要 3D 浮起。", "section": "elevation" },
+      { "name": "The Capsule Active Rule", "body": "菜单激活态用全宽圆角胶囊（pc-primary-50 bg + 8px radius），禁止用左侧 3-4px 色条 ── 那是 impeccable BAN 1 + 老式 ERP 第一象征。", "section": "components" },
+      { "name": "The Single-Source Component Rule", "body": "任何 pc-* 类只在 element-overrides.css 定义。业务页里不允许自写 pc-card、pc-page-title 等局部样式覆盖。", "section": "components" }
+    ],
+    "dos": [
+      "Do 用 var(--pc-*) token 引用所有颜色 / 字号 / 圆角 / 阴影 / spacing。",
+      "Do 状态 Tag 必须命中 el-tag--{warn|info2|prog|succ|pos|neg} 6 类之一；新增业务状态先去 src/utils/pc.js 的 STATUS_MAP 加映射。",
+      "Do 多品牌业务页（BRCA / 维汝健 / 安易筛）共用同一套表格、segmented、工具条、批量条骨架；通过菜单 IA 区分入口。",
+      "Do 数字密集位置（订单号、样本编号、金额、计数、KPI 大数）一律 mono font-family + font-feature-settings: 'tnum'。",
+      "Do 表格 hover 用 pc-primary-50 整行浅底；不用阴影抬升。",
+      "Do 按钮 4px 圆角、Tag 全圆、卡片 6px 圆角 ── 圆角递进让层级清楚。",
+      "Do focus 状态可见：box-shadow 0 0 0 3px rgba(14,122,110,.12) 已在 element-overrides 实现，业务页不要 outline: none 后不补。",
+      "Do 顶栏深墨青 #0B3B47，不是品牌绿 ── 让顶栏退到稳重的横梁角色，不与 primary 抢戏。",
+      "Do 空状态文案场景化：不要写\"暂无数据\"，写\"还没有订单 / 还没有客户邀请你 / 这个月还没数据\"。"
+    ],
+    "donts": [
+      "Don't 在业务页里写直接颜色字面量 #0E7A6E / #14a495 / #01806f / #117e73 ── 全部走 token。",
+      "Don't 自定义状态 Tag 的十六进制色 ── 走 D3 6 类。getColor() 这种返回 '#368c01' 的写法已 deprecated。",
+      "Don't border-left / border-right > 1px 作为彩色装饰条（impeccable BAN 1 + 老式 ERP 第一象征）。用 full border / background tint / leading icon 替代。",
+      "Don't background-clip: text + 渐变 ── 文字一律纯色（impeccable BAN 2）。",
+      "Don't 玻璃拟态 / 毛玻璃 / 暗底霓虹紫蓝渐变 ── PRODUCT.md 明确 reject 的 AI slop。",
+      "Don't 彩虹色调按钮组 / 大圆图标 + 厚重阴影 / \"每个数据卡一个不同色\"（PRODUCT.md 明确 reject 的花哨彩色）。",
+      "Don't 密密麻麻无气孔表格 + 灰底蓝标题 + 硬色 1px black 边框（PRODUCT.md 明确 reject 的老式 ERP）。",
+      "Don't 在新业务页里写局部 !important 重新覆盖 design-system ── 历史 normal.css 的 #14a495 !important 已经是技术债，新代码不应再制造同类。",
+      "Don't 嵌套卡片（pc-card 内 pc-card）。",
+      "Don't 把\"多个品牌\"理解成\"多套 UI\"。BRCA / 维汝健 / 安易筛 同业务（订单 / 报告 / 财务）必须复用同一套组件骨架。",
+      "Don't dark mode。本系统 light only，长时段医疗 SaaS 用户的眼睛比\"看起来酷\"重要。",
+      "Don't 用 <el-empty description=\"暂无数据\"> 作为通用空状态 ── 抽 <EmptyState> 共享组件。",
+      "Don't 在长正文里用 em dash。用逗号、冒号、分号、句号、括号。也不用 --。"
+    ]
+  }
+}
