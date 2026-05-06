@@ -113,16 +113,7 @@
 </template>
 
 <script>
-import { formatDate } from '@/utils/pc'
-
-const STATUS_TYPE = {
-  '待处理': 'warn',
-  '待发货': 'warn',
-  '已发货': 'prog',
-  '已完成': 'succ',
-  '已签收': 'succ',
-  '已取消': ''
-}
+import { formatDate, formatAddress, apiSubmit, BRCA_EXCHANGE_STATUS_TYPE, typeOf } from '@/utils/pc'
 
 export default {
   name: 'BrcaExchange',
@@ -146,13 +137,8 @@ export default {
   },
   filters: { formatDate },
   methods: {
-    statusType (statusStr) {
-      return STATUS_TYPE[statusStr] !== undefined ? STATUS_TYPE[statusStr] : ''
-    },
-    formatAddress (r) {
-      if (!r) return ''
-      return [r.province, r.city, r.county, r.address].filter(Boolean).join(' ')
-    },
+    statusType (statusStr) { return typeOf(BRCA_EXCHANGE_STATUS_TYPE, statusStr) },
+    formatAddress: formatAddress,
     _initData () {
       this.getData()
     },
@@ -185,13 +171,9 @@ export default {
     },
     onExpressSubmit () {
       this.expressItem.operatorId = this.userId
-      const instance = this.axios.create({
-        headers: { 'Authorization': window.localStorage.token, 'Content-Type': 'application/json' }
-      })
-      const headers = { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' }
 
       if (!this.isDiscountReward) {
-        instance({ method: 'post', url: 'rice/confirm', data: this.expressItem, headers })
+        apiSubmit(this.axios, 'post', 'rice/confirm', this.expressItem)
           .then(() => {
             this.$message.success('物流信息已绑定')
             this.dialogExpressFormVisible = false
@@ -204,17 +186,17 @@ export default {
         return
       }
 
-      instance({
-        method: 'post',
-        url: 'cashout/discount',
-        data: { userId: this.expressItem.userId, discount: this.expressItem.discount, productId: 1901 },
-        params: { count: 1 },
-        headers
-      }).then(res => {
+      apiSubmit(
+        this.axios,
+        'post',
+        'cashout/discount',
+        { userId: this.expressItem.userId, discount: this.expressItem.discount, productId: 1901 },
+        { count: 1 }
+      ).then(res => {
         if (res.data && res.data.length === 10) {
           this.expressItem.mailName = '安易筛0.0001折扣码'
           this.expressItem.mailNo = res.data
-          return instance({ method: 'post', url: 'rice/confirm', data: this.expressItem, headers })
+          return apiSubmit(this.axios, 'post', 'rice/confirm', this.expressItem)
         }
         this.$message.warning('券面校验失败：请检查折扣额度配置')
         return Promise.reject(new Error('discount validation failed'))

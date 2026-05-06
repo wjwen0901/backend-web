@@ -157,14 +157,7 @@
 
 <script>
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
-import { formatDate } from '@/utils/pc'
-
-const STATUS = {
-  0: { type: 'warn', label: '待审核' },
-  1: { type: 'succ', label: '已审核' },
-  2: { type: 'prog', label: '待寄出' },
-  3: { type: 'succ', label: '已寄出' }
-}
+import { formatDate, formatAddress, apiSubmit, BRCA_PAPER_REPORT_STATUS, statusOf } from '@/utils/pc'
 
 export default {
   name: 'BrcaPaperReport',
@@ -206,16 +199,14 @@ export default {
   },
   filters: { formatDate },
   methods: {
-    statusType (s) { return (STATUS[s] && STATUS[s].type) || '' },
+    statusType (s) { return statusOf(BRCA_PAPER_REPORT_STATUS, s).type },
     statusLabel (s) {
-      if (STATUS[s]) return STATUS[s].label
+      const found = BRCA_PAPER_REPORT_STATUS[s]
+      if (found) return found.label
       if (s <= 1) return '已审核'
       return '未知'
     },
-    formatAddress (r) {
-      if (!r) return ''
-      return [r.province, r.city, r.county, r.address].filter(Boolean).join(' ')
-    },
+    formatAddress: formatAddress,
     _initData () { this.getData() },
     getData () {
       this.loading = true
@@ -272,42 +263,28 @@ export default {
       this.dialogConfirmFormVisible = true
     },
     onExpressSubmit () {
-      const instance = this.axios.create({
-        headers: { 'Authorization': window.localStorage.token, 'Content-Type': 'application/json' }
-      })
-      instance({
-        method: 'post',
-        url: 'sf/report',
-        data: this.expressItem,
-        params: { goodsId: this.expressItem.goodsId, userId: this.userId },
-        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' }
-      }).then(() => {
-        this.$message.success('寄送信息已提交')
-        this.dialogExpressFormVisible = false
-        this._initData()
-      }).catch(err => {
-        console.log(err)
-        this.$message.error('提交失败，请稍后重试')
-      })
+      apiSubmit(this.axios, 'post', 'sf/report', this.expressItem, { goodsId: this.expressItem.goodsId, userId: this.userId })
+        .then(() => {
+          this.$message.success('寄送信息已提交')
+          this.dialogExpressFormVisible = false
+          this._initData()
+        })
+        .catch(err => {
+          console.log(err)
+          this.$message.error('提交失败，请稍后重试')
+        })
     },
     confirmInvoice () {
-      const instance = this.axios.create({
-        headers: { 'Authorization': window.localStorage.token, 'Content-Type': 'application/json' }
-      })
-      instance({
-        method: 'put',
-        url: 'report/confirm/' + this.expressItem.goodsId,
-        data: this.expressItem,
-        params: { note: this.expressItem.note, userId: this.userId },
-        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' }
-      }).then(() => {
-        this.$message.success('已发送审核提醒')
-        this.dialogConfirmFormVisible = false
-        this._initData()
-      }).catch(err => {
-        console.log(err)
-        this.$message.error('发送失败，请稍后重试')
-      })
+      apiSubmit(this.axios, 'put', 'report/confirm/' + this.expressItem.goodsId, this.expressItem, { note: this.expressItem.note, userId: this.userId })
+        .then(() => {
+          this.$message.success('已发送审核提醒')
+          this.dialogConfirmFormVisible = false
+          this._initData()
+        })
+        .catch(err => {
+          console.log(err)
+          this.$message.error('发送失败，请稍后重试')
+        })
     },
     addressHandleChange (value) {
       this.expressItem.jProvince = this.CodeToText[value[0]]

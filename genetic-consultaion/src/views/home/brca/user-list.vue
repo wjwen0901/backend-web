@@ -164,7 +164,7 @@
 </template>
 
 <script>
-import { formatDate } from '@/utils/pc'
+import { formatDate, apiSubmit, downloadBlob, dateStr } from '@/utils/pc'
 
 export default {
   name: 'BrcaUserList',
@@ -224,18 +224,7 @@ export default {
         params: { userId: this.userId },
         responseType: 'blob'
       }).then(response => {
-        const blob = new Blob([response.data], {
-          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
-        })
-        const aEle = document.createElement('a')
-        const href = window.URL.createObjectURL(blob)
-        aEle.href = href
-        const today = new Date()
-        aEle.download = '医生注册列表-' + today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '.xls'
-        document.body.appendChild(aEle)
-        aEle.click()
-        document.body.removeChild(aEle)
-        window.URL.revokeObjectURL(href)
+        downloadBlob(response.data, '医生注册列表-' + dateStr() + '.xls')
       }).catch(err => {
         console.log(err)
         this.$message.error('导出失败，请稍后重试')
@@ -259,24 +248,17 @@ export default {
       this._submitUser('put', 'user/' + id)
     },
     _submitUser (method, url) {
-      const instance = this.axios.create({
-        headers: { 'Authorization': window.localStorage.token, 'Content-Type': 'application/json' }
-      })
       this.userResource.roleCode = this.roleCode
-      instance({
-        method,
-        url,
-        data: this.userResource,
-        params: { userId: this.userId },
-        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' }
-      }).then(() => {
-        this.$message.success(method === 'post' ? '新增成功' : '修改成功')
-        this.dialogEditFormVisible = false
-        this._initData()
-      }).catch(err => {
-        console.log(err)
-        this.$message.error('提交失败，请稍后重试')
-      })
+      apiSubmit(this.axios, method, url, this.userResource, { userId: this.userId })
+        .then(() => {
+          this.$message.success(method === 'post' ? '新增成功' : '修改成功')
+          this.dialogEditFormVisible = false
+          this._initData()
+        })
+        .catch(err => {
+          console.log(err)
+          this.$message.error('提交失败，请稍后重试')
+        })
     },
     addSalesman (user) {
       this.salesman = {
@@ -309,16 +291,13 @@ export default {
       this._submitService('service', this.serviceman, () => { this.dialogServiceVisible = false })
     },
     _submitService (type, payload, onSuccess) {
-      const instance = this.axios.create({
-        headers: { 'Authorization': window.localStorage.token, 'Content-Type': 'application/json' }
-      })
-      instance({
-        method: 'post',
-        url: 'user/manager/service?type=' + type + '&hospitalId=' + payload.hospitalId,
-        data: payload,
-        params: { userId: this.userId },
-        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' }
-      }).then(() => {
+      apiSubmit(
+        this.axios,
+        'post',
+        'user/manager/service?type=' + type + '&hospitalId=' + payload.hospitalId,
+        payload,
+        { userId: this.userId }
+      ).then(() => {
         this.$message.success('分配成功')
         onSuccess()
         this._initData()

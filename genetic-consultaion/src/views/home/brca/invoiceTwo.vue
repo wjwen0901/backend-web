@@ -237,17 +237,7 @@
 
 <script>
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
-import { formatDate } from '@/utils/pc'
-
-const INVOICE_STATUS_TYPE = {
-  '已申请': 'warn',
-  '未开票': '',
-  '已确定': 'prog',
-  '已完成': 'succ',
-  '已发送邮件': 'succ',
-  '已寄出': 'succ',
-  '待寄出': 'prog'
-}
+import { formatDate, formatAddress, BRCA_INVOICE_STATUS_TYPE, typeOf, downloadBlob, dateStr } from '@/utils/pc'
 
 export default {
   name: 'BrcaInvoice',
@@ -324,13 +314,8 @@ export default {
     this.getStatus()
   },
   methods: {
-    invoiceStatusType (statusStr) {
-      return INVOICE_STATUS_TYPE[statusStr] !== undefined ? INVOICE_STATUS_TYPE[statusStr] : ''
-    },
-    formatAddress (r) {
-      if (!r) return ''
-      return [r.province, r.city, r.county, r.address].filter(Boolean).join(' ')
-    },
+    invoiceStatusType (statusStr) { return typeOf(BRCA_INVOICE_STATUS_TYPE, statusStr) },
+    formatAddress: formatAddress,
     handleSearch () {
       this.pageNum = 1
       this.getInvoiceList()
@@ -510,18 +495,7 @@ export default {
         params: { pageNum: this.pageNum, pageSize: this.pageSize, userId: this.userId, condition: this.keyword },
         responseType: 'blob'
       }).then(res => {
-        const blob = new Blob([res.data], {
-          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
-        })
-        const aEle = document.createElement('a')
-        const href = window.URL.createObjectURL(blob)
-        aEle.href = href
-        const today = new Date()
-        aEle.download = '发票记录-' + today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '.xls'
-        document.body.appendChild(aEle)
-        aEle.click()
-        document.body.removeChild(aEle)
-        window.URL.revokeObjectURL(href)
+        downloadBlob(res.data, '发票记录-' + dateStr() + '.xls')
       }).catch(err => {
         console.log(err)
         this.$message.error('导出失败，请稍后重试')

@@ -132,7 +132,7 @@
 </template>
 
 <script>
-import { formatDate } from '@/utils/pc'
+import { formatDate, apiSubmit } from '@/utils/pc'
 
 export default {
   name: 'BrcaCommission',
@@ -202,22 +202,16 @@ export default {
       this.dialogEditFormVisible = true
     },
     onAddSubmit () {
-      const instance = this.axios.create({
-        headers: { 'Authorization': window.localStorage.token, 'Content-Type': 'application/json' }
-      })
-      instance({
-        method: 'post',
-        url: 'withdraw',
-        data: this.withdrawCash,
-        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' }
-      }).then(() => {
-        this.$message.success('提现申请已提交')
-        this.dialogEditFormVisible = false
-        this._initData()
-      }).catch(err => {
-        console.log(err)
-        this.$message.error('提现失败，请稍后重试')
-      })
+      apiSubmit(this.axios, 'post', 'withdraw', this.withdrawCash)
+        .then(() => {
+          this.$message.success('提现申请已提交')
+          this.dialogEditFormVisible = false
+          this._initData()
+        })
+        .catch(err => {
+          console.log(err)
+          this.$message.error('提现失败，请稍后重试')
+        })
     },
     toDetail (user) {
       this.withdrawCash = Object.assign({}, user, {

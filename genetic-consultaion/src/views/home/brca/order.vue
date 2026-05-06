@@ -245,29 +245,15 @@
 </template>
 
 <script>
-import { formatDate } from '@/utils/pc'
-
-const BRCA_STATUS_TYPE = {
-  0: 'warn',
-  1: 'info2',
-  2: 'info2',
-  3: 'prog',
-  4: 'prog',
-  5: 'succ',
-  7: 'succ',
-  10: ''
-}
-
-const STATUS_OPTIONS = [
-  { value: '0', label: '待付款' },
-  { value: '1', label: '待采样' },
-  { value: '2', label: '待回寄' },
-  { value: '3', label: '寄样中' },
-  { value: '4', label: '检测中' },
-  { value: '5', label: '报告已出' },
-  { value: '7', label: '已发起解读' },
-  { value: '10', label: '已取消' }
-]
+import {
+  formatDate,
+  brcaOrderStatusType,
+  canUploadBrcaReport,
+  BRCA_ORDER_STATUS_OPTIONS,
+  apiSubmit,
+  downloadBlob,
+  dateStr
+} from '@/utils/pc'
 
 export default {
   name: 'BrcaOrderList',
@@ -286,7 +272,7 @@ export default {
       userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
       dialogDistributionVisible: false,
       dialogDistributionSalesVisible: false,
-      statusOptions: STATUS_OPTIONS
+      statusOptions: BRCA_ORDER_STATUS_OPTIONS
     }
   },
   computed: {
@@ -303,12 +289,8 @@ export default {
   },
   filters: { formatDate },
   methods: {
-    brcaStatusType (code) {
-      return BRCA_STATUS_TYPE[code] !== undefined ? BRCA_STATUS_TYPE[code] : ''
-    },
-    canUploadReport (status) {
-      return status >= 3 && status !== 10
-    },
+    brcaStatusType: brcaOrderStatusType,
+    canUploadReport: canUploadBrcaReport,
     _initData () {
       this.loading = true
       this.axios.get('hospital-dept').then(res => {
@@ -421,29 +403,17 @@ export default {
     },
     submitDistribution (serviceType) {
       this.distribution.serviceType = serviceType
-      const instance = this.axios.create({
-        headers: {
-          'Authorization': window.localStorage.token,
-          'Content-Type': 'application/json'
-        }
-      })
-      instance({
-        method: 'post',
-        url: 'commission/distribution',
-        data: this.distribution,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json'
-        }
-      }).then(() => {
-        this.$message.success('分账成功')
-        this.dialogDistributionVisible = false
-        this.dialogDistributionSalesVisible = false
-        this._initData()
-      }).catch(err => {
-        console.log(err)
-        this.$message.error('分账失败，请稍后重试')
-      })
+      apiSubmit(this.axios, 'post', 'commission/distribution', this.distribution)
+        .then(() => {
+          this.$message.success('分账成功')
+          this.dialogDistributionVisible = false
+          this.dialogDistributionSalesVisible = false
+          this._initData()
+        })
+        .catch(err => {
+          console.log(err)
+          this.$message.error('分账失败，请稍后重试')
+        })
     },
     confirmMoney () {
       if (!this.multipleSelection.length) return
@@ -471,18 +441,7 @@ export default {
         params: { ids: ids, userId: this.userId },
         responseType: 'blob'
       }).then(response => {
-        const blob = new Blob([response.data], {
-          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
-        })
-        const aEle = document.createElement('a')
-        const href = window.URL.createObjectURL(blob)
-        aEle.href = href
-        const today = new Date()
-        aEle.download = '订单列表-' + today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '.xls'
-        document.body.appendChild(aEle)
-        aEle.click()
-        document.body.removeChild(aEle)
-        window.URL.revokeObjectURL(href)
+        downloadBlob(response.data, '订单列表-' + dateStr() + '.xls')
       }).catch(err => {
         console.log(err)
         this.$message.error('导出失败，请稍后重试')

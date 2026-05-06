@@ -98,13 +98,7 @@
 </template>
 
 <script>
-import { formatDate } from '@/utils/pc'
-
-const STATUS = {
-  0: { type: 'warn', label: '待审核' },
-  1: { type: 'prog', label: '转账中' },
-  2: { type: 'succ', label: '已到账' }
-}
+import { formatDate, BRCA_WITHDRAW_STATUS, statusOf } from '@/utils/pc'
 
 export default {
   name: 'BrcaWithdraw',
@@ -124,8 +118,8 @@ export default {
   },
   filters: { formatDate },
   methods: {
-    statusType (s) { return (STATUS[s] && STATUS[s].type) || '' },
-    statusLabel (s) { return (STATUS[s] && STATUS[s].label) || '未知' },
+    statusType (s) { return statusOf(BRCA_WITHDRAW_STATUS, s).type },
+    statusLabel (s) { return statusOf(BRCA_WITHDRAW_STATUS, s).label },
     _initData () { this.getData() },
     getData () {
       this.loading = true

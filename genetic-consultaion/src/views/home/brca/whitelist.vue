@@ -133,6 +133,7 @@
 
 <script>
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
+import { apiSubmit } from '@/utils/pc'
 
 export default {
   name: 'BrcaWhitelist',
@@ -225,23 +226,16 @@ export default {
       this._submitDoctor('put', 'white/' + id)
     },
     _submitDoctor (method, url) {
-      const instance = this.axios.create({
-        headers: { 'Authorization': window.localStorage.token, 'Content-Type': 'application/json' }
-      })
-      instance({
-        method,
-        url,
-        params: { userId: this.userId },
-        data: this.whitelistDoctor,
-        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' }
-      }).then(() => {
-        this.$message.success(method === 'post' ? '新增成功' : '修改成功')
-        this.dialogEditFormVisible = false
-        this._initData()
-      }).catch(err => {
-        console.log(err)
-        this.$message.error('提交失败，请稍后重试')
-      })
+      apiSubmit(this.axios, method, url, this.whitelistDoctor, { userId: this.userId })
+        .then(() => {
+          this.$message.success(method === 'post' ? '新增成功' : '修改成功')
+          this.dialogEditFormVisible = false
+          this._initData()
+        })
+        .catch(err => {
+          console.log(err)
+          this.$message.error('提交失败，请稍后重试')
+        })
     },
     deleteUser (id) {
       this.$confirm('确定删除此医生？', '删除提示', {
