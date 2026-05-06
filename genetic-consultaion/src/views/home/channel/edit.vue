@@ -1,180 +1,126 @@
 <template>
   <div>
-    <el-row>
-      <el-col :span="24">
+    <div class="company-container">
+      <div class="page-header">
         <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item :to="{ path: '/channel' }">渠道管理</el-breadcrumb-item>
-          <el-breadcrumb-item>{{menuInfo}}</el-breadcrumb-item>
+          <el-breadcrumb-item>主数据</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: '/channel' }">渠道公司管理</el-breadcrumb-item>
+          <el-breadcrumb-item>{{ menuInfo }}</el-breadcrumb-item>
         </el-breadcrumb>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="24">
-        <div class="company-container">
-          <el-form ref="companyForm" :model="company" label-width="80px" size="mini" class="edit-form">
-            <el-form-item label="公司名称">
-              <el-input v-model="company.name" placeholder="请输入内容"></el-input>
-            </el-form-item>
-            <el-form-item label="机构代码">
-              <el-input v-model="company.code" placeholder="请输入内容"></el-input>
-            </el-form-item>
-            <el-form-item label="注册地址">
-              <el-input v-model="company.address" placeholder="请输入内容"></el-input>
-            </el-form-item>
-            <el-form-item label="开户银行">
-              <el-input v-model="company.bank" placeholder="请输入内容"></el-input>
-            </el-form-item>
-            <el-form-item label="银行账号">
-              <el-input v-model="company.bankAccount" placeholder="请输入内容"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="cancel">取消</el-button>
-              <el-button type="primary" @click="edit">保存</el-button>
-            </el-form-item>
-          </el-form>
-        </div>
-      </el-col>
-    </el-row>
+      </div>
+
+      <el-form
+        ref="companyForm"
+        :model="company"
+        :rules="rules"
+        label-width="100px"
+        size="small"
+        v-loading="loading"
+        element-loading-text="加载中"
+        class="edit-form">
+        <el-form-item label="公司名称" prop="name">
+          <el-input v-model="company.name" placeholder="请输入渠道公司全称"></el-input>
+        </el-form-item>
+        <el-form-item label="机构代码">
+          <el-input v-model="company.code" placeholder="统一社会信用代码"></el-input>
+        </el-form-item>
+        <el-form-item label="注册地址">
+          <el-input v-model="company.address" placeholder="营业执照上的注册地址"></el-input>
+        </el-form-item>
+        <el-form-item label="开户银行">
+          <el-input v-model="company.bank" placeholder="如 工商银行 北京分行"></el-input>
+        </el-form-item>
+        <el-form-item label="银行账号">
+          <el-input v-model="company.bankAccount" placeholder="对公账号"></el-input>
+        </el-form-item>
+
+        <el-form-item>
+          <el-button @click="cancel">取消</el-button>
+          <el-button type="primary" :loading="submitting" @click="submit">保存</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
   </div>
 </template>
+
 <script>
-import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
+import { apiSubmit } from '@/utils/pc'
+
 export default {
-  name: 'EditInformed',
+  name: 'ChannelEdit',
   data () {
     return {
-      menuInfo: this.$route.params.id === undefined ? '新增' : '编辑',
+      menuInfo: this.$route.params.id === undefined ? '新增渠道公司' : '编辑渠道公司',
       company: {},
-      regionData: regionData,
-      CodeToText: CodeToText,
-      TextToCode: TextToCode
+      loading: false,
+      submitting: false,
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
+      rules: {
+        name: [{ required: true, message: '请输入公司名称', trigger: 'blur' }]
+      }
     }
   },
-  props: {},
   methods: {
     _initData () {
-      if (this.$route.params.id !== undefined) {
-        this.axios.get('company/' + this.$route.params.id).then(res => {
-          this.company = res.data
-        }).catch(err => {
+      const id = this.$route.params.id
+      if (id === undefined) return
+      this.loading = true
+      this.axios.get('company/' + id, { params: { userId: this.userId } })
+        .then(res => { this.company = res.data || {} })
+        .catch(err => {
           console.log(err)
+          this.$message.error('渠道公司信息加载失败')
         })
-      }
+        .then(() => { this.loading = false })
     },
-    edit () {
-      if (this.$route.params.id === undefined) {
-        let instance = this.axios.create({
-          headers: {
-            'Authorization': window.localStorage.token,
-            'Content-Type': 'application/json'
-          }
-        })
-        let _this = this
-        this.company.type = 1
-        instance({
-          method: 'post',
-          url: 'company',
-          data: this.company,
-          params: {
-            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
-          },
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Content-Type': 'application/json'
-          }
-        }).then(function () {
-          _this.$message({
-            message: '新增成功',
-            type: 'success'
+    submit () {
+      this.$refs.companyForm.validate(valid => {
+        if (!valid) return
+        this.submitting = true
+        const id = this.$route.params.id
+        const isEdit = id !== undefined
+        if (!isEdit) this.company.type = 1
+        const promise = isEdit
+          ? apiSubmit(this.axios, 'put', 'company/' + id, this.company, { userId: this.userId })
+          : apiSubmit(this.axios, 'post', 'company', this.company, { userId: this.userId })
+        promise
+          .then(() => {
+            this.$message.success(isEdit ? '渠道公司已更新' : '渠道公司已新增')
+            this.$router.push('/channel')
           })
-          _this.$router.push('/channel')
-        }).catch(function () {
-          _this.$message({
-            message: '新增失败',
-            type: 'error'
+          .catch(err => {
+            console.log(err)
+            this.$message.error(isEdit ? '更新失败，请稍后重试' : '新增失败，请稍后重试')
           })
-        })
-      } else {
-        let instance = this.axios.create({
-          headers: {
-            'Authorization': window.localStorage.token,
-            'Content-Type': 'application/json'
-          }
-        })
-        let _this = this
-        instance({
-          method: 'put',
-          url: 'company/' + this.$route.params.id,
-          data: this.company,
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Content-Type': 'application/json'
-          }
-        }).then(function () {
-          _this.$message({
-            message: '修改成功',
-            type: 'success'
-          })
-          _this.$router.push('/channel')
-        }).catch(function () {
-          _this.$message({
-            message: '修改失败',
-            type: 'error'
-          })
-        })
-      }
+          .then(() => { this.submitting = false })
+      })
     },
     cancel () {
       this.$router.push('/channel')
-    },
-    addressHandleChange (value) {
-      this.company.province = this.CodeToText[value[0]]
-      this.company.city = this.CodeToText[value[1]]
-      this.company.county = this.CodeToText[value[2]]
     }
   },
-  filters: {},
-  computed: {},
   created () {
-    let loading = this.$loading({
-      lock: true,
-      text: 'Loading',
-      spinner: 'el-icon-loading',
-      background: 'rgba(0, 0, 0, 0.7)'
-    })
     this._initData()
-    loading.close()
-  },
-  mounted () {},
-  destroyed () {}
+  }
 }
 </script>
+
 <style rel="stylesheet/scss" lang="scss" scoped>
-  .company-container {
-    margin: 20px 0px;
-    padding: 20px;
-    background: #ffffff;
-    .el-input {
-      width: 100%;
-    }
-  }
-  .company-container .header {
-    margin-bottom: 20px;
-    font-size: 18px;
-  }
-  .edit-form {
-    max-width: 500px;
-  }
-  .width-100-p {
-    width: 100%
-  }
-  .img-content {
-    margin: 20px 0px 20px 20px;
-    height: 700px;
-    background: #ffffff;
-    overflow: auto;
-    img {
-      width: 100%;
-    }
-  }
+.company-container {
+  margin: 20px 0;
+  padding: 20px;
+  background: var(--pc-white);
+  border-radius: var(--pc-r-4);
+  box-shadow: var(--pc-sh-1);
+}
+
+.page-header {
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+  border-bottom: var(--pc-bd-hair);
+}
+
+.edit-form {
+  max-width: 560px;
+}
 </style>

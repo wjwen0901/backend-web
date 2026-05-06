@@ -1,146 +1,138 @@
 <template>
   <div>
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/review' }">信息复核</el-breadcrumb-item>
-      <el-breadcrumb-item>信息详情</el-breadcrumb-item>
-    </el-breadcrumb>
     <div class="review-container">
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <el-row class="report-detail">
-            <span class="report-detail-title">报告信息
-            <el-button type="text" @click="toEditReport(report.id)">修改信息</el-button>
-            </span>
-          </el-row>
-          <el-row class="report-detail">
-            <span class="report-detail-title">客户姓名:</span>
-            <span>{{report.truename}}</span>
-          </el-row>
-          <el-row class="report-detail">
-            <span class="report-detail-title">手机号码:</span>
-            <span>{{report.cellphone}}</span>
-          </el-row>
-          <el-row class="report-detail">
-            <span class="report-detail-title">样本编号:</span>
-            <span>{{report.sampleCode}}</span>
-          </el-row>
-          <el-row>
-            <div class="img-content">
-              <object :data="imagePath" type="application/pdf" width="80%" height="90%" v-if="report.mimeType === 'application/pdf'">
+      <div class="page-header">
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+          <el-breadcrumb-item :to="{ path: '/review' }">信息复核</el-breadcrumb-item>
+          <el-breadcrumb-item>信息详情</el-breadcrumb-item>
+        </el-breadcrumb>
+        <div class="page-meta" v-if="informedList.length">
+          匹配 <strong>{{ informedList.length }}</strong> 份知情同意
+        </div>
+      </div>
+
+      <el-row :gutter="20" v-loading="loading" element-loading-text="加载复核信息">
+        <el-col :span="14">
+          <div class="panel">
+            <div class="panel-header">
+              <h4>报告信息</h4>
+              <el-button type="text" size="mini" @click="toEditReport(report.id)">修改信息</el-button>
+            </div>
+            <div class="meta-grid">
+              <span class="meta-label">客户姓名</span><span class="meta-value">{{ report.truename || '—' }}</span>
+              <span class="meta-label">手机号码</span><span class="meta-value num">{{ report.cellphone || '—' }}</span>
+              <span class="meta-label">样本编号</span><span class="meta-value num">{{ report.sampleCode || '—' }}</span>
+            </div>
+            <div class="doc-frame" v-if="imagePath">
+              <object :data="imagePath" type="application/pdf" v-if="report.mimeType === 'application/pdf'">
                 <embed :src="imagePath">
               </object>
-              <img :src="imagePath" v-else>
+              <img :src="imagePath" v-else class="doc-img">
             </div>
-          </el-row>
+            <div class="doc-empty" v-else>
+              <p class="empty-title">尚无报告文件</p>
+            </div>
+          </div>
         </el-col>
-        <el-col :span="16">
-          <el-row class="report-detail">
-            <span class="report-detail-title">知情同意</span>
-            <el-table
-              :data="informedList"
-              size="mini"
-              breport
-              style="width: 100%">
-              <el-table-column
-                label="基本信息"
-                width="180">
-                <template slot-scope="scope">
-                  <el-row class="report-detail">
-                    <span class="report-detail-title">客户姓名:</span>
-                    <span>{{scope.row.truename}}</span>
-                  </el-row>
-                  <el-row class="report-detail">
-                    <span class="report-detail-title">手机号码:</span>
-                    <span>{{scope.row.cellphone}}</span>
-                  </el-row>
-                  <el-row class="report-detail">
-                    <span class="report-detail-title">样本编号:</span>
-                    <span>{{scope.row.sampleCode}}</span>
-                  </el-row>
-                  <el-button type="text" @click="toEditInformed(scope.row.id)">修改信息</el-button>
-                  <el-button type="text" @click="toDelInformedRelat(scope.row.id)">删除此关系</el-button>
-                </template>
-              </el-table-column>
-              <el-table-column
-                label="文件">
-                <template slot-scope="scope">
-                  <div class="img-content">
-                    <object :data="scope.row.imagePath" type="application/pdf" width="100%" height="700px" v-if="scope.row.mimeType === 'application/pdf'">
-                      <embed :src="scope.row.imagePath">
-                    </object>
-                    <img :src="scope.row.imagePath" v-else>
-                  </div>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-row>
+
+        <el-col :span="10">
+          <div class="panel">
+            <div class="panel-header">
+              <h4>知情同意</h4>
+            </div>
+
+            <div v-if="informedList.length" class="informed-stack">
+              <div class="informed-card" v-for="item in informedList" :key="item.id">
+                <div class="meta-grid">
+                  <span class="meta-label">客户姓名</span><span class="meta-value">{{ item.truename || '—' }}</span>
+                  <span class="meta-label">手机号码</span><span class="meta-value num">{{ item.cellphone || '—' }}</span>
+                  <span class="meta-label">样本编号</span><span class="meta-value num">{{ item.sampleCode || '—' }}</span>
+                </div>
+
+                <div class="card-actions">
+                  <el-button type="text" size="mini" @click="toEditInformed(item.id)">修改信息</el-button>
+                  <el-button type="text" size="mini" class="danger" @click="toDelInformedRelat(item.id)">删除此关系</el-button>
+                </div>
+
+                <div class="doc-frame doc-frame--small" v-if="item.imagePath">
+                  <object :data="item.imagePath" type="application/pdf" v-if="item.mimeType === 'application/pdf'">
+                    <embed :src="item.imagePath">
+                  </object>
+                  <img :src="item.imagePath" v-else class="doc-img">
+                </div>
+              </div>
+            </div>
+
+            <div v-else class="doc-empty">
+              <p class="empty-title">尚无关联的知情同意</p>
+              <p class="empty-hint">通过"信息复核"匹配后会显示在这里</p>
+            </div>
+          </div>
         </el-col>
       </el-row>
+
       <div class="footer-btn">
-        <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="reviewPass">确定匹配</el-button>
+        <el-button @click="cancel">取消</el-button>
+        <el-button type="primary" :loading="submitting" :disabled="!informedList.length" @click="reviewPass">确定匹配</el-button>
       </div>
     </div>
   </div>
 </template>
+
 <script>
+import { apiSubmit } from '@/utils/pc'
+
 export default {
-  components: {},
-  name: 'reportList',
+  name: 'ReviewDetail',
   data () {
     return {
       report: {},
-      skuPropertiesName: [],
       informedList: [],
-      imagePath: ''
+      imagePath: '',
+      loading: false,
+      submitting: false,
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
     }
   },
   methods: {
-    _initData () {
-      this.getData()
+    _initData () { this.getData() },
+    toAbsoluteUrl (url) {
+      if (!url) return url
+      return this.axios.defaults.baseURL.includes('https://')
+        ? url.replace('http://', 'https://')
+        : url
     },
     getData () {
-      this.axios.get('report/recheck/' + this.$route.params.reportId).then(res => {
-        let _this = this
-        res.data.informed.forEach(function (item) {
-          let informed = item
-          if (item.path) {
-            _this.axios.get('oss/upload/show', {
-              params: {
-                objectKey: item.path,
-                bucket: item.type
-              }
-            }).then(res1 => {
-              informed['imagePath'] = _this.axios.defaults.baseURL.includes('https://')
-                ? res1.data.replace('http://', 'https://') : res1.data
-              _this.informedList.push(informed)
-            }).catch(err => {
-              console.log(err)
-            })
-          } else {
-            _this.informedList.push(informed)
+      const reportId = this.$route.params.reportId
+      this.loading = true
+      const reportPromise = this.axios.get('report/' + reportId)
+        .then(res => {
+          this.report = res.data || {}
+          if (this.report.path) {
+            return this.axios.get('oss/upload/show', {
+              params: { objectKey: this.report.path, bucket: this.report.type }
+            }).then(r => { this.imagePath = this.toAbsoluteUrl(r.data) })
           }
+        })
 
+      const informedPromise = this.axios.get('report/recheck/' + reportId)
+        .then(res => {
+          const informed = (res.data && res.data.informed) || []
+          const tasks = informed.map(item => {
+            if (!item.path) return Promise.resolve(item)
+            return this.axios.get('oss/upload/show', {
+              params: { objectKey: item.path, bucket: item.type }
+            }).then(r => Object.assign({}, item, { imagePath: this.toAbsoluteUrl(r.data) }))
+          })
+          return Promise.all(tasks).then(list => { this.informedList = list })
         })
-      }).catch(err => {
-        console.log(err)
-      })
-      this.axios.get('report/' + this.$route.params.reportId).then(res => {
-        this.report = res.data
-        this.axios.get('oss/upload/show', {
-          params: {
-            objectKey: res.data.path,
-            bucket: res.data.type
-          }
-        }).then(res1 => {
-          this.imagePath = this.axios.defaults.baseURL.includes('https://')
-            ? res1.data.replace('http://', 'https://') : res1.data
-        }).catch(err => {
+
+      Promise.all([reportPromise, informedPromise])
+        .catch(err => {
           console.log(err)
+          this.$message.error('复核信息加载失败，请稍后重试')
         })
-      }).catch(err => {
-        console.log(err)
-      })
+        .then(() => { this.loading = false })
     },
     toEditReport (id) {
       this.$router.push('/report/edit/' + id)
@@ -149,115 +141,189 @@ export default {
       this.$router.push('/informed/edit/' + id)
     },
     toDelInformedRelat (id) {
-      this.$alert('删除之后将无法回复！！！', '确认删除？', {
-        confirmButtonText: '确定',
-        callback: action => {
-          let instance = this.axios.create({
-            headers: {
-              'Authorization': window.localStorage.token,
-              'Content-Type': 'application/json'
-            }
-          })
-          let _this = this
-          instance({
-            method: 'post',
-            url: 'report/relieve',
-            params: {
-              reportId: _this.report.id,
-              informedId: id
-            },
-            headers: {
-              'X-Requested-With': 'XMLHttpRequest',
-              'Content-Type': 'application/json'
-            }
-          }).then(function (response) {
-            _this.$message({
-              message: '删除成功',
-              type: 'success'
-            })
-            _this.reload()
-          })
-        }
-      })
+      this.$confirm('删除后将无法恢复，确认要解除该匹配？', '解除关联', {
+        confirmButtonText: '解除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        apiSubmit(this.axios, 'post', 'report/relieve', null, {
+          reportId: this.report.id,
+          informedId: id
+        }).then(() => {
+          this.$message.success('关系已解除')
+          this.getData()
+        }).catch(err => {
+          console.log(err)
+          this.$message.error('解除失败，请稍后重试')
+        })
+      }).catch(() => {})
     },
     reviewPass () {
-      let _this = this
-      _this.informedList.forEach(function (item) {
-        _this.axios.put('report/pass', {
-          reportId: _this.report.id,
-          informedId: item.id
-        }).then(res => {
-          _this.$message({
-            message: '审核成功',
-            type: 'success'
-          })
-          _this.$router.push('/review')
-        }).catch(err => {
-          _this.$message({
-            message: '审核失败',
-            type: 'error'
-          })
-          console.log(err)
+      if (!this.informedList.length) return
+      this.submitting = true
+      const reportId = this.report.id
+      const tasks = this.informedList.map(item =>
+        this.axios.put('report/pass', { reportId, informedId: item.id })
+      )
+      Promise.all(tasks)
+        .then(() => {
+          this.$message.success('已审核通过')
+          this.$router.push('/review')
         })
-      })
+        .catch(err => {
+          console.log(err)
+          this.$message.error('审核失败，请稍后重试')
+        })
+        .then(() => { this.submitting = false })
     },
     cancel () {
       this.$router.push('/review')
     }
   },
-  filters: {
-    stateFilter: function (state) {
-      if (state <= 1) return '实验中'
-      if (state === 2) return '无法识别'
-      if (state === 3) return '报告已出'
-    }
-  },
-  computed: {},
   created () {
-    let loading = this.$loading({
-      lock: true,
-      text: 'Loading',
-      spinner: 'el-icon-loading',
-      background: 'rgba(0, 0, 0, 0.7)'
-    })
     this._initData()
-    loading.close()
-  },
-  mounted () {},
-  destroyed () {}
+  }
 }
 </script>
+
 <style rel="stylesheet/scss" lang="scss" scoped>
-  .review-container {
-    margin: 20px 0px;
-    padding: 20px;
-    background: #ffffff;
-  }
-  .review-container .header {
-    margin-bottom: 20px;
-    font-size: 18px;
-  }
-  .report-detail {
-    margin-bottom: 10px;
-    font-size: 14px;
-    .report-detail-title {
-      font-weight: bold;
-      margin-right: 10px;
+.review-container {
+  margin: 20px 0;
+  padding: 20px;
+  background: var(--pc-white);
+  border-radius: var(--pc-r-4);
+  box-shadow: var(--pc-sh-1);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+  border-bottom: var(--pc-bd-hair);
+
+  .page-meta {
+    font-size: var(--pc-fs-13);
+    color: var(--pc-ink-500);
+    strong {
+      color: var(--pc-ink-800);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
     }
-    .null-title {
-      padding-left: 62px;
-    }
   }
-  .fl-right {
-    float: right;
+}
+
+.panel {
+  background: var(--pc-bg-50);
+  border: var(--pc-bd-hair);
+  border-radius: var(--pc-r-4);
+  padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: var(--pc-bd-hair);
+
+  h4 {
+    margin: 0;
+    font-size: var(--pc-fs-14);
+    font-weight: 600;
+    color: var(--pc-ink-800);
   }
-  .img-content {
-    /*margin: 20px 0px 20px 20px;*/
-    height: 500px;
-    background: #ffffff;
-    overflow: auto;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  row-gap: 6px;
+  column-gap: 8px;
+  margin-bottom: 12px;
+  font-size: var(--pc-fs-13);
+
+  .meta-label {
+    color: var(--pc-ink-500);
   }
-  .footer-btn {
-    text-align: center;
+  .meta-value {
+    color: var(--pc-ink-800);
+    word-break: break-all;
+    &.num { font-variant-numeric: tabular-nums; }
   }
+}
+
+.doc-frame {
+  width: 100%;
+  height: 560px;
+  background: var(--pc-white);
+  border: var(--pc-bd-hair);
+  border-radius: var(--pc-r-4);
+  overflow: hidden;
+
+  object {
+    width: 100%;
+    height: 100%;
+  }
+  .doc-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: var(--pc-bg-100);
+  }
+
+  &--small {
+    height: 320px;
+  }
+}
+
+.doc-empty {
+  padding: 40px 0 24px;
+  text-align: center;
+  background: var(--pc-white);
+  border: var(--pc-bd-hair);
+  border-radius: var(--pc-r-4);
+
+  .empty-title {
+    margin: 0 0 4px;
+    font-size: var(--pc-fs-14);
+    color: var(--pc-ink-600);
+  }
+  .empty-hint {
+    margin: 0;
+    font-size: var(--pc-fs-12);
+    color: var(--pc-ink-400);
+  }
+}
+
+.informed-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.informed-card {
+  background: var(--pc-white);
+  border: var(--pc-bd-hair);
+  border-radius: var(--pc-r-4);
+  padding: 12px 14px;
+}
+
+.card-actions {
+  margin-bottom: 10px;
+
+  .danger { color: var(--pc-neg-600); }
+}
+
+.footer-btn {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: var(--pc-bd-hair);
+  text-align: center;
+}
 </style>
