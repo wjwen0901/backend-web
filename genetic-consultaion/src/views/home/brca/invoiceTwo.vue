@@ -236,7 +236,7 @@
         <div class="email-but">
           <el-button type="warning" icon="el-icon-download" size="small" :disabled="emilPathList.length===0" @click="downloadBatchEmail">下载文件</el-button>
         </div>
-        <el-table size="small" ref="multipleTable" :row-class-name="tableRowClassName" :header-cell-style="{background:'#14a495',color:'white'}" border :data="downloadFileList" @selection-change="handleSelectionChange" :row-key="handleReserve">
+        <el-table size="small" ref="multipleTable" :row-class-name="tableRowClassName" border :data="downloadFileList" @selection-change="handleSelectionChange" :row-key="handleReserve">
           <el-table-column align="center" type="selection" width="80"></el-table-column>
           <el-table-column align="center" label="文件名称" prop="fileName"></el-table-column>
         </el-table>
@@ -665,6 +665,8 @@ export default {
             this.getInvoiceList()
         },
      /**标签状态颜色 */
+        // CRITIQUE[critical]: getColor 自定义十六进制色 map，未走 D3 6 类语义色；
+        // 改用 tagClassForStatusStr 模式（参 src/views/home/order/orderNew.vue），命中 el-tag--{warn,info2,prog,succ,pos,neg}
         getColor(val){
             const map = {
                 '已发送邮件':'#14a495',
@@ -745,9 +747,11 @@ export default {
                 transform: translateY(2px);
             }
             .i-title{
-                background: #14a495;
-                color: white;
+                background: var(--pc-ink-50);
+                color: var(--pc-ink-600);
+                font-weight: 600;
                 line-height: 3;
+                border-bottom: 1px solid var(--pc-ink-200);
             }
             .i-line{
                 background: #f5f6f9;
@@ -814,9 +818,6 @@ export default {
     .el-table .success-row {
             background: white;
     }
-    .el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner{
-            background-color: #14a495;
-            border-color: white;
-        }
+    /* el-checkbox 主色已由 design-system/element-overrides.css 接管，此处不再覆盖 */
     }
 </style>

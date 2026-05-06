@@ -525,6 +525,7 @@ export default {
     background: #f2f2f2;
     overflow: hidden;
   }
+  /* TODO(Sprint 3): 删 !important 有视觉回归风险（el-header 默认 60px）。需在 Playwright 校核后改用 .pc-section-header 类替代 */
   .el-header {
     margin-top: 20px;
     text-align: left;

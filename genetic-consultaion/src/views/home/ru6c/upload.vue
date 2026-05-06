@@ -447,6 +447,7 @@ export default {
     background: #f2f2f2;
     overflow: hidden;
   }
+  /* TODO(Sprint 3): 删 !important 有视觉回归风险（同 informed_upload.vue），待 .pc-section-header 抽出后替换 */
   .el-header {
     margin-top: 20px;
     text-align: left;

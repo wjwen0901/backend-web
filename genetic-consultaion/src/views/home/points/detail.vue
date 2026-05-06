@@ -272,6 +272,7 @@ export default {
 }
 </style>
 <style lang="scss">
+/* TODO(Sprint 3): 透明行 !important 删除会让 Element 默认 zebra 回来，需先确认积分明细的视觉是否依赖透明行（建议 Playwright 截图对比后处理） */
 .el-table__row {
   background-color: transparent !important;
 }

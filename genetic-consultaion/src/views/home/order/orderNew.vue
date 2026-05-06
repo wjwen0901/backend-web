@@ -517,6 +517,7 @@ export default {
       console.log(this.checkIds)
     },
     // 标签颜色 —— 旧自定义色保留为 fallback
+    // CRITIQUE[major]: 此 map 是历史 fallback。新增 statusStr 走 tagClassForStatusStr 命中 D3 6 类，不要再扩这个 map（参 docs/2026-05-06-design-critique.md M2）
     getColor (val) {
       const map = {
         '待采样': '#14a495',

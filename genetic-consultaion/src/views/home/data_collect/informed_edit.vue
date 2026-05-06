@@ -1328,6 +1328,7 @@ export default {
       font-weight: 400;
       color: #333;
     }
+    /* TODO(Sprint 3): scoped 内 !important 应能直接删（scoped attr 已有高 specificity），需校核后处理 */
     .box{
       position: relative;
       margin-left: 20px;
@@ -1388,6 +1389,7 @@ export default {
     }
   }
 
+  /* TODO(Sprint 3): el-date-editor 默认宽度较窄需 100% 撑满，改用 .full-w 类 + design-system token */
   .el-date-editor.el-input {
     width: 100% !important;
   }

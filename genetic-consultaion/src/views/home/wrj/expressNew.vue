@@ -238,10 +238,13 @@ export default {
             svg{
                 transform: translateY(2px);
             }
+            /* TODO(Sprint 2): 与 brca/expressNew 双胞胎复制；待抽 <ExpressListTable> 共享组件 */
             .i-title{
-                background: #14a495;
-                color: white;
+                background: var(--pc-ink-50);
+                color: var(--pc-ink-600);
+                font-weight: 600;
                 line-height: 3;
+                border-bottom: 1px solid var(--pc-ink-200);
             }
             .i-line{
                 background: #f5f6f9;

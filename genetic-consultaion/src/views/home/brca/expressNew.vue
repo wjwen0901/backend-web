@@ -239,9 +239,11 @@ export default {
                 transform: translateY(2px);
             }
             .i-title{
-                background: #14a495;
-                color: white;
+                background: var(--pc-ink-50);
+                color: var(--pc-ink-600);
+                font-weight: 600;
                 line-height: 3;
+                border-bottom: 1px solid var(--pc-ink-200);
             }
             .i-line{
                 background: #f5f6f9;

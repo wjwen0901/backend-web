@@ -412,6 +412,7 @@ export default {
         margin: 4px 0;
       }
     }
+    /* TODO(Sprint 3): scoped 内 !important 应能直接删（同 informed_edit.vue），需校核后处理 */
     .info-cell,.brief {
       position: relative;
       padding: 10px;
@@ -442,6 +443,7 @@ export default {
       }
     }
   }
+  /* TODO(Sprint 3): el-date-editor 默认宽度较窄需 100% 撑满，改用 .full-w 类 + design-system token */
   .el-date-editor.el-input {
     width: 100% !important;
   }
