@@ -1,20 +1,30 @@
 <template>
   <div>
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>诠见康-维汝健</el-breadcrumb-item>
-      <el-breadcrumb-item>订单管理</el-breadcrumb-item>
-    </el-breadcrumb>
     <div class="user-container">
+      <div class="page-header">
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+          <el-breadcrumb-item>诠见康 · 维汝健</el-breadcrumb-item>
+          <el-breadcrumb-item>订单管理</el-breadcrumb-item>
+        </el-breadcrumb>
+        <div class="page-meta">
+          共 <strong>{{ totalPage }}</strong> 条
+          <template v-if="hasSelection">
+            <span class="meta-divider">·</span>
+            已选 <strong>{{ multipleSelection.length }}</strong> 条
+          </template>
+        </div>
+      </div>
+
       <div class="search-box">
-        <el-form ref="form" :model="searchForm" label-width="80px" size="small">
-          <el-row>
+        <el-form ref="searchForm" :model="searchForm" label-width="80px" size="small">
+          <el-row :gutter="0">
             <el-col :span="6">
               <el-form-item label="医院">
                 <el-autocomplete
-                    class="inline-input"
+                  class="width-100-p"
                   v-model="searchForm.hospitalName"
                   :fetch-suggestions="hospitalQuerySearch"
-                  placeholder="请输入内容"
+                  placeholder="输入医院名称"
                   :trigger-on-focus="false"
                   @select="hospitalHandleSelect"
                 ></el-autocomplete>
@@ -22,167 +32,124 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="科室">
-                <el-select class="width-100-p" v-model="searchForm.deptId" filterable placeholder="请选择" @change="getData">
-                  <el-option
-                    v-for="item in depts"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
+                <el-select class="width-100-p" v-model="searchForm.deptId" filterable clearable placeholder="全部科室" @change="handleSearch">
+                  <el-option v-for="item in depts" :key="item.id" :label="item.name" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="患者">
-                <el-input v-model="searchForm.patient" placeholder="样本编号/姓名" @change="getData"></el-input>
+                <el-input v-model="searchForm.patient" placeholder="样本编号 / 姓名" clearable @change="handleSearch"></el-input>
               </el-form-item>
             </el-col>
-          </el-row>
-          <el-row>
             <el-col :span="6">
               <el-form-item label="订单状态">
-                <el-select v-model="searchForm.status" placeholder="请选择订单状态" @change="getData">
-                  <el-option label="全部" value=""></el-option>
-                  <el-option label="待付款" value="0"></el-option>
-                  <el-option label="待采样" value="1"></el-option>
-                  <el-option label="待回寄" value="2"></el-option>
-                  <el-option label="寄样中" value="3"></el-option>
-                  <el-option label="检测中" value="4"></el-option>
-                  <el-option label="报告已出" value="5"></el-option>
-                  <el-option label="已发起解读" value="7"></el-option>
-                  <el-option label="已取消" value="10"></el-option>
+                <el-select class="width-100-p" v-model="searchForm.status" clearable placeholder="全部状态" @change="handleSearch">
+                  <el-option v-for="opt in statusOptions" :key="opt.value" :label="opt.label" :value="opt.value"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
+          </el-row>
+          <el-row :gutter="0">
             <el-col :span="12">
               <el-form-item label="下单日期">
                 <el-col :span="11">
-                  <el-form-item>
-                    <el-date-picker type="date" placeholder="开始日期" v-model="searchForm.startDate" style="width: 100%;" @change="getData"></el-date-picker>
-                  </el-form-item>
+                  <el-date-picker class="width-100-p" type="date" placeholder="开始日期" v-model="searchForm.startDate" @change="handleSearch"></el-date-picker>
                 </el-col>
-                <el-col class="line" :span="2">-</el-col>
+                <el-col class="line" :span="2">—</el-col>
                 <el-col :span="11">
-                  <el-form-item>
-                    <el-date-picker placeholder="结束日期" v-model="searchForm.endDate" style="width: 100%;" @change="getData"></el-date-picker>
-                  </el-form-item>
+                  <el-date-picker class="width-100-p" type="date" placeholder="结束日期" v-model="searchForm.endDate" @change="handleSearch"></el-date-picker>
                 </el-col>
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
       </div>
+
       <div class="opera-box">
-        <el-row>
-<!--          <el-button type="primary" size="small" @click="toDistribution">分配解读费用</el-button>-->
-<!--          <el-button type="primary" size="small" @click="toDistributionSalesman">分配市场费用</el-button>-->
-          <el-button type="success" size="small" @click="confirmMoney">确认到帐</el-button>
-        </el-row>
+        <el-button type="success" size="small" :disabled="!hasSelection" @click="confirmMoney">确认到账</el-button>
+        <span class="opera-hint" v-if="!hasSelection">勾选订单后启用批量操作</span>
       </div>
+
       <el-table
+        ref="table"
         :data="orderList"
         @selection-change="handleSelectionChange"
         size="mini"
         border
+        v-loading="loading"
+        element-loading-text="加载订单中"
         style="width: 100%">
-        <el-table-column
-          fixed
-          type="selection"
-          width="40">
-        </el-table-column>
-        <el-table-column
-          prop="createTime"
-          label="下单时间"
-          width="136">
+        <el-table-column type="selection" width="40" fixed="left"></el-table-column>
+        <el-table-column label="下单时间" width="136" fixed="left">
           <template slot-scope="scope">
-            {{scope.row.createTime | formatDate}}
+            <span class="num">{{ scope.row.createTime | formatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="createTime"
-          label="更新时间"
-          width="136">
+        <el-table-column label="状态" width="92" fixed="left">
           <template slot-scope="scope">
-            {{scope.row.updateTime | formatDate}}
+            <el-tag :type="brcaOrderStatusType(scope.row.status)" size="mini" disable-transitions>{{ scope.row.statusStr }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="statusStr"
-          label="订单状态"
-          width="100">
-        </el-table-column>
-        <el-table-column
-          prop="payment"
-          label="支付价格"
-          width="80">
-          <template slot-scope="scope" v-if="scope.row.payment !== undefined">
-            ¥ {{scope.row.payment}} <span v-if="scope.row.tid">(有赞)</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="受检者"
-          width="140">
+        <el-table-column label="受检者" width="160" fixed="left" show-overflow-tooltip>
           <template slot-scope="scope">
-            <span v-if="scope.row.patientName != undefined">
-              <span>
-                {{scope.row.patientName}}({{scope.row.patientPhone}})
-              </span>
+            <span v-if="scope.row.patientName">
+              {{ scope.row.patientName }}
+              <span class="meta">({{ scope.row.patientPhone }})</span>
             </span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="sampleCode"
-          label="样本编号"
-          width="100">
-        </el-table-column>
-        <el-table-column
-          prop="hospitalName"
-          label="医院"
-          width="210">
-        </el-table-column>
-        <el-table-column
-          prop="deptName"
-          label="科室"
-          width="100">
-        </el-table-column>
-        <el-table-column
-          prop="doctorName"
-          label="医生"
-          width="80">
-        </el-table-column>
-        <el-table-column
-          prop="solutionName"
-          label="检测项目"
-          width="200">
-        </el-table-column>
-        <el-table-column
-          prop="companyName"
-          label="实验室"
-          width="180">
-        </el-table-column>
-        <el-table-column
-          label="服务人员"
-          width="200">
+
+        <el-table-column label="更新时间" width="136">
           <template slot-scope="scope">
-            <span v-if="scope.row.serviceName != undefined">
-              <span>
-                {{scope.row.serviceName}}({{scope.row.servicePhone}})
-              </span>
+            <span class="num">{{ scope.row.updateTime | formatDate }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="支付价格" width="108">
+          <template slot-scope="scope">
+            <span class="num" v-if="scope.row.payment !== undefined">¥{{ scope.row.payment }}</span>
+            <el-tag v-if="scope.row.tid" type="info2" size="mini" disable-transitions class="ml-4">有赞</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="sampleCode" label="样本编号" width="100"></el-table-column>
+        <el-table-column prop="hospitalName" label="医院" width="200" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="deptName" label="科室" width="100" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="doctorName" label="医生" width="80" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="solutionName" label="检测项目" width="180" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="companyName" label="实验室" width="160" show-overflow-tooltip></el-table-column>
+        <el-table-column label="服务人员" width="180" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <span v-if="scope.row.serviceName">
+              {{ scope.row.serviceName }}
+              <span class="meta">({{ scope.row.servicePhone }})</span>
             </span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="业务代表"
-          width="200">
+        <el-table-column label="业务代表" width="180" show-overflow-tooltip>
           <template slot-scope="scope">
-            <span v-if="scope.row.salesmanName != undefined">
-              <span>
-                {{scope.row.salesmanName}}({{scope.row.salesmanPhone}})
-              </span>
+            <span v-if="scope.row.salesmanName">
+              {{ scope.row.salesmanName }}
+              <span class="meta">({{ scope.row.salesmanPhone }})</span>
             </span>
           </template>
         </el-table-column>
+
+        <el-table-column label="操作" width="160" fixed="right">
+          <template slot-scope="scope">
+            <el-button size="mini" type="text" @click="toInformedDetail(scope.row.orderId, scope.row.expressCode, scope.row.expressId)">查看</el-button>
+            <el-button size="mini" type="text" @click="toUploadInformed(scope.row.orderId)">知情</el-button>
+            <el-button size="mini" type="text" @click="toUploadReport(scope.row.orderId)" v-if="canUploadBrcaReport(scope.row.status)">报告</el-button>
+          </template>
+        </el-table-column>
+
+        <template slot="empty">
+          <div class="empty">
+            <p class="empty-title">没有匹配的订单</p>
+            <p class="empty-hint">{{ emptyHint }}</p>
+          </div>
+        </template>
       </el-table>
+
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -194,176 +161,113 @@
       </el-pagination>
     </div>
 
-    <el-dialog title="分账" :visible.sync="dialogDistributionVisible">
-      <div>
-        <div class="infos">
-          <h5>操作说明：</h5>
-          <p>1. 按医生、患者、时间等筛选订单, 为避免财务纠纷，目前仅支持选择 "一位" 医生的订单，进行操作</p>
-          <p>2. 勾选需要分账的订单</p>
-          <p>3. 点击"分账"按钮，显示勾选订单的医生所有的服务人员</p>
-        </div>
-        <el-form ref="form" :model="distribution" label-width="120px" size="small" style="width: 80%">
-          <el-form-item label="相关医生">
-            {{distribution.doctorNames}}
-          </el-form-item>
-          <el-form-item label="选择分配人员">
-            <el-select v-model="distribution.userId" filterable placeholder="请选择">
-              <el-option
-                v-for="item in serviceUserList"
-                :key="item.userId"
-                :label="item.fullName"
-                :value="item.userId">
-              </el-option>
-            </el-select>
-          </el-form-item>
-
-          <el-form-item>
-            <el-button type="primary" @click="submitDistribution(1)">确定</el-button>
-            <el-button @click="dialogDistributionVisible = false">取消</el-button>
-          </el-form-item>
-        </el-form>
+    <transition name="bulk-bar">
+      <div class="bulk-bar" v-show="hasSelection">
+        <span class="bulk-count">已选 <strong>{{ multipleSelection.length }}</strong> 条</span>
+        <span class="bulk-divider"></span>
+        <el-button type="success" size="small" @click="confirmMoney">确认到账</el-button>
+        <el-button size="small" plain @click="clearSelection">取消选中</el-button>
       </div>
-    </el-dialog>
-
-    <el-dialog title="市场费用分配" :visible.sync="dialogDistributionSalesVisible">
-      <div>
-        <div class="infos">
-          <h5>操作说明：</h5>
-          <p>1. 按医生、患者、时间等筛选订单, 为避免财务纠纷，目前仅支持选择 "一位" 医生的订单，进行操作</p>
-          <p>2. 勾选需要分配的订单</p>
-          <p>3. 点击"分配市场费用"按钮，显示勾选订单的医生所有的服务人员</p>
-        </div>
-        <el-form ref="form" :model="distribution" label-width="120px" size="small" style="width: 80%">
-          <el-form-item label="相关医生">
-            {{distribution.doctorNames}}
-          </el-form-item>
-          <el-form-item label="选择分配人员">
-            <el-select v-model="distribution.userId" filterable placeholder="请选择">
-              <el-option
-                v-for="item in serviceUserList"
-                :key="item.userId"
-                :label="item.fullName"
-                :value="item.userId">
-              </el-option>
-            </el-select>
-          </el-form-item>
-
-          <el-form-item>
-            <el-button type="primary" @click="submitDistribution(0)">确定</el-button>
-            <el-button @click="dialogDistributionSalesVisible = false">取消</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-dialog>
+    </transition>
   </div>
 </template>
+
 <script>
+import {
+  formatDate,
+  brcaOrderStatusType,
+  canUploadBrcaReport,
+  BRCA_ORDER_STATUS_OPTIONS
+} from '@/utils/pc'
+
 export default {
-  components: {},
-  name: 'orderList',
+  name: 'WrjOrderList',
   data () {
     return {
       orderList: [],
       searchForm: {},
-      distribution: {},
-      pageNum: window.sessionStorage.orderPageNum === undefined ? 1 : window.sessionStorage.orderPageNum,
-      pageSize: window.sessionStorage.orderPageSize === undefined ? 20 : window.sessionStorage.orderPageSize,
+      pageNum: parseInt(window.sessionStorage.orderPageNum) || 1,
+      pageSize: parseInt(window.sessionStorage.orderPageSize) || 20,
       totalPage: 0,
-      dialogFormVisible: false,
+      loading: false,
       multipleSelection: [],
-      reportIds: [],
-      companyId: '',
-      companyList: [],
-      companySelLoading: false,
-      sendEmailFormVisible: false,
-      companyEmail: [],
-      emailList: [],
       depts: [],
-      serviceUserList: [],
-      roleCode: window.localStorage.role,
-      condition: null,
       userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-      dialogDistributionVisible: false,
-      dialogDistributionSalesVisible: false,
+      statusOptions: BRCA_ORDER_STATUS_OPTIONS
     }
   },
+  computed: {
+    hasSelection () { return this.multipleSelection.length > 0 },
+    emptyHint () {
+      return this.hasFilter ? '试试调整筛选条件，或清空后重新查询' : '暂无维汝健订单数据'
+    },
+    hasFilter () {
+      const f = this.searchForm
+      return !!(f.hospitalId || f.deptId || f.patient || f.status || f.startDate || f.endDate)
+    }
+  },
+  filters: { formatDate },
   methods: {
+    brcaOrderStatusType: brcaOrderStatusType,
+    canUploadBrcaReport: canUploadBrcaReport,
     _initData () {
+      this.loading = true
       this.axios.get('hospital-dept').then(res => {
         this.depts = res.data
-      }).catch(err => {
-        console.log(err)
-      })
+      }).catch(err => console.log(err))
       this.getData()
-      this.getCompanyList()
     },
     getData () {
-      this.axios.get('order/brca/page', {
+      this.loading = true
+      return this.axios.get('order/brca/page', {
         params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
+          userId: this.userId,
           hospitalId: this.searchForm.hospitalId,
           deptId: this.searchForm.deptId,
-          doctor: this.searchForm.doctor,
           patient: this.searchForm.patient,
-          companyId: this.searchForm.companyId,
           status: this.searchForm.status,
           startDate: this.searchForm.startDate,
           endDate: this.searchForm.endDate,
           pageNum: this.pageNum,
-          pageSize: this.pageSize,
-          condition: this.condition
+          pageSize: this.pageSize
         }
       }).then(res => {
-        this.orderList = res.data.list
+        this.orderList = res.data.list || []
         this.pageSize = res.data.pageSize
         this.pageNum = res.data.pageNum
         this.totalPage = res.data.total
       }).catch(err => {
         console.log(err)
+        this.$message.error('订单加载失败，请稍后重试')
+      }).then(() => {
+        this.loading = false
       })
     },
-    getCompanyList () {
-      this.axios.get('company/CustCompany', {
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
-        }
-      }).then(res => {
-        this.companyList = res.data
-      }).catch(err => {
-        this.$message.error(err.data.message)
-        console.log(err)
-      })
+    handleSearch () {
+      this.pageNum = 1
+      window.sessionStorage.orderPageNum = 1
+      this.getData()
     },
     handleSelectionChange (value) {
       this.multipleSelection = value
     },
+    clearSelection () {
+      if (this.$refs.table) this.$refs.table.clearSelection()
+    },
     hospitalQuerySearch (queryString, cb) {
       this.axios.get('hospital/page', {
-        params: {
-          pageNum: 1, // 页码
-          pageSize: 8, // 每页长度
-          keywords: queryString
-        }
+        params: { pageNum: 1, pageSize: 8, keywords: queryString }
       }).then(res => {
-        let result = []
         if (res.data.endRow === 0) {
-          cb(result)
+          cb([])
         } else {
-          res.data.list.forEach(function (item) {
-            result.push({
-              'value': item.name,
-              'id': item.id
-            })
-          })
-          cb(result)
+          cb(res.data.list.map(item => ({ value: item.name, id: item.id })))
         }
-      }).catch(err => {
-        console.log(err)
-      })
+      }).catch(err => console.log(err))
     },
     hospitalHandleSelect (item) {
       this.searchForm.hospitalId = item.id
-      this.getData();
+      this.handleSearch()
     },
     handleSizeChange (val) {
       this.pageSize = val
@@ -375,234 +279,171 @@ export default {
       window.sessionStorage.orderPageNum = val
       this.getData()
     },
-    toRecheck (reportId, informedId) {
-      this.axios.get('report/recheck/' + reportId, {
-        params: {
-          informedId: informedId
-        }
-      }).then(res => {
-        this.informed = res.data.informed
-        this.report = res.data.report
-        this.dialogFormVisible = true
-      }).catch(err => {
-        console.log(err)
-      })
-    },
     toUploadInformed (id) {
-      this.$router.push({path: '/informed/upload', query: {orderId: id}})
+      this.$router.push({ path: '/informed/upload', query: { orderId: id } })
     },
     toUploadReport (id) {
-      this.$router.push({path: '/report/upload', query: {orderId: id}})
+      this.$router.push({ path: '/report/upload', query: { orderId: id } })
     },
     toInformedDetail (id, expressCode, expressId) {
-      this.$router.push({path: '/order/' + id, query: {expressCode: expressCode, expressId: expressId}})
-    },
-
-    // 分账
-    toDistribution () {
-      let doctorIds = []
-      this.serviceUserList = []
-      this.distribution.orderIds = []
-      this.multipleSelection.forEach(item => {
-        this.distribution.orderIds.push(item.orderId)
-        if (doctorIds.indexOf(item.doctorId) == -1) {
-          doctorIds.push(item.doctorId)
-          this.distribution.doctorNames = this.distribution.doctorNames ?  (this.distribution.doctorNames + '  ' + item.doctorName) : item.doctorName
-        }
-      })
-      doctorIds.forEach(item => {
-        this.axios.get('doctor/service', {
-          params: {
-            doctorId: item
-          }
-        }).then(res => {
-          if (res.data.length > 0) {
-            this.serviceUserList = this.serviceUserList.concat(res.data)
-          }
-        }).catch(err => {
-          console.log(err)
-        })
-      })
-
-
-      this.dialogDistributionVisible = true
-    },
-    // 分账
-    toDistributionSalesman () {
-      let doctorIds = []
-      this.serviceUserList = []
-      this.distribution.orderIds = []
-      this.multipleSelection.forEach(item => {
-        this.distribution.orderIds.push(item.orderId)
-        if (doctorIds.indexOf(item.doctorId) == -1) {
-          doctorIds.push(item.doctorId)
-          this.distribution.doctorNames = this.distribution.doctorNames ?  (this.distribution.doctorNames + '  ' + item.doctorName) : item.doctorName
-        }
-      })
-      doctorIds.forEach(item => {
-        this.axios.get('doctor/service', {
-          params: {
-            doctorId: item
-          }
-        }).then(res => {
-          if (res.data.length > 0) {
-            this.serviceUserList = this.serviceUserList.concat(res.data)
-          }
-        }).catch(err => {
-          console.log(err)
-        })
-      })
-      this.dialogDistributionVisible = true
-    },
-    // 分账
-    toDistributionSalesman () {
-      let doctorIds = []
-      this.distribution.orderIds = []
-      this.serviceUserList = []
-      this.multipleSelection.forEach(item => {
-        this.distribution.orderIds.push(item.orderId)
-        if (doctorIds.indexOf(item.doctorId) == -1) {
-          doctorIds.push(item.doctorId)
-          this.distribution.doctorNames = this.distribution.doctorNames ?  (this.distribution.doctorNames + '  ' + item.doctorName) : item.doctorName
-        }
-      })
-      doctorIds.forEach(item => {
-        this.axios.get('doctor/salesman', {
-          params: {
-            doctorId: item
-          }
-        }).then(res => {
-          if (res.data.length > 0) {
-            this.serviceUserList = this.serviceUserList.concat(res.data)
-          }
-        }).catch(err => {
-          console.log(err)
-        })
-      })
-      this.dialogDistributionSalesVisible = true
-    },
-    // 分账
-    submitDistribution (serviceType) {
-      let _this = this
-      this.distribution.serviceType = serviceType
-      let instance = this.axios.create({
-        headers: {
-          'Authorization': window.localStorage.token,
-          'Content-Type': 'application/json'
-        }
-      })
-      instance({
-        method: 'post',
-        url: 'commission/distribution',
-        data: this.distribution,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json'
-        }
-      }).then(res => {
-        _this.$message({
-          message: '分账成功',
-          type: 'success'
-        })
-        _this._initData()
-        _this.dialogDistributionVisible = false
-      })
+      this.$router.push({ path: '/order/' + id, query: { expressCode: expressCode, expressId: expressId } })
     },
     confirmMoney () {
-      this.multipleSelection.forEach(item => {
+      if (!this.multipleSelection.length) return
+      const calls = this.multipleSelection.map(item =>
         this.axios.get('order/confirm', {
-          params: {
-            orderId: item.orderId,
-            userId: this.userId
-          }
-        }).then(res => {
-          if (res.data == 'success') {
-            this.$message({
-              message: '确认成功',
-              type: 'success'
-            })
-          }
-        }).catch(err => {
-          console.log(err)
-        })
+          params: { orderId: item.orderId, userId: this.userId }
+        }).then(res => res.data === 'success').catch(() => false)
+      )
+      Promise.all(calls).then(results => {
+        const ok = results.filter(Boolean).length
+        const fail = results.length - ok
+        if (fail === 0) {
+          this.$message.success('已确认到账 ' + ok + ' 条')
+        } else if (ok === 0) {
+          this.$message.error('确认失败 ' + fail + ' 条，请重试')
+        } else {
+          this.$message.warning('成功 ' + ok + ' 条 / 失败 ' + fail + ' 条')
+        }
+        if (ok > 0) this.getData()
       })
     }
   },
-  filters: {},
-  computed: {},
   created () {
-    let loading = this.$loading({
-      lock: true,
-      text: 'Loading',
-      spinner: 'el-icon-loading',
-      background: 'rgba(0, 0, 0, 0.7)'
-    })
     this._initData()
-    loading.close()
-  },
-  mounted () {},
-  destroyed () {}
+  }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss" scoped>
-  .user-container {
-    margin: 20px 0px;
-    padding: 20px;
-    background: #ffffff;
 
-    .search-box {
-      border: 1px solid #ddd;
-      padding: 20px 20px 0 0;
-      margin-bottom: 20px;
-      .line {
-        text-align: center;
-      }
+<style rel="stylesheet/scss" lang="scss" scoped>
+.user-container {
+  margin: 20px 0;
+  padding: 20px;
+  background: var(--pc-white);
+  border-radius: var(--pc-r-4);
+  box-shadow: var(--pc-sh-1);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+  border-bottom: var(--pc-bd-hair);
+
+  .page-meta {
+    font-size: var(--pc-fs-13);
+    color: var(--pc-ink-500);
+
+    strong {
+      color: var(--pc-ink-800);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
     }
-    .opera-box {
-      padding-bottom: 20px;
-    }
-  }
-  .user-container .header {
-    margin-bottom: 20px;
-    font-size: 18px;
-  }
-  .search-box {
-    min-height: 30px;
-    padding-bottom: 10px;
-  }
-  .el-col {
-    border-radius: 4px;
-  }
-  .bg-purple-dark {
-    background: #99a9bf;
-  }
-  .bg-purple {
-    background: #d3dce6;
-  }
-  .bg-purple-light {
-    background: #e5e9f2;
-  }
-  .grid-content {
-    border-radius: 4px;
-    min-height: 36px;
-    padding: 10px 20px;
-  }
-  .fl-right {
-    float: right;
-  }
-  .infos {
-    margin-bottom: 20px;
-    background: #eee;
-    padding: 20px;
-    h5 {
-      margin: 0 0 20px 0;
-      font-size: 14px;
-    }
-    p{
-      margin: 0 0 4px 0;
-      padding: 0;
-      font-size: 12px;
-      line-height: 20px;
+    .meta-divider {
+      margin: 0 8px;
+      color: var(--pc-ink-300);
     }
   }
+}
+
+.search-box {
+  border: var(--pc-bd-hair);
+  border-radius: var(--pc-r-4);
+  padding: 16px 16px 0 0;
+  margin-bottom: 16px;
+  background: var(--pc-ink-50);
+
+  .line {
+    text-align: center;
+    color: var(--pc-ink-400);
+  }
+  .width-100-p { width: 100%; }
+}
+
+.opera-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 16px;
+
+  .opera-hint {
+    font-size: var(--pc-fs-12);
+    color: var(--pc-ink-400);
+    margin-left: 4px;
+  }
+}
+
+.bulk-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--pc-white);
+  border-radius: 999px;
+  box-shadow: var(--pc-sh-3);
+  border: var(--pc-bd-hair);
+
+  .bulk-count {
+    font-size: var(--pc-fs-13);
+    color: var(--pc-ink-600);
+    padding: 0 8px;
+    strong {
+      color: var(--pc-accent-600);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+  .bulk-divider {
+    width: 1px;
+    height: 16px;
+    background: var(--pc-ink-200);
+    margin: 0 4px;
+  }
+}
+.bulk-bar-enter-active, .bulk-bar-leave-active {
+  transition: opacity var(--pc-dur-2) var(--pc-ease), transform var(--pc-dur-2) var(--pc-ease);
+}
+.bulk-bar-enter, .bulk-bar-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(8px);
+}
+
+.empty {
+  padding: 40px 0 24px;
+  text-align: center;
+  .empty-title {
+    margin: 0 0 4px;
+    font-size: var(--pc-fs-14);
+    color: var(--pc-ink-600);
+  }
+  .empty-hint {
+    margin: 0;
+    font-size: var(--pc-fs-12);
+    color: var(--pc-ink-400);
+  }
+}
+
+.width-100-p { width: 100%; }
+.ml-4 { margin-left: 4px; }
+
+::v-deep .el-table {
+  .meta {
+    color: var(--pc-ink-400);
+    font-size: var(--pc-fs-12);
+    margin-left: 2px;
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+  .cell .el-button--text {
+    padding: 0 4px;
+  }
+}
 </style>
