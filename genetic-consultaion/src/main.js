@@ -13,7 +13,9 @@ import VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
+import './assets/css/design-system/tokens.css'
 import './assets/css/normal.css'
+import './assets/css/design-system/element-overrides.css'
 
 Vue.use(VueQuillEditor)
 Vue.use(VueJsonp)
@@ -48,6 +50,12 @@ Vue.filter('formatDate', function (time) {
   }
   return fmt
 })
+Vue.filter('formatSize', function (v) {
+  if (!v && v !== 0) return '-'
+  if (v < 1024) return v + ' B'
+  if (v < 1024 * 1024) return (v / 1024).toFixed(1) + ' KB'
+  return (v / 1024 / 1024).toFixed(1) + ' MB'
+})
 Date.prototype.Format = function (fmt) { //author: meizz
   var o = {
     "M+": this.getMonth() + 1, //月份
@@ -73,7 +81,7 @@ zhiManager.on('load', function () {
 })
 // zhiManager.set('color','09aeb0'); //API示例，格式为 0-9 a-f 之间的六位有效字符 不用加#
 
-zhiManager.set('color', '117e73') // 格式为 0-9 a-f 之间的六位有效字符 不用加#
+zhiManager.set('color', '0E7A6E') // 设计系统 v0.2 主色 pc-primary-600，格式为 0-9 a-f 之间的六位有效字符 不用加#
 zhiManager.set('title', '联系我') // 建议长度为 8 个字符之内，文案仅对 PC组件有效，移动端没有文案
 // 若传入 1 ，按钮将显示在右下角 默认显示在右下角
 // 若传入 2 ，按钮将显示在左下角

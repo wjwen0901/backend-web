@@ -1,15 +1,45 @@
 <template>
-  <div>
-    <el-breadcrumb>
-      <el-breadcrumb-item>订单管理</el-breadcrumb-item>
-    </el-breadcrumb>
+  <div class="pc-order">
+    <div class="pc-page-title">
+      <h2>订单管理</h2>
+      <span class="desc">共 {{ totalPage }} 单 · 当前页 {{ filteredOrderList.length }} 单</span>
+    </div>
+
     <div class="order-box">
-      <div class="operate">
-        <el-input placeholder="请输入下单人姓名/手机号/检测项目" v-model="condition" size="small" class="input-with-select"
-          style="width:400px">
+      <!-- 状态分段 -->
+      <div class="pc-seg" ref="seg" v-if="statusSegments.length">
+        <div class="pc-seg__item"
+             :class="{ 'is-active': activeStatusStr === '' }"
+             @click="setStatusFilter('', $event)">
+          全部 <span class="count">{{ orderList.length }}</span>
+        </div>
+        <div class="pc-seg__item"
+             v-for="s in statusSegments"
+             :key="s.label"
+             :class="{ 'is-active': activeStatusStr === s.label }"
+             @click="setStatusFilter(s.label, $event)">
+          {{ s.label }} <span class="count">{{ s.count }}</span>
+        </div>
+        <div class="pc-seg__bar" :style="{ width: barW + 'px', transform: 'translateX(' + barX + 'px)' }"></div>
+      </div>
+
+      <!-- 工具条 -->
+      <div class="pc-toolbar">
+        <el-input placeholder="请输入下单人姓名/手机号/检测项目" v-model="condition" size="small" class="search-input" @keyup.enter.native="getData">
           <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
         </el-input>
-        <el-button type="warning" size="small" @click="exportData">导出</el-button>
+        <span class="grow"></span>
+        <el-button size="small" icon="el-icon-refresh" @click="getData">刷新</el-button>
+        <el-button type="warning" size="small" icon="el-icon-download" @click="exportData">导出</el-button>
+      </div>
+
+      <!-- 批量操作条 -->
+      <div class="pc-batchbar" v-if="checkIds.length">
+        <span>已选 <b>{{ checkIds.length }}</b> 项</span>
+        <span class="batchbar-actions">
+          <el-button size="mini" @click="exportData">批量导出</el-button>
+          <el-button size="mini" type="danger" plain @click="clearChecked">取消选择</el-button>
+        </span>
       </div>
       <div class="order-table">
         <table class="i-table">
@@ -25,8 +55,8 @@
             <th colspan="2" width="200px">操作</th>
           </tr>
           <br />
-          <template v-if="orderList && orderList.length !== 0">
-            <template v-for="(item, index) in orderList">
+          <template v-if="filteredOrderList && filteredOrderList.length !== 0">
+            <template v-for="(item, index) in filteredOrderList">
               <div :key="index + '&'" class="space"></div>
               <tr :key="index" class="i-line">
                 <td colspan="3">
@@ -75,10 +105,8 @@
                 <td>{{ item.pName }}({{ item.pCellphone || '-' }})</td>
                 <td>{{ item.fullName || '-' }}</td>
                 <td class="price-box">
-                  <el-tag size="small" effect="plain"
-                    :style="{ color: getColor(item.statusStr), borderColor: getColor(item.statusStr) }">{{
-                      item.statusStr ||
-                      '——' }}</el-tag>
+                  <el-tag size="small" :class="tagClassForStatusStr(item.statusStr)">{{
+                      item.statusStr || '——' }}</el-tag>
                   <el-button v-if="item.statusStr === '收款码待付款'" type="text" size="small" class="priceText"
                     @click="changePrice(item.payment, item.orderNo, item.itemTitle, item.id)">改价</el-button>
                 </td>
@@ -93,7 +121,7 @@
               </tr>
             </template>
           </template>
-          <tr v-if="!orderList || orderList.length === 0">
+          <tr v-if="!filteredOrderList || filteredOrderList.length === 0">
             <td colspan="8">
               <el-empty description="暂无数据"></el-empty>
             </td>
@@ -294,12 +322,30 @@ export default {
       emailList: [],
       roleCode: window.localStorage.role,
       condition: null,
-      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
+      activeStatusStr: '',
+      barX: 0,
+      barW: 0
+    }
+  },
+  computed: {
+    statusSegments () {
+      const counts = {}
+      this.orderList.forEach(o => {
+        const k = o.statusStr || '——'
+        counts[k] = (counts[k] || 0) + 1
+      })
+      return Object.keys(counts).map(label => ({ label, count: counts[label] }))
+    },
+    filteredOrderList () {
+      if (!this.activeStatusStr) return this.orderList
+      return this.orderList.filter(o => (o.statusStr || '——') === this.activeStatusStr)
     }
   },
   mounted () {
     this.getData()
     this.getCompanyList()
+    this.$nextTick(() => this.moveBar())
   },
   created () {
 
@@ -470,7 +516,7 @@ export default {
       }
       console.log(this.checkIds)
     },
-    // 标签颜色
+    // 标签颜色 —— 旧自定义色保留为 fallback
     getColor (val) {
       const map = {
         '待采样': '#14a495',
@@ -482,6 +528,47 @@ export default {
         '检测中': '#fe8a5d'
       }
       return map[val]
+    },
+    // statusStr → 设计系统 6 类语义 Tag class（D3）
+    tagClassForStatusStr (val) {
+      const map = {
+        '收款码待付款': 'el-tag--warn',
+        '待付款': 'el-tag--warn',
+        '已下单': 'el-tag--info2',
+        '待采样': 'el-tag--info2',
+        '待回寄': 'el-tag--prog',
+        '寄样中': 'el-tag--prog',
+        '已签收': 'el-tag--prog',
+        '检测中': 'el-tag--prog',
+        '待复核': 'el-tag--prog',
+        '已出报告': 'el-tag--succ',
+        '报告已出': 'el-tag--succ',
+        '已审核': 'el-tag--succ',
+        '已寄出': 'el-tag--succ',
+        '阳性': 'el-tag--pos',
+        '阴性': 'el-tag--neg',
+        '已取消订单': ''
+      }
+      return map[val] || ''
+    },
+    setStatusFilter (label, ev) {
+      this.activeStatusStr = label
+      this.$nextTick(() => this.moveBar(ev && ev.currentTarget))
+    },
+    moveBar (target) {
+      const seg = this.$refs.seg
+      if (!seg) return
+      if (!target) target = seg.querySelector('.is-active')
+      if (!target) return
+      const r = target.getBoundingClientRect()
+      const p = seg.getBoundingClientRect()
+      this.barX = r.left - p.left + seg.scrollLeft
+      this.barW = r.width
+    },
+    clearChecked () {
+      this.checkIds = []
+      this.checkAll = false
+      this.orderList.forEach(item => { item.isChecked = false })
     },
     headerClassName ({ row, rowIndex }) {
       return 'header-row'
@@ -608,45 +695,35 @@ export default {
 }
 </script>
 <style scoped lang="scss">
+.pc-order .search-input { width: 340px; }
+.pc-order .grow { flex: 1; }
+.pc-order .batchbar-actions { display: flex; gap: 8px; }
+
 .order-box {
   display: flex;
   flex-direction: column;
-  background: white;
-  padding: 20px;
-  margin-top: 30px;
+  background: var(--pc-white);
+  border: var(--pc-bd-hair);
+  border-radius: var(--pc-r-6);
+  padding: 16px 20px;
+  box-shadow: var(--pc-sh-1);
+  margin: 0 0 16px;
 
   .page-box {
     text-align: right;
-    margin: 40px 0;
-  }
-
-  .operate {
-    background: #f5f6f9;
-    height: 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-
-    .el-button {
-      min-width: 80px;
-    }
-
-    .el-input {
-      width: 300px;
-    }
+    margin: 12px 0 0;
   }
 
   .order-table {
-    margin-top: 20px;
+    margin-top: 12px;
 
     .i-table {
       width: 100%;
       border-spacing: 0;
       text-align: center;
       table-layout: fixed;
-      font-size: 13px;
-      color: #5c5c5c;
+      font-size: 12.5px;
+      color: var(--pc-ink-700);
       border-collapse: collapse;
 
       svg {
@@ -654,15 +731,19 @@ export default {
       }
 
       .i-title {
-        background: #14a495;
-        color: white;
-        line-height: 3;
+        background: var(--pc-ink-50);
+        color: var(--pc-ink-600);
+        line-height: 2.6;
+        font-weight: 600;
+        border-bottom: 1px solid var(--pc-ink-200);
       }
 
       .i-line {
-        background: #f5f6f9;
-        height: 40px;
+        background: var(--pc-ink-50);
+        height: 36px;
         text-align: left;
+        color: var(--pc-ink-600);
+        border-bottom: 1px solid var(--pc-ink-100);
 
         .detail {
           text-align: right;
@@ -671,17 +752,20 @@ export default {
       }
 
       .space {
-        height: 10px;
+        height: 8px;
       }
 
       .i-box {
-        min-height: 60px;
+        min-height: 56px;
+        transition: background var(--pc-dur-2) var(--pc-ease);
 
         td {
-          border: 1px solid #f5f6f9;
+          border: 1px solid var(--pc-ink-100);
           padding: 8px;
           line-height: 1.5;
         }
+
+        &:hover td { background: var(--pc-primary-50); }
       }
     }
   }
@@ -732,13 +816,10 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  .el-tag {
-    margin-top: 5px;
-  }
+  gap: 4px;
 
   .priceText {
-    color: rgb(16, 31, 251);
+    color: var(--pc-info-600);
     text-decoration: underline;
   }
 }
