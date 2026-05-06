@@ -1,63 +1,54 @@
 <template>
   <div>
-    <div>
-      <el-button class="add-user" size="small" type="primary" @click="toExcel">导出Excel</el-button>
+    <div class="opera-box">
+      <el-button size="small" type="primary" @click="toExcel">导出 Excel</el-button>
+      <span class="page-meta">共 <strong>{{ totalPage }}</strong> 名医生</span>
     </div>
+
     <el-table
       :data="list"
       size="mini"
       border
+      v-loading="loading"
+      element-loading-text="加载医生列表"
       style="width: 100%">
-      <el-table-column
-        fixed
-        prop="fullName"
-        label="姓名"
-        width="120">
-      </el-table-column>
-      <el-table-column
-        prop="cellphone"
-        label="手机号"
-        width="110">
-      </el-table-column>
-      <el-table-column
-        prop="hospitalName"
-        label="医院名称">
-      </el-table-column>
-      <el-table-column
-        prop="standardCode"
-        label="医院编码">
-      </el-table-column>
-      <el-table-column
-        prop="area"
-        label="大区">
-      </el-table-column>
-      <el-table-column
-        prop="salesmans"
-        label="业务代表">
-      </el-table-column>
-      <el-table-column
-        prop="serviceUsers"
-        label="服务(收款)账号">
-      </el-table-column>
-      <el-table-column
-        prop="createTime"
-        label="注册时间"
-        width="160">
+      <el-table-column prop="fullName" label="姓名" width="120" fixed="left"></el-table-column>
+      <el-table-column label="手机号" width="130">
         <template slot-scope="scope">
-          {{scope.row.createTime | formatDate}}
+          <span class="num">{{ scope.row.cellphone }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        fixed="right"
-        label="操作"
-        width="260">
+      <el-table-column prop="hospitalName" label="医院名称" min-width="200" show-overflow-tooltip></el-table-column>
+      <el-table-column label="医院编码" width="120">
         <template slot-scope="scope">
-          <el-button @click="addSalesman(scope.row)" type="text" size="small">分配业务代表</el-button>
-          <el-button @click="addServiceman(scope.row)" type="text" size="small">添加辅助人员</el-button>
-          <el-button @click="toDetail(scope.row.id)" type="text" size="small" v-if="userId != 2222">编辑</el-button>
+          <span class="num" v-if="scope.row.standardCode">{{ scope.row.standardCode }}</span>
+          <span class="muted" v-else>—</span>
         </template>
       </el-table-column>
+      <el-table-column prop="area" label="大区" width="100" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="salesmans" label="业务代表" min-width="160" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="serviceUsers" label="服务（收款）账号" min-width="200" show-overflow-tooltip></el-table-column>
+      <el-table-column label="注册时间" width="160">
+        <template slot-scope="scope">
+          <span class="num">{{ scope.row.createTime | formatDate }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column fixed="right" label="操作" width="280">
+        <template slot-scope="scope">
+          <el-button @click="addSalesman(scope.row)" type="text" size="mini">分配业务代表</el-button>
+          <el-button @click="addServiceman(scope.row)" type="text" size="mini">添加辅助人员</el-button>
+          <el-button @click="toDetail(scope.row.id)" type="text" size="mini" v-if="canOperate">编辑</el-button>
+        </template>
+      </el-table-column>
+
+      <template slot="empty">
+        <div class="empty">
+          <p class="empty-title">没有匹配的医生</p>
+          <p class="empty-hint">尚无医生注册数据</p>
+        </div>
+      </template>
     </el-table>
+
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -68,523 +59,334 @@
       :total="totalPage">
     </el-pagination>
 
-    <el-dialog title="分配业务代表" :visible.sync="dialogSalesmanVisible">
-      <div>
-        <el-form ref="form" :model="salesman" label-width="80px" size="small" style="width: 80%">
-          <el-form-item label="服务医生">
-            {{salesman.doctorName}}
-          </el-form-item>
-          <el-form-item label="姓名">
-            <el-input v-model="salesman.fullName"></el-input>
-          </el-form-item>
-          <el-form-item label="手机号码">
-            <el-input type="tel" v-model="salesman.cellphone"></el-input>
-          </el-form-item>
-          <el-form-item label="邮箱">
-            <el-input v-model="salesman.email"></el-input>
-          </el-form-item>
-          <el-form-item label="收款银行">
-            <el-select v-model="salesman.bankCode" filterable placeholder="请选择" @change="changeBankSelect">
-              <el-option
-                v-for="item in bankList"
-                :key="item['bankCode']"
-                :label="item['bankName']"
-                :value="item['bankCode']">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="银行卡号">
-            <el-input type="number" v-model="salesman.bankcardNo"></el-input>
-          </el-form-item>
-          <el-form-item label="佣金比例">
-            <el-input v-model="salesman.personalTax"></el-input>
-          </el-form-item>
-          <el-form-item label="备注">
-            <el-input type="textarea" v-model="salesman.remark"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="submitSalesman">确定</el-button>
-            <el-button @click="dialogSalesmanVisible = false">取消</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
+    <el-dialog title="分配业务代表" :visible.sync="dialogSalesmanVisible" width="640px">
+      <el-form ref="salesmanForm" :model="salesman" label-width="100px" size="small">
+        <el-form-item label="服务医生">
+          <span class="readonly">{{ salesman.doctorName }}</span>
+        </el-form-item>
+        <el-form-item label="姓名">
+          <el-input v-model="salesman.fullName"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号码">
+          <el-input type="tel" v-model="salesman.cellphone"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="salesman.email"></el-input>
+        </el-form-item>
+        <el-form-item label="收款银行">
+          <el-select v-model="salesman.bankCode" filterable placeholder="请选择" class="width-100-p" @change="changeBankSelect">
+            <el-option v-for="item in bankList" :key="item.bankCode" :label="item.bankName" :value="item.bankCode"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="银行卡号">
+          <el-input v-model="salesman.bankcardNo"></el-input>
+        </el-form-item>
+        <el-form-item label="佣金比例">
+          <el-input v-model="salesman.personalTax" placeholder="如 0.05 表示 5%"></el-input>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input type="textarea" v-model="salesman.remark" :rows="2"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button @click="dialogSalesmanVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitSalesman">确定分配</el-button>
+      </span>
     </el-dialog>
 
-
-    <el-dialog title="分配辅助人员" :visible.sync="dialogServiceVisible">
-      <div>
-        <el-form ref="form" :model="serviceman" label-width="80px" size="small" style="width: 80%">
-          <el-form-item label="姓名">
-            <el-input v-model="serviceman.fullName"></el-input>
-          </el-form-item>
-          <el-form-item label="手机号码">
-            <el-input type="tel" v-model="serviceman.cellphone"></el-input>
-          </el-form-item>
-          <el-form-item label="邮箱">
-            <el-input v-model="serviceman.email"></el-input>
-          </el-form-item>
-          <el-form-item label="收款银行">
-            <el-select v-model="serviceman.bankCode" filterable placeholder="请选择" @change="changeServiceBankSelect">
-              <el-option
-                v-for="item in bankList"
-                :key="item['bankCode']"
-                :label="item['bankName']"
-                :value="item['bankCode']">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="银行卡号">
-            <el-input type="tel" v-model="serviceman.bankcardNo"></el-input>
-          </el-form-item>
-          <el-form-item label="备注">
-            <el-input type="textarea" v-model="serviceman.remark"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button   type="primary" @click="submitServiceman">确定</el-button>
-            <el-button @click="dialogServiceVisible = false">取消</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
+    <el-dialog title="分配辅助人员" :visible.sync="dialogServiceVisible" width="640px">
+      <el-form ref="servicemanForm" :model="serviceman" label-width="100px" size="small">
+        <el-form-item label="服务医生">
+          <span class="readonly">{{ serviceman.doctorName }}</span>
+        </el-form-item>
+        <el-form-item label="姓名">
+          <el-input v-model="serviceman.fullName"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号码">
+          <el-input type="tel" v-model="serviceman.cellphone"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="serviceman.email"></el-input>
+        </el-form-item>
+        <el-form-item label="收款银行">
+          <el-select v-model="serviceman.bankCode" filterable placeholder="请选择" class="width-100-p" @change="changeServiceBankSelect">
+            <el-option v-for="item in bankList" :key="item.bankCode" :label="item.bankName" :value="item.bankCode"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="银行卡号">
+          <el-input v-model="serviceman.bankcardNo"></el-input>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input type="textarea" v-model="serviceman.remark" :rows="2"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button @click="dialogServiceVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitServiceman">确定分配</el-button>
+      </span>
     </el-dialog>
 
-    <el-dialog title="编辑" :visible.sync="dialogEditFormVisible">
-      <div>
-        <el-form ref="form" :model="userResource" label-width="80px">
-          <el-form-item label="姓名">
-            <el-input v-model="userResource.fullName"></el-input>
-          </el-form-item>
-          <el-form-item label="手机号码">
-            <el-input type="tel" v-model="userResource.cellphone"></el-input>
-          </el-form-item>
-          <el-form-item label="用户名">
-            <el-input v-model="userResource.username"></el-input>
-          </el-form-item>
-          <el-form-item label="邮箱">
-            <el-input v-model="userResource.email"></el-input>
-          </el-form-item>
-          <el-form-item label="所属医院">
-              <el-autocomplete
-                class="inline-input"
-                v-model="userResource.hospitalName"
-                :fetch-suggestions="hospitalQuerySearch"
-                placeholder="请输入内容"
-                :trigger-on-focus="false"
-                @select="hospitalHandleSelect"
-              ></el-autocomplete>
-          </el-form-item>
-          <el-form-item label="备注">
-            <el-input type="textarea" v-model="userResource.remark"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button v-if="userResource.id === undefined" type="primary" @click="onAddSubmit()">确定</el-button>
-            <el-button v-else type="primary" @click="onEditSubmit(userResource.id)">确定</el-button>
-            <el-button @click="dialogEditFormVisible = false">取消</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
+    <el-dialog title="编辑医生" :visible.sync="dialogEditFormVisible" width="640px">
+      <el-form ref="userForm" :model="userResource" label-width="100px" size="small">
+        <el-form-item label="姓名">
+          <el-input v-model="userResource.fullName"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号码">
+          <el-input type="tel" v-model="userResource.cellphone"></el-input>
+        </el-form-item>
+        <el-form-item label="用户名">
+          <el-input v-model="userResource.username"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="userResource.email"></el-input>
+        </el-form-item>
+        <el-form-item label="所属医院">
+          <el-autocomplete
+            class="width-100-p"
+            v-model="userResource.hospitalName"
+            :fetch-suggestions="hospitalQuerySearch"
+            placeholder="搜索医院"
+            :trigger-on-focus="false"
+            @select="hospitalHandleSelect"
+          ></el-autocomplete>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input type="textarea" v-model="userResource.remark" :rows="2"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button @click="dialogEditFormVisible = false">取消</el-button>
+        <el-button v-if="!userResource.id" type="primary" @click="onAddSubmit">确定新增</el-button>
+        <el-button v-else type="primary" @click="onEditSubmit(userResource.id)">保存修改</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
+
 <script>
+import { formatDate } from '@/utils/pc'
 
 export default {
-  components: {},
-  name: 'UserList',
+  name: 'BrcaUserList',
   data () {
     return {
       list: [],
       pageNum: 1,
       pageSize: 20,
       totalPage: 0,
+      loading: false,
       userResource: {},
-      secList: [],
       dialogServiceVisible: false,
       dialogSalesmanVisible: false,
       dialogEditFormVisible: false,
-      resourceList: [],
-      resourceSelet: [],
-      hospitals: [],
-      depts: [],
       bankList: [],
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      },
-      companyList: [],
-      roleCode: this.$route.role,
-      currentUserRole: window.localStorage.role,
+      roleCode: this.$route.params && this.$route.params.role,
       condition: null,
-      qrCode: {},
-      eleInformed: {},
-      salesman: {
-      },
+      salesman: {},
       serviceman: {},
-      informedQrCode: {
-        sampleType: '口腔拭子',
-        price: 688,
-        time: '2020.03'
-      },
-      options2: [{
-        text: 'name1',
-        value: 'value1'
-      }, {
-        text: 'name2',
-        value: 'value2'
-      }],
-      bankInfo: [],
       userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
     }
   },
+  computed: {
+    canOperate () { return this.userId !== 2222 }
+  },
+  filters: { formatDate },
   methods: {
     _initData () {
       this.getData()
       this.getBankList()
-      this.axios.get('hospital',{
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-        },
-      }).then(res => {
-        this.hospitals = res.data
-      }).catch(err => {
-        console.log(err)
-      })
-      this.axios.get('hospital-dept', {
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-        }
-      }).then(res => {
-        this.depts = res.data
-      }).catch(err => {
-        console.log(err)
-      })
     },
     getData () {
+      this.loading = true
       this.axios.get('/white/doctor/list', {
-        params: {
-          pageNum: this.pageNum,
-          pageSize: this.pageSize,
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-          condition: this.condition
-        }
+        params: { pageNum: this.pageNum, pageSize: this.pageSize, userId: this.userId, condition: this.condition }
       }).then(res => {
-        this.list = res.data.list
+        this.list = res.data.list || []
         this.pageSize = res.data.pageSize
         this.pageNum = res.data.pageNum
         this.totalPage = res.data.total
       }).catch(err => {
         console.log(err)
+        this.$message.error('医生列表加载失败，请稍后重试')
+      }).then(() => {
+        this.loading = false
       })
     },
-
     getBankList () {
-      this.axios.get('/bankcard/bank', {
-        params: {
-          userId: this.userId
-        }
-      }).then(res => {
-        this.bankList = res.data
-      })
+      this.axios.get('/bankcard/bank', { params: { userId: this.userId } })
+        .then(res => { this.bankList = res.data })
+        .catch(err => console.log(err))
     },
-    handleSizeChange (val) {
-      this.pageSize = val
-      this.getData()
-    },
-    handleCurrentChange (val) {
-      this.pageNum = val
-      this.getData()
-    },
+    handleSizeChange (val) { this.pageSize = val; this.getData() },
+    handleCurrentChange (val) { this.pageNum = val; this.getData() },
     toExcel () {
-      this.axios.get('/white/export',{
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-        },
-        responseType:"blob"
+      this.axios.get('/white/export', {
+        params: { userId: this.userId },
+        responseType: 'blob'
       }).then(response => {
-        const blob = new Blob(
-          [response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8' })
-        const aEle = document.createElement('a');     // 创建a标签
-        const href = window.URL.createObjectURL(blob);       // 创建下载的链接
-        aEle.href = href;
-        const today = new Date();
-        aEle.download = "医生注册列表-" + today.getFullYear() + '-'+ (today.getMonth()+1)+ '-' + today.getDate() + ".xls";  // 下载后文件名
-        document.body.appendChild(aEle);
-        aEle.click();     // 点击下载
-        document.body.removeChild(aEle); // 下载完成移除元素
-        window.URL.revokeObjectURL(href) // 释放掉blob对象
+        const blob = new Blob([response.data], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
+        })
+        const aEle = document.createElement('a')
+        const href = window.URL.createObjectURL(blob)
+        aEle.href = href
+        const today = new Date()
+        aEle.download = '医生注册列表-' + today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '.xls'
+        document.body.appendChild(aEle)
+        aEle.click()
+        document.body.removeChild(aEle)
+        window.URL.revokeObjectURL(href)
       }).catch(err => {
         console.log(err)
+        this.$message.error('导出失败，请稍后重试')
       })
     },
-
     onAddSubmit () {
-      let secArray = []
-      let secIds = []
-      for (let sec of this.$refs.tree.getCheckedNodes()) {
-        if (sec.parent !== undefined && secIds.indexOf(sec.parent) <= -1) {
-          secIds.push(sec.parent)
-          secArray.push({id: sec.parent})
-        }
-        secIds.push(sec.id)
-        secArray.push({id: sec.id})
-      }
-      this.userResource.secList = secArray
-      let instance = this.axios.create({
-        headers: {
-          'Authorization': window.localStorage.token,
-          'Content-Type': 'application/json'
-        }
-      })
-      this.userResource.roleCode = this.roleCode
-      let _this = this
-      instance({
-        method: 'post',
-        url: 'user',
-        data: this.userResource,
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-        },
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json'
-        }
-      }).then(function (response) {
-        _this.$message({
-          message: '新增成功',
-          type: 'success'
-        })
-        _this._initData()
-        _this.dialogEditFormVisible = false
-      })
+      this._submitUser('post', 'user')
     },
     toDetail (id) {
-      this.axios.get('user/' + id,{
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-        }
-      }).then(res => {
-        this.userResource = res.data
-        this.resourceSelet = []
-        for (let sec of res.data.secList) {
-          let children = []
-          for (let d of this.$refs.tree.data) {
-            if (d.id === sec.id) {
-              children = d.children
-            }
-          }
-          if (sec.parentId === 0 && children.length !== 0) {
-            continue
-          }
-          this.resourceSelet.push(sec.id)
-        }
-        this.$refs.tree.setCheckedKeys(this.resourceSelet)
-      }).catch(err => {
-        console.log(err)
-      })
-      this.dialogEditFormVisible = true
+      this.axios.get('user/' + id, { params: { userId: this.userId } })
+        .then(res => {
+          this.userResource = res.data
+          this.dialogEditFormVisible = true
+        })
+        .catch(err => {
+          console.log(err)
+          this.$message.error('加载详情失败')
+        })
     },
     onEditSubmit (id) {
-      let instance = this.axios.create({
-        headers: {
-          'Authorization': window.localStorage.token,
-          'Content-Type': 'application/json'
-        }
+      this._submitUser('put', 'user/' + id)
+    },
+    _submitUser (method, url) {
+      const instance = this.axios.create({
+        headers: { 'Authorization': window.localStorage.token, 'Content-Type': 'application/json' }
       })
-      let _this = this
+      this.userResource.roleCode = this.roleCode
       instance({
-        method: 'put',
-        url: 'user/' + id,
+        method,
+        url,
         data: this.userResource,
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-        },
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json'
-        }
-      }).then(function (response) {
-        _this.$message({
-          message: '修改成功',
-          type: 'success'
-        })
-        _this._initData()
-        _this.dialogEditFormVisible = false
-      })
-    },
-    deleteUser (id) {
-      this.$confirm('确定删除此用户?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+        params: { userId: this.userId },
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' }
       }).then(() => {
-        this.axios.delete('user/' + id, {
-          params: {
-            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-          },
-        }).then(res => {
-          this._initData()
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-        }).catch(err => {
-          console.log(err)
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
-      })
-    },
-    addSalesman(user) {
-      this.salesman.doctorId = user.userId
-      this.salesman.doctorName = user.fullName
-      this.salesman.hospitalId = user.hospitalId
-      this.dialogSalesmanVisible = true
-    },
-    changeBankSelect (val) {
-      this.bankList.forEach(item => {
-        if (item.bankCode === val) {
-          this.salesman.bank = item.bankName
-          this.salesman.bankCode = item.bankCode
-        }
-      })
-    },
-    changeServiceBankSelect (val) {
-      this.bankList.forEach(item => {
-
-        if (item.bankCode === val) {
-          this.serviceman.bank = item['bankName']
-          this.serviceman.bankCode = item['bankCode']
-        }
-      })
-    },
-    submitSalesman () {
-      let instance = this.axios.create({
-        headers: {
-          'Authorization': window.localStorage.token,
-          'Content-Type': 'application/json'
-        }
-      })
-      let _this = this
-      instance({
-        method: 'post',
-        url: 'user/manager/service?type=salesman&hospitalId=' + this.salesman.hospitalId,
-        data: this.salesman,
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-        },
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json'
-        }
-      }).then(function (response) {
-        _this.$message({
-          message: '修改成功',
-          type: 'success'
-        })
-        _this._initData()
-        _this.dialogSalesmanVisible = false
-      })
-    },
-    addServiceman(user) {
-      this.serviceman = {}
-      this.serviceman.doctorId = user.userId
-      this.serviceman.doctorName = user.fullName
-      this.serviceman.hospitalId = user.hospitalId
-      this.dialogServiceVisible = true
-    },
-    submitServiceman () {
-      let instance = this.axios.create({
-        headers: {
-          'Authorization': window.localStorage.token,
-          'Content-Type': 'application/json'
-        }
-      })
-      let _this = this
-      instance({
-        method: 'post',
-        url: 'user/manager/service?type=service&hospitalId=' + this.serviceman.hospitalId,
-        data: this.serviceman,
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-        },
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json'
-        }
-      }).then(function (response) {
-        _this.$message({
-          message: '修改成功',
-          type: 'success'
-        })
-        _this._initData()
-        _this.dialogServiceVisible = false
-      })
-    },
-
-    hospitalQuerySearch (queryString, cb) {
-      console.log(queryString)
-      this.axios.get('hospital/page', {
-        params: {
-          pageNum: 1, // 页码
-          pageSize: 8, // 每页长度
-          keywords: queryString,
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-        },
-      }).then(res => {
-        let result = []
-        if (res.data.endRow === 0) {
-          cb(result)
-        } else {
-          res.data.list.forEach(function (item) {
-            result.push({
-              'value': item.name,
-              'id': item.id
-            })
-          })
-          cb(result)
-        }
+        this.$message.success(method === 'post' ? '新增成功' : '修改成功')
+        this.dialogEditFormVisible = false
+        this._initData()
       }).catch(err => {
         console.log(err)
+        this.$message.error('提交失败，请稍后重试')
       })
     },
-    hospitalHandleSelect (item) {
-      this.userResource.hospitalId = item.ids
+    addSalesman (user) {
+      this.salesman = {
+        doctorId: user.userId,
+        doctorName: user.fullName,
+        hospitalId: user.hospitalId
+      }
+      this.dialogSalesmanVisible = true
     },
+    addServiceman (user) {
+      this.serviceman = {
+        doctorId: user.userId,
+        doctorName: user.fullName,
+        hospitalId: user.hospitalId
+      }
+      this.dialogServiceVisible = true
+    },
+    changeBankSelect (val) {
+      const bank = this.bankList.find(item => item.bankCode === val)
+      if (bank) { this.salesman.bank = bank.bankName; this.salesman.bankCode = bank.bankCode }
+    },
+    changeServiceBankSelect (val) {
+      const bank = this.bankList.find(item => item.bankCode === val)
+      if (bank) { this.serviceman.bank = bank.bankName; this.serviceman.bankCode = bank.bankCode }
+    },
+    submitSalesman () {
+      this._submitService('salesman', this.salesman, () => { this.dialogSalesmanVisible = false })
+    },
+    submitServiceman () {
+      this._submitService('service', this.serviceman, () => { this.dialogServiceVisible = false })
+    },
+    _submitService (type, payload, onSuccess) {
+      const instance = this.axios.create({
+        headers: { 'Authorization': window.localStorage.token, 'Content-Type': 'application/json' }
+      })
+      instance({
+        method: 'post',
+        url: 'user/manager/service?type=' + type + '&hospitalId=' + payload.hospitalId,
+        data: payload,
+        params: { userId: this.userId },
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' }
+      }).then(() => {
+        this.$message.success('分配成功')
+        onSuccess()
+        this._initData()
+      }).catch(err => {
+        console.log(err)
+        this.$message.error('分配失败，请稍后重试')
+      })
+    },
+    hospitalQuerySearch (queryString, cb) {
+      this.axios.get('hospital/page', {
+        params: { pageNum: 1, pageSize: 8, keywords: queryString, userId: this.userId }
+      }).then(res => {
+        if (res.data.endRow === 0) {
+          cb([])
+        } else {
+          cb(res.data.list.map(item => ({ value: item.name, id: item.id })))
+        }
+      }).catch(err => console.log(err))
+    },
+    hospitalHandleSelect (item) {
+      this.userResource.hospitalId = item.id
+    }
   },
   created () {
-    let loading = this.$loading({
-      lock: true,
-      text: 'Loading',
-      spinner: 'el-icon-loading',
-      background: 'rgba(0, 0, 0, 0.7)'
-    })
     this._initData()
-    loading.close()
-  },
-  mounted () {
-  },
-  destroyed () {}
+  }
 }
 </script>
+
 <style rel="stylesheet/scss" lang="scss" scoped>
-  .is-parent {
-    margin-bottom: 5px;
-    display: block;
-    font-weight: bolder;
+.opera-box {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 12px;
+
+  .page-meta {
+    margin-left: auto;
+    font-size: var(--pc-fs-13);
+    color: var(--pc-ink-500);
+    strong {
+      color: var(--pc-ink-800);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
   }
-  .sec-info {
-    display: inline-block;
-    padding-left: 10px;
-    font-weight: normal;
+}
+
+.empty {
+  padding: 40px 0 24px;
+  text-align: center;
+  .empty-title {
+    margin: 0 0 4px;
+    font-size: var(--pc-fs-14);
+    color: var(--pc-ink-600);
   }
-  .add-user {
-    margin-bottom: 10px;
+  .empty-hint {
+    margin: 0;
+    font-size: var(--pc-fs-12);
+    color: var(--pc-ink-400);
   }
-  .search-box {
-    width: 400px;
-    float: right;
-    margin-bottom: 10px;
-  }
+}
+
+.readonly { color: var(--pc-ink-700); font-size: var(--pc-fs-13); }
+.width-100-p { width: 100%; }
+
+::v-deep .el-table {
+  .num { font-variant-numeric: tabular-nums; }
+  .muted { color: var(--pc-ink-400); }
+}
 </style>

@@ -1,97 +1,74 @@
 <template>
   <div>
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>BRCA轻松检</el-breadcrumb-item>
-      <el-breadcrumb-item>白名单管理</el-breadcrumb-item>
-    </el-breadcrumb>
     <div class="user-container">
-      <div>
-        <el-button class="add-user" size="small" type="primary" @click="toAdd">新增</el-button>
-        <div class="search-box">
-          <el-input placeholder="请输入姓名/手机号" v-model="condition" class="input-with-select">
-            <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
-          </el-input>
-        </div>
+      <div class="page-header">
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+          <el-breadcrumb-item>BRCA轻松检</el-breadcrumb-item>
+          <el-breadcrumb-item>白名单管理</el-breadcrumb-item>
+        </el-breadcrumb>
+        <div class="page-meta">共 <strong>{{ totalPage }}</strong> 名医生</div>
       </div>
+
+      <div class="opera-box">
+        <el-button size="small" type="primary" @click="toAdd">新增医生</el-button>
+        <el-input
+          placeholder="搜索姓名 / 手机号"
+          v-model="condition"
+          size="small"
+          clearable
+          class="search-input"
+          @keyup.enter.native="handleSearch"
+          @clear="handleSearch">
+          <el-button slot="append" icon="el-icon-search" @click="handleSearch"></el-button>
+        </el-input>
+      </div>
+
       <el-table
         :data="list"
         size="mini"
         border
+        v-loading="loading"
+        element-loading-text="加载白名单"
         style="width: 100%">
-        <el-table-column
-          prop="area"
-          label="大区"
-          width="80">
-        </el-table-column>
-        <el-table-column
-          prop="salesman"
-          label="业务代表"
-          width="100">
-        </el-table-column>
-        <el-table-column
-          prop="team"
-          label="团队"
-          width="140">
-        </el-table-column>
-        <el-table-column
-          prop="name"
-          label="医生姓名">
-        </el-table-column>
-        <el-table-column
-          prop="cellphone"
-          label="手机号"
-          width="110">
-        </el-table-column>
-        <el-table-column
-          prop="standardCode"
-          label="医院编码"
-          width="100">
-        </el-table-column>
-        <el-table-column
-          prop="hospital"
-          label="医院"
-          width="200">
-        </el-table-column>
-        <el-table-column
-          prop="deptName"
-          label="科室"
-          width="100">
-        </el-table-column>
-        <el-table-column
-          prop="province"
-          label="省"
-          width="100">
-        </el-table-column>
-        <el-table-column
-          prop="city"
-          label="市"
-          width="100">
-        </el-table-column>
-        <el-table-column
-          prop="county"
-          label="区"
-          width="100">
-        </el-table-column>
-        <el-table-column
-          prop="address"
-          label="地址"
-          width="300">
-        </el-table-column>
-        <el-table-column
-          prop="serviceTime"
-          label="门诊时间"
-          width="220">
-        </el-table-column>
-        <el-table-column
-          fixed="right"
-          label="操作"
-          width="180">
+        <el-table-column prop="name" label="医生姓名" width="100" fixed="left"></el-table-column>
+        <el-table-column prop="cellphone" label="手机号" width="120" fixed="left">
           <template slot-scope="scope">
-            <el-button @click="toDetail(scope.row.id)" type="text" size="small" v-if="userId != 2222">编辑</el-button>
-            <el-button @click="deleteUser(scope.row.id)" type="text" size="small" v-if="userId != 2222">删除</el-button>
+            <span class="num">{{ scope.row.cellphone }}</span>
           </template>
         </el-table-column>
+        <el-table-column prop="hospital" label="医院" width="220" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="deptName" label="科室" width="100" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="standardCode" label="医院编码" width="110">
+          <template slot-scope="scope">
+            <span class="num" v-if="scope.row.standardCode">{{ scope.row.standardCode }}</span>
+            <span class="muted" v-else>—</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="区域" width="200" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <span class="meta">{{ scope.row.area }}</span>
+            <span> {{ regionLabel(scope.row) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="address" label="地址" min-width="240" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="serviceTime" label="门诊时间" width="220" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="salesman" label="业务代表" width="120"></el-table-column>
+        <el-table-column prop="team" label="团队" width="140" show-overflow-tooltip></el-table-column>
+        <el-table-column fixed="right" label="操作" width="140" v-if="canOperate">
+          <template slot-scope="scope">
+            <el-button @click="toDetail(scope.row.id)" type="text" size="mini">编辑</el-button>
+            <el-button @click="deleteUser(scope.row.id)" type="text" size="mini" class="text-danger">删除</el-button>
+          </template>
+        </el-table-column>
+
+        <template slot="empty">
+          <div class="empty">
+            <p class="empty-title">没有匹配的医生</p>
+            <p class="empty-hint">{{ condition ? '换个关键词试试' : '尚无白名单医生 — 点上方「新增医生」开始添加' }}</p>
+          </div>
+        </template>
       </el-table>
+
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -102,346 +79,199 @@
         :total="totalPage">
       </el-pagination>
 
-      <el-dialog title="编辑" :visible.sync="dialogEditFormVisible">
-        <div>
-          <el-form ref="form" :model="whitelistDoctor" label-width="80px">
-            <el-form-item label="姓名">
-              <el-input v-model="whitelistDoctor.name"></el-input>
-            </el-form-item>
-            <el-form-item label="手机号码">
-              <el-input type="tel" v-model="whitelistDoctor.cellphone"></el-input>
-            </el-form-item>
-            <el-form-item label="医院">
-              <el-autocomplete
-                style="width: 100%"
-                class="inline-input"
-                v-model="whitelistDoctor.hospital"
-                :fetch-suggestions="querySearch"
-                placeholder="请输入内容"
-                :trigger-on-focus="false"
-                @select="handleSelect"
-              ></el-autocomplete>
-            </el-form-item>
-            <el-form-item label="科室">
-              <el-select v-model="whitelistDoctor.deptId" filterable placeholder="请选择" style="width: 100%">
-                <el-option
-                  v-for="item in depts"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="省市区">
-              <el-cascader class="width-100-p"
-                           :options="regionData"
-                           v-model="areaInfo"
-                           @change="addressHandleChange">
-              </el-cascader>
-            </el-form-item>
-            <el-form-item label="详细地址">
-              <el-input v-model="whitelistDoctor.address"></el-input>
-            </el-form-item>
-            <el-form-item label="门诊时间">
-              <el-input v-model="whitelistDoctor.serviceTime"></el-input>
-            </el-form-item>
-            <el-form-item label="业务代表">
-              <el-input v-model="whitelistDoctor.salesman"></el-input>
-            </el-form-item>
-            <el-form-item label="区域">
-              <el-input v-model="whitelistDoctor.area"></el-input>
-            </el-form-item>
-            <el-form-item label="提交团队">
-              <el-input v-model="whitelistDoctor.team"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button v-if="whitelistDoctor.id === undefined" type="primary" @click="onAddSubmit()">确定</el-button>
-              <el-button v-else type="primary" @click="onEditSubmit(whitelistDoctor.id)">确定</el-button>
-              <el-button @click="dialogEditFormVisible = false">取消</el-button>
-            </el-form-item>
-          </el-form>
-        </div>
+      <el-dialog :title="isEdit ? '编辑医生' : '新增医生'" :visible.sync="dialogEditFormVisible" width="640px">
+        <el-form ref="form" :model="whitelistDoctor" label-width="80px" size="small">
+          <el-form-item label="姓名">
+            <el-input v-model="whitelistDoctor.name"></el-input>
+          </el-form-item>
+          <el-form-item label="手机号码">
+            <el-input type="tel" v-model="whitelistDoctor.cellphone"></el-input>
+          </el-form-item>
+          <el-form-item label="医院">
+            <el-autocomplete
+              class="width-100-p"
+              v-model="whitelistDoctor.hospital"
+              :fetch-suggestions="querySearch"
+              placeholder="搜索医院"
+              :trigger-on-focus="false"
+              @select="handleHospitalSelect"
+            ></el-autocomplete>
+          </el-form-item>
+          <el-form-item label="科室">
+            <el-select v-model="whitelistDoctor.deptId" filterable placeholder="请选择" class="width-100-p">
+              <el-option v-for="item in depts" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="省市区">
+            <el-cascader class="width-100-p" :options="regionData" v-model="areaInfo" @change="addressHandleChange"></el-cascader>
+          </el-form-item>
+          <el-form-item label="详细地址">
+            <el-input v-model="whitelistDoctor.address"></el-input>
+          </el-form-item>
+          <el-form-item label="门诊时间">
+            <el-input v-model="whitelistDoctor.serviceTime" placeholder="如：周一上午、周三下午"></el-input>
+          </el-form-item>
+          <el-form-item label="业务代表">
+            <el-input v-model="whitelistDoctor.salesman"></el-input>
+          </el-form-item>
+          <el-form-item label="区域">
+            <el-input v-model="whitelistDoctor.area"></el-input>
+          </el-form-item>
+          <el-form-item label="提交团队">
+            <el-input v-model="whitelistDoctor.team"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer">
+          <el-button @click="dialogEditFormVisible = false">取消</el-button>
+          <el-button v-if="!isEdit" type="primary" @click="onAddSubmit">确定新增</el-button>
+          <el-button v-else type="primary" @click="onEditSubmit(whitelistDoctor.id)">保存修改</el-button>
+        </span>
       </el-dialog>
     </div>
   </div>
 </template>
+
 <script>
-  import { provinceAndCityDataPlus, regionData, CodeToText, TextToCode } from 'element-china-area-data'
+import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
+
 export default {
-  components: {},
-  name: 'UserList',
+  name: 'BrcaWhitelist',
   data () {
     return {
       list: [],
       pageNum: 1,
       pageSize: 20,
       totalPage: 0,
+      loading: false,
       whitelistDoctor: {},
-      secList: [],
       dialogEditFormVisible: false,
-      dialogCodeFormVisible: false,
-      dialogPayCodeFormVisible: false,
-      dialogOnlineInformedFormVisible: false,
-      dialogElecInformedFormVisible: false,
-      resourceList: [],
-      resourceSelet: [],
-      solutionList: [],
-      hospitals: [],
       depts: [],
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      },
-      companyList: [],
-      roleCode: this.$route.role,
-      currentUserRole: window.localStorage.role,
       condition: null,
-      qrCode: {},
-      eleInformed: {},
-      informedQrCode: {
-        sampleType: '口腔拭子',
-        price: 688,
-        time: '2020.03'
-      },
-      options2: [{
-        text: 'name1',
-        value: 'value1'
-      }, {
-        text: 'name2',
-        value: 'value2'
-      }],
       userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
       regionData: regionData,
       CodeToText: CodeToText,
-      TextToCode: TextToCode,
+      TextToCode: TextToCode
     }
   },
+  computed: {
+    canOperate () { return this.userId !== 2222 },
+    isEdit () { return !!this.whitelistDoctor.id },
+    areaInfo: {
+      get () {
+        const d = this.whitelistDoctor
+        if (!d.county) return []
+        try {
+          const province = this.TextToCode[d.province].code
+          const cityKey = d.city === d.province ? '市辖区' : d.city
+          const city = this.TextToCode[d.province][cityKey].code
+          const county = this.TextToCode[d.province][cityKey][d.county].code
+          return [province, city, county]
+        } catch (e) {
+          return []
+        }
+      },
+      set () {}
+    }
+  },
+  filters: {},
   methods: {
+    regionLabel (row) {
+      return [row.province, row.city, row.county].filter(Boolean).join(' ')
+    },
     _initData () {
       this.getData()
+      this.axios.get('hospital-dept', { params: { userId: this.userId } })
+        .then(res => { this.depts = res.data })
+        .catch(err => console.log(err))
     },
     getData () {
-      this.resourceList = []
+      this.loading = true
       this.axios.get('white/list', {
-        params: {
-          pageNum: this.pageNum,
-          pageSize: this.pageSize,
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-          condition: this.condition
-        }
+        params: { pageNum: this.pageNum, pageSize: this.pageSize, userId: this.userId, condition: this.condition }
       }).then(res => {
-        this.list = res.data.list
+        this.list = res.data.list || []
         this.pageSize = res.data.pageSize
         this.pageNum = res.data.pageNum
         this.totalPage = res.data.total
       }).catch(err => {
         console.log(err)
-      })
-      this.axios.get('hospital', {
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-        },
-      }).then(res => {
-        this.hospitals = res.data
-      }).catch(err => {
-        console.log(err)
-      })
-      this.axios.get('hospital-dept', {
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-        },
-      }).then(res => {
-        this.depts = res.data
-      }).catch(err => {
-        console.log(err)
+        this.$message.error('白名单加载失败，请稍后重试')
+      }).then(() => {
+        this.loading = false
       })
     },
-    handleSizeChange (val) {
-      this.pageSize = val
-      this.getData()
-    },
-    handleCurrentChange (val) {
-      this.pageNum = val
-      this.getData()
-    },
+    handleSearch () { this.pageNum = 1; this.getData() },
+    handleSizeChange (val) { this.pageSize = val; this.getData() },
+    handleCurrentChange (val) { this.pageNum = val; this.getData() },
     toAdd () {
       this.whitelistDoctor = {}
       this.dialogEditFormVisible = true
     },
-    onAddSubmit () {
-      let instance = this.axios.create({
-        headers: {
-          'Authorization': window.localStorage.token,
-          'Content-Type': 'application/json'
-        }
-      })
-      let _this = this
-      instance({
-        method: 'post',
-        url: 'white',
-        data: this.whitelistDoctor,
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-        },
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json'
-        }
-      }).then(function (response) {
-        _this.$message({
-          message: '新增成功',
-          type: 'success'
-        })
-        _this._initData()
-        _this.dialogEditFormVisible = false
-      })
-    },
     toDetail (id) {
-      this.axios.get('white/' + id, {
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-        }
-      }).then(res => {
-        this.whitelistDoctor = res.data
-      }).catch(err => {
-        console.log(err)
-      })
-      this.dialogEditFormVisible = true
+      this.axios.get('white/' + id, { params: { userId: this.userId } })
+        .then(res => {
+          this.whitelistDoctor = res.data
+          this.dialogEditFormVisible = true
+        })
+        .catch(err => {
+          console.log(err)
+          this.$message.error('加载详情失败')
+        })
+    },
+    onAddSubmit () {
+      this._submitDoctor('post', 'white')
     },
     onEditSubmit (id) {
-      var instance = this.axios.create({
-        headers: {
-          'Authorization': window.localStorage.token,
-          'Content-Type': 'application/json'
-        }
+      this._submitDoctor('put', 'white/' + id)
+    },
+    _submitDoctor (method, url) {
+      const instance = this.axios.create({
+        headers: { 'Authorization': window.localStorage.token, 'Content-Type': 'application/json' }
       })
-      let _this = this
       instance({
-        method: 'put',
-        url: 'white/' + id,
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-        },
+        method,
+        url,
+        params: { userId: this.userId },
         data: this.whitelistDoctor,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json'
-        }
-      }).then(function (response) {
-        _this.$message({
-          message: '修改成功',
-          type: 'success'
-        })
-        _this._initData()
-        _this.dialogEditFormVisible = false
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' }
+      }).then(() => {
+        this.$message.success(method === 'post' ? '新增成功' : '修改成功')
+        this.dialogEditFormVisible = false
+        this._initData()
+      }).catch(err => {
+        console.log(err)
+        this.$message.error('提交失败，请稍后重试')
       })
     },
     deleteUser (id) {
-      this.$confirm('确定删除此用户?', '提示', {
-        confirmButtonText: '确定',
+      this.$confirm('确定删除此医生？', '删除提示', {
+        confirmButtonText: '确定删除',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.axios.delete('white/' + id, {
-          params: {
-            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-          }
-        }).then(res => {
-          this._initData()
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
+        this.axios.delete('white/' + id, { params: { userId: this.userId } })
+          .then(() => {
+            this.$message.success('删除成功')
+            this._initData()
           })
-        }).catch(err => {
-          console.log(err)
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
-      })
-    },
-    getSecResource (val) {
-      console.log(val)
-      // 获取权限列表
-      this.axios.get('user/secs', {
-        params: {
-          role: val,
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-        },
-      }).then(res => {
-        this.resourceList = []
-        for (let sec of res.data) {
-          if (sec.parentId === 0) {
-            let children = []
-            for (let secChild of res.data) {
-              if (secChild.parentId === sec.id) {
-                children.push({
-                  'id': secChild.id,
-                  'label': secChild.name,
-                  'parent': secChild.parentId
-                })
-              }
-            }
-            this.resourceList.push({
-              'id': sec.id,
-              'label': sec.name,
-              'children': children
-            })
-          }
-        }
-        this.resourceSelet = []
-        for (let sec of this.whitelistDoctor.secList) {
-          let children = []
-          for (let d of this.$refs.tree.data) {
-            if (d.id === sec.id) {
-              children = d.children
-            }
-          }
-          if (sec.parentId === 0 && children.length !== 0) {
-            continue
-          }
-          this.resourceSelet.push(sec.id)
-        }
-        this.$refs.tree.setCheckedKeys(this.resourceSelet)
-        console.log(this.resourceList)
-        console.log(this.resourceSelet)
-      }).catch(err => {
-        console.log(err)
-      })
+          .catch(err => {
+            console.log(err)
+            this.$message.error('删除失败，请稍后重试')
+          })
+      }).catch(() => {})
     },
     querySearch (queryString, cb) {
-      console.log(queryString)
       this.axios.get('hospital/page', {
-        params: {
-          pageNum: 1, // 页码
-          pageSize: 8, // 每页长度
-          keywords: queryString,
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-        },
+        params: { pageNum: 1, pageSize: 8, keywords: queryString, userId: this.userId }
       }).then(res => {
-        console.log(res.data)
-        let result = []
         if (res.data.endRow === 0) {
-          cb(result)
+          cb([])
         } else {
-          res.data.list.forEach(function (item) {
-            result.push({
-              'value': item.name,
-              'id': item.id,
-              'hospital': item
-            })
-          })
-          console.log(result)
-          cb(result)
+          cb(res.data.list.map(item => ({ value: item.name, id: item.id, hospital: item })))
         }
-      }).catch(err => {
-        console.log(err)
-      })
+      }).catch(err => console.log(err))
     },
-    handleSelect (item) {
-      console.log(item.hospital)
+    handleHospitalSelect (item) {
       this.whitelistDoctor.hospitalId = item.id
       this.whitelistDoctor.standardCode = item.hospital.standardCode
     },
@@ -449,79 +279,76 @@ export default {
       this.whitelistDoctor.province = this.CodeToText[value[0]]
       this.whitelistDoctor.city = this.CodeToText[value[1]]
       this.whitelistDoctor.county = this.CodeToText[value[2]]
-    },
-  },
-  watch: {
-    '$route' (to, from) {
-      if (this.$route.params.role) {
-        this.roleCode = this.$route.params.role
-        this.getData()
-      }
-    }
-  },
-  filters: {
-  },
-  computed: {
-    areaInfo: {
-      get: function () {
-        if (this.whitelistDoctor.county === undefined || this.whitelistDoctor.county === '' || this.whitelistDoctor.county === null) {
-          return []
-        }
-        let province = this.TextToCode[this.whitelistDoctor.province].code
-        let cityTemp = this.whitelistDoctor.city === this.whitelistDoctor.province ? '市辖区' : this.whitelistDoctor.city
-        let city = this.TextToCode[this.whitelistDoctor.province][cityTemp].code
-        let county = this.TextToCode[this.whitelistDoctor.province][cityTemp][this.whitelistDoctor.county].code
-        return [province, city, county]
-      },
-      set: function () {
-      }
     }
   },
   created () {
-    let loading = this.$loading({
-      lock: true,
-      text: 'Loading',
-      spinner: 'el-icon-loading',
-      background: 'rgba(0, 0, 0, 0.7)'
-    })
     this._initData()
-    loading.close()
-  },
-  mounted () {
-  },
-  destroyed () {}
+  }
 }
 </script>
+
 <style rel="stylesheet/scss" lang="scss" scoped>
-  .user-container {
-    margin: 20px 0px;
-    padding: 20px;
-    background: #ffffff;
-    .search-box {
+.user-container {
+  margin: 20px 0;
+  padding: 20px;
+  background: var(--pc-white);
+  border-radius: var(--pc-r-4);
+  box-shadow: var(--pc-sh-1);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+  border-bottom: var(--pc-bd-hair);
+
+  .page-meta {
+    font-size: var(--pc-fs-13);
+    color: var(--pc-ink-500);
+    strong {
+      color: var(--pc-ink-800);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
     }
-    .opera-box {
-      padding-bottom: 20px;
-    }
   }
-  .is-parent {
-    margin-bottom: 5px;
-    display: block;
-    font-weight: bolder;
+}
+
+.opera-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  .search-input {
+    width: 320px;
+    margin-left: auto;
   }
-  .sec-info {
-    display: inline-block;
-    padding-left: 10px;
-    font-weight: normal;
+}
+
+.empty {
+  padding: 40px 0 24px;
+  text-align: center;
+  .empty-title {
+    margin: 0 0 4px;
+    font-size: var(--pc-fs-14);
+    color: var(--pc-ink-600);
   }
-  .add-user {
-    margin-bottom: 10px;
+  .empty-hint {
+    margin: 0;
+    font-size: var(--pc-fs-12);
+    color: var(--pc-ink-400);
   }
-  .search-box {
-    width: 400px;
-    float: right;
-    margin-bottom: 10px;
-  }
-  .width-100-p {
-    width: 100%;
-  }
+}
+
+.width-100-p { width: 100%; }
+
+::v-deep .el-table {
+  .num { font-variant-numeric: tabular-nums; }
+  .meta { color: var(--pc-ink-400); font-size: var(--pc-fs-12); margin-right: 4px; }
+  .muted { color: var(--pc-ink-400); }
+  .text-danger { color: var(--pc-pos-600) !important; }
+  .text-danger:hover { color: var(--pc-pos-700) !important; background: var(--pc-pos-100); }
+}
 </style>

@@ -1,59 +1,40 @@
 <template>
   <div>
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/' }">BRCA轻松检</el-breadcrumb-item>
-      <el-breadcrumb-item>医生列表</el-breadcrumb-item>
-    </el-breadcrumb>
     <div class="user-container">
-  <!--      <el-tabs v-model="activeName" class="tab-list" type="card" @tab-click="handleClick">-->
-  <!--        <el-tab-pane label="普通客户" name="normal" v-if="roleCode === 'manager'"></el-tab-pane>-->
-  <!--        <el-tab-pane label="业务员" name="business-agent"></el-tab-pane>-->
-  <!--        <el-tab-pane label="渠道管理员" name="channel" v-if="roleCode === 'manager' || roleCode === 'firm-service'"></el-tab-pane>-->
-  <!--        <el-tab-pane label="厂商管理员" name="firm-service" v-if="roleCode === 'manager'"></el-tab-pane>-->
-  <!--        <el-tab-pane label="见山会诊管理" name="jk-service" v-if="roleCode === 'manager'"></el-tab-pane>-->
-  <!--        <el-tab-pane label="医生" name="doctor" v-if="roleCode === 'manager'"></el-tab-pane>-->
-  <!--        <el-tab-pane label="患者" name="patient" v-if="roleCode === 'manager'"></el-tab-pane>-->
-  <!--&lt;!&ndash;        <el-tab-pane label="系统管理" name="manager" v-if="roleCode === 'manager'"></el-tab-pane>&ndash;&gt;-->
-  <!--      </el-tabs>-->
+      <div class="page-header">
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+          <el-breadcrumb-item :to="{ path: '/' }">BRCA轻松检</el-breadcrumb-item>
+          <el-breadcrumb-item>医生列表</el-breadcrumb-item>
+        </el-breadcrumb>
+      </div>
       <router-view></router-view>
     </div>
   </div>
 </template>
+
 <script>
 export default {
-  components: {},
-  name: 'User',
+  name: 'BrcaUserShell',
   data () {
     return {
-      activeName: this.$route.params.role,
       roleCode: window.localStorage.role
     }
-  },
-  methods: {
-    handleClick (tab) {
-      this.$router.push({
-        name: 'UserList',
-        params: { role: tab.name }
-      })
-    }
-  },
-  filters: {},
-  computed: {},
-  created () {
-  },
-  mounted () {},
-  destroyed () {}
+  }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss" scoped>
-  .user-container {
-    margin: 20px 0px;
-    padding: 20px;
-    background: #ffffff;
-  }
-  .user-container .header {
-    margin-bottom: 20px;
-    font-size: 18px;
-  }
 
+<style rel="stylesheet/scss" lang="scss" scoped>
+.user-container {
+  margin: 20px 0;
+  padding: 20px;
+  background: var(--pc-white);
+  border-radius: var(--pc-r-4);
+  box-shadow: var(--pc-sh-1);
+}
+
+.page-header {
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+  border-bottom: var(--pc-bd-hair);
+}
 </style>
