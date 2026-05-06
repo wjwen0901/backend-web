@@ -123,7 +123,7 @@
           </template>
           <tr v-if="!filteredOrderList || filteredOrderList.length === 0">
             <td colspan="8">
-              <el-empty description="暂无数据"></el-empty>
+              <el-empty :description="activeStatusStr ? '没有「' + activeStatusStr + '」状态的订单' : '还没有订单'"></el-empty>
             </td>
           </tr>
         </table>

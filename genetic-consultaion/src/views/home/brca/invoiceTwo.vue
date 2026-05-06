@@ -90,7 +90,7 @@
                 </template>
                 <tr v-if="!invoiceList || invoiceList.length === 0" >
                     <td colspan="8">
-                        <el-empty description="暂无数据"></el-empty>
+                        <el-empty description="还没有发票记录"></el-empty>
                     </td>
                 </tr>
             </table>
