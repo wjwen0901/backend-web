@@ -86,7 +86,7 @@
             <span class="num">{{ scope.row.createTime | formatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="状态" width="92" fixed="left">
+        <el-table-column label="状态" width="120" fixed="left">
           <template slot-scope="scope">
             <el-tag :type="brcaOrderStatusType(scope.row.status)" size="mini" disable-transitions>{{ scope.row.statusStr }}</el-tag>
           </template>
@@ -108,10 +108,9 @@
         <el-table-column label="支付价格" width="108">
           <template slot-scope="scope">
             <span class="num" v-if="scope.row.payment !== undefined">¥{{ scope.row.payment }}</span>
-            <el-tag v-if="payChannelLabel(scope.row.payType)" type="info2" size="mini" disable-transitions class="ml-4">{{ payChannelLabel(scope.row.payType) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="sampleCode" label="样本编号" width="100"></el-table-column>
+        <el-table-column prop="sampleCode" label="样本编号" width="140"></el-table-column>
         <el-table-column prop="hospitalName" label="医院" width="200" show-overflow-tooltip></el-table-column>
         <el-table-column prop="deptName" label="科室" width="100" show-overflow-tooltip></el-table-column>
         <el-table-column prop="doctorName" label="医生" width="80" show-overflow-tooltip></el-table-column>
