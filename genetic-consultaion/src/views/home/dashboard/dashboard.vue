@@ -399,25 +399,24 @@ export default {
 .ops-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-  margin-bottom: 14px;
+  gap: var(--pc-space-16);
+  margin-bottom: var(--pc-space-16);
 }
 
 .ops-card {
   min-height: 116px;
-  padding: 14px 16px;
+  padding: var(--pc-space-16);
   background: var(--pc-white);
   border: var(--pc-bd-hair);
   border-radius: var(--pc-r-6);
   box-shadow: var(--pc-sh-1);
   cursor: pointer;
-  transition: border-color var(--pc-dur-2) var(--pc-ease), box-shadow var(--pc-dur-2) var(--pc-ease), transform var(--pc-dur-2) var(--pc-ease);
+  transition: border-color var(--pc-dur-2) var(--pc-ease), background var(--pc-dur-2) var(--pc-ease);
 }
 
 .ops-card:hover {
   border-color: var(--pc-ink-300);
-  box-shadow: var(--pc-sh-3);
-  transform: translateY(-1px);
+  background: var(--pc-ink-50);
 }
 
 .ops-card__head {
@@ -448,20 +447,20 @@ export default {
 .ops-main {
   display: grid;
   grid-template-columns: minmax(0, 1.45fr) minmax(360px, .95fr);
-  gap: 14px;
-  margin-bottom: 14px;
+  gap: var(--pc-space-16);
+  margin-bottom: var(--pc-space-16);
 }
 
 .ops-bottom {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 280px;
-  gap: 14px;
+  gap: var(--pc-space-16);
 }
 
 .trend-legend {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: var(--pc-space-16);
   color: var(--pc-ink-500);
   font-size: 11.5px;
 }
@@ -686,9 +685,9 @@ export default {
 }
 
 .source-error {
-  margin-top: 12px;
-  padding: 8px 10px;
-  border-radius: var(--pc-r-4);
+  margin-top: var(--pc-space-12);
+  padding: var(--pc-space-8) var(--pc-space-12);
+  border-radius: var(--pc-r-6);
   background: var(--pc-pos-100);
   color: var(--pc-pos-700);
   font-size: 12px;

@@ -1160,7 +1160,7 @@ export default {
     position: relative;
     display: grid;
     grid-template-columns: minmax(540px, 1fr) minmax(360px, 42%);
-    gap: 16px;
+    gap: var(--pc-space-16);
     align-items: start;
 
     &.is-preview-only {
@@ -1176,18 +1176,18 @@ export default {
   .edit-form {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--pc-space-16);
   }
 
   .form-section,
   .preview-panel {
     background: var(--pc-white);
     border: var(--pc-bd-hair);
-    border-radius: var(--pc-r-4);
+    border-radius: var(--pc-r-6);
   }
 
   .form-section {
-    padding: 14px 16px 2px;
+    padding: var(--pc-space-16) var(--pc-space-16) 4px;
 
     &.form-section--muted {
       background: var(--pc-ink-50);
@@ -1200,8 +1200,8 @@ export default {
 
   .preview-panel {
     position: sticky;
-    top: 12px;
-    padding: 14px;
+    top: var(--pc-space-12);
+    padding: var(--pc-space-16);
   }
 
   .section-header {
@@ -1245,9 +1245,9 @@ export default {
   .cell-group {
     background: var(--pc-ink-50);
     border: var(--pc-bd-hair);
-    border-radius: var(--pc-r-4);
-    padding: 10px 12px 0;
-    margin-bottom: 10px;
+    border-radius: var(--pc-r-6);
+    padding: var(--pc-space-12) var(--pc-space-12) 0;
+    margin-bottom: var(--pc-space-12);
   }
 
   .doc-frame {
@@ -1256,7 +1256,7 @@ export default {
     min-height: 520px;
     background: var(--pc-ink-50);
     border: var(--pc-bd-hair);
-    border-radius: var(--pc-r-4);
+    border-radius: var(--pc-r-6);
     overflow: hidden;
 
     object,
@@ -1281,7 +1281,7 @@ export default {
     text-align: center;
     background: var(--pc-ink-50);
     border: var(--pc-bd-hair);
-    border-radius: var(--pc-r-4);
+    border-radius: var(--pc-r-6);
 
     .empty-title {
       margin: 0 0 4px;
@@ -1303,12 +1303,12 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    margin-top: 16px;
-    padding: 12px 76px 12px 16px;
+    gap: var(--pc-space-16);
+    margin-top: var(--pc-space-16);
+    padding: var(--pc-space-12) 76px var(--pc-space-12) var(--pc-space-16);
     background: var(--pc-white);
     border: var(--pc-bd-hair);
-    border-radius: var(--pc-r-4);
+    border-radius: var(--pc-r-6);
     box-shadow: var(--pc-sh-2);
   }
 

@@ -30,8 +30,55 @@ const STATUS_COLOR = {
   neg: 'var(--pc-neg-600)'
 }
 
+const STATUS_TEXT_TYPE = {
+  '收款码待付款': 'warn',
+  '待付款': 'warn',
+  '待处理': 'warn',
+  '待发货': 'warn',
+  '待审核': 'warn',
+  '新增': 'warn',
+  '已下单': 'info2',
+  '待采样': 'info2',
+  '已录入': 'info2',
+  '待回寄': 'prog',
+  '寄样中': 'prog',
+  '已签收': 'prog',
+  '检测中': 'prog',
+  '待复核': 'prog',
+  '转账中': 'prog',
+  '已发货': 'prog',
+  '待寄出': 'prog',
+  '已确定': 'prog',
+  '未打印': 'prog',
+  '已出报告': 'succ',
+  '报告已出': 'succ',
+  '已审核': 'succ',
+  '已寄出': 'succ',
+  '已完成': 'succ',
+  '已到账': 'succ',
+  '已打印': 'succ',
+  '启用': 'succ',
+  '阳性': 'pos',
+  '无法识别': 'pos',
+  '人工检验': 'pos',
+  '阴性': 'neg',
+  '已取消': '',
+  '已取消订单': '',
+  '未开票': '',
+  '已停用': ''
+}
+
 function mapStatus (code) {
   return STATUS_MAP[code] || { type: '', label: '未知' }
+}
+
+function typeOfStatusText (text) {
+  return STATUS_TEXT_TYPE[text] !== undefined ? STATUS_TEXT_TYPE[text] : ''
+}
+
+function tagClassOf (typeOrText) {
+  const type = STATUS_COLOR[typeOrText] !== undefined ? typeOrText : typeOfStatusText(typeOrText)
+  return type ? 'el-tag--' + type : ''
 }
 
 function statusCounts (list) {
@@ -227,7 +274,10 @@ function dateStr (date) {
 export default {
   STATUS_MAP,
   STATUS_COLOR,
+  STATUS_TEXT_TYPE,
   mapStatus,
+  typeOfStatusText,
+  tagClassOf,
   statusCounts,
   BRCA_ORDER_STATUS_TYPE,
   BRCA_ORDER_STATUS_OPTIONS,
@@ -253,7 +303,10 @@ export default {
 export {
   STATUS_MAP,
   STATUS_COLOR,
+  STATUS_TEXT_TYPE,
   mapStatus,
+  typeOfStatusText,
+  tagClassOf,
   statusCounts,
   BRCA_ORDER_STATUS_TYPE,
   BRCA_ORDER_STATUS_OPTIONS,

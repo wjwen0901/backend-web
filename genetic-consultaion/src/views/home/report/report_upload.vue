@@ -472,7 +472,7 @@ export default {
   .upload-grid {
     display: grid;
     grid-template-columns: 1fr 320px;
-    gap: 16px;
+    gap: var(--pc-space-16);
     align-items: start;
   }
   .upload-side-col { position: sticky; top: 0; }
@@ -493,10 +493,10 @@ export default {
   .file-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px 10px;
+    gap: var(--pc-space-8);
+    padding: var(--pc-space-8) var(--pc-space-12);
     border: 1px solid var(--pc-ink-200);
-    border-radius: 4px;
+    border-radius: var(--pc-r-6);
     font-size: 12.5px;
     margin-bottom: 6px;
     background: #fff;

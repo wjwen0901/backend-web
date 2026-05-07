@@ -52,8 +52,8 @@
   - `--pc-accent-ink #0B3B47` —— 顶栏深墨青底色（NOT 绿色）
 - **6 类语义色 D3**：`warn / info2 / prog / succ / pos / neg`，承载 11 业务状态映射（见 `src/utils/pc.js`）
 - **中性 ink**：`ink-50` ~ `ink-900` 9 阶；侧栏白底 + ink-50 主内容区背景
-- **阴影**：`pc-sh-1` ~ `pc-sh-4` 4 阶，从 1px 极轻到 12px 漂浮
-- **圆角**：`pc-r-2/4/6/8`；按钮 4px、卡片 6px、Tag 999px 全圆
+- **阴影**：`pc-sh-1` ~ `pc-sh-4` 4 阶；默认卡片靠 1px 边框和背景层级，阴影仅用于顶栏、弹层和轻 hover
+- **圆角**：`pc-r-2/4/6/8`；后台控件默认收敛在 6-8px，按钮 6px、卡片 6px、Tag 8px
 - **字体**：`-apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif`；mono 用 `"SF Mono", "JetBrains Mono"`（订单号、样本编号、接口路径）
 - **字号**：12 / 12.5 / 13 / 14 / 16 / 18 / 22 / 28 px 八阶；body 13px / 表格 12.5px / 大数 28px
 - **图标**：菜单与品牌用 Remix Icon (`ri-*`)；操作微动作用 Element 自带 (`el-icon-*`)

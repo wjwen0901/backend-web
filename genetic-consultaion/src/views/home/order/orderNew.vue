@@ -230,6 +230,7 @@
 </template>
 <script>
 import NP from 'number-precision'
+import { tagClassOf } from '@/utils/pc'
 export default {
   data () {
     return {
@@ -499,25 +500,7 @@ export default {
     },
     // statusStr → 设计系统 6 类语义 Tag class（D3）
     tagClassForStatusStr (val) {
-      const map = {
-        '收款码待付款': 'el-tag--warn',
-        '待付款': 'el-tag--warn',
-        '已下单': 'el-tag--info2',
-        '待采样': 'el-tag--info2',
-        '待回寄': 'el-tag--prog',
-        '寄样中': 'el-tag--prog',
-        '已签收': 'el-tag--prog',
-        '检测中': 'el-tag--prog',
-        '待复核': 'el-tag--prog',
-        '已出报告': 'el-tag--succ',
-        '报告已出': 'el-tag--succ',
-        '已审核': 'el-tag--succ',
-        '已寄出': 'el-tag--succ',
-        '阳性': 'el-tag--pos',
-        '阴性': 'el-tag--neg',
-        '已取消订单': ''
-      }
-      return map[val] || ''
+      return tagClassOf(val)
     },
     setStatusFilter (label, ev) {
       this.activeStatusStr = label
@@ -831,11 +814,11 @@ export default {
 }
 
 .priceDiag {
-  margin: 30px 0 70px 0;
+  margin: var(--pc-space-24) 0 56px;
   border: 1px dashed var(--pc-ink-200);
-  padding: 60px 15px 37px 15px;
+  padding: 48px var(--pc-space-16) 32px;
   background: var(--pc-ink-50);
-  border-radius: 15px;
+  border-radius: var(--pc-r-8);
   height: 250px;
 }
 
@@ -885,8 +868,8 @@ export default {
 
 .tokenRatio {
   background-color: var(--pc-ink-50);
-  padding: 12px;
-  border-radius: 8px;
+  padding: var(--pc-space-12);
+  border-radius: var(--pc-r-6);
 }
 </style>
 <style lang="scss">

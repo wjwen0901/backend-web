@@ -86,13 +86,19 @@
   --pc-r-6:  6px;
   --pc-r-8:  8px;
 
-  --pc-sh-1: 0 1px 2px rgba(15, 23, 42, .04);
-  --pc-sh-2: 0 2px 6px rgba(15, 23, 42, .06);
-  --pc-sh-3: 0 6px 16px rgba(15, 23, 42, .08);
-  --pc-sh-4: 0 12px 32px rgba(15, 23, 42, .12);
+  --pc-sh-1: none;
+  --pc-sh-2: 0 1px 3px rgba(15, 23, 42, .05);
+  --pc-sh-3: 0 2px 8px rgba(15, 23, 42, .07);
+  --pc-sh-4: 0 8px 24px rgba(15, 23, 42, .10);
 
   --pc-bd-hair:   1px solid var(--pc-ink-200);
   --pc-bd-strong: 1px solid var(--pc-ink-300);
+
+  --pc-space-8: 8px;
+  --pc-space-12: 12px;
+  --pc-space-16: 16px;
+  --pc-space-20: 20px;
+  --pc-space-24: 24px;
 
   --pc-dur-1: 120ms;
   --pc-dur-2: 200ms;

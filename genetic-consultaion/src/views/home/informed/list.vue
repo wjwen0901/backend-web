@@ -180,10 +180,11 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 .user-container {
-  margin: 20px 0;
-  padding: 20px;
+  margin: 0 0 var(--pc-space-16);
+  padding: var(--pc-space-16) var(--pc-space-20);
   background: var(--pc-white);
-  border-radius: var(--pc-r-4);
+  border: var(--pc-bd-hair);
+  border-radius: var(--pc-r-6);
   box-shadow: var(--pc-sh-1);
 }
 
