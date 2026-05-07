@@ -1,9 +1,6 @@
 <template>
   <div class="pc-page pc-dashboard">
-    <div class="pc-page-title">
-      <h2>运营驾驶舱</h2>
-      <span class="desc">{{ sourceLabel }}</span>
-    </div>
+    <div class="pc-page-meta-row" v-if="sourceLabel">{{ sourceLabel }}</div>
 
     <div class="ops-grid">
       <div class="ops-card"
@@ -394,6 +391,14 @@ export default {
     color: var(--pc-ink-500);
     font-size: 11.5px;
   }
+}
+
+.pc-page-meta-row {
+  font-size: 12px;
+  color: var(--pc-ink-500);
+  letter-spacing: .2px;
+  margin: 0 0 12px;
+  line-height: 1.5;
 }
 
 .ops-grid {
