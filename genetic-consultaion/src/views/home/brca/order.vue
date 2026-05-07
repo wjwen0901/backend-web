@@ -128,7 +128,7 @@
         <el-table-column label="支付价格" width="108">
           <template slot-scope="scope">
             <span class="num" v-if="scope.row.payment !== undefined">¥{{ scope.row.payment }}</span>
-            <el-tag v-if="scope.row.tid" type="info2" size="mini" disable-transitions class="ml-4">有赞</el-tag>
+            <el-tag v-if="payChannelLabel(scope.row.payType)" type="info2" size="mini" disable-transitions class="ml-4">{{ payChannelLabel(scope.row.payType) }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="sampleCode" label="样本编号" width="100"></el-table-column>
@@ -252,7 +252,8 @@ import {
   BRCA_ORDER_STATUS_OPTIONS,
   apiSubmit,
   downloadBlob,
-  dateStr
+  dateStr,
+  payChannelLabel
 } from '@/utils/pc'
 
 export default {
@@ -291,6 +292,7 @@ export default {
   methods: {
     brcaStatusType: brcaOrderStatusType,
     canUploadReport: canUploadBrcaReport,
+    payChannelLabel,
     _initData () {
       this.loading = true
       this.axios.get('hospital-dept').then(res => {

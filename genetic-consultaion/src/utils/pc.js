@@ -130,6 +130,33 @@ const REPORT_STATE_MAP = {
   3: { type: 'succ',  label: '关联知情' }
 }
 
+// trade_order.pay_type → 展示标签。两套历史枚举共存：
+//   旧版（TradeOrder 注释）  : 1 微信 / 2 支付宝 / 3 现金 / 4 代金券 / 107 有赞
+//   新版（PayRecordPayTypeEnum）: 102 微信 / 103 支付宝 / 104 POS / 105 对公 /
+//     106 储值卡 / 113 通联 / 201 现金 / 202 有赞商城 / 203 鹿鹿通
+// 历史野值（10/12/16/36/37/72/7 等 2018-2020 老订单）和 0 / NULL 一律不显示标签
+const PAY_CHANNEL_MAP = {
+  1: '微信',
+  102: '微信',
+  2: '支付宝',
+  103: '支付宝',
+  3: '现金',
+  201: '现金',
+  4: '代金券',
+  104: 'POS',
+  105: '对公',
+  106: '储值卡',
+  113: '通联',
+  107: '有赞',
+  202: '有赞',
+  203: '鹿鹿通'
+}
+
+function payChannelLabel (payType) {
+  if (payType === undefined || payType === null) return ''
+  return PAY_CHANNEL_MAP[payType] || ''
+}
+
 // 通用：根据 status code/text 取 { type, label }；找不到返回 fallback
 function statusOf (map, key, fallback) {
   return map[key] || fallback || { type: '', label: '未知' }
@@ -249,8 +276,10 @@ export default {
   BRCA_EXCHANGE_STATUS_TYPE,
   INFORMED_STATE_MAP,
   REPORT_STATE_MAP,
+  PAY_CHANNEL_MAP,
   brcaOrderStatusType,
   canUploadBrcaReport,
+  payChannelLabel,
   statusOf,
   typeOf,
   countUp,
@@ -276,8 +305,10 @@ export {
   BRCA_EXCHANGE_STATUS_TYPE,
   INFORMED_STATE_MAP,
   REPORT_STATE_MAP,
+  PAY_CHANNEL_MAP,
   brcaOrderStatusType,
   canUploadBrcaReport,
+  payChannelLabel,
   statusOf,
   typeOf,
   countUp,
