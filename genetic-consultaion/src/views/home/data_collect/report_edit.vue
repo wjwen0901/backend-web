@@ -60,10 +60,15 @@
           <div class="panel">
             <div class="section-header">
               <h4>报告原件</h4>
+              <el-button v-if="imagePath" type="text" size="mini" icon="el-icon-view" @click="openExternal">在新窗口打开</el-button>
             </div>
             <div class="doc-frame" v-if="imagePath">
               <object :data="imagePath" type="application/pdf" v-if="report.mimeType === 'application/pdf'">
                 <embed :src="imagePath">
+                <div class="pdf-fallback">
+                  <p class="empty-title">PDF 无法在浏览器内预览</p>
+                  <p class="empty-hint">点击右上角"在新窗口打开"查看完整报告</p>
+                </div>
               </object>
               <img :src="imagePath" v-else class="doc-img">
             </div>
@@ -180,6 +185,9 @@ export default {
     hospitalHandleSelect (item) {
       this.report.hospitalId = item.id
     },
+    openExternal () {
+      if (this.imagePath) window.open(this.imagePath, '_blank')
+    },
     toCustomizeReport () {
       this.axios.get('report/combine/' + this.$route.params.reportId, {
         params: { hospitalId: this.report.hospitalId, solutionId: this.report.solutionId }
@@ -235,6 +243,9 @@ export default {
 }
 
 .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
   margin-bottom: 12px;
   padding-bottom: 8px;
   border-bottom: var(--pc-bd-hair);
@@ -244,6 +255,23 @@ export default {
     font-size: var(--pc-fs-14);
     font-weight: 600;
     color: var(--pc-ink-800);
+  }
+}
+
+.pdf-fallback {
+  padding: 60px 24px;
+  text-align: center;
+  color: var(--pc-ink-500);
+
+  .empty-title {
+    margin: 0 0 4px;
+    font-size: var(--pc-fs-14);
+    color: var(--pc-ink-600);
+  }
+  .empty-hint {
+    margin: 0;
+    font-size: var(--pc-fs-12);
+    color: var(--pc-ink-400);
   }
 }
 

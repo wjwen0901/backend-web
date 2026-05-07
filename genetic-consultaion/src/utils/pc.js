@@ -183,6 +183,18 @@ function formatAddress (r) {
   return [r.province, r.city, r.county, r.address].filter(Boolean).join(' ')
 }
 
+// ---- 脏数据 sanitize ----
+// DB 历史脏数据可能写入字符串 'undefined' / 'null' / ''
+// 模板里 {{ safe(row.x) || '—' }} 让 fallback 生效
+// huashu critique 2026-05-07 命中 user-list 'undefined / undefined' 行
+function safe (val) {
+  if (val === undefined || val === null) return null
+  if (typeof val !== 'string') return val
+  const s = val.trim()
+  if (s === '' || s === 'undefined' || s === 'null') return null
+  return val
+}
+
 // ---- API 提交工具 ----
 // http.js 的 axios 拦截器已自动注入 Authorization 和 userId param
 // 此处只补充 X-Requested-With 头并集中错误处理
@@ -245,6 +257,7 @@ export default {
   sparkPoints,
   formatDate,
   formatAddress,
+  safe,
   apiSubmit,
   downloadBlob,
   dateStr
@@ -271,6 +284,7 @@ export {
   sparkPoints,
   formatDate,
   formatAddress,
+  safe,
   apiSubmit,
   downloadBlob,
   dateStr

@@ -53,17 +53,20 @@
             <span v-else class="muted">—</span>
           </template>
         </el-table-column>
-        <el-table-column label="权限" min-width="220">
+        <el-table-column label="权限" min-width="160">
           <template slot-scope="scope">
-            <div v-if="hasSecList(scope.row)" class="sec-stack">
-              <div v-for="sec in topSecs(scope.row)" :key="sec.id" class="sec-row">
-                <span class="sec-parent">{{ sec.name }}</span>
-                <span
-                  v-for="child in childSecs(scope.row, sec.id)"
-                  :key="child.id"
-                  class="sec-child">{{ child.name }}</span>
+            <el-tooltip v-if="hasSecList(scope.row)" placement="top" effect="light" :open-delay="200">
+              <div slot="content" class="sec-tooltip">
+                <div v-for="sec in topSecs(scope.row)" :key="sec.id" class="sec-row">
+                  <span class="sec-parent">{{ sec.name }}</span>
+                  <span
+                    v-for="child in childSecs(scope.row, sec.id)"
+                    :key="child.id"
+                    class="sec-child">{{ child.name }}</span>
+                </div>
               </div>
-            </div>
+              <span class="sec-summary">{{ secSummary(scope.row) }}</span>
+            </el-tooltip>
             <span v-else class="muted">—</span>
           </template>
         </el-table-column>
@@ -292,7 +295,7 @@
 </template>
 
 <script>
-import { formatDate, apiSubmit } from '@/utils/pc'
+import { formatDate, apiSubmit, safe } from '@/utils/pc'
 
 const ROLE_LABELS = {
   'business-agent': '业务员',
@@ -384,7 +387,12 @@ export default {
             condition: this.condition
           }
         }).then(res => {
-          this.list = res.data.list || []
+          this.list = (res.data.list || []).map(row => Object.assign({}, row, {
+            fullName: safe(row.fullName),
+            cellphone: safe(row.cellphone),
+            companyName: safe(row.companyName),
+            roleCode: safe(row.roleCode)
+          }))
           this.pageSize = res.data.pageSize
           this.pageNum = res.data.pageNum
           this.totalPage = res.data.total
@@ -416,6 +424,15 @@ export default {
     },
     childSecs (row, parentId) {
       return (row.secList || []).filter(s => s.parentId === parentId)
+    },
+    secSummary (row) {
+      const tops = this.topSecs(row)
+      if (!tops.length) return ''
+      if (tops.length === 1) {
+        const children = this.childSecs(row, tops[0].id)
+        return tops[0].name + (children.length ? ' · ' + children.length + ' 项' : '')
+      }
+      return tops[0].name + ' 等 ' + tops.length + ' 类'
     },
     maskPhone (cellphone) {
       if (this.userId === READONLY_USER_ID && cellphone) {
@@ -728,27 +745,19 @@ export default {
   }
 }
 
-.sec-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.sec-row {
-  font-size: var(--pc-fs-12);
-}
-.sec-parent {
+.sec-summary {
   display: inline-block;
   padding: 1px 8px;
-  margin-right: 6px;
   border-radius: var(--pc-r-2);
   background: var(--pc-primary-50);
   color: var(--pc-primary-700);
+  font-size: var(--pc-fs-12);
   font-weight: 500;
-}
-.sec-child {
-  display: inline-block;
-  margin-right: 8px;
-  color: var(--pc-ink-500);
+  cursor: help;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .danger { color: var(--pc-neg-600); }
@@ -758,5 +767,28 @@ export default {
 ::v-deep .el-table {
   .num { font-variant-numeric: tabular-nums; }
   .muted { color: var(--pc-ink-400); }
+}
+</style>
+
+<style rel="stylesheet/scss" lang="scss">
+.sec-tooltip {
+  max-width: 320px;
+  font-size: var(--pc-fs-12);
+
+  .sec-row {
+    margin-bottom: 4px;
+    &:last-child { margin-bottom: 0; }
+  }
+  .sec-parent {
+    display: inline-block;
+    margin-right: 6px;
+    font-weight: 600;
+    color: var(--pc-ink-800);
+  }
+  .sec-child {
+    display: inline-block;
+    margin-right: 8px;
+    color: var(--pc-ink-500);
+  }
 }
 </style>

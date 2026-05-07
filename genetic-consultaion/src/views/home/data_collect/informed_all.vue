@@ -38,12 +38,18 @@
             <div class="section-header">
               <h4>病理信息</h4>
             </div>
-            <div class="meta-grid">
-              <span class="meta-label">癌种</span><span class="meta-value">{{ cancerLabel || '—' }}</span>
+            <div v-if="hasPathology" class="meta-grid">
+              <template v-if="cancerLabel">
+                <span class="meta-label">癌种</span><span class="meta-value">{{ cancerLabel }}</span>
+              </template>
               <template v-for="(info, index) in moreInfo">
                 <span class="meta-label" :key="'k' + index">{{ info.key }}</span>
                 <span class="meta-value" :key="'v' + index">{{ info.value }}</span>
               </template>
+            </div>
+            <div v-else class="empty-inline">
+              <p class="empty-title">病理信息暂未录入</p>
+              <p class="empty-hint">实验室录入病理后会显示在这里</p>
             </div>
 
             <el-form ref="formData" :rules="formRules" :model="formData" label-width="100px" size="small" class="address-form">
@@ -94,29 +100,33 @@
 
         <el-col :span="10">
           <div class="panel">
-            <div class="section-header">
-              <h4>手写签名</h4>
+            <div v-if="!informed.informedUrl && !pathologicFiles.length" class="doc-empty">
+              <p class="empty-title">客户尚未签署知情同意</p>
+              <p class="empty-hint">签署完成后这里会显示手写签名 + 病理报告文件</p>
             </div>
-            <div class="signature" v-if="informed.informedUrl">
-              <img :src="informed.informedUrl">
-            </div>
-            <div class="doc-empty" v-else>
-              <p class="empty-title">尚无签名</p>
-              <p class="empty-hint">客户签署知情同意后会显示</p>
-            </div>
-
-            <div class="section-header">
-              <h4>病理报告文件</h4>
-            </div>
-            <div class="pathologic-files" v-if="pathologicFiles.length">
-              <div class="pathologic-item" v-for="(img, index) in pathologicFiles" :key="index">
-                <img :src="img">
+            <template v-else>
+              <div class="section-header">
+                <h4>手写签名</h4>
               </div>
-            </div>
-            <div class="doc-empty" v-else>
-              <p class="empty-title">尚无报告文件</p>
-              <p class="empty-hint">实验室未上传或文件正在加载</p>
-            </div>
+              <div class="signature" v-if="informed.informedUrl">
+                <img :src="informed.informedUrl">
+              </div>
+              <div class="doc-empty" v-else>
+                <p class="empty-title">尚无签名</p>
+              </div>
+
+              <div class="section-header">
+                <h4>病理报告文件</h4>
+              </div>
+              <div class="pathologic-files" v-if="pathologicFiles.length">
+                <div class="pathologic-item" v-for="(img, index) in pathologicFiles" :key="index">
+                  <img :src="img">
+                </div>
+              </div>
+              <div class="doc-empty" v-else>
+                <p class="empty-title">尚无报告文件</p>
+              </div>
+            </template>
           </div>
         </el-col>
       </el-row>
@@ -177,7 +187,8 @@ export default {
     deptLabel () { return this.informed.deptName || (this.informed.informed && this.informed.informed.deptTemp) || '' },
     doctorLabel () { return this.informed.informed ? this.informed.informed.doctor : '' },
     cancerLabel () { return this.informed.informed ? this.informed.informed.cancerType : '' },
-    pathologicFiles () { return this.informed.pathologicFiles || [] }
+    pathologicFiles () { return this.informed.pathologicFiles || [] },
+    hasPathology () { return !!this.cancerLabel || this.moreInfo.length > 0 }
   },
   methods: {
     _initData () {
@@ -380,6 +391,26 @@ export default {
     margin: 0 0 4px;
     font-size: var(--pc-fs-14);
     color: var(--pc-ink-600);
+  }
+  .empty-hint {
+    margin: 0;
+    font-size: var(--pc-fs-12);
+    color: var(--pc-ink-400);
+  }
+}
+
+.empty-inline {
+  padding: 16px 0 12px;
+  text-align: center;
+  background: var(--pc-white);
+  border: var(--pc-bd-hair);
+  border-radius: var(--pc-r-4);
+  margin-bottom: 12px;
+
+  .empty-title {
+    margin: 0 0 4px;
+    font-size: var(--pc-fs-13);
+    color: var(--pc-ink-500);
   }
   .empty-hint {
     margin: 0;
