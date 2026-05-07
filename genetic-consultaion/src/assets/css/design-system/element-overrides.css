@@ -31,7 +31,53 @@
   border-bottom: 1px solid var(--pc-accent-ink-3);
   position: relative;
   z-index: 10;
+  overflow: hidden;
 }
+/* 顶栏装饰：雾色光晕呼吸 + 斜扫光斑（不抢交互） */
+#app .pc-header::before {
+  content: '';
+  position: absolute;
+  top: -120%;
+  left: 25%;
+  width: 520px;
+  height: 340%;
+  background: radial-gradient(ellipse 60% 50% at center,
+    rgba(251, 193, 162, .22) 0%,
+    rgba(200, 182, 226, .16) 38%,
+    rgba(176, 207, 229, .10) 62%,
+    transparent 80%);
+  filter: blur(24px);
+  pointer-events: none;
+  animation: pcMistBreathe 6s ease-in-out infinite;
+  z-index: 0;
+}
+#app .pc-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(135deg,
+    transparent 30%,
+    rgba(255, 255, 255, .12) 50%,
+    transparent 70%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: pcPhotoLight 9s linear infinite;
+  z-index: 0;
+}
+#app .pc-header > * { position: relative; z-index: 1; }
+
+@keyframes pcMistBreathe {
+  0%, 100% { transform: scale(.9);  opacity: .7; }
+  50%      { transform: scale(1.15); opacity: 1; }
+}
+@keyframes pcPhotoLight {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(220%); }
+}
+
 #app .pc-header .left { display:flex; align-items:center; gap:14px; }
 #app .pc-header .collapse-ic {
   font-size: 20px; color: rgba(255,255,255,.7); cursor: pointer;
