@@ -114,6 +114,22 @@ const BRCA_EXCHANGE_STATUS_TYPE = {
   '已取消': ''
 }
 
+// informed/list.vue + data_collect/informed_list.vue：知情同意 state 0/1/2/3
+const INFORMED_STATE_MAP = {
+  0: { type: 'warn',  label: '新增' },
+  1: { type: 'info2', label: '已录入' },
+  2: { type: 'pos',   label: '无法识别' },
+  3: { type: 'succ',  label: '报告已出' }
+}
+
+// data_collect/report_list.vue：报告 state 0/1/2/3
+const REPORT_STATE_MAP = {
+  0: { type: 'warn',  label: '新增' },
+  1: { type: 'info2', label: '已录入' },
+  2: { type: 'pos',   label: '无法识别' },
+  3: { type: 'succ',  label: '关联知情' }
+}
+
 // 通用：根据 status code/text 取 { type, label }；找不到返回 fallback
 function statusOf (map, key, fallback) {
   return map[key] || fallback || { type: '', label: '未知' }
@@ -219,6 +235,8 @@ export default {
   BRCA_PAPER_REPORT_STATUS,
   BRCA_INVOICE_STATUS_TYPE,
   BRCA_EXCHANGE_STATUS_TYPE,
+  INFORMED_STATE_MAP,
+  REPORT_STATE_MAP,
   brcaOrderStatusType,
   canUploadBrcaReport,
   statusOf,
@@ -243,6 +261,8 @@ export {
   BRCA_PAPER_REPORT_STATUS,
   BRCA_INVOICE_STATUS_TYPE,
   BRCA_EXCHANGE_STATUS_TYPE,
+  INFORMED_STATE_MAP,
+  REPORT_STATE_MAP,
   brcaOrderStatusType,
   canUploadBrcaReport,
   statusOf,

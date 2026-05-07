@@ -1,97 +1,107 @@
 <template>
   <div>
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>知情管理</el-breadcrumb-item>
-      <el-breadcrumb-item>知情列表</el-breadcrumb-item>
-    </el-breadcrumb>
     <div class="user-container">
-      <div>
-        <el-button class="add-solution" size="small" type="primary" @click="toExport">导出</el-button>
-        <div class="search-box">
-          <el-input placeholder="请输入条码编号/受检者姓名/手机号" size="small" v-model="condition" class="input-with-select">
-            <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
-          </el-input>
-        </div>
+      <div class="page-header">
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+          <el-breadcrumb-item>知情管理</el-breadcrumb-item>
+          <el-breadcrumb-item>知情列表</el-breadcrumb-item>
+        </el-breadcrumb>
+        <div class="page-meta">共 <strong>{{ totalPage }}</strong> 份知情同意</div>
       </div>
+
+      <div class="pc-toolbar">
+        <el-input
+          placeholder="搜索条码编号 / 受检者姓名 / 手机号"
+          size="small"
+          class="grow"
+          v-model="condition"
+          @keyup.enter.native="search"
+          clearable>
+          <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
+        </el-input>
+        <el-button
+          type="warning"
+          size="small"
+          :disabled="!multipleSelection.length"
+          :loading="exporting"
+          @click="toExport">导出选中 ({{ multipleSelection.length }})</el-button>
+      </div>
+
       <el-table
         @selection-change="handleSelectionChange"
         :data="informedList"
         size="small"
         border
+        v-loading="loading"
+        element-loading-text="加载知情同意"
         style="width: 100%">
-        <el-table-column
-          fixed
-          align="center"
-          type="selection"
-          width="40">
-        </el-table-column>
-        <el-table-column
-          prop="sampleCode"
-          label="条码编号"
-          align="center"
-          width="140">
-        </el-table-column>
-        <el-table-column
-          prop="truename"
-          align="center"
-          label="受检者姓名"
-          width="120">
-        </el-table-column>
-        <el-table-column
-          prop="createTime"
-          align="center"
-          label="上传时间"
-          width="160">
+        <el-table-column fixed type="selection" width="40"></el-table-column>
+        <el-table-column prop="sampleCode" label="条码编号" width="140">
           <template slot-scope="scope">
-            {{scope.row.createTime | formatDate}}
+            <span class="num">{{ scope.row.sampleCode || '—' }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="fullName"
-          align="center"
-          label="上传人姓名">
-        </el-table-column>
-        <el-table-column
-          prop="cellphone"
-          align="center"
-          label="上传人联系电话">
-        </el-table-column>
-        <el-table-column
-          prop="group"
-          align="center"
-          label="所属分组">
-        </el-table-column>
-        <el-table-column
-          prop="solutionName"
-          align="center"
-          label="检测项目">
-        </el-table-column>
-        <el-table-column
-          prop="companyName"
-          align="center"
-          label="实验室">
-        </el-table-column>
-        <el-table-column
-          prop="state"
-          align="center"
-          label="状态">
+        <el-table-column prop="truename" label="受检者" width="100">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.state === 0" size="small">{{scope.row.state | stateFilter}}</el-tag>
-            <el-tag v-else-if="scope.row.state === 1" size="small" type="info">{{scope.row.state | stateFilter}}</el-tag>
-            <el-tag v-else-if="scope.row.state === 2" size="small" type="danger">{{scope.row.state | stateFilter}}</el-tag>
-            <el-tag v-else-if="scope.row.state === 3" size="small" type="success">{{scope.row.state | stateFilter}}</el-tag>
+            <span v-if="scope.row.truename">{{ scope.row.truename }}</span>
+            <span v-else class="muted">—</span>
           </template>
         </el-table-column>
-        <el-table-column
-          fixed="right"
-          label="操作"
-          align="center"
-          width="160">
+        <el-table-column label="联系电话" width="130">
           <template slot-scope="scope">
-            <el-button @click="toDetail(scope.row.id,scope.row.groupId,scope.row.sampleCode,scope.row)" type="text" size="small">编辑</el-button>
-            <el-button @click="toAllDetail(scope.row)" type="text" size="small">查看病理信息</el-button>
+            <span v-if="scope.row.cellphone" class="num">{{ scope.row.cellphone }}</span>
+            <span v-else class="muted">—</span>
           </template>
         </el-table-column>
+        <el-table-column prop="solutionName" label="检测项目" min-width="160" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <span v-if="scope.row.solutionName">{{ scope.row.solutionName }}</span>
+            <span v-else class="muted">—</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="companyName" label="实验室" min-width="140" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <span v-if="scope.row.companyName">{{ scope.row.companyName }}</span>
+            <span v-else class="muted">—</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="group" label="分组" width="120" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <span v-if="scope.row.group">{{ scope.row.group }}</span>
+            <span v-else class="muted">—</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="fullName" label="上传人" width="100">
+          <template slot-scope="scope">
+            <span v-if="scope.row.fullName">{{ scope.row.fullName }}</span>
+            <span v-else class="muted">—</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="上传时间" width="150">
+          <template slot-scope="scope">
+            <span class="num">{{ scope.row.createTime | formatDate }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="状态" width="100">
+          <template slot-scope="scope">
+            <el-tag size="mini" :class="'el-tag--' + stateInfo(scope.row.state).type">
+              {{ stateInfo(scope.row.state).label }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" label="操作" width="160">
+          <template slot-scope="scope">
+            <el-button @click="toDetail(scope.row)" type="text" size="mini">编辑</el-button>
+            <el-button @click="toAllDetail(scope.row)" type="text" size="mini">病理信息</el-button>
+          </template>
+        </el-table-column>
+
+        <template slot="empty">
+          <div class="empty">
+            <p class="empty-title">尚无知情同意</p>
+            <p class="empty-hint">客户上传知情同意书后会显示在这里</p>
+          </div>
+        </template>
       </el-table>
 
       <el-pagination
@@ -106,39 +116,49 @@
     </div>
   </div>
 </template>
+
 <script>
+import { formatDate, INFORMED_STATE_MAP, statusOf, downloadBlob, dateStr } from '@/utils/pc'
+
 export default {
-  components: {},
-  name: 'InformedUpload',
+  name: 'DataCollectInformedList',
   data () {
     return {
       informedList: [],
       multipleSelection: [],
-      pageNum: window.sessionStorage.informedPageNum === undefined ? 1 : window.sessionStorage.informedPageNum,
+      pageNum: window.sessionStorage.informedPageNum === undefined ? 1 : parseInt(window.sessionStorage.informedPageNum),
       pageSize: window.sessionStorage.informedPageSize === undefined ? 20 : parseInt(window.sessionStorage.informedPageSize),
       totalPage: 0,
-      condition: ''
+      condition: '',
+      loading: false,
+      exporting: false,
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
     }
   },
+  filters: { formatDate },
   methods: {
     _initData () {
       this.getData()
     },
     getData () {
+      this.loading = true
       this.axios.get('informed', {
         params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
+          userId: this.userId,
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           searchCondition: this.condition
         }
       }).then(res => {
-        this.informedList = res.data.list
+        this.informedList = res.data.list || []
         this.pageSize = res.data.pageSize
         this.pageNum = res.data.pageNum
         this.totalPage = res.data.total
       }).catch(err => {
         console.log(err)
+        this.$message.error('知情同意加载失败，请稍后重试')
+      }).then(() => {
+        this.loading = false
       })
     },
     handleSizeChange (val) {
@@ -151,87 +171,107 @@ export default {
       window.sessionStorage.informedPageNum = val
       this.getData()
     },
-    toDetail (id,groupId,sampleCode,obj) {
-      this.$router.push({
-        path:'/informed/edit/'+id,
-        query: { informedId: id,groupId: groupId,sampleCode:sampleCode,
-            orderId:obj.orderId,
-            solutionId:obj.solutionId,
-            fileId:obj.id,
-            orderNo:obj.orderNo
-          }
-      })
-      // this.$router.push({
-      //   name: 'InformedEdit',
-      //   params: { informedId: id,groupId: groupId,sampleCode:sampleCode }
-      // })
-      _hmt.push(['_trackEvent', '知情同意', '编辑', 'informedId', id]);
+    search () {
+      this.pageNum = 1
+      this.getData()
     },
-    toAllDetail (item) {
+    stateInfo (state) {
+      return statusOf(INFORMED_STATE_MAP, state, { type: '', label: '未知' })
+    },
+    toDetail (row) {
+      this.$router.push({
+        path: '/informed/edit/' + row.id,
+        query: {
+          informedId: row.id,
+          groupId: row.groupId,
+          sampleCode: row.sampleCode,
+          orderId: row.orderId,
+          solutionId: row.solutionId,
+          fileId: row.id,
+          orderNo: row.orderNo
+        }
+      })
+      if (typeof _hmt !== 'undefined') {
+        _hmt.push(['_trackEvent', '知情同意', '编辑', 'informedId', row.id])
+      }
+    },
+    toAllDetail (row) {
       this.$router.push({
         name: 'InformedAll',
-        params: { sampleNo: item.sampleCode,orderId:item.orderId }
+        params: { sampleNo: row.sampleCode, orderId: row.orderId }
       })
     },
     toExport () {
-      let informedIds = []
-      this.multipleSelection.forEach(item => {
-        informedIds.push(item.id)
-      })
-      this.axios.get('informed/export?informedIds=' + informedIds + '&userId=' + window.localStorage.userId, {
-        responseType:"blob"
+      if (!this.multipleSelection.length) return
+      this.exporting = true
+      const informedIds = this.multipleSelection.map(item => item.id).join(',')
+      this.axios.get('informed/export', {
+        params: { informedIds, userId: this.userId },
+        responseType: 'blob'
       }).then(response => {
-        const blob = new Blob(
-          [response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8' })
-        const aEle = document.createElement('a');     // 创建a标签
-        const href = window.URL.createObjectURL(blob);       // 创建下载的链接
-        aEle.href = href;
-        const today = new Date();
-        aEle.download = "知情同意-" + today.getFullYear() + '-'+ (today.getMonth()+1)+ '-' + today.getDate() + ".xls";  // 下载后文件名
-        document.body.appendChild(aEle);
-        aEle.click();     // 点击下载
-        document.body.removeChild(aEle); // 下载完成移除元素
-        window.URL.revokeObjectURL(href) // 释放掉blob对象
+        downloadBlob(response.data, '知情同意-' + dateStr() + '.xls')
       }).catch(err => {
         console.log(err)
+        this.$message.error('导出失败，请稍后重试')
+      }).then(() => {
+        this.exporting = false
       })
     },
     handleSelectionChange (value) {
       this.multipleSelection = value
-    },
-  },
-  filters: {
-    stateFilter: function (state) {
-      if (state === 0) return '新增'
-      if (state === 1) return '已录入'
-      if (state === 2) return '无法识别'
-      if (state === 3) return '报告已出'
     }
   },
-  computed: {},
   created () {
-    let loading = this.$loading({
-      lock: true,
-      text: 'Loading',
-      spinner: 'el-icon-loading',
-      background: 'rgba(0, 0, 0, 0.7)'
-    })
     this._initData()
-    loading.close()
-  },
-  mounted () {},
-  destroyed () {}
+  }
 }
 </script>
+
 <style rel="stylesheet/scss" lang="scss" scoped>
-  .user-container {
-    margin: 20px 0px;
-    padding: 20px;
-    background: #ffffff;
-    .search-box {
-      width: 400px;
-      float: right;
-      margin-bottom: 10px;
+.user-container {
+  margin: 20px 0;
+  padding: 20px;
+  background: var(--pc-white);
+  border-radius: var(--pc-r-4);
+  box-shadow: var(--pc-sh-1);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+  border-bottom: var(--pc-bd-hair);
+
+  .page-meta {
+    font-size: var(--pc-fs-13);
+    color: var(--pc-ink-500);
+    strong {
+      color: var(--pc-ink-800);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
     }
   }
+}
+
+.empty {
+  padding: 40px 0 24px;
+  text-align: center;
+  .empty-title {
+    margin: 0 0 4px;
+    font-size: var(--pc-fs-14);
+    color: var(--pc-ink-600);
+  }
+  .empty-hint {
+    margin: 0;
+    font-size: var(--pc-fs-12);
+    color: var(--pc-ink-400);
+  }
+}
+
+::v-deep .el-table {
+  .num { font-variant-numeric: tabular-nums; }
+  .muted { color: var(--pc-ink-400); }
+}
 </style>

@@ -1,73 +1,88 @@
 <template>
   <div>
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>报告管理</el-breadcrumb-item>
-      <el-breadcrumb-item>报告列表</el-breadcrumb-item>
-    </el-breadcrumb>
     <div class="user-container">
-      <div>
-        <!--<el-button class="add-solution" size="small" type="primary" @click="toAdd">新增</el-button>-->
-        <div class="search-box">
-          <el-input placeholder="请输入条码编号/受检者姓名/手机号" v-model="condition" class="input-with-select">
-            <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
-          </el-input>
-        </div>
+      <div class="page-header">
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+          <el-breadcrumb-item>报告管理</el-breadcrumb-item>
+          <el-breadcrumb-item>报告列表</el-breadcrumb-item>
+        </el-breadcrumb>
+        <div class="page-meta">共 <strong>{{ totalPage }}</strong> 份检测报告</div>
       </div>
+
+      <div class="pc-toolbar">
+        <el-input
+          placeholder="搜索条码编号 / 受检者姓名 / 手机号"
+          size="small"
+          class="grow"
+          v-model="condition"
+          @keyup.enter.native="search"
+          clearable>
+          <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
+        </el-input>
+      </div>
+
       <el-table
         :data="reportList"
         size="mini"
         border
+        v-loading="loading"
+        element-loading-text="加载报告"
         style="width: 100%">
-        <el-table-column
-          prop="sampleCode"
-          label="条码编号"
-          width="180">
-        </el-table-column>
-        <el-table-column
-          prop="truename"
-          label="受检者姓名"
-          width="180">
-        </el-table-column>
-        <el-table-column
-          prop="fileName"
-          label="文件名称"
-          width="180">
-        </el-table-column>
-        <el-table-column
-          prop="createTime"
-          label="上传时间"
-          width="180">
+        <el-table-column prop="sampleCode" label="条码编号" width="160">
           <template slot-scope="scope">
-            {{scope.row.createTime | formatDate}}
+            <span class="num">{{ scope.row.sampleCode || '—' }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="fullName"
-          label="实验员">
-        </el-table-column>
-        <el-table-column
-          prop="userCellphone"
-          label="联系电话">
-        </el-table-column>
-        <el-table-column
-          prop="state"
-          label="状态">
+        <el-table-column prop="truename" label="受检者" width="100">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.state === 0">{{scope.row.state | stateFilter}}</el-tag>
-            <el-tag v-else-if="scope.row.state === 1" type="info">{{scope.row.state | stateFilter}}</el-tag>
-            <el-tag v-else-if="scope.row.state === 2" type="danger">{{scope.row.state | stateFilter}}</el-tag>
-            <el-tag v-else-if="scope.row.state === 3" type="success">{{scope.row.state | stateFilter}}</el-tag>
+            <span v-if="scope.row.truename">{{ scope.row.truename }}</span>
+            <span v-else class="muted">—</span>
           </template>
         </el-table-column>
-        <el-table-column
-          fixed="right"
-          label="操作"
-          width="100">
+        <el-table-column prop="fileName" label="文件名称" min-width="220" show-overflow-tooltip>
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="toDetail(scope.row.id)">编辑</el-button>
+            <span v-if="scope.row.fileName">{{ scope.row.fileName }}</span>
+            <span v-else class="muted">—</span>
           </template>
         </el-table-column>
+        <el-table-column prop="fullName" label="实验员" width="100">
+          <template slot-scope="scope">
+            <span v-if="scope.row.fullName">{{ scope.row.fullName }}</span>
+            <span v-else class="muted">—</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="联系电话" width="130">
+          <template slot-scope="scope">
+            <span v-if="scope.row.userCellphone" class="num">{{ scope.row.userCellphone }}</span>
+            <span v-else class="muted">—</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="上传时间" width="150">
+          <template slot-scope="scope">
+            <span class="num">{{ scope.row.createTime | formatDate }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="状态" width="100">
+          <template slot-scope="scope">
+            <el-tag size="mini" :class="'el-tag--' + stateInfo(scope.row.state).type">
+              {{ stateInfo(scope.row.state).label }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" label="操作" width="80">
+          <template slot-scope="scope">
+            <el-button type="text" size="mini" @click="toDetail(scope.row.id)">编辑</el-button>
+          </template>
+        </el-table-column>
+
+        <template slot="empty">
+          <div class="empty">
+            <p class="empty-title">尚无检测报告</p>
+            <p class="empty-hint">实验员上传报告后会显示在这里</p>
+          </div>
+        </template>
       </el-table>
+
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -80,97 +95,127 @@
     </div>
   </div>
 </template>
+
 <script>
+import { formatDate, REPORT_STATE_MAP, statusOf } from '@/utils/pc'
+
 export default {
-  components: {},
-  name: 'ReportList',
+  name: 'DataCollectReportList',
   data () {
     return {
       reportList: [],
-      pageNum: 1,
-      pageSize: 20,
+      pageNum: window.localStorage.reportPageNum === undefined ? 1 : parseInt(window.localStorage.reportPageNum),
+      pageSize: window.localStorage.reportPageSize === undefined ? 20 : parseInt(window.localStorage.reportPageSize),
       totalPage: 0,
-      condition: ''
+      condition: '',
+      loading: false,
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
     }
   },
+  filters: { formatDate },
   methods: {
     _initData () {
-      this.pageNum = window.localStorage.reportPageNum === undefined ? 1 : window.localStorage.reportPageNum
-      this.pageSize = window.localStorage.reportPageSize === undefined ? 20 : parseInt(window.localStorage.reportPageSize)
       this.getData()
     },
     getData () {
+      this.loading = true
       this.axios.get('report', {
         params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
+          userId: this.userId,
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           searchCondition: this.condition
         }
       }).then(res => {
-        this.reportList = res.data.list
+        this.reportList = res.data.list || []
         this.pageSize = res.data.pageSize
         this.pageNum = res.data.pageNum
         this.totalPage = res.data.total
       }).catch(err => {
         console.log(err)
+        this.$message.error('报告加载失败，请稍后重试')
+      }).then(() => {
+        this.loading = false
       })
     },
     handleSizeChange (val) {
       this.pageSize = val
-      window.localStorage.reportPageSize = this.pageSize
+      window.localStorage.reportPageSize = val
       this.getData()
     },
     handleCurrentChange (val) {
       this.pageNum = val
-      window.localStorage.reportPageNum = this.pageNum
+      window.localStorage.reportPageNum = val
       this.getData()
+    },
+    search () {
+      this.pageNum = 1
+      this.getData()
+    },
+    stateInfo (state) {
+      return statusOf(REPORT_STATE_MAP, state, { type: '', label: '未知' })
     },
     toDetail (id) {
       this.$router.push({
         name: 'ReportEdit',
         params: { reportId: id }
       })
-      _hmt.push(['_trackEvent', '检测报告', '编辑', 'informedId', id]);
+      if (typeof _hmt !== 'undefined') {
+        _hmt.push(['_trackEvent', '检测报告', '编辑', 'reportId', id])
+      }
     }
   },
-  filters: {
-    stateFilter: function (state) {
-      if (state === 0) return '新增'
-      if (state === 1) return '已录入'
-      if (state === 2) return '无法识别'
-      if (state === 3) return '关联知情'
-    }
-  },
-  computed: {},
   created () {
-    let loading = this.$loading({
-      lock: true,
-      text: 'Loading',
-      spinner: 'el-icon-loading',
-      background: 'rgba(0, 0, 0, 0.7)'
-    })
     this._initData()
-    loading.close()
-  },
-  mounted () {},
-  destroyed () {}
+  }
 }
 </script>
+
 <style rel="stylesheet/scss" lang="scss" scoped>
-  .user-container {
-    margin: 20px 0px;
-    padding: 20px;
-    background: #ffffff;
-    .search-box {
-      width: 400px;
-      float: right;
-      margin-bottom: 10px;
+.user-container {
+  margin: 20px 0;
+  padding: 20px;
+  background: var(--pc-white);
+  border-radius: var(--pc-r-4);
+  box-shadow: var(--pc-sh-1);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+  border-bottom: var(--pc-bd-hair);
+
+  .page-meta {
+    font-size: var(--pc-fs-13);
+    color: var(--pc-ink-500);
+    strong {
+      color: var(--pc-ink-800);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
     }
   }
-  .user-container .header {
-    margin-bottom: 20px;
-    font-size: 18px;
-  }
+}
 
+.empty {
+  padding: 40px 0 24px;
+  text-align: center;
+  .empty-title {
+    margin: 0 0 4px;
+    font-size: var(--pc-fs-14);
+    color: var(--pc-ink-600);
+  }
+  .empty-hint {
+    margin: 0;
+    font-size: var(--pc-fs-12);
+    color: var(--pc-ink-400);
+  }
+}
+
+::v-deep .el-table {
+  .num { font-variant-numeric: tabular-nums; }
+  .muted { color: var(--pc-ink-400); }
+}
 </style>
