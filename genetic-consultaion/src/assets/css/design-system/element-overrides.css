@@ -16,24 +16,22 @@
 
 /* ---- container ---- */
 #app .home-container { min-height: 100%; height: 100%; min-width: 1200px; }
-#app .pc-body { flex: 1; min-height: 0; }
 
-/* ===== 顶栏（满宽 top frame） ===== */
+/* ===== 顶栏 ===== */
 #app .el-header.pc-header {
   background: var(--pc-accent-ink);
   color: #fff;
   height: 56px !important;
   line-height: 56px;
-  padding: 0 24px 0 0;
+  padding: 0 24px 0 16px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   box-shadow: var(--pc-sh-2);
   border-bottom: 1px solid var(--pc-accent-ink-3);
   position: relative;
   z-index: 10;
-  flex-shrink: 0;
 }
-#app .pc-header .pc-header-spacer { flex: 1; }
 #app .pc-header .left { display:flex; align-items:center; gap:14px; }
 #app .pc-header .collapse-ic {
   font-size: 20px; color: rgba(255,255,255,.7); cursor: pointer;
@@ -47,12 +45,22 @@
 #app .pc-header .header-crumb .el-breadcrumb__separator { color: rgba(255,255,255,.4) !important; }
 #app .pc-workspace-title {
   display: inline-flex;
-  align-items: center;
-  font-size: 16px;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.15;
+  min-width: 180px;
+}
+#app .pc-workspace-title .eyebrow {
+  font-size: 10.5px;
+  color: rgba(255,255,255,.55);
+  letter-spacing: 1.4px;
+  font-weight: 500;
+}
+#app .pc-workspace-title .title {
+  margin-top: 3px;
+  font-size: 14px;
   color: #fff;
   font-weight: 600;
-  line-height: 56px;
-  padding-left: 24px;
 }
 
 #app .pc-header .right { display:flex; align-items:center; gap:6px; font-size: 13px; }
@@ -154,12 +162,12 @@
 }
 #app .pc-tabs-actions i:hover { background: var(--pc-ink-50); color: var(--pc-ink-800); }
 
-/* ===== 侧栏（顶部 frame 之下，纯菜单容器） ===== */
+/* ===== 侧栏 ===== */
 #app .el-aside {
   background: #fff !important;
   width: 200px !important;
   overflow: hidden auto;
-  height: 100%;
+  height: 100vh;
   scrollbar-width: thin;
   border-right: 1px solid var(--pc-ink-200);
   display: flex; flex-direction: column;
@@ -168,29 +176,25 @@
 #app .el-aside::-webkit-scrollbar { width: 6px; }
 #app .el-aside::-webkit-scrollbar-thumb { background: var(--pc-ink-200); border-radius: 3px; }
 
-/* 顶栏左侧的品牌块（200px 占位，与下方侧栏宽度对齐） */
-#app .pc-header .pc-sidebrand {
+/* 侧栏品牌块 */
+#app .pc-sidebrand {
   display: flex; align-items: center; gap: 10px;
-  width: 200px;
-  height: 100%;
-  padding: 0 18px;
+  padding: 16px 18px; border-bottom: 1px solid var(--pc-ink-100);
   flex-shrink: 0;
-  box-sizing: border-box;
 }
 #app .pc-sidebrand .mark {
   width: 32px; height: 32px; border-radius: 8px;
   background: linear-gradient(135deg, var(--pc-accent-500) 0%, var(--pc-primary-700) 100%);
   display: inline-flex; align-items: center; justify-content: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.18);
-  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(14,122,110,.22), inset 0 1px 0 rgba(255,255,255,.18);
 }
 #app .pc-sidebrand .mark .g {
   color:#fff; font-size: 16px; font-weight: 700; letter-spacing: 0;
 }
 #app .pc-sidebrand .meta { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
-#app .pc-sidebrand .meta .n { font-size: 14px; font-weight: 600; color: #fff; }
+#app .pc-sidebrand .meta .n { font-size: 14px; font-weight: 600; color: var(--pc-ink-900); }
 #app .pc-sidebrand .meta .s {
-  font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: 1.6px; font-weight: 500;
+  font-size: 10px; color: var(--pc-ink-400); letter-spacing: 1.6px; font-weight: 500;
   margin-top: 3px;
 }
 
@@ -305,8 +309,7 @@
   background: var(--pc-ink-50) !important;
   color: var(--pc-ink-700);
   padding: var(--pc-space-16) var(--pc-space-20) 32px;
-  flex: 1;
-  min-height: 0;
+  height: calc(100vh - 56px);
   overflow: auto;
 }
 

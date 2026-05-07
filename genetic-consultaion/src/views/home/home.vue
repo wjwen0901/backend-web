@@ -1,7 +1,7 @@
 <template>
-  <el-container class="home-container" direction="vertical">
-    <!-- ===== 顶部 Frame（贯穿全宽） ===== -->
-    <el-header class="pc-header">
+  <el-container class="home-container">
+    <!-- ===== 侧栏（贯穿全高） ===== -->
+    <el-aside width="200px" class="pc-aside">
       <div class="pc-sidebrand">
         <div class="mark"><span class="g">易</span></div>
         <div class="meta">
@@ -9,32 +9,6 @@
           <div class="s">HEALTH ADMIN</div>
         </div>
       </div>
-      <span class="pc-workspace-title">运营工作台</span>
-      <div class="pc-header-spacer"></div>
-      <div class="right">
-        <i class="el-icon-search" title="搜索"></i>
-        <i class="el-icon-question" title="帮助"></i>
-        <span class="ic-bell"><i class="el-icon-bell" title="通知"></i><em class="dot"></em></span>
-        <el-dropdown trigger="click">
-          <span class="user-chip">
-            <span class="avatar">{{ avatarText }}</span>
-            <span class="meta">
-              <span class="n">{{ username }}</span>
-              <span class="r">{{ roleLabel }}</span>
-            </span>
-            <i class="el-icon-arrow-down"></i>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>个人信息</el-dropdown-item>
-            <el-dropdown-item divided @click.native="logout">退出</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </div>
-    </el-header>
-
-    <!-- ===== 顶部下面：侧栏 + 主区两个 frame ===== -->
-    <el-container class="pc-body">
-    <el-aside width="200px" class="pc-aside">
       <el-menu
         class="pc-side-menu"
         :default-active="activeIndex"
@@ -154,6 +128,34 @@
 
     <!-- ===== 主内容区 ===== -->
     <el-container direction="vertical" class="pc-content">
+      <el-header class="pc-header">
+        <div class="left">
+          <div class="pc-workspace-title">
+            <span class="eyebrow">易得好康后台</span>
+            <span class="title">运营工作台</span>
+          </div>
+        </div>
+        <div class="right">
+          <i class="el-icon-search" title="搜索"></i>
+          <i class="el-icon-question" title="帮助"></i>
+          <span class="ic-bell"><i class="el-icon-bell" title="通知"></i><em class="dot"></em></span>
+          <el-dropdown trigger="click">
+            <span class="user-chip">
+              <span class="avatar">{{ avatarText }}</span>
+              <span class="meta">
+                <span class="n">{{ username }}</span>
+                <span class="r">{{ roleLabel }}</span>
+              </span>
+              <i class="el-icon-arrow-down"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>个人信息</el-dropdown-item>
+              <el-dropdown-item divided @click.native="logout">退出</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </div>
+      </el-header>
+
       <!-- 历史 Tab 条 -->
       <div class="pc-tabs" v-if="tabs.length">
         <div class="pc-tabs-track">
@@ -188,7 +190,6 @@
           <router-view :key="activeIndex"></router-view>
         </transition>
       </el-main>
-    </el-container>
     </el-container>
   </el-container>
 </template>
@@ -411,23 +412,15 @@ export default {
 .home-container {
   min-height: 100%;
   min-width: 1200px;
-  height: 100vh;
-}
-.pc-body {
-  flex: 1;
-  min-height: 0;
-  display: flex;
+  height: 100%;
 }
 .pc-content {
   flex: 1;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
 }
 /* aside 自带样式由 element-overrides.css 提供 */
 .pc-aside {
-  height: 100%;
+  height: 100vh;
 }
 </style>
 
