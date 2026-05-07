@@ -38,7 +38,7 @@
   content: '';
   position: absolute;
   top: -120%;
-  left: 25%;
+  left: 0;
   width: 520px;
   height: 340%;
   background: radial-gradient(ellipse 60% 50% at center,
@@ -48,7 +48,7 @@
     transparent 80%);
   filter: blur(24px);
   pointer-events: none;
-  animation: pcMistBreathe 6s ease-in-out infinite;
+  animation: pcMistBreathe 14s ease-in-out infinite;
   z-index: 0;
 }
 #app .pc-header::after {
@@ -70,8 +70,11 @@
 #app .pc-header > * { position: relative; z-index: 1; }
 
 @keyframes pcMistBreathe {
-  0%, 100% { transform: scale(.9);  opacity: .7; }
-  50%      { transform: scale(1.15); opacity: 1; }
+  0%   { transform: translateX(-30%) scale(.85);  opacity: 0;   }
+  18%  { transform: translateX(15%)  scale(1);     opacity: .85; }
+  50%  { transform: translateX(calc(50vw - 260px)) scale(1.15); opacity: 1; }
+  82%  { transform: translateX(calc(100vw - 460px)) scale(1);    opacity: .85; }
+  100% { transform: translateX(calc(100vw - 200px)) scale(.85);  opacity: 0; }
 }
 @keyframes pcPhotoLight {
   0%   { transform: translateX(-100%); }
