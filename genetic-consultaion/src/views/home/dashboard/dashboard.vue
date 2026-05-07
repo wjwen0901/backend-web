@@ -32,14 +32,14 @@
         </div>
         <svg viewBox="0 0 600 200" class="trend-svg">
           <g v-for="y in [40, 80, 120, 160]" :key="y">
-            <line :x1="0" :y1="y" :x2="600" :y2="y" stroke="#E5E7EB" stroke-dasharray="2 4" />
+            <line :x1="0" :y1="y" :x2="600" :y2="y" stroke="var(--pc-ink-200)" stroke-dasharray="2 4" />
           </g>
-          <polyline :points="trendPts(trend.order)" fill="none" stroke="#0E7A6E" stroke-width="1.8" />
-          <polyline :points="trendPts(trend.report)" fill="none" stroke="#2EBDAE" stroke-width="1.8" stroke-dasharray="3 3" />
+          <polyline :points="trendPts(trend.order)" fill="none" stroke="var(--pc-ink-700)" stroke-width="1.8" />
+          <polyline :points="trendPts(trend.report)" fill="none" stroke="var(--pc-info-600)" stroke-width="1.8" stroke-dasharray="3 3" />
           <g v-for="(d, i) in trend.dates" :key="'l' + i">
             <text v-if="i % 5 === 0"
                   :x="i * (600 / (trend.dates.length - 1))"
-                  y="195" font-size="9" fill="#6B7280" text-anchor="middle">{{ d }}</text>
+                  y="195" font-size="9" fill="var(--pc-ink-500)" text-anchor="middle">{{ d }}</text>
           </g>
         </svg>
       </div>
@@ -232,8 +232,8 @@ export default {
       vertical-align: 3px;
       margin-right: 4px;
     }
-    .seg-primary { background: var(--pc-primary-600); }
-    .seg-accent  { background: var(--pc-accent-500); }
+    .seg-primary { background: var(--pc-ink-700); }
+    .seg-accent  { background: var(--pc-info-600); }
   }
   .trend-svg {
     width: 100%;

@@ -51,10 +51,10 @@
   --pc-info-700:    #1D4ED8;
   --pc-info-600:    #2563EB;
   --pc-info-100:    #DBEAFE;
-  /* progress · 待回寄 / 已签收 / 待复核 (4,5,6) */
-  --pc-prog-700:    #6D28D9;
-  --pc-prog-600:    #7C3AED;
-  --pc-prog-100:    #EDE9FE;
+  /* progress · 待回寄 / 已签收 / 待复核 (4,5,6)，归入信息蓝，不再引入装饰紫 */
+  --pc-prog-700:    var(--pc-info-700);
+  --pc-prog-600:    var(--pc-info-600);
+  --pc-prog-100:    var(--pc-info-100);
   /* success · 已出报告 / 已审核 / 已寄出 (7,8,9) */
   --pc-succ-700:    #047857;
   --pc-succ-600:    #059669;

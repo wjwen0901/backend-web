@@ -506,57 +506,68 @@
   font-weight: 500;
   transition: all var(--pc-dur-2) var(--pc-ease);
 }
-/* primary / warning / success 加 !important 覆盖 normal.css 的 #14a495 强制色 */
 #app .el-button--primary {
-  background: var(--pc-primary-600) !important;
-  border-color: var(--pc-primary-600) !important;
-  color: #fff !important;
+  background: var(--pc-primary-600);
+  border-color: var(--pc-primary-600);
+  color: var(--pc-white);
 }
 #app .el-button--primary:hover,
 #app .el-button--primary:focus {
-  background: var(--pc-primary-700) !important;
-  border-color: var(--pc-primary-700) !important;
-  color: #fff !important;
+  background: var(--pc-primary-700);
+  border-color: var(--pc-primary-700);
+  color: var(--pc-white);
 }
 #app .el-button--text {
-  color: var(--pc-primary-600) !important;
+  color: var(--pc-info-600);
   padding: 4px 6px;
 }
-#app .el-button--text:hover { color: var(--pc-primary-700) !important; background: var(--pc-primary-50); }
+#app .el-button--text:hover {
+  color: var(--pc-info-700);
+  background: var(--pc-info-100);
+}
 #app .el-button--warning {
-  background: var(--pc-warn-600) !important;
-  border-color: var(--pc-warn-600) !important;
-  color: #fff !important;
+  background: var(--pc-warn-600);
+  border-color: var(--pc-warn-600);
+  color: var(--pc-white);
 }
 #app .el-button--warning:hover {
-  background: var(--pc-warn-700) !important;
-  border-color: var(--pc-warn-700) !important;
-  color: #fff !important;
+  background: var(--pc-warn-700);
+  border-color: var(--pc-warn-700);
+  color: var(--pc-white);
 }
 #app .el-button--success {
-  background: var(--pc-succ-600) !important;
-  border-color: var(--pc-succ-600) !important;
-  color: #fff !important;
+  background: var(--pc-succ-600);
+  border-color: var(--pc-succ-600);
+  color: var(--pc-white);
 }
 #app .el-button--success:hover {
-  background: var(--pc-succ-700) !important;
-  border-color: var(--pc-succ-700) !important;
-  color: #fff !important;
+  background: var(--pc-succ-700);
+  border-color: var(--pc-succ-700);
+  color: var(--pc-white);
+}
+#app .el-button--danger {
+  background: var(--pc-pos-600);
+  border-color: var(--pc-pos-600);
+  color: var(--pc-white);
+}
+#app .el-button--danger:hover {
+  background: var(--pc-pos-700);
+  border-color: var(--pc-pos-700);
+  color: var(--pc-white);
 }
 
-/* disabled 态：让 !important 覆盖也能看出是禁用 */
 #app .el-button.is-disabled:not(.el-button--text),
 #app .el-button.is-disabled:not(.el-button--text):hover,
 #app .el-button.is-disabled:not(.el-button--text):focus {
-  background: var(--pc-ink-100) !important;
-  border-color: var(--pc-ink-200) !important;
-  color: var(--pc-ink-400) !important;
+  background: var(--pc-ink-100);
+  border-color: var(--pc-ink-200);
+  color: var(--pc-ink-400);
   cursor: not-allowed;
 }
 #app .el-button--text.is-disabled,
 #app .el-button--text.is-disabled:hover {
-  color: var(--pc-ink-400) !important;
-  background: transparent !important;
+  color: var(--pc-ink-400);
+  background: transparent;
   cursor: not-allowed;
 }
 
@@ -577,7 +588,7 @@
   border-color: var(--pc-ink-300);
 }
 #app .el-input-group__append .el-button {
-  color: var(--pc-primary-600);
+  color: var(--pc-info-600);
 }
 
 /* ===== 表格 ===== */
@@ -805,8 +816,8 @@
 #app .pc-section-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
 
 /* sparkline polyline · accent（KPI tile 上的迷你趋势）*/
-.pc-spark-line { fill: none; stroke: var(--pc-accent-600); stroke-width: 1.5; }
-.pc-spark-area { fill: var(--pc-accent-100); opacity: .6; }
+.pc-spark-line { fill: none; stroke: var(--pc-info-600); stroke-width: 1.5; }
+.pc-spark-area { fill: var(--pc-info-100); opacity: .6; }
 
 /* 排名徽章 */
 #app .pc-rank {

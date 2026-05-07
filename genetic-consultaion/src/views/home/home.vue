@@ -13,10 +13,7 @@
         class="pc-side-menu"
         :default-active="activeIndex"
         :default-openeds="openMenu"
-        @select="handleSelect"
-        background-color="#FFFFFF"
-        text-color="#475569"
-        active-text-color="#08594F">
+        @select="handleSelect">
 
         <li class="pc-menu-group">总览</li>
         <el-menu-item index="/dashboard">

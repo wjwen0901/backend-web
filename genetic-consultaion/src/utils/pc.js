@@ -22,12 +22,12 @@ const STATUS_MAP = {
 }
 
 const STATUS_COLOR = {
-  warn: '#D97706',
-  info2: '#2563EB',
-  prog: '#7C3AED',
-  succ: '#059669',
-  pos: '#DC2626',
-  neg: '#16A34A'
+  warn: 'var(--pc-warn-600)',
+  info2: 'var(--pc-info-600)',
+  prog: 'var(--pc-prog-600)',
+  succ: 'var(--pc-succ-600)',
+  pos: 'var(--pc-pos-600)',
+  neg: 'var(--pc-neg-600)'
 }
 
 function mapStatus (code) {
