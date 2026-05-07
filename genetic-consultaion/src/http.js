@@ -30,6 +30,8 @@ axios.interceptors.request.use(
 // production
 const linkUrl =  process.env.NODE_ENV === 'production' ? 'https://z.mdhcare.cn/login.html':'https://qa.mdhcare.cn/website/login.html'
 // const linkUrl =  'http://47.113.112.104:9101/login.html'
+// [LOCAL-DEBUG] 联调期临时：本地 dev 无登录页，禁用 401 跳转，仅打 warn；提交前还原
+const SUPPRESS_401_REDIRECT = process.env.NODE_ENV !== 'production'
 axios.interceptors.response.use(
     response => {
         return response
@@ -38,13 +40,17 @@ axios.interceptors.response.use(
         if (error && error.response) {
             switch (error.response.status) {
                 case 401:
-                    window.localStorage.clear()
-                    window.location.href = linkUrl
+                    if (SUPPRESS_401_REDIRECT) {
+                        console.warn('[http] 401 received, redirect suppressed (local dev)', error.response.config && error.response.config.url)
+                    } else {
+                        window.localStorage.clear()
+                        window.location.href = linkUrl
+                    }
             }
-        }else{
+        }else if (!SUPPRESS_401_REDIRECT) {
             window.location.href = linkUrl
         }
-        return Promise.reject(error.response.data)
+        return Promise.reject(error.response ? error.response.data : error)
     })
 
 export default axios
