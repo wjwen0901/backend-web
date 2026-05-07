@@ -582,10 +582,6 @@
           </el-form-item>
         </template>
       </template>
-      <el-row class="button-box">
-        <el-button size="small" @click="$router.push('/informed/list')">取消</el-button>
-        <el-button @click="submitForm('formData')" type="primary" size="small">提交</el-button>
-      </el-row>
     </el-form>
   </div>
 </template>

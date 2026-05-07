@@ -433,7 +433,7 @@
           </el-form>
           </div>
           <div class="panel" v-else-if="groupId === 7">
-            <prEdit :data="{
+            <prEdit ref="prEditRef" :data="{
               orderId: $route.query.orderId,
               solutionId: $route.query.solutionId,
               fileId: $route.query.fileId,
@@ -464,7 +464,8 @@
       <div class="footer-btn">
         <el-button @click="cancel">取消</el-button>
         <el-button @click="unread" :loading="submitting">图形不可读</el-button>
-        <el-button v-if="groupId !== 7" type="primary" @click="edit" :loading="submitting">保存信息</el-button>
+        <el-button v-if="groupId === 7" type="primary" @click="submitPr">提交</el-button>
+        <el-button v-else type="primary" @click="edit" :loading="submitting">保存信息</el-button>
       </div>
     </div>
   </div>
@@ -1006,6 +1007,9 @@ export default {
           this.$message.error('保存失败，请稍后重试')
         })
         .then(() => { this.submitting = false })
+    },
+    submitPr () {
+      if (this.$refs.prEditRef) this.$refs.prEditRef.submitForm('formData')
     },
     cancel () {
       this.$router.push('/informed/list')
