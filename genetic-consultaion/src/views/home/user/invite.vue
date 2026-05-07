@@ -1,335 +1,313 @@
 <template>
   <div>
-    <!--<el-button class="add-user" size="mini" type="primary" @click="toAdd">新增用户</el-button>-->
-    <div>
-      <el-button class="add-user" size="small" type="primary" @click="toAdd">新增</el-button>
-      <div class="search-box">
-        <el-input placeholder="请输入姓名/手机号" v-model="condition" class="input-with-select">
-          <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
-        </el-input>
+    <div class="user-container">
+      <div class="page-header">
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+          <el-breadcrumb-item>用户管理</el-breadcrumb-item>
+          <el-breadcrumb-item>邀请用户</el-breadcrumb-item>
+        </el-breadcrumb>
+        <div class="page-meta">共 <strong>{{ totalPage }}</strong> 位用户</div>
       </div>
-    </div>
-    <el-table
-      :data="list"
-      size="mini"
-      border
-      style="width: 100%">
-      <el-table-column
-        fixed
-        prop="fullName"
-        label="姓名">
-      </el-table-column>
-      <el-table-column
-        fixed
-        prop="cellphone"
-        label="手机号"
-        width="110">
-        <template slot-scope="scope">
-          <span v-if="userId == 2222 && scope.row.cellphone != undefined">
-            {{scope.row.cellphone.substring(0,4) + '*******'}}
-          </span>
-          <span v-else>
-            {{scope.row.cellphone}}
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        v-if="roleCode=='doctor'"
-        prop="hospitalName"
-        label="所属医院">
-      </el-table-column>
-      <el-table-column
-        v-if="roleCode=='doctor'"
-        prop="hospitalDeptName"
-        label="所属科室">
-      </el-table-column>
-      <el-table-column
-        v-if="roleCode!='doctor'"
-        prop="companyName"
-        label="所属公司">
-      </el-table-column>
-      <el-table-column
-        label="权限">
-        <template slot-scope="scope">
-          <el-tag v-for="sec in scope.row.secList" v-bind:key="sec.id" class="is-parent" v-if="sec.parentId === 0">
-            {{sec.name}}
-            <span v-for="secChild in scope.row.secList" v-bind:key="secChild.id" class="sec-info" v-if="secChild.parentId === sec.id">
-              {{secChild.name}}
-            </span>
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="createTime"
-        label="创建日期"
-        width="160">
-        <template slot-scope="scope">
-          {{scope.row.createTime | formatDate}}
-        </template>
-      </el-table-column>
-      <el-table-column
-        fixed="right"
-        label="操作"
-        width="180">
-        <template slot-scope="scope">
-          <el-button @click="selectItem(scope.row.id, scope.row.name)" type="text" size="small" v-if="scope.row.role === 1 || scope.row.role === 8">产品二维码</el-button>
-          <el-button @click="selectPayItem(scope.row.id, scope.row.name)" type="text" size="small" v-if="scope.row.role === 1 || scope.row.role === 8">收款二维码</el-button>
-          <el-button @click="selectOnlineInformed(scope.row.id, scope.row.name)" type="text" size="small" v-if="scope.row.role === 1 || scope.row.role === 8">渠道下单码</el-button>
-          <el-button @click="selectElecInformed(scope.row.id, scope.row.name)" type="text" size="small">在线知情二维码</el-button>
-          <el-button @click="toDetail(scope.row.id)" type="text" size="small" v-if="userId != 2222">编辑</el-button>
-          <el-button @click="deleteUser(scope.row.id)" type="text" size="small" v-if="userId != 2222">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="pageNum"
-      :page-sizes="[20, 50, 100, 150]"
-      :page-size="pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="totalPage">
-    </el-pagination>
 
-    <el-dialog title="编辑" :visible.sync="dialogEditFormVisible">
-      <div>
-        <el-form ref="form" :model="userResource" label-width="80px">
-          <el-form-item label="姓名">
-            <el-input v-model="userResource.fullName"></el-input>
-          </el-form-item>
-          <el-form-item label="手机号码">
-            <el-input type="tel" v-model="userResource.cellphone"></el-input>
-          </el-form-item>
-          <el-form-item label="用户名">
-            <el-input v-model="userResource.username"></el-input>
-          </el-form-item>
-          <el-form-item label="邮箱">
-            <el-input v-model="userResource.email"></el-input>
-          </el-form-item>
-          <el-form-item label="所属医院" v-if="userResource.role === 2">
-            <el-autocomplete
-              class="inline-input"
-              v-model="userResource.hospitalName"
-              :fetch-suggestions="querySearch"
-              placeholder="请输入内容"
-              :trigger-on-focus="false"
-              @select="handleUserHospitalSelect"
-            ></el-autocomplete>
-<!--            <el-select v-model="userResource.hospitalId" filterable placeholder="请选择">-->
-<!--              <el-option-->
-<!--                v-for="item in hospitals"-->
-<!--                :key="item.id"-->
-<!--                :label="item.name"-->
-<!--                :value="item.id">-->
-<!--              </el-option>-->
-<!--            </el-select>-->
-          </el-form-item>
-          <el-form-item label="所属企业" v-else>
-            <el-select v-model="userResource.companyId" filterable placeholder="请选择">
-              <el-option
-                v-for="item in companyList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="角色">
-            <el-radio-group v-model="userResource.roleCode" size="small" @change="getSecResource">
-              <el-radio label="business-agent">业务员</el-radio>
-              <el-radio label="channel">渠道商</el-radio>
-              <el-radio label="firm-service" v-if="currentUserRole === 'manager'">实验室客服</el-radio>
-              <el-radio label="jk-service" v-if="currentUserRole === 'manager'">“见康”客服</el-radio>
-              <el-radio label="doctor" v-if="currentUserRole === 'manager'">医生</el-radio>
-              <el-radio label="patient" v-if="currentUserRole === 'manager'">患者</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="权限">
-            <el-tree
-              ref="tree"
-              :data="resourceList"
-              show-checkbox
-              node-key="id"
-              :default-checked-keys="resourceSelet"
-              :default-expand-all="true"
-              :props="defaultProps">
-            </el-tree>
-          </el-form-item>
-          <el-form-item label="备注">
-            <el-input type="textarea" v-model="userResource.remark"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button v-if="userResource.id === undefined" type="primary" @click="onAddSubmit()">确定</el-button>
-            <el-button v-else type="primary" @click="onEditSubmit(userResource.id)">确定</el-button>
-            <el-button @click="dialogEditFormVisible = false">取消</el-button>
-          </el-form-item>
-        </el-form>
+      <div class="pc-toolbar">
+        <el-input
+          class="grow"
+          placeholder="搜索姓名 / 手机号"
+          size="small"
+          v-model="condition"
+          clearable
+          @keyup.enter.native="search">
+          <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
+        </el-input>
+        <el-button type="primary" size="small" icon="el-icon-plus" @click="toAdd">邀请新用户</el-button>
+      </div>
+
+      <el-table
+        :data="list"
+        size="mini"
+        border
+        v-loading="loading"
+        element-loading-text="加载用户"
+        style="width: 100%">
+        <el-table-column fixed prop="fullName" label="姓名" width="120">
+          <template slot-scope="scope">
+            <span v-if="scope.row.fullName">{{ scope.row.fullName }}</span>
+            <span v-else class="muted">—</span>
+          </template>
+        </el-table-column>
+        <el-table-column fixed label="手机号" width="130">
+          <template slot-scope="scope">
+            <span v-if="scope.row.cellphone" class="num">{{ maskPhone(scope.row.cellphone) }}</span>
+            <span v-else class="muted">—</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="companyName" label="所属公司" min-width="180" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <span v-if="scope.row.companyName">{{ scope.row.companyName }}</span>
+            <span v-else class="muted">—</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="角色" width="120">
+          <template slot-scope="scope">
+            <span v-if="scope.row.roleCode">{{ ROLE_LABELS[scope.row.roleCode] || scope.row.roleCode }}</span>
+            <span v-else class="muted">—</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="权限" min-width="220">
+          <template slot-scope="scope">
+            <div v-if="hasSecList(scope.row)" class="sec-stack">
+              <div v-for="sec in topSecs(scope.row)" :key="sec.id" class="sec-row">
+                <span class="sec-parent">{{ sec.name }}</span>
+                <span
+                  v-for="child in childSecs(scope.row, sec.id)"
+                  :key="child.id"
+                  class="sec-child">{{ child.name }}</span>
+              </div>
+            </div>
+            <span v-else class="muted">—</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建日期" width="160">
+          <template slot-scope="scope">
+            <span class="num">{{ scope.row.createTime | formatDate }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" label="操作" width="200">
+          <template slot-scope="scope">
+            <el-dropdown
+              v-if="scope.row.role === 1 || scope.row.role === 8"
+              size="mini"
+              trigger="click"
+              @command="handleQrCommand($event, scope.row)">
+              <el-button type="text" size="mini">
+                二维码<i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="product">产品二维码</el-dropdown-item>
+                <el-dropdown-item command="pay">收款二维码</el-dropdown-item>
+                <el-dropdown-item command="online">渠道下单码</el-dropdown-item>
+                <el-dropdown-item command="elec">在线知情码</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+            <el-button v-else @click="selectElecInformed(scope.row)" type="text" size="mini">在线知情码</el-button>
+            <el-button v-if="userId !== READONLY_USER_ID" @click="toDetail(scope.row.id)" type="text" size="mini">编辑</el-button>
+            <el-button v-if="userId !== READONLY_USER_ID" @click="deleteUser(scope.row.id)" type="text" size="mini" class="danger">删除</el-button>
+          </template>
+        </el-table-column>
+
+        <template slot="empty">
+          <div class="empty">
+            <p class="empty-title">尚无用户</p>
+            <p class="empty-hint">点击右上角"邀请新用户"按钮添加</p>
+          </div>
+        </template>
+      </el-table>
+
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="pageNum"
+        :page-sizes="[20, 50, 100, 150]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="totalPage">
+      </el-pagination>
+    </div>
+
+    <el-dialog :title="userResource.id === undefined ? '邀请新用户' : '编辑用户'" :visible.sync="dialogEditFormVisible" width="640px">
+      <el-form ref="userForm" :model="userResource" label-width="90px" size="small">
+        <el-form-item label="姓名">
+          <el-input v-model="userResource.fullName" placeholder="请输入用户姓名"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号码">
+          <el-input type="tel" v-model="userResource.cellphone" placeholder="11 位手机号"></el-input>
+        </el-form-item>
+        <el-form-item label="用户名">
+          <el-input v-model="userResource.username" placeholder="登录用户名"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="userResource.email" placeholder="可选"></el-input>
+        </el-form-item>
+        <el-form-item label="所属医院" v-if="userResource.role === 2">
+          <el-autocomplete
+            class="width-100-p"
+            v-model="userResource.hospitalName"
+            :fetch-suggestions="querySearchHospital"
+            placeholder="输入医院名搜索"
+            :trigger-on-focus="false"
+            @select="handleUserHospitalSelect"></el-autocomplete>
+        </el-form-item>
+        <el-form-item label="所属企业" v-else>
+          <el-select v-model="userResource.companyId" filterable placeholder="请选择" class="width-100-p">
+            <el-option v-for="item in companyList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="角色">
+          <el-radio-group v-model="userResource.roleCode" size="small" @change="getSecResource">
+            <el-radio label="business-agent">业务员</el-radio>
+            <el-radio label="channel">渠道商</el-radio>
+            <el-radio label="firm-service" v-if="currentUserRole === 'manager'">实验室客服</el-radio>
+            <el-radio label="jk-service" v-if="currentUserRole === 'manager'">"见康"客服</el-radio>
+            <el-radio label="doctor" v-if="currentUserRole === 'manager'">医生</el-radio>
+            <el-radio label="patient" v-if="currentUserRole === 'manager'">患者</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="权限">
+          <el-tree
+            ref="tree"
+            :data="resourceList"
+            show-checkbox
+            node-key="id"
+            :default-checked-keys="resourceSelet"
+            :default-expand-all="true"
+            :props="defaultProps"></el-tree>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input type="textarea" v-model="userResource.remark" :rows="2" placeholder="可选"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="dialogEditFormVisible = false">取消</el-button>
+        <el-button type="primary" :loading="submitting" @click="userResource.id === undefined ? onAddSubmit() : onEditSubmit(userResource.id)">保存</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="生成二维码" :visible.sync="dialogCodeFormVisible">
-      <div>
-        <el-form ref="form" label-width="150px">
-          <el-form-item label="选择产品">
-            <el-select v-model="qrCode.selSolution" value-key="id" filterable placeholder="请选择">
-              <el-option
-                v-for="item in solutionList"
-                :key="item.id"
-                :label="item.name"
-                :value="item">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="商品优惠链接">
-            <el-input v-model="qrCode.url" placeholder="http://..."></el-input>
-          </el-form-item>
-          <el-form-item label="单价">
-            <el-input v-model="qrCode.price" placeholder="1300"></el-input>
-          </el-form-item>
-          <el-form-item label="检测周期（工作日）">
-            <el-input-number v-model="qrCode.period" :min="1" :max="100" label="请输入"></el-input-number>
-          </el-form-item>
-          <el-form-item label="送检医院">
-            <el-autocomplete
-              class="inline-input"
-              v-model="qrCode.hospitalName"
-              :fetch-suggestions="querySearch"
-              placeholder="请输入内容"
-              :trigger-on-focus="false"
-              @select="handleSelect"
-            ></el-autocomplete>
-          </el-form-item>
-          <el-form-item label="送检科室">
-            <el-select class="width-100-p" v-model="qrCode.deptId" filterable placeholder="请选择">
-              <el-option
-                v-for="item in depts"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="送检医生">
-            <el-input v-model="qrCode.doctor" placeholder="王大夫"></el-input>
-          </el-form-item>
-          <el-form-item label="识别代码">
-            <el-input v-model="qrCode.code" placeholder="MDHCARE1001"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="downloadCode()">确定</el-button>
-            <el-button @click="dialogFormVisible = false">取消</el-button>
-          </el-form-item>
-        </el-form>
+
+    <el-dialog title="生成产品二维码" :visible.sync="dialogCodeFormVisible" width="560px">
+      <el-form label-width="120px" size="small">
+        <el-form-item label="选择产品">
+          <el-select v-model="qrCode.selSolution" value-key="id" filterable placeholder="请选择" class="width-100-p">
+            <el-option v-for="item in solutionList" :key="item.id" :label="item.name" :value="item"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="商品优惠链接">
+          <el-input v-model="qrCode.url" placeholder="http://..."></el-input>
+        </el-form-item>
+        <el-form-item label="单价">
+          <el-input v-model="qrCode.price" placeholder="例如 1300"></el-input>
+        </el-form-item>
+        <el-form-item label="检测周期（工作日）">
+          <el-input-number v-model="qrCode.period" :min="1" :max="100"></el-input-number>
+        </el-form-item>
+        <el-form-item label="送检医院">
+          <el-autocomplete
+            class="width-100-p"
+            v-model="qrCode.hospitalName"
+            :fetch-suggestions="querySearchHospital"
+            placeholder="输入医院名搜索"
+            :trigger-on-focus="false"
+            @select="handleSelect"></el-autocomplete>
+        </el-form-item>
+        <el-form-item label="送检科室">
+          <el-select class="width-100-p" v-model="qrCode.deptId" filterable placeholder="请选择">
+            <el-option v-for="item in depts" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="送检医生">
+          <el-input v-model="qrCode.doctor" placeholder="例如 王大夫"></el-input>
+        </el-form-item>
+        <el-form-item label="识别代码">
+          <el-input v-model="qrCode.code" placeholder="例如 MDHCARE1001"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="dialogCodeFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="downloadCode">下载</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="生成收款二维码" :visible.sync="dialogPayCodeFormVisible">
-      <div>
-        <el-form ref="form" label-width="150px">
-          <el-form-item label="选择产品">
-            <el-select v-model="qrCode.selSolution" value-key="id" filterable placeholder="请选择">
-              <el-option
-                v-for="item in solutionList"
-                :key="item.id"
-                :label="item.name"
-                :value="item">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="送检医院">
-            <el-autocomplete
-              class="inline-input"
-              v-model="qrCode.hospitalName"
-              :fetch-suggestions="querySearch"
-              placeholder="请输入内容"
-              :trigger-on-focus="false"
-              @select="handleSelect"
-            ></el-autocomplete>
-          </el-form-item>
-          <el-form-item label="送检科室">
-            <el-select class="width-100-p" v-model="qrCode.deptId" filterable placeholder="请选择">
-              <el-option
-                v-for="item in depts"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="送检医生">
-            <el-input v-model="qrCode.doctor" placeholder="王大夫"></el-input>
-          </el-form-item>
-          <el-form-item label="收款价格">
-            <el-input v-model="qrCode.price" placeholder="1300"></el-input>
-          </el-form-item>
-          <el-form-item label="项目描述">
-            <el-input v-model="qrCodeDescription" placeholder=""></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="downloadPayCode()">确定</el-button>
-            <el-button @click="dialogPayCodeFormVisible = false">取消</el-button>
-          </el-form-item>
-        </el-form>
+
+    <el-dialog title="生成收款二维码" :visible.sync="dialogPayCodeFormVisible" width="560px">
+      <el-form label-width="120px" size="small">
+        <el-form-item label="选择产品">
+          <el-select v-model="qrCode.selSolution" value-key="id" filterable placeholder="请选择" class="width-100-p">
+            <el-option v-for="item in solutionList" :key="item.id" :label="item.name" :value="item"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="送检医院">
+          <el-autocomplete
+            class="width-100-p"
+            v-model="qrCode.hospitalName"
+            :fetch-suggestions="querySearchHospital"
+            placeholder="输入医院名搜索"
+            :trigger-on-focus="false"
+            @select="handleSelect"></el-autocomplete>
+        </el-form-item>
+        <el-form-item label="送检科室">
+          <el-select class="width-100-p" v-model="qrCode.deptId" filterable placeholder="请选择">
+            <el-option v-for="item in depts" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="送检医生">
+          <el-input v-model="qrCode.doctor" placeholder="例如 王大夫"></el-input>
+        </el-form-item>
+        <el-form-item label="收款价格">
+          <el-input v-model="qrCode.price" placeholder="例如 1300"></el-input>
+        </el-form-item>
+        <el-form-item label="项目描述">
+          <el-input v-model="payDescription" placeholder="自动生成"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="dialogPayCodeFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="downloadPayCode">下载</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="生成渠道下单码" :visible.sync="dialogOnlineInformedFormVisible">
-      <div>
-        <el-form ref="form" label-width="150px">
-          <el-form-item label="选择产品">
-            <el-select v-model="informedQrCode.selSolution" value-key="id" filterable placeholder="请选择">
-              <el-option
-                v-for="item in solutionList"
-                :key="item.id"
-                :label="item.name"
-                :value="item">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="送检医院">
-            <el-autocomplete
-              class="inline-input"
-              v-model="informedQrCode.hospitalName"
-              :fetch-suggestions="querySearch"
-              placeholder="请输入内容"
-              :trigger-on-focus="false"
-              @select="handleChannelSelect"
-            ></el-autocomplete>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="downloadOnlineInformedCode()">确定</el-button>
-            <el-button @click="dialogOnlineInformedFormVisible = false">取消</el-button>
-          </el-form-item>
-        </el-form>
+
+    <el-dialog title="生成渠道下单码" :visible.sync="dialogOnlineInformedFormVisible" width="560px">
+      <el-form label-width="120px" size="small">
+        <el-form-item label="选择产品">
+          <el-select v-model="informedQrCode.selSolution" value-key="id" filterable placeholder="请选择" class="width-100-p">
+            <el-option v-for="item in solutionList" :key="item.id" :label="item.name" :value="item"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="送检医院">
+          <el-autocomplete
+            class="width-100-p"
+            v-model="informedQrCode.hospitalName"
+            :fetch-suggestions="querySearchHospital"
+            placeholder="输入医院名搜索"
+            :trigger-on-focus="false"
+            @select="handleChannelSelect"></el-autocomplete>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="dialogOnlineInformedFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="downloadOnlineInformedCode">下载</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="生成在线知情码" :visible.sync="dialogElecInformedFormVisible">
-      <div>
-        <el-form ref="form" label-width="150px">
-          <el-form-item label="选择产品">
-            <el-select v-model="eleInformed.selSolution" value-key="id" filterable placeholder="请选择">
-              <el-option
-                v-for="item in solutionList"
-                :key="item.id"
-                :label="item.name"
-                :value="item">
-              </el-option>
-            </el-select>
-          </el-form-item>
-<!--          <el-form-item label="样本编号">-->
-<!--            <el-input v-model="eleInformed.sampleCode" placeholder="口腔拭子"></el-input>-->
-<!--          </el-form-item>-->
-          <el-form-item>
-            <el-button type="primary" @click="downloadElecInformedCode()">确定</el-button>
-            <el-button @click="dialogOnlineInformedFormVisible = false">取消</el-button>
-          </el-form-item>
-        </el-form>
+
+    <el-dialog title="生成在线知情码" :visible.sync="dialogElecInformedFormVisible" width="480px">
+      <el-form label-width="100px" size="small">
+        <el-form-item label="选择产品">
+          <el-select v-model="eleInformed.selSolution" value-key="id" filterable placeholder="请选择" class="width-100-p">
+            <el-option v-for="item in solutionList" :key="item.id" :label="item.name" :value="item"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="dialogElecInformedFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="downloadElecInformedCode">下载</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
+
 <script>
+import { formatDate, apiSubmit } from '@/utils/pc'
+
+const ROLE_LABELS = {
+  'business-agent': '业务员',
+  'channel': '渠道商',
+  'firm-service': '实验室客服',
+  'jk-service': '见康客服',
+  'doctor': '医生',
+  'patient': '患者',
+  'normal': '普通用户'
+}
+
+const READONLY_USER_ID = 2222
 
 export default {
-  components: {},
-  name: 'UserList',
+  name: 'UserInvite',
   data () {
     return {
       list: [],
@@ -337,7 +315,6 @@ export default {
       pageSize: 20,
       totalPage: 0,
       userResource: {},
-      secList: [],
       dialogEditFormVisible: false,
       dialogCodeFormVisible: false,
       dialogPayCodeFormVisible: false,
@@ -346,31 +323,32 @@ export default {
       resourceList: [],
       resourceSelet: [],
       solutionList: [],
-      hospitals: [],
       depts: [],
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      },
+      defaultProps: { children: 'children', label: 'label' },
       companyList: [],
-      roleCode: this.$route.role,
       currentUserRole: window.localStorage.role,
-      condition: null,
+      condition: '',
       qrCode: {},
       eleInformed: {},
-      informedQrCode: {
-        sampleType: '口腔拭子',
-        price: 688,
-        time: '2020.03'
-      },
-      options2: [{
-        text: 'name1',
-        value: 'value1'
-      }, {
-        text: 'name2',
-        value: 'value2'
-      }],
-      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
+      informedQrCode: { sampleType: '口腔拭子', price: 688 },
+      targetUserId: undefined,
+      targetUserName: '',
+      loading: false,
+      submitting: false,
+      userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
+      ROLE_LABELS,
+      READONLY_USER_ID
+    }
+  },
+  filters: { formatDate },
+  computed: {
+    payDescription () {
+      const sol = this.qrCode.selSolution
+      const hospital = this.qrCode.hospitalName
+      if (sol && hospital) {
+        return hospital + '(' + sol.name + ')收费码-[M' + this.targetUserId + ']'
+      }
+      return ''
     }
   },
   methods: {
@@ -378,87 +356,72 @@ export default {
       this.getData()
     },
     getData () {
-      this.resourceList = []
-      if (this.roleCode !== 'normal') {
-        // 获取权限列表
-        this.axios.get('user/secs', {
+      this.loading = true
+      const tasks = []
+
+      tasks.push(
+        this.axios.get('company')
+          .then(res => { this.companyList = res.data || [] })
+          .catch(err => console.log(err))
+      )
+      tasks.push(
+        this.axios.get('solution', { params: { userId: this.userId } })
+          .then(res => { this.solutionList = res.data || [] })
+          .catch(err => console.log(err))
+      )
+      tasks.push(
+        this.axios.get('hospital-dept', { params: { userId: this.userId } })
+          .then(res => { this.depts = res.data || [] })
+          .catch(err => console.log(err))
+      )
+
+      tasks.push(
+        this.axios.get('user/page', {
           params: {
-            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-            role: this.roleCode
+            pageNum: this.pageNum,
+            pageSize: this.pageSize,
+            userId: this.userId,
+            condition: this.condition
           }
         }).then(res => {
-          for (let sec of res.data) {
-            if (sec.parentId === 0) {
-              let children = []
-              for (let secChild of res.data) {
-                if (secChild.parentId === sec.id) {
-                  children.push({
-                    'id': secChild.id,
-                    'label': secChild.name,
-                    'parent': secChild.parentId
-                  })
-                }
-              }
-              this.resourceList.push({
-                'id': sec.id,
-                'label': sec.name,
-                'children': children
-              })
-            }
-          }
+          this.list = res.data.list || []
+          this.pageSize = res.data.pageSize
+          this.pageNum = res.data.pageNum
+          this.totalPage = res.data.total
         }).catch(err => {
           console.log(err)
+          this.$message.error('用户列表加载失败，请稍后重试')
         })
+      )
+
+      Promise.all(tasks).then(() => { this.loading = false })
+    },
+    buildResourceTree (rawList) {
+      const tree = []
+      for (const sec of rawList) {
+        if (sec.parentId === 0) {
+          const children = rawList
+            .filter(c => c.parentId === sec.id)
+            .map(c => ({ id: c.id, label: c.name, parent: c.parentId }))
+          tree.push({ id: sec.id, label: sec.name, children })
+        }
       }
-      // 获取公司列表
-      this.axios.get('company').then(res => {
-        this.companyList = res.data
-      }).catch(err => {
-        console.log(err)
-      })
-      this.axios.get('user/page', {
-        params: {
-          pageNum: this.pageNum,
-          pageSize: this.pageSize,
-          role: this.roleCode,
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-          condition: this.condition
-        }
-      }).then(res => {
-        this.list = res.data.list
-        this.pageSize = res.data.pageSize
-        this.pageNum = res.data.pageNum
-        this.totalPage = res.data.total
-      }).catch(err => {
-        console.log(err)
-      })
-      this.axios.get('solution', {
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
-        }
-      }).then(res => {
-        this.solutionList = res.data
-      }).catch(err => {
-        console.log(err)
-      })
-      this.axios.get('hospital', {
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
-        }
-      }).then(res => {
-        this.hospitals = res.data
-      }).catch(err => {
-        console.log(err)
-      })
-      this.axios.get('hospital-dept', {
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
-        }
-      }).then(res => {
-        this.depts = res.data
-      }).catch(err => {
-        console.log(err)
-      })
+      return tree
+    },
+    hasSecList (row) {
+      return row.secList && row.secList.some(s => s.parentId === 0)
+    },
+    topSecs (row) {
+      return (row.secList || []).filter(s => s.parentId === 0)
+    },
+    childSecs (row, parentId) {
+      return (row.secList || []).filter(s => s.parentId === parentId)
+    },
+    maskPhone (cellphone) {
+      if (this.userId === READONLY_USER_ID && cellphone) {
+        return cellphone.substring(0, 4) + '*******'
+      }
+      return cellphone
     },
     handleSizeChange (val) {
       this.pageSize = val
@@ -468,265 +431,171 @@ export default {
       this.pageNum = val
       this.getData()
     },
+    search () {
+      this.pageNum = 1
+      this.getData()
+    },
     toAdd () {
+      this.userResource = { roleCode: 'business-agent' }
+      this.resourceSelet = []
       this.dialogEditFormVisible = true
+      this.$nextTick(() => {
+        if (this.$refs.tree) this.$refs.tree.setCheckedKeys([])
+      })
+      this.getSecResource('business-agent')
+    },
+    collectSecArray () {
+      const seen = new Set()
+      const secArray = []
+      for (const sec of this.$refs.tree.getCheckedNodes()) {
+        if (sec.parent !== undefined && !seen.has(sec.parent)) {
+          seen.add(sec.parent); secArray.push({ id: sec.parent })
+        }
+        if (!seen.has(sec.id)) {
+          seen.add(sec.id); secArray.push({ id: sec.id })
+        }
+      }
+      return secArray
     },
     onAddSubmit () {
-      let secArray = []
-      let secIds = []
-      for (let sec of this.$refs.tree.getCheckedNodes()) {
-        if (sec.parent !== undefined && secIds.indexOf(sec.parent) <= -1) {
-          secIds.push(sec.parent)
-          secArray.push({id: sec.parent})
-        }
-        secIds.push(sec.id)
-        secArray.push({id: sec.id})
-      }
-      this.userResource.secList = secArray
-      let instance = this.axios.create({
-        headers: {
-          'Authorization': window.localStorage.token,
-          'Content-Type': 'application/json'
-        }
-      })
-      this.userResource.roleCode = this.roleCode
-      let _this = this
-      instance({
-        method: 'post',
-        url: 'user',
-        data: this.userResource,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json'
-        },
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
-        }
-      }).then(function (response) {
-        _this.$message({
-          message: '新增成功',
-          type: 'success'
+      this.userResource.secList = this.collectSecArray()
+      this.submitting = true
+      apiSubmit(this.axios, 'post', 'user', this.userResource, { userId: this.userId })
+        .then(() => {
+          this.$message.success('用户已新增')
+          this.dialogEditFormVisible = false
+          this._initData()
         })
-        _this._initData()
-        _this.dialogEditFormVisible = false
-      })
+        .catch(err => {
+          console.log(err)
+          this.$message.error('新增失败，请稍后重试')
+        })
+        .then(() => { this.submitting = false })
     },
     toDetail (id) {
       this.axios.get('user/' + id).then(res => {
-        this.userResource = res.data
-        this.resourceSelet = []
-        for (let sec of res.data.secList) {
-          let children = []
-          for (let d of this.$refs.tree.data) {
-            if (d.id === sec.id) {
-              children = d.children
-            }
-          }
-          if (sec.parentId === 0 && children.length !== 0) {
-            continue
-          }
-          this.resourceSelet.push(sec.id)
-        }
-        this.$refs.tree.setCheckedKeys(this.resourceSelet)
+        this.userResource = res.data || {}
+        this.refreshTreeChecks()
       }).catch(err => {
         console.log(err)
+        this.$message.error('用户详情加载失败')
       })
       this.dialogEditFormVisible = true
     },
-    onEditSubmit (id) {
-      let secArray = []
-      let secIds = []
-      for (let sec of this.$refs.tree.getCheckedNodes()) {
-        if (sec.parent !== undefined && secIds.indexOf(sec.parent) <= -1) {
-          secIds.push(sec.parent)
-          secArray.push({id: sec.parent})
-        }
-        secIds.push(sec.id)
-        secArray.push({id: sec.id})
+    refreshTreeChecks () {
+      this.resourceSelet = []
+      const treeData = (this.$refs.tree && this.$refs.tree.data) || this.resourceList
+      for (const sec of (this.userResource.secList || [])) {
+        const node = treeData.find(d => d.id === sec.id)
+        const hasChildren = node && node.children && node.children.length > 0
+        if (sec.parentId === 0 && hasChildren) continue
+        this.resourceSelet.push(sec.id)
       }
-      this.userResource.secList = secArray
-      var instance = this.axios.create({
-        headers: {
-          'Authorization': window.localStorage.token,
-          'Content-Type': 'application/json'
-        }
-      })
-      let _this = this
-      instance({
-        method: 'put',
-        url: 'user/' + id,
-        data: this.userResource,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json'
-        },
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
-        }
-      }).then(function (response) {
-        _this.$message({
-          message: '修改成功',
-          type: 'success'
-        })
-        _this._initData()
-        _this.dialogEditFormVisible = false
+      this.$nextTick(() => {
+        if (this.$refs.tree) this.$refs.tree.setCheckedKeys(this.resourceSelet)
       })
     },
+    onEditSubmit (id) {
+      this.userResource.secList = this.collectSecArray()
+      this.submitting = true
+      apiSubmit(this.axios, 'put', 'user/' + id, this.userResource, { userId: this.userId })
+        .then(() => {
+          this.$message.success('用户已更新')
+          this.dialogEditFormVisible = false
+          this._initData()
+        })
+        .catch(err => {
+          console.log(err)
+          this.$message.error('更新失败，请稍后重试')
+        })
+        .then(() => { this.submitting = false })
+    },
     deleteUser (id) {
-      this.$confirm('确定删除此用户?', '提示', {
-        confirmButtonText: '确定',
+      this.$confirm('确定删除此用户?', '删除用户', {
+        confirmButtonText: '删除',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.axios.delete('user/' + id,{
-          params: {
-            userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
-          }
-        }).then(res => {
-          this._initData()
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
+        this.axios.delete('user/' + id, { params: { userId: this.userId } })
+          .then(() => {
+            this.$message.success('已删除')
+            this._initData()
           })
-        }).catch(err => {
-          console.log(err)
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
-      })
+          .catch(err => {
+            console.log(err)
+            this.$message.error('删除失败，请稍后重试')
+          })
+      }).catch(() => {})
     },
     getSecResource (val) {
-      console.log(val)
-      // 获取权限列表
-      this.axios.get('user/secs', {
-        params: {
-          role: val,
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
-        }
-      }).then(res => {
-        this.resourceList = []
-        for (let sec of res.data) {
-          if (sec.parentId === 0) {
-            let children = []
-            for (let secChild of res.data) {
-              if (secChild.parentId === sec.id) {
-                children.push({
-                  'id': secChild.id,
-                  'label': secChild.name,
-                  'parent': secChild.parentId
-                })
-              }
-            }
-            this.resourceList.push({
-              'id': sec.id,
-              'label': sec.name,
-              'children': children
-            })
-          }
-        }
-        this.resourceSelet = []
-        for (let sec of this.userResource.secList) {
-          let children = []
-          for (let d of this.$refs.tree.data) {
-            if (d.id === sec.id) {
-              children = d.children
-            }
-          }
-          if (sec.parentId === 0 && children.length !== 0) {
-            continue
-          }
-          this.resourceSelet.push(sec.id)
-        }
-        this.$refs.tree.setCheckedKeys(this.resourceSelet)
-        console.log(this.resourceList)
-        console.log(this.resourceSelet)
-      }).catch(err => {
-        console.log(err)
-      })
+      this.axios.get('user/secs', { params: { role: val, userId: this.userId } })
+        .then(res => {
+          this.resourceList = this.buildResourceTree(res.data || [])
+          this.refreshTreeChecks()
+        })
+        .catch(err => console.log(err))
     },
-    selectItem (id, name) {
-      this.userId = id
-      this.name = name
-      this.axios.get('solution', {
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
-        }
-      }).then(res => {
-        this.solutionList = res.data
-      }).catch(err => {
-        console.log(err)
-      })
+    handleQrCommand (cmd, row) {
+      if (cmd === 'product') this.selectItem(row)
+      else if (cmd === 'pay') this.selectPayItem(row)
+      else if (cmd === 'online') this.selectOnlineInformed(row)
+      else if (cmd === 'elec') this.selectElecInformed(row)
+    },
+    selectItem (row) {
+      this.targetUserId = row.id
+      this.targetUserName = row.fullName || row.name
+      this.qrCode = {}
       this.dialogCodeFormVisible = true
     },
-    selectPayItem (id, name) {
-      this.userId = id
-      this.name = name
+    selectPayItem (row) {
+      this.targetUserId = row.id
+      this.targetUserName = row.fullName || row.name
+      this.qrCode = {}
       this.dialogPayCodeFormVisible = true
     },
-    selectOnlineInformed (id, name) {
-      this.userId = id
-      this.name = name
+    selectOnlineInformed (row) {
+      this.targetUserId = row.id
+      this.targetUserName = row.fullName || row.name
+      this.informedQrCode = { sampleType: '口腔拭子', price: 688 }
       this.dialogOnlineInformedFormVisible = true
     },
-    selectElecInformed (id, name) {
-      this.userId = id
-      this.name = name
+    selectElecInformed (row) {
+      this.targetUserId = row.id
+      this.targetUserName = row.fullName || row.name
+      this.eleInformed = {}
       this.dialogElecInformedFormVisible = true
     },
-    querySearch (queryString, cb) {
-      console.log(queryString)
+    querySearchHospital (queryString, cb) {
       this.axios.get('hospital/page', {
-        params: {
-          pageNum: 1, // 页码
-          pageSize: 8, // 每页长度
-          keywords: queryString,
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
-        }
+        params: { pageNum: 1, pageSize: 8, keywords: queryString, userId: this.userId }
       }).then(res => {
-        console.log(res.data)
-        let result = []
-        if (res.data.endRow === 0) {
-          cb(result)
-        } else {
-          res.data.list.forEach(function (item) {
-            result.push({
-              'value': item.name,
-              'id': item.id
-            })
-          })
-          console.log(result)
-          cb(result)
-        }
+        if (!res.data || res.data.endRow === 0) return cb([])
+        cb((res.data.list || []).map(item => ({ value: item.name, id: item.id })))
       }).catch(err => {
         console.log(err)
+        cb([])
       })
     },
-    handleSelect (item) {
-      this.qrCode.hospitalId = item.id
-    },
-    handleChannelSelect (item) {
-      this.informedQrCode.hospitalId = item.id
-    },
-    handleUserHospitalSelect (item) {
-      this.userResource.hospitalId = item.id
+    handleSelect (item) { this.qrCode.hospitalId = item.id },
+    handleChannelSelect (item) { this.informedQrCode.hospitalId = item.id },
+    handleUserHospitalSelect (item) { this.userResource.hospitalId = item.id },
+    barcodeOpen (filename) {
+      window.open(this.axios.defaults.baseURL + '/barcode/down?isPatientCode=false&filename=' + filename + '&Authorization=' + window.localStorage.token)
     },
     downloadCode () {
+      if (!this.qrCode.selSolution) {
+        this.$message.warning('请选择产品')
+        return
+      }
       this.dialogCodeFormVisible = false
-      // 获取权限列表
-      this.axios.get('barcode/create/' + this.userId, {
+      this.axios.get('barcode/create/' + this.targetUserId, {
         params: {
-          userId: this.userId,
+          userId: this.targetUserId,
           solutionId: this.qrCode.selSolution.id,
           period: this.qrCode.period,
           price: this.qrCode.price,
           url: this.qrCode.url,
-          // solutionId: 149,
           alias: this.qrCode.selSolution.yzAlias,
-          // alias: '3evj0vgmgvie1',
-          // name: '结直肠癌化疗套餐—2',
           name: this.qrCode.selSolution.name,
           code: this.qrCode.code,
           hospitalId: this.qrCode.hospitalId,
@@ -735,153 +604,159 @@ export default {
           doctor: this.qrCode.doctor
         }
       }).then(res => {
-        window.open(this.axios.defaults.baseURL + '/barcode/down?isPatientCode=false&filename=' + res.data + '&Authorization=' + window.localStorage.token)
+        this.barcodeOpen(res.data)
       }).catch(err => {
         console.log(err)
+        this.$message.error('生成失败')
       })
     },
     downloadPayCode () {
-      let instance = this.axios.create({
-        headers: {
-          'Authorization': window.localStorage.token,
-          'Content-Type': 'application/json'
-        }
-      })
-      let _this = this
-      this.qrCode.solutionId = this.qrCode.selSolution.id
-      instance({
-        method: 'post',
-        url: 'barcode/payCode/' + this.userId,
-        params: {
-          alias: this.qrCode.selSolution.yzAlias,
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
-        },
-        data: {
-          userId: this.userId,
-          solutionId: this.qrCode.selSolution.id,
-          price: this.qrCode.price,
-          reportCycle: this.qrCode.period,
-          hospitalId: this.qrCode.hospitalId,
-          deptId: this.qrCode.deptId,
-          doctor: this.qrCode.doctor,
-          alias: this.qrCode.selSolution.yzAlias,
-          description: this.qrCodeDescription
-        },
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json'
-        }
-      }).then(function (res) {
-        window.open(_this.axios.defaults.baseURL + '/barcode/down?isPatientCode=false&filename=' + res.data + '&Authorization=' + window.localStorage.token)
-        _this.dialogPayCodeFormVisible = false
-      })
+      if (!this.qrCode.selSolution) {
+        this.$message.warning('请选择产品')
+        return
+      }
+      const sol = this.qrCode.selSolution
+      apiSubmit(this.axios, 'post', 'barcode/payCode/' + this.targetUserId, {
+        userId: this.targetUserId,
+        solutionId: sol.id,
+        price: this.qrCode.price,
+        reportCycle: this.qrCode.period,
+        hospitalId: this.qrCode.hospitalId,
+        deptId: this.qrCode.deptId,
+        doctor: this.qrCode.doctor,
+        alias: sol.yzAlias,
+        description: this.payDescription
+      }, { userId: this.userId, alias: sol.yzAlias })
+        .then(res => {
+          this.barcodeOpen(res.data)
+          this.dialogPayCodeFormVisible = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.$message.error('生成失败')
+        })
     },
     downloadOnlineInformedCode () {
-      let instance = this.axios.create({
-        headers: {
-          'Authorization': window.localStorage.token,
-          'Content-Type': 'application/json'
-        }
-      })
-      let _this = this
-      instance({
-        method: 'post',
-        url: 'barcode/channel',
-        data: {
-          solutionId: this.informedQrCode.selSolution.id,
-          userId: this.userId,
-          hospitalId: this.informedQrCode.hospitalId,
-        },
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json'
-        },
-        params: {
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
-        }
-      }).then(function (res) {
-        window.open(_this.axios.defaults.baseURL + '/barcode/down?isPatientCode=false&filename=' + res.data + '&Authorization=' + window.localStorage.token)
-        _this.dialogOnlineInformedFormVisible = false
-      })
-
-
+      if (!this.informedQrCode.selSolution) {
+        this.$message.warning('请选择产品')
+        return
+      }
+      apiSubmit(this.axios, 'post', 'barcode/channel', {
+        solutionId: this.informedQrCode.selSolution.id,
+        userId: this.targetUserId,
+        hospitalId: this.informedQrCode.hospitalId
+      }, { userId: this.userId })
+        .then(res => {
+          this.barcodeOpen(res.data)
+          this.dialogOnlineInformedFormVisible = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.$message.error('生成失败')
+        })
     },
     downloadElecInformedCode () {
-      let instance = this.axios.create({
-        headers: {
-          'Authorization': window.localStorage.token,
-          'Content-Type': 'application/json'
-        }
-      })
-      let _this = this
-      instance({
-        method: 'post',
-        url: 'barcode/elecInformed',
-        params: {
-          salesmanId: this.userId,
-          solutionId: this.eleInformed.selSolution.id,
-          solutionName: this.eleInformed.selSolution.name,
-          fullName: this.name,
-          description: this.qrCodeDescription,
-          userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
-        },
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json'
-        }
-      }).then(function (res) {
-        window.open(_this.axios.defaults.baseURL + '/barcode/down?isPatientCode=false&filename=' + res.data + '&Authorization=' + window.localStorage.token)
-        _this.dialogPayCodeFormVisible = false
-      })
-    }
-  },
-  watch: {
-    '$route' (to, from) {
-      if (this.$route.params.role) {
-        this.roleCode = this.$route.params.role
-        this.getData()
+      if (!this.eleInformed.selSolution) {
+        this.$message.warning('请选择产品')
+        return
       }
-    }
-  },
-  filters: {
-  },
-  computed: {
-    qrCodeDescription: function () {
-      return (this.qrCode.hospitalName !== '' && this.qrCode.selSolution !== undefined) ? (this.qrCode.hospitalName + '(' + this.qrCode.selSolution.name + ')收费码-[M' + this.userId + ']') : ''
+      const sol = this.eleInformed.selSolution
+      apiSubmit(this.axios, 'post', 'barcode/elecInformed', null, {
+        salesmanId: this.targetUserId,
+        solutionId: sol.id,
+        solutionName: sol.name,
+        fullName: this.targetUserName,
+        description: this.payDescription,
+        userId: this.userId
+      })
+        .then(res => {
+          this.barcodeOpen(res.data)
+          this.dialogElecInformedFormVisible = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.$message.error('生成失败')
+        })
     }
   },
   created () {
-    let loading = this.$loading({
-      lock: true,
-      text: 'Loading',
-      spinner: 'el-icon-loading',
-      background: 'rgba(0, 0, 0, 0.7)'
-    })
     this._initData()
-    loading.close()
-  },
-  mounted () {
-  },
-  destroyed () {}
+  }
 }
 </script>
+
 <style rel="stylesheet/scss" lang="scss" scoped>
-  .is-parent {
-    margin-bottom: 5px;
-    display: block;
-    font-weight: bolder;
+.user-container {
+  margin: 20px 0;
+  padding: 20px;
+  background: var(--pc-white);
+  border-radius: var(--pc-r-4);
+  box-shadow: var(--pc-sh-1);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+  border-bottom: var(--pc-bd-hair);
+
+  .page-meta {
+    font-size: var(--pc-fs-13);
+    color: var(--pc-ink-500);
+    strong {
+      color: var(--pc-ink-800);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
   }
-  .sec-info {
-    display: inline-block;
-    padding-left: 10px;
-    font-weight: normal;
+}
+
+.empty {
+  padding: 40px 0 24px;
+  text-align: center;
+  .empty-title {
+    margin: 0 0 4px;
+    font-size: var(--pc-fs-14);
+    color: var(--pc-ink-600);
   }
-  .add-user {
-    margin-bottom: 10px;
+  .empty-hint {
+    margin: 0;
+    font-size: var(--pc-fs-12);
+    color: var(--pc-ink-400);
   }
-  .search-box {
-    width: 400px;
-    float: right;
-    margin-bottom: 10px;
-  }
+}
+
+.sec-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.sec-row {
+  font-size: var(--pc-fs-12);
+}
+.sec-parent {
+  display: inline-block;
+  padding: 1px 8px;
+  margin-right: 6px;
+  border-radius: var(--pc-r-2);
+  background: var(--pc-primary-50);
+  color: var(--pc-primary-700);
+  font-weight: 500;
+}
+.sec-child {
+  display: inline-block;
+  margin-right: 8px;
+  color: var(--pc-ink-500);
+}
+
+.danger { color: var(--pc-neg-600); }
+
+.width-100-p { width: 100%; }
+
+::v-deep .el-table {
+  .num { font-variant-numeric: tabular-nums; }
+  .muted { color: var(--pc-ink-400); }
+}
 </style>

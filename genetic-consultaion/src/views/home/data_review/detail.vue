@@ -215,7 +215,7 @@ export default {
 }
 
 .panel {
-  background: var(--pc-bg-50);
+  background: var(--pc-ink-50);
   border: var(--pc-bd-hair);
   border-radius: var(--pc-r-4);
   padding: 16px;
@@ -274,7 +274,7 @@ export default {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    background: var(--pc-bg-100);
+    background: var(--pc-ink-100);
   }
 
   &--small {
