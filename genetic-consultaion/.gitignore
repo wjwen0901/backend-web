@@ -15,3 +15,7 @@ selenium-debug.log
 *.ntvs*
 *.njsproj
 *.sln
+
+# Local agent / handoff scratch directories (Claude Code, design handoff)
+.superpowers/
+handoff/
