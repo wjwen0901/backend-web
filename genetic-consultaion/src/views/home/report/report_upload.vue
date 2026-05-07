@@ -1,12 +1,12 @@
 <template>
-  <div class="pc-report-upload">
+  <div class="pc-page pc-report-upload">
     <div class="pc-page-title">
       <h2>上传报告</h2>
       <span class="desc">为指定订单上传 PDF 报告 · 文件名需为「样本唯一编码」</span>
     </div>
 
-    <div class="upload-grid">
-      <div class="upload-main-col">
+    <div class="pc-page-grid pc-page-grid--aside upload-grid">
+      <div class="pc-main-panel upload-main-col">
         <!-- 卡片 1：订单 & 客户 -->
         <div class="pc-card">
           <div class="card-title">订单 &amp; 客户</div>
@@ -101,7 +101,7 @@
       </div>
 
       <!-- 右侧：步骤条 + 概要 -->
-      <div class="upload-side-col">
+      <div class="pc-side-panel upload-side-col">
         <div class="pc-card">
           <div class="card-title">上传流程</div>
           <div class="pc-steps">

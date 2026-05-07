@@ -133,10 +133,10 @@
     <el-container direction="vertical" class="pc-content">
       <el-header class="pc-header">
         <div class="left">
-          <el-breadcrumb separator-class="el-icon-arrow-right" class="header-crumb">
-            <el-breadcrumb-item>首页</el-breadcrumb-item>
-            <el-breadcrumb-item v-for="c in crumbPath" :key="c">{{ c }}</el-breadcrumb-item>
-          </el-breadcrumb>
+          <div class="pc-workspace-title">
+            <span class="eyebrow">易得好康后台</span>
+            <span class="title">运营工作台</span>
+          </div>
         </div>
         <div class="right">
           <i class="el-icon-search" title="搜索"></i>

@@ -1,11 +1,12 @@
 <template>
-  <div class="pc-order">
+  <div class="pc-page pc-order">
     <div class="pc-page-title">
       <h2>订单管理</h2>
       <span class="desc">共 {{ totalPage }} 单 · 当前页 {{ filteredOrderList.length }} 单</span>
     </div>
 
-    <div class="order-box">
+    <div class="pc-data-panel order-box">
+      <div class="pc-filter-strip">
       <!-- 状态分段 -->
       <div class="pc-seg" ref="seg" v-if="statusSegments.length">
         <div class="pc-seg__item"
@@ -40,6 +41,7 @@
           <el-button size="mini" @click="exportData">批量导出</el-button>
           <el-button size="mini" type="danger" plain @click="clearChecked">取消选择</el-button>
         </span>
+      </div>
       </div>
       <div class="order-table">
         <table class="i-table">
@@ -122,8 +124,12 @@
             </template>
           </template>
           <tr v-if="!filteredOrderList || filteredOrderList.length === 0">
-            <td colspan="8">
-              <el-empty :description="activeStatusStr ? '没有「' + activeStatusStr + '」状态的订单' : '还没有订单'"></el-empty>
+            <td colspan="10">
+              <div class="pc-empty-state">
+                <i class="el-icon-document"></i>
+                <h3>{{ activeStatusStr ? '没有该状态订单' : '还没有订单' }}</h3>
+                <p>{{ activeStatusStr ? '当前筛选条件下没有「' + activeStatusStr + '」状态订单' : '订单同步后会显示在这里' }}</p>
+              </div>
             </td>
           </tr>
         </table>

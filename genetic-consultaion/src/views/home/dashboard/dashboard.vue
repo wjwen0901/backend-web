@@ -1,12 +1,12 @@
 <template>
-  <div class="pc-dashboard">
+  <div class="pc-page pc-dashboard">
     <div class="pc-page-title">
       <h2>运营总览</h2>
       <span class="desc">数据每 5 分钟刷新 · 数据源：order / report / informed / hospital</span>
     </div>
 
     <!-- KPI 行 -->
-    <div class="pc-kpi-grid">
+    <div class="pc-page-section pc-kpi-grid">
       <div class="pc-kpi" v-for="(k, i) in kpis" :key="k.key">
         <div class="pc-kpi__label">{{ k.label }}</div>
         <div class="pc-kpi__value" :ref="'kpi' + i">0</div>
@@ -21,7 +21,7 @@
     </div>
 
     <!-- 趋势 + 待办 -->
-    <div class="pc-section-row">
+    <div class="pc-page-section pc-section-row">
       <div class="pc-card">
         <div class="card-head">
           <div class="card-title">订单 / 报告 趋势 · 近 30 天</div>
@@ -61,7 +61,7 @@
     </div>
 
     <!-- 11 状态分布 -->
-    <div class="pc-card">
+    <div class="pc-card pc-page-section">
       <div class="card-title">订单状态分布</div>
       <div class="card-sub">全部 11 个业务状态（D3）· 当前样本 {{ orderTotal || 0 }} 单</div>
       <div class="pc-statusbar">
