@@ -464,7 +464,7 @@
       <div class="footer-btn">
         <el-button @click="cancel">取消</el-button>
         <el-button @click="unread" :loading="submitting">图形不可读</el-button>
-        <el-button type="primary" @click="edit" :loading="submitting">保存信息</el-button>
+        <el-button v-if="groupId !== 7" type="primary" @click="edit" :loading="submitting">保存信息</el-button>
       </div>
     </div>
   </div>
