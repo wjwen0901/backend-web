@@ -11,6 +11,28 @@ axios.defaults.baseURL = process.env.BASE_URL
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 axios.defaults.headers.put['Content-Type'] = 'application/json'
 
+const isDev = process.env.NODE_ENV === 'development'
+
+function setDevAuthItem (key, value) {
+    if (value !== undefined && value !== '') {
+        window.localStorage.setItem(key, value)
+    }
+}
+
+function ensureDevAuth () {
+    if (!isDev || !process.env.DEV_AUTH_TOKEN || window.localStorage.token) {
+        return
+    }
+
+    setDevAuthItem('token', process.env.DEV_AUTH_TOKEN)
+    setDevAuthItem('userId', process.env.DEV_AUTH_USER_ID || '1')
+    setDevAuthItem('role', process.env.DEV_AUTH_ROLE || 'manager')
+    setDevAuthItem('fullName', process.env.DEV_AUTH_FULL_NAME || 'admin')
+    setDevAuthItem('username', process.env.DEV_AUTH_USERNAME || process.env.DEV_AUTH_FULL_NAME || 'admin')
+}
+
+ensureDevAuth()
+
 // http request 拦截器
 axios.interceptors.request.use(
     config => {
@@ -27,7 +49,6 @@ axios.interceptors.request.use(
     err => {
         return Promise.reject(err)
     })
-const isDev = process.env.NODE_ENV === 'development'
 const linkUrl = process.env.NODE_ENV === 'production' ? 'https://z.mdhcare.cn/login.html' : process.env.DEV_LOGIN_PATH
 axios.interceptors.response.use(
     response => {
@@ -37,7 +58,9 @@ axios.interceptors.response.use(
         if (error && error.response) {
             switch (error.response.status) {
                 case 401:
-                    window.localStorage.clear()
+                    if (!isDev) {
+                        window.localStorage.clear()
+                    }
                     if (!isDev && linkUrl) {
                         window.location.href = linkUrl
                     }
