@@ -84,7 +84,7 @@
         </el-table-column>
         <el-table-column label="状态" width="100">
           <template slot-scope="scope">
-            <el-tag size="mini" :class="'el-tag--' + stateInfo(scope.row.state).type">
+            <el-tag v-if="stateInfo(scope.row.state)" size="mini" :class="'el-tag--' + stateInfo(scope.row.state).type">
               {{ stateInfo(scope.row.state).label }}
             </el-tag>
           </template>
@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import { formatDate, INFORMED_STATE_MAP, statusOf, downloadBlob, dateStr } from '@/utils/pc'
+import { formatDate, INFORMED_STATE_MAP, downloadBlob, dateStr } from '@/utils/pc'
 
 export default {
   name: 'DataCollectInformedList',
@@ -176,7 +176,7 @@ export default {
       this.getData()
     },
     stateInfo (state) {
-      return statusOf(INFORMED_STATE_MAP, state, { type: '', label: '未知' })
+      return INFORMED_STATE_MAP[state]
     },
     toDetail (row) {
       this.$router.push({
