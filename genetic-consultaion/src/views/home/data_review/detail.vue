@@ -16,7 +16,10 @@
           <div class="panel">
             <div class="panel-header">
               <h4>报告信息</h4>
-              <el-button type="text" size="mini" @click="toEditReport(report.id)">修改信息</el-button>
+              <div class="header-actions">
+                <el-button v-if="imagePath" type="text" size="mini" icon="el-icon-view" @click="openExternal(imagePath)">在新窗口打开</el-button>
+                <el-button type="text" size="mini" @click="toEditReport(report.id)">修改信息</el-button>
+              </div>
             </div>
             <div class="meta-grid">
               <span class="meta-label">客户姓名</span><span class="meta-value">{{ report.truename || '—' }}</span>
@@ -26,6 +29,10 @@
             <div class="doc-frame" v-if="imagePath">
               <object :data="imagePath" type="application/pdf" v-if="report.mimeType === 'application/pdf'">
                 <embed :src="imagePath">
+                <div class="pdf-fallback">
+                  <p class="empty-title">PDF 无法在浏览器内预览</p>
+                  <p class="empty-hint">点击右上角"在新窗口打开"查看完整报告</p>
+                </div>
               </object>
               <img :src="imagePath" v-else class="doc-img">
             </div>
@@ -50,6 +57,7 @@
                 </div>
 
                 <div class="card-actions">
+                  <el-button v-if="item.imagePath" type="text" size="mini" icon="el-icon-view" @click="openExternal(item.imagePath)">在新窗口打开</el-button>
                   <el-button type="text" size="mini" @click="toEditInformed(item.id)">修改信息</el-button>
                   <el-button type="text" size="mini" class="danger" @click="toDelInformedRelat(item.id)">删除此关系</el-button>
                 </div>
@@ -57,6 +65,10 @@
                 <div class="doc-frame doc-frame--small" v-if="item.imagePath">
                   <object :data="item.imagePath" type="application/pdf" v-if="item.mimeType === 'application/pdf'">
                     <embed :src="item.imagePath">
+                    <div class="pdf-fallback">
+                      <p class="empty-title">PDF 无法在浏览器内预览</p>
+                      <p class="empty-hint">点击右上角"在新窗口打开"查看完整文件</p>
+                    </div>
                   </object>
                   <img :src="item.imagePath" v-else class="doc-img">
                 </div>
@@ -96,6 +108,9 @@ export default {
   },
   methods: {
     _initData () { this.getData() },
+    openExternal (url) {
+      if (url) window.open(url, '_blank')
+    },
     toAbsoluteUrl (url) {
       if (!url) return url
       return this.axios.defaults.baseURL.includes('https://')
@@ -237,6 +252,28 @@ export default {
     font-size: var(--pc-fs-14);
     font-weight: 600;
     color: var(--pc-ink-800);
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.pdf-fallback {
+  padding: 60px 24px;
+  text-align: center;
+  color: var(--pc-ink-500);
+
+  .empty-title {
+    margin: 0 0 4px;
+    font-size: var(--pc-fs-14);
+    color: var(--pc-ink-600);
+  }
+  .empty-hint {
+    margin: 0;
+    font-size: var(--pc-fs-12);
+    color: var(--pc-ink-400);
   }
 }
 
