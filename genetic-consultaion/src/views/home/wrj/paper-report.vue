@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pc-page">
     <div class="user-container">
       <div class="page-header">
         <el-breadcrumb separator-class="el-icon-arrow-right">

@@ -1,5 +1,5 @@
 <template>
-  <div class="pc-ru6c-upload">
+  <div class="pc-page pc-ru6c-upload">
     <div class="pc-page-title">
       <h2>上传下机文件</h2>
       <span class="desc">上传 .zip 压缩包，系统自动分析并入库</span>

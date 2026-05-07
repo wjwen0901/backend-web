@@ -13,10 +13,7 @@
         class="pc-side-menu"
         :default-active="activeIndex"
         :default-openeds="openMenu"
-        @select="handleSelect"
-        background-color="#FFFFFF"
-        text-color="#475569"
-        active-text-color="#08594F">
+        @select="handleSelect">
 
         <li class="pc-menu-group">总览</li>
         <el-menu-item index="/dashboard">
@@ -133,10 +130,10 @@
     <el-container direction="vertical" class="pc-content">
       <el-header class="pc-header">
         <div class="left">
-          <el-breadcrumb separator-class="el-icon-arrow-right" class="header-crumb">
-            <el-breadcrumb-item>首页</el-breadcrumb-item>
-            <el-breadcrumb-item v-for="c in crumbPath" :key="c">{{ c }}</el-breadcrumb-item>
-          </el-breadcrumb>
+          <div class="pc-workspace-title">
+            <span class="eyebrow">易得好康后台</span>
+            <span class="title">运营工作台</span>
+          </div>
         </div>
         <div class="right">
           <i class="el-icon-search" title="搜索"></i>
@@ -325,6 +322,10 @@ export default {
   methods: {
     logout () {
       window.localStorage.clear()
+      if (process.env.NODE_ENV === 'development') {
+        window.location.href = process.env.DEV_LOGIN_PATH || '/#/dashboard'
+        return
+      }
       if (this.axios.defaults.baseURL.includes('qa.mdhcare.cn')) {
         window.location.href = 'http://qa.mdhcare.cn/website/login.html'
       } else if (this.axios.defaults.baseURL.includes('z.mdhcare.cn/z/')) {

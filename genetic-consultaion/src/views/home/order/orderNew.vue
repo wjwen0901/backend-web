@@ -1,11 +1,12 @@
 <template>
-  <div class="pc-order">
+  <div class="pc-page pc-order">
     <div class="pc-page-title">
       <h2>订单管理</h2>
       <span class="desc">共 {{ totalPage }} 单 · 当前页 {{ filteredOrderList.length }} 单</span>
     </div>
 
-    <div class="order-box">
+    <div class="pc-data-panel order-box">
+      <div class="pc-filter-strip">
       <!-- 状态分段 -->
       <div class="pc-seg" ref="seg" v-if="statusSegments.length">
         <div class="pc-seg__item"
@@ -41,91 +42,84 @@
           <el-button size="mini" type="danger" plain @click="clearChecked">取消选择</el-button>
         </span>
       </div>
+      </div>
       <div class="order-table">
-        <table class="i-table">
-          <tr class="i-title">
-            <th width="80px">
-              <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleAllCheck"></el-checkbox>
-            <th colspan="2">检测项目</th>
-            <th>支付价格</th>
-            <th>受检者</th>
-            <th>下单人</th>
-            <th>订单状态</th>
-            <th>积分</th>
-            <th colspan="2" width="200px">操作</th>
-          </tr>
-          <br />
-          <template v-if="filteredOrderList && filteredOrderList.length !== 0">
-            <template v-for="(item, index) in filteredOrderList">
-              <div :key="index + '&'" class="space"></div>
-              <tr :key="index" class="i-line">
-                <td colspan="3">
-                  <svg t="1665285503374" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                    xmlns="http://www.w3.org/2000/svg" p-id="2676" width="16" height="16">
-                    <path
-                      d="M512 950.848c-242.368 0-438.848-196.48-438.848-438.848C73.152 269.632 269.632 73.152 512 73.152c242.368 0 438.848 196.48 438.848 438.848 0 242.368-196.48 438.848-438.848 438.848z m-18.976-491.84v-129.856a36.576 36.576 0 0 0-73.152 0v209.248L262.624 315.296a43.872 43.872 0 0 0-79.776 25.28v299.008a36.576 36.576 0 1 0 73.152 0v-206.72l157.28 223.072a43.872 43.872 0 0 0 79.744-25.28v-32.384a146.272 146.272 0 1 0 0-139.264z m128.704 142.752a73.152 73.152 0 1 1 0-146.272 73.152 73.152 0 0 1 0 146.272z m182.848 56.512a36.576 36.576 0 1 0 0-73.12 36.576 36.576 0 0 0 0 73.12z"
-                      p-id="2677" fill="#01806f"></path>
-                  </svg>
-                  订单编号：{{ item.orderNo }}
-                </td>
-                <td colspan="3">
-                  <svg t="1665285864156" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                    xmlns="http://www.w3.org/2000/svg" p-id="8826" width="16" height="16">
-                    <path d="M512 512m-450.56 0a450.56 450.56 0 1 0 901.12 0 450.56 450.56 0 1 0-901.12 0Z"
-                      fill="#01806f" p-id="8827" data-spm-anchor-id="a313x.7781069.0.i10" class=""></path>
-                    <path
-                      d="M491.52 317.44a30.72 30.72 0 0 1 30.57664 27.77088L522.24 348.16v174.08H757.76a30.72 30.72 0 0 1 30.57664 27.77088L788.48 552.96a30.72 30.72 0 0 1-27.77088 30.57664L757.76 583.68H491.52a30.72 30.72 0 0 1-30.57664-27.77088L460.8 552.96V348.16a30.72 30.72 0 0 1 30.72-30.72z"
-                      fill="#ffffff" p-id="8828" data-spm-anchor-id="a313x.7781069.0.i11" class="selected"></path>
-                  </svg>
-                  报告时间：{{ item.createTime | formatDate }}
-                </td>
-                <td colspan="3"></td>
-                <td class="detail">
-                  <el-button type="text" size="small"
-                    @click="toInformedDetail(item.id, item.expressCode, item.expressId)">查看详情</el-button>
-                </td>
-              </tr>
-              <tr :key="index + '%'" class="i-box">
-                <td>
-                  <el-checkbox v-model="item.isChecked" @change="handelCheckIs($event, item)"></el-checkbox>
-                </td>
-                <td colspan="2">{{ item.itemTitle || '——' }}</td>
-                <td>
-                  <svg t="1662443559209" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                    xmlns="http://www.w3.org/2000/svg" p-id="12023" width="16" height="16">
-                    <path
-                      d="M512 0C228.8 0 0 228.8 0 512s228.8 512 512 512 512-228.8 512-512S795.2 0 512 0z m0 976C256 976 48 768 48 512S256 48 512 48s464 208 464 464-208 464-464 464z"
-                      fill="#F9AC3E" p-id="12024"></path>
-                    <path
-                      d="M512 96C281.6 96 96 281.6 96 512s185.6 416 416 416 416-185.6 416-416S742.4 96 512 96z m209.6 171.2L544 464v28.8h150.4c14.4 0 25.6 11.2 25.6 25.6S707.2 544 692.8 544H544v54.4h150.4c14.4 0 25.6 11.2 25.6 25.6s-11.2 25.6-25.6 25.6H544v124.8-16c0 19.2-16 33.6-33.6 33.6-19.2 0-33.6-16-33.6-33.6v16-124.8H329.6c-14.4 0-25.6-11.2-25.6-25.6s11.2-25.6 25.6-25.6h147.2V544H329.6c-14.4 0-25.6-11.2-25.6-25.6s11.2-25.6 25.6-25.6h147.2V464l-176-196.8s-19.2-52.8 40-35.2c20.8 6.4 36.8 35.2 36.8 35.2l136 145.6 139.2-145.6s16-30.4 40-35.2c54.4-11.2 28.8 35.2 28.8 35.2z"
-                      fill="#F9AC3E" p-id="12025"></path>
-                  </svg>
-                  {{ item.payment || '-' }}
-                </td>
-                <td>{{ item.pName }}({{ item.pCellphone || '-' }})</td>
-                <td>{{ item.fullName || '-' }}</td>
-                <td class="price-box">
-                  <el-tag size="small" :class="tagClassForStatusStr(item.statusStr)">{{
-                      item.statusStr || '——' }}</el-tag>
-                  <el-button v-if="item.statusStr === '收款码待付款'" type="text" size="small" class="priceText"
+        <table class="business-table">
+          <thead>
+            <tr>
+              <th class="col-check">
+                <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleAllCheck"></el-checkbox>
+              </th>
+              <th class="col-product">检测项目 / 订单</th>
+              <th class="col-status">状态</th>
+              <th class="col-money">金额 / 积分</th>
+              <th class="col-person">客户</th>
+              <th class="col-time">时间</th>
+              <th class="col-actions">操作</th>
+            </tr>
+          </thead>
+          <tbody v-if="filteredOrderList && filteredOrderList.length !== 0">
+            <tr v-for="(item, index) in filteredOrderList" :key="item.id || index" class="business-row">
+              <td class="col-check">
+                <el-checkbox v-model="item.isChecked" @change="handelCheckIs($event, item)"></el-checkbox>
+              </td>
+              <td class="col-product product-cell">
+                <div class="product-title" :title="item.itemTitle || item.solutionName || '未命名检测项目'">
+                  {{ item.itemTitle || item.solutionName || '未命名检测项目' }}
+                </div>
+                <div class="product-meta">
+                  <span>订单 {{ item.orderNo || '——' }}</span>
+                  <span v-if="item.sampleCode">样本 {{ item.sampleCode }}</span>
+                  <span v-if="item.solutionName && item.solutionName !== item.itemTitle">{{ item.solutionName }}</span>
+                </div>
+              </td>
+              <td class="col-status status-cell">
+                <el-tag size="small" :class="tagClassForStatusStr(item.statusStr)">
+                  {{ item.statusStr || '——' }}
+                </el-tag>
+                <div class="status-counts">
+                  知情 {{ item.informedNum || 0 }} / 报告 {{ item.reportNum || 0 }}
+                </div>
+              </td>
+              <td class="col-money money-cell">
+                <div class="money-main">{{ formatCurrency(item.payment) }}</div>
+                <div class="money-sub">原价 {{ formatCurrency(item.directPrice || item.totalFee) }}</div>
+                <div class="money-token">{{ item.tokenNum || '无积分记录' }}</div>
+              </td>
+              <td class="col-person person-cell">
+                <div class="person-main">{{ item.pName || '未填写受检者' }}</div>
+                <div class="person-sub">{{ item.pCellphone || '无手机号' }}</div>
+                <div class="person-orderer">下单 {{ item.fullName || '-' }}<span v-if="item.cellphone"> · {{ item.cellphone }}</span></div>
+              </td>
+              <td class="col-time time-cell">
+                <div><span class="time-label">下单</span>{{ formatOrderTime(item.createTime) }}</div>
+                <div><span class="time-label">支付</span>{{ formatOrderTime(item.payTime, '未支付') }}</div>
+              </td>
+              <td class="col-actions action-cell">
+                <el-button type="text" size="small"
+                  @click="toInformedDetail(item.id, item.expressCode, item.expressId)">详情</el-button>
+                <el-button v-if="item.statusStr === '收款码待付款'" type="text" size="small" class="priceText"
                     @click="changePrice(item.payment, item.orderNo, item.itemTitle, item.id)">改价</el-button>
-                </td>
-                <td>{{ item.tokenNum || '-' }}</td>
-                <td colspan="2">
-                  <el-button type="text" size="small" @click="toUploadInformed(item.id)">上传知情</el-button>
-                  <el-button type="text" size="small" @click="toUploadReport(item.id)"
-                    v-if="item.reportNum === 0 && roleCode === 'manager'">上传报告</el-button>
-                  <el-button type="text" size="small" @click="openTokenDialog(item)">分配积分</el-button>
-                  <!-- <el-button type="text" size="small" @click="toInformedDetail(item.id,item.expressCode,item.expressId)">查看</el-button> -->
-                </td>
-              </tr>
-            </template>
-          </template>
-          <tr v-if="!filteredOrderList || filteredOrderList.length === 0">
-            <td colspan="8">
-              <el-empty :description="activeStatusStr ? '没有「' + activeStatusStr + '」状态的订单' : '还没有订单'"></el-empty>
-            </td>
-          </tr>
+                <el-button type="text" size="small" @click="toUploadInformed(item.id)">知情</el-button>
+                <el-button type="text" size="small" @click="toUploadReport(item.id)"
+                  v-if="item.reportNum === 0 && roleCode === 'manager'">报告</el-button>
+                <el-button type="text" size="small" @click="openTokenDialog(item)">积分</el-button>
+              </td>
+            </tr>
+          </tbody>
+          <tbody v-else>
+            <tr>
+              <td colspan="7">
+                <div class="business-empty">
+                  <i class="el-icon-document"></i>
+                  <h3>{{ emptyTitle }}</h3>
+                  <p>{{ emptyReason }}</p>
+                  <el-button v-if="activeStatusStr || condition" type="primary" size="small" @click="resetFilters">清空筛选</el-button>
+                  <el-button v-else size="small" @click="getData">刷新订单</el-button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
       <div class="page-box">
@@ -136,41 +130,16 @@
       </div>
     </div>
     <el-dialog title="改 价" :visible.sync="visiablePrice" center class="price-dialog" width="60%">
-      <el-row style="margin-top:20px; font-size: 15px;">
-        <svg t="1665285503374" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-          p-id="2676" width="16" height="16">
-          <path
-            d="M512 950.848c-242.368 0-438.848-196.48-438.848-438.848C73.152 269.632 269.632 73.152 512 73.152c242.368 0 438.848 196.48 438.848 438.848 0 242.368-196.48 438.848-438.848 438.848z m-18.976-491.84v-129.856a36.576 36.576 0 0 0-73.152 0v209.248L262.624 315.296a43.872 43.872 0 0 0-79.776 25.28v299.008a36.576 36.576 0 1 0 73.152 0v-206.72l157.28 223.072a43.872 43.872 0 0 0 79.744-25.28v-32.384a146.272 146.272 0 1 0 0-139.264z m128.704 142.752a73.152 73.152 0 1 1 0-146.272 73.152 73.152 0 0 1 0 146.272z m182.848 56.512a36.576 36.576 0 1 0 0-73.12 36.576 36.576 0 0 0 0 73.12z"
-            p-id="2677" fill="#01806f"></path>
-        </svg>
-        <span>订单编号：</span>
-        <span>{{ orderNo }}</span>
-      </el-row>
-      <el-row style="margin-top:10px; font-size: 15px;">
-        <svg t="1665285503374" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-          p-id="2676" width="16" height="16">
-          <path
-            d="M512 950.848c-242.368 0-438.848-196.48-438.848-438.848C73.152 269.632 269.632 73.152 512 73.152c242.368 0 438.848 196.48 438.848 438.848 0 242.368-196.48 438.848-438.848 438.848z m-18.976-491.84v-129.856a36.576 36.576 0 0 0-73.152 0v209.248L262.624 315.296a43.872 43.872 0 0 0-79.776 25.28v299.008a36.576 36.576 0 1 0 73.152 0v-206.72l157.28 223.072a43.872 43.872 0 0 0 79.744-25.28v-32.384a146.272 146.272 0 1 0 0-139.264z m128.704 142.752a73.152 73.152 0 1 1 0-146.272 73.152 73.152 0 0 1 0 146.272z m182.848 56.512a36.576 36.576 0 1 0 0-73.12 36.576 36.576 0 0 0 0 73.12z"
-            p-id="2677" fill="#01806f"></path>
-        </svg>
-        <span>检测项目：</span>
-        <span>{{ itemTitle }}</span>
-      </el-row>
+      <div class="price-dialog-meta">
+        <span><i class="el-icon-tickets"></i>订单编号：{{ orderNo }}</span>
+        <span><i class="el-icon-collection-tag"></i>检测项目：{{ itemTitle }}</span>
+      </div>
       <el-row type="flex" justify="center" class="priceDiag">
         <el-col :span="6">
           <div class="priceBox">
             <span class="priceTitle">当前价格</span>
             <span class="linerText">
-              <svg t="1662443559209" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                xmlns="http://www.w3.org/2000/svg" p-id="12023" width="16" height="16">
-                <path
-                  d="M512 0C228.8 0 0 228.8 0 512s228.8 512 512 512 512-228.8 512-512S795.2 0 512 0z m0 976C256 976 48 768 48 512S256 48 512 48s464 208 464 464-208 464-464 464z"
-                  fill="#F9AC3E" p-id="12024"></path>
-                <path
-                  d="M512 96C281.6 96 96 281.6 96 512s185.6 416 416 416 416-185.6 416-416S742.4 96 512 96z m209.6 171.2L544 464v28.8h150.4c14.4 0 25.6 11.2 25.6 25.6S707.2 544 692.8 544H544v54.4h150.4c14.4 0 25.6 11.2 25.6 25.6s-11.2 25.6-25.6 25.6H544v124.8-16c0 19.2-16 33.6-33.6 33.6-19.2 0-33.6-16-33.6-33.6v16-124.8H329.6c-14.4 0-25.6-11.2-25.6-25.6s11.2-25.6 25.6-25.6h147.2V544H329.6c-14.4 0-25.6-11.2-25.6-25.6s11.2-25.6 25.6-25.6h147.2V464l-176-196.8s-19.2-52.8 40-35.2c20.8 6.4 36.8 35.2 36.8 35.2l136 145.6 139.2-145.6s16-30.4 40-35.2c54.4-11.2 28.8 35.2 28.8 35.2z"
-                  fill="#F9AC3E" p-id="12025"></path>
-              </svg>
-              {{ nowPrice }}</span>
+              {{ formatCurrency(nowPrice) }}</span>
           </div>
         </el-col>
         <el-col :span="2">
@@ -183,15 +152,6 @@
           <div class="priceBox">
             <span class="priceTitle">添加价格</span>
             <div>
-              <svg t="1662443559209" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                xmlns="http://www.w3.org/2000/svg" p-id="12023" width="16" height="16">
-                <path
-                  d="M512 0C228.8 0 0 228.8 0 512s228.8 512 512 512 512-228.8 512-512S795.2 0 512 0z m0 976C256 976 48 768 48 512S256 48 512 48s464 208 464 464-208 464-464 464z"
-                  fill="#F9AC3E" p-id="12024"></path>
-                <path
-                  d="M512 96C281.6 96 96 281.6 96 512s185.6 416 416 416 416-185.6 416-416S742.4 96 512 96z m209.6 171.2L544 464v28.8h150.4c14.4 0 25.6 11.2 25.6 25.6S707.2 544 692.8 544H544v54.4h150.4c14.4 0 25.6 11.2 25.6 25.6s-11.2 25.6-25.6 25.6H544v124.8-16c0 19.2-16 33.6-33.6 33.6-19.2 0-33.6-16-33.6-33.6v16-124.8H329.6c-14.4 0-25.6-11.2-25.6-25.6s11.2-25.6 25.6-25.6h147.2V544H329.6c-14.4 0-25.6-11.2-25.6-25.6s11.2-25.6 25.6-25.6h147.2V464l-176-196.8s-19.2-52.8 40-35.2c20.8 6.4 36.8 35.2 36.8 35.2l136 145.6 139.2-145.6s16-30.4 40-35.2c54.4-11.2 28.8 35.2 28.8 35.2z"
-                  fill="#F9AC3E" p-id="12025"></path>
-              </svg>
               <el-input class="liner" v-model="addPrice" size="small" placeholder="请输入价格"
                 style="width:140px;"></el-input>
             </div>
@@ -208,16 +168,7 @@
           <div class="priceBox">
             <span class="priceTitle">改后价格</span>
             <span class="linerText">
-              <svg t="1662443559209" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                xmlns="http://www.w3.org/2000/svg" p-id="12023" width="16" height="16">
-                <path
-                  d="M512 0C228.8 0 0 228.8 0 512s228.8 512 512 512 512-228.8 512-512S795.2 0 512 0z m0 976C256 976 48 768 48 512S256 48 512 48s464 208 464 464-208 464-464 464z"
-                  fill="#F9AC3E" p-id="12024"></path>
-                <path
-                  d="M512 96C281.6 96 96 281.6 96 512s185.6 416 416 416 416-185.6 416-416S742.4 96 512 96z m209.6 171.2L544 464v28.8h150.4c14.4 0 25.6 11.2 25.6 25.6S707.2 544 692.8 544H544v54.4h150.4c14.4 0 25.6 11.2 25.6 25.6s-11.2 25.6-25.6 25.6H544v124.8-16c0 19.2-16 33.6-33.6 33.6-19.2 0-33.6-16-33.6-33.6v16-124.8H329.6c-14.4 0-25.6-11.2-25.6-25.6s11.2-25.6 25.6-25.6h147.2V544H329.6c-14.4 0-25.6-11.2-25.6-25.6s11.2-25.6 25.6-25.6h147.2V464l-176-196.8s-19.2-52.8 40-35.2c20.8 6.4 36.8 35.2 36.8 35.2l136 145.6 139.2-145.6s16-30.4 40-35.2c54.4-11.2 28.8 35.2 28.8 35.2z"
-                  fill="#F9AC3E" p-id="12025"></path>
-              </svg>
-              {{ afterPrice }}</span>
+              {{ formatCurrency(afterPrice) }}</span>
             <span class="price-tip" v-if="afterPrice < 0" style="transform: translateY(-30px);">* 赔钱啦~怎么变成负数啦~</span>
           </div>
         </el-col>
@@ -279,6 +230,7 @@
 </template>
 <script>
 import NP from 'number-precision'
+import { tagClassOf } from '@/utils/pc'
 export default {
   data () {
     return {
@@ -340,6 +292,16 @@ export default {
     filteredOrderList () {
       if (!this.activeStatusStr) return this.orderList
       return this.orderList.filter(o => (o.statusStr || '——') === this.activeStatusStr)
+    },
+    emptyTitle () {
+      if (this.activeStatusStr) return '没有该状态订单'
+      if (this.condition) return '没有匹配订单'
+      return '还没有订单'
+    },
+    emptyReason () {
+      if (this.activeStatusStr) return '当前筛选为「' + this.activeStatusStr + '」，可以清空筛选查看全部订单。'
+      if (this.condition) return '关键词没有命中下单人、手机号、订单号、受检者或检测项目。'
+      return '订单同步后会出现在这里，先确认渠道、支付状态或刷新列表。'
     }
   },
   mounted () {
@@ -406,6 +368,26 @@ export default {
     }
   },
   methods: {
+    formatCurrency (value) {
+      if (value === null || value === undefined || value === '') return '-'
+      const num = Number(value)
+      if (isNaN(num)) return '-'
+      return '¥' + num.toFixed(2)
+    },
+    formatOrderTime (value, emptyText) {
+      if (!value) return emptyText || '-'
+      const date = new Date(value)
+      if (isNaN(date.getTime())) return emptyText || '-'
+      const pad = n => n < 10 ? '0' + n : '' + n
+      return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate()) + ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes())
+    },
+    resetFilters () {
+      this.condition = null
+      this.activeStatusStr = ''
+      this.pageNum = 1
+      this.getData()
+      this.$nextTick(() => this.moveBar())
+    },
     // 根据比例设置积分
     setTokenByRatio (ratio) {
       if (!this.tokenForm.directPrice || isNaN(this.tokenForm.directPrice)) {
@@ -516,41 +498,9 @@ export default {
       }
       console.log(this.checkIds)
     },
-    // 标签颜色 —— 旧自定义色保留为 fallback
-    // CRITIQUE[major]: 此 map 是历史 fallback。新增 statusStr 走 tagClassForStatusStr 命中 D3 6 类，不要再扩这个 map（参 docs/2026-05-06-design-critique.md M2）
-    getColor (val) {
-      const map = {
-        '待采样': '#14a495',
-        '待回寄': '#202020',
-        '已取消订单': '#999999',
-        '报告已出': '#368c01',
-        '寄样中': '#6045a3',
-        '收款码待付款': '#101ffb',
-        '检测中': '#fe8a5d'
-      }
-      return map[val]
-    },
     // statusStr → 设计系统 6 类语义 Tag class（D3）
     tagClassForStatusStr (val) {
-      const map = {
-        '收款码待付款': 'el-tag--warn',
-        '待付款': 'el-tag--warn',
-        '已下单': 'el-tag--info2',
-        '待采样': 'el-tag--info2',
-        '待回寄': 'el-tag--prog',
-        '寄样中': 'el-tag--prog',
-        '已签收': 'el-tag--prog',
-        '检测中': 'el-tag--prog',
-        '待复核': 'el-tag--prog',
-        '已出报告': 'el-tag--succ',
-        '报告已出': 'el-tag--succ',
-        '已审核': 'el-tag--succ',
-        '已寄出': 'el-tag--succ',
-        '阳性': 'el-tag--pos',
-        '阴性': 'el-tag--neg',
-        '已取消订单': ''
-      }
-      return map[val] || ''
+      return tagClassOf(val)
     },
     setStatusFilter (label, ev) {
       this.activeStatusStr = label
@@ -717,74 +667,159 @@ export default {
 
   .order-table {
     margin-top: 12px;
+    overflow-x: auto;
 
-    .i-table {
+    .business-table {
       width: 100%;
       border-spacing: 0;
-      text-align: center;
       table-layout: fixed;
       font-size: 12.5px;
       color: var(--pc-ink-700);
       border-collapse: collapse;
 
-      svg {
-        transform: translateY(3px);
-      }
-
-      .i-title {
+      th {
+        height: 38px;
+        padding: 0 10px;
         background: var(--pc-ink-50);
         color: var(--pc-ink-600);
-        line-height: 2.6;
         font-weight: 600;
+        text-align: left;
         border-bottom: 1px solid var(--pc-ink-200);
       }
 
-      .i-line {
-        background: var(--pc-ink-50);
-        height: 36px;
-        text-align: left;
-        color: var(--pc-ink-600);
-        border-bottom: 1px solid var(--pc-ink-100);
-
-        .detail {
-          text-align: right;
-          transform: translateX(-20px);
-        }
+      td {
+        padding: 11px 10px;
+        border-bottom: 1px solid var(--pc-ink-200);
+        vertical-align: middle;
       }
 
-      .space {
-        height: 8px;
-      }
-
-      .i-box {
-        min-height: 56px;
+      .business-row {
         transition: background var(--pc-dur-2) var(--pc-ease);
+      }
 
-        td {
-          border: 1px solid var(--pc-ink-100);
-          padding: 8px;
-          line-height: 1.5;
-        }
+      .business-row:hover {
+        background: var(--pc-ink-50);
+      }
 
-        &:hover td { background: var(--pc-primary-50); }
+      .col-check { width: 44px; text-align: center; }
+      .col-product { width: 34%; }
+      .col-status { width: 112px; }
+      .col-money { width: 132px; text-align: right; }
+      .col-person { width: 176px; }
+      .col-time { width: 178px; }
+      .col-actions { width: 170px; text-align: right; }
+
+      .product-title,
+      .person-main {
+        color: var(--pc-ink-900);
+        font-weight: 600;
+      }
+
+      .product-title {
+        line-height: 1.45;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .product-meta,
+      .status-counts,
+      .money-sub,
+      .money-token,
+      .person-sub,
+      .person-orderer,
+      .time-cell {
+        color: var(--pc-ink-500);
+        font-size: 11.5px;
+      }
+
+      .product-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 10px;
+        margin-top: 5px;
+        line-height: 1.35;
+      }
+
+      .status-cell .el-tag {
+        margin-bottom: 5px;
+      }
+
+      .money-main {
+        color: var(--pc-ink-900);
+        font-family: var(--pc-font-mono);
+        font-weight: 700;
+        font-size: 13px;
+      }
+
+      .money-sub,
+      .money-token {
+        margin-top: 3px;
+      }
+
+      .person-sub,
+      .person-orderer {
+        margin-top: 3px;
+      }
+
+      .time-cell {
+        line-height: 1.7;
+      }
+
+      .time-label {
+        display: inline-block;
+        width: 30px;
+        color: var(--pc-ink-400);
+      }
+
+      .action-cell {
+        white-space: normal;
+      }
+
+      .action-cell .el-button {
+        margin-left: 8px;
+        padding: 3px 0;
+      }
+
+      .business-empty {
+        padding: 42px 0 46px;
+        text-align: center;
+        color: var(--pc-ink-500);
+      }
+
+      .business-empty i {
+        display: inline-flex;
+        width: 34px;
+        height: 34px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+        border-radius: var(--pc-r-6);
+        background: var(--pc-info-100);
+        color: var(--pc-info-600);
+        font-size: 18px;
+      }
+
+      .business-empty h3 {
+        margin: 0 0 6px;
+        color: var(--pc-ink-900);
+        font-size: 14px;
+      }
+
+      .business-empty p {
+        margin: 0 0 14px;
       }
     }
   }
 }
 
 .priceDiag {
-  margin: 30px 0 70px 0;
-  border: 1px dashed #e2f8f6;
-  padding: 60px 15px 37px 15px;
-  background: #e4edec;
-  border-radius: 15px;
+  margin: var(--pc-space-24) 0 56px;
+  border: 1px dashed var(--pc-ink-200);
+  padding: 48px var(--pc-space-16) 32px;
+  background: var(--pc-ink-50);
+  border-radius: var(--pc-r-8);
   height: 250px;
-}
-
-.price-dialog {
-  svg {
-    transform: translateY(2px);
-  }
 }
 
 .priceBox {
@@ -808,37 +843,43 @@ export default {
 
   .price-tip {
     font-size: 12px;
-    color: #bc0d0a;
+    color: var(--pc-pos-600);
     line-height: 40px;
   }
 }
 
-.price-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+.priceText {
+  color: var(--pc-info-600);
+  text-decoration: underline;
+}
 
-  .priceText {
-    color: var(--pc-info-600);
-    text-decoration: underline;
-  }
+.price-dialog-meta {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0 0;
+  color: var(--pc-ink-700);
+  font-size: 13px;
+}
+
+.price-dialog-meta i {
+  margin-right: 6px;
+  color: var(--pc-info-600);
 }
 
 .tokenRatio {
-  background-color: #f5f6f9;
-  padding: 12px;
-  border-radius: 8px;
+  background-color: var(--pc-ink-50);
+  padding: var(--pc-space-12);
+  border-radius: var(--pc-r-6);
 }
 </style>
 <style lang="scss">
 .price-dialog {
   .el-dialog__body {
-    background: #f5f6f9;
+    background: var(--pc-ink-50);
   }
 
   .el-dialog__header {
-    background: #e4edec;
+    background: var(--pc-ink-50);
   }
 }
 </style>

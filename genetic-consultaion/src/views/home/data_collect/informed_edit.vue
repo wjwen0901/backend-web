@@ -1,240 +1,258 @@
 <template>
-  <div>
+  <div class="pc-page pc-informed-edit">
     <div class="user-container">
-      <div class="page-header">
-        <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item>信息提取</el-breadcrumb-item>
-          <el-breadcrumb-item :to="{ path: '/informed/list' }">知情列表</el-breadcrumb-item>
-          <el-breadcrumb-item>编辑</el-breadcrumb-item>
-        </el-breadcrumb>
+      <div class="pc-page-title informed-title">
+        <div>
+          <h2>编辑知情同意</h2>
+          <span class="desc">核对受检者信息、送检信息与原件内容</span>
+        </div>
         <div class="page-meta" v-if="informedContent.sampleCode || informedContent.truename">
           <span v-if="informedContent.truename">{{ informedContent.truename }}</span>
-          <span v-if="informedContent.sampleCode" class="num">· {{ informedContent.sampleCode }}</span>
+          <span v-if="informedContent.sampleCode" class="num">{{ informedContent.sampleCode }}</span>
         </div>
       </div>
 
-      <el-row :gutter="20" v-loading="loading" element-loading-text="加载知情同意">
-        <el-col :span="14" v-if="role === 'manager' || role === 'jk-service'">
-          <div class="panel" v-if="groupId !== 7">
-          <el-form ref="informedForm" :model="informedContent" label-width="110px" size="mini" class="edit-form">
-            <div class="section-header">
-              <h4>基本信息</h4>
-              <el-button type="text" size="small" @click="$router.push({name: 'InformedAll', params: { sampleNo: $route.query.sampleCode, orderId: $route.query.orderId }})">查看病理信息</el-button>
-            </div>
+      <div
+        class="workbench-grid"
+        :class="{ 'is-preview-only': !canEditInformed }"
+        v-loading="loading"
+        element-loading-text="加载知情同意">
+        <div class="form-column" v-if="canEditInformed">
+          <el-form
+            v-if="groupId !== 7"
+            ref="informedForm"
+            :model="informedContent"
+            label-width="112px"
+            size="mini"
+            class="edit-form">
+            <section class="form-section">
+              <div class="section-header">
+                <h4>基本信息</h4>
+                <el-button type="text" size="small" @click="$router.push({name: 'InformedAll', params: { sampleNo: $route.query.sampleCode, orderId: $route.query.orderId }})">查看病理信息</el-button>
+              </div>
               <el-form-item label="姓名">
-              <el-col :span="9">
-                <el-input v-model="informedContent.truename"></el-input>
-              </el-col>
-              <el-col class="line" :span="3" style="padding-left:10px;">性别</el-col>
-              <el-col :span="12">
-                <el-radio-group v-model="informedContent.sex">
-                  <el-radio label="男">男</el-radio>
-                  <el-radio label="女">女</el-radio>
+                <el-col :span="9">
+                  <el-input v-model="informedContent.truename"></el-input>
+                </el-col>
+                <el-col class="line field-inline-label" :span="3">性别</el-col>
+                <el-col :span="12">
+                  <el-radio-group v-model="informedContent.sex">
+                    <el-radio label="男">男</el-radio>
+                    <el-radio label="女">女</el-radio>
+                  </el-radio-group>
+                </el-col>
+              </el-form-item>
+              <el-form-item label="出生日期">
+                <el-col :span="9">
+                  <el-date-picker
+                    v-model="informedContent.dateOfBirth"
+                    type="date"
+                    value-format="timestamp"
+                    placeholder="选择日期时间">
+                  </el-date-picker>
+                </el-col>
+                <el-col class="line field-inline-label" :span="3">年龄</el-col>
+                <el-col :span="12">
+                  <el-input v-model="informedContent.age"></el-input>
+                </el-col>
+              </el-form-item>
+              <el-form-item label="地址">
+                <el-cascader class="width-100-p"
+                             :options="regionData"
+                             v-model="areaInfo"
+                             @change="addressHandleChange">
+                </el-cascader>
+              </el-form-item>
+              <el-form-item label="联系电话">
+                <el-input v-model="informedContent.cellphone"></el-input>
+              </el-form-item>
+              <el-form-item label="邮箱">
+                <el-input v-model="informedContent.email"></el-input>
+              </el-form-item>
+              <el-form-item label="发送短信">
+                <el-radio-group v-model="smsStatus">
+                  <el-radio @click.native.prevent="updateSmsStatus(0)" :label="0">发送</el-radio>
+                  <el-radio @click.native.prevent="updateSmsStatus(1)" :label="1">不发送</el-radio>
                 </el-radio-group>
-              </el-col>
-            </el-form-item>
-            <el-form-item label="出生日期">
-              <el-col :span="9">
-                <el-date-picker
-                  v-model="informedContent.dateOfBirth"
-                  type="date"
-                  value-format="timestamp"
-                  placeholder="选择日期时间">
-                </el-date-picker>
-              </el-col>
-              <el-col class="line" :span="3" style="padding-left:10px;">年龄</el-col>
-              <el-col :span="12">
-                <el-input v-model="informedContent.age"></el-input>
-              </el-col>
-            </el-form-item>
-            <el-form-item label="地址">
-              <el-cascader class="width-100-p"
-                           :options="regionData"
-                           v-model="areaInfo"
-                           @change="addressHandleChange">
-              </el-cascader>
-            </el-form-item>
-            <el-form-item label="联系电话">
-              <el-input v-model="informedContent.cellphone"></el-input>
-            </el-form-item>
-            <el-form-item label="邮箱">
-              <el-input v-model="informedContent.email"></el-input>
-            </el-form-item>
-            <el-form-item label="发送短信">
-              <el-radio-group v-model="smsStatus">
-                <el-radio @click.native.prevent="updateSmsStatus(0)" :label="0">发送</el-radio>
-                <el-radio @click.native.prevent="updateSmsStatus(1)" :label="1">不发送</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="证件类型">
-              <el-col :span="9">
-                <el-select v-model="informedContent.idType" filterable placeholder="请选择">
+              </el-form-item>
+              <el-form-item label="证件类型">
+                <el-col :span="9">
+                  <el-select v-model="informedContent.idType" filterable placeholder="请选择">
+                    <el-option
+                      v-for="item in idType"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-col>
+                <el-col class="line field-inline-label" :span="3">号码</el-col>
+                <el-col :span="12">
+                  <el-input v-model="informedContent.idCode"></el-input>
+                </el-col>
+              </el-form-item>
+              <el-form-item label="详细地址">
+                <el-input v-model="informedContent.address"></el-input>
+              </el-form-item>
+              <el-form-item label="备注">
+                <el-input type="textarea" v-model="informedContent.remark"></el-input>
+              </el-form-item>
+            </section>
+
+            <section class="form-section">
+              <div class="section-header">
+                <h4>送检信息</h4>
+              </div>
+              <el-form-item label="订单编号">
+                <el-input v-model="informedContent.orderNo"></el-input>
+              </el-form-item>
+              <el-form-item label="送检项目">
+                <el-select class="width-100-p" v-model="informedContent.solutionId" filterable placeholder="请选择">
                   <el-option
-                    v-for="item in idType"
+                    v-for="item in projects"
                     :key="item.id"
                     :label="item.name"
                     :value="item.id">
                   </el-option>
                 </el-select>
-              </el-col>
-              <el-col class="line" :span="3" style="padding-left:10px;">号码</el-col>
-              <el-col :span="12">
-                <el-input v-model="informedContent.idCode"></el-input>
-              </el-col>
-            </el-form-item>
-            <el-form-item label="详细地址">
-              <el-input v-model="informedContent.address"></el-input>
-            </el-form-item>
-            <el-form-item label="备注">
-              <el-input type="textarea" v-model="informedContent.remark"></el-input>
-            </el-form-item>
-
-            <h4>送检信息</h4>
-            <el-form-item label="订单编号">
-              <el-input v-model="informedContent.orderNo"></el-input>
-            </el-form-item>
-            <el-form-item label="送检项目">
-              <el-select class="width-100-p" v-model="informedContent.solutionId" filterable placeholder="请选择">
-                <el-option
-                  v-for="item in projects"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="送检医院">
-              <el-autocomplete
-                class="inline-input"
-                v-model="informedContent.hospitalName"
-                :fetch-suggestions="hospitalQuerySearch"
-                placeholder="请输入内容"
-                :trigger-on-focus="false"
-                @select="hospitalHandleSelect"
-              ></el-autocomplete>
-            </el-form-item>
-            <el-form-item label="送检科室">
-              <el-select class="width-100-p" v-model="informedContent.deptId" filterable placeholder="请选择">
-                <el-option
-                  v-for="item in depts"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="诊室">
-              <el-input v-model="informedContent.room"></el-input>
-            </el-form-item>
-            <el-form-item label="送检医生">
-              <el-input v-model="informedContent.doctor"></el-input>
-            </el-form-item>
-            <el-form-item label="条码编号">
-              <el-input v-model="informedContent.sampleCode"></el-input>
-            </el-form-item>
-             <el-form-item label="实验室样本编号">
-              <el-input v-model="informedContent.labSampleCode"></el-input>
-            </el-form-item>
-            <el-form-item label="样本类型">
-              <el-input v-model="informedContent.sampleType"></el-input>
-            </el-form-item>
-            <el-form-item label="采样日期">
+              </el-form-item>
+              <el-form-item label="送检医院">
+                <el-autocomplete
+                  class="inline-input"
+                  v-model="informedContent.hospitalName"
+                  :fetch-suggestions="hospitalQuerySearch"
+                  placeholder="请输入内容"
+                  :trigger-on-focus="false"
+                  @select="hospitalHandleSelect"
+                ></el-autocomplete>
+              </el-form-item>
+              <el-form-item label="送检科室">
+                <el-select class="width-100-p" v-model="informedContent.deptId" filterable placeholder="请选择">
+                  <el-option
+                    v-for="item in depts"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="诊室">
+                <el-input v-model="informedContent.room"></el-input>
+              </el-form-item>
+              <el-form-item label="送检医生">
+                <el-input v-model="informedContent.doctor"></el-input>
+              </el-form-item>
+              <el-form-item label="条码编号">
+                <el-input v-model="informedContent.sampleCode"></el-input>
+              </el-form-item>
+              <el-form-item label="实验室样本编号">
+                <el-input v-model="informedContent.labSampleCode"></el-input>
+              </el-form-item>
+              <el-form-item label="样本类型">
+                <el-input v-model="informedContent.sampleType"></el-input>
+              </el-form-item>
+              <el-form-item label="采样日期">
                 <el-date-picker
                   v-model="informedContent.samplingDate"
                   type="date"
                   value-format="timestamp"
                   placeholder="选择日期">
                 </el-date-picker>
-            </el-form-item>
-            <template v-if="groupId !== 7">
-            <h4>病理信息</h4>
-            <el-form-item label="疾病类型">
-              <el-select class="width-100-p" v-model="informedContent.cancerType" filterable placeholder="请选择">
-                <el-option
-                  v-for="item in diseaseList"
-                  :key="item"
-                  :label="item"
-                  :value="item">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="其他癌种" v-if="informedContent.cancerType == '其他癌种'">
-              <el-input v-model="otherDisease"></el-input>
-            </el-form-item>
-            <el-form-item label="组织分型">
-              <el-select class="width-100-p" v-model="zuzhifenxing" filterable placeholder="请选择">
-                <el-option
-                  v-for="item in zuzhifenxingList"
-                  :key="item"
-                  :label="item"
-                  :value="item">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="FIGO分期">
-              <el-select class="width-100-p" v-model="figo" filterable placeholder="请选择">
-                <el-option
-                  v-for="item in figoList"
-                  :key="item"
-                  :label="item"
-                  :value="item">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="治疗阶段">
-              <el-select class="width-100-p" v-model="jieduan" filterable placeholder="请选择">
-                <el-option
-                  v-for="item in jieduanList"
-                  :key="item"
-                  :label="item"
-                  :value="item">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="分子分型">
-              <el-select class="width-100-p" v-model="fenzifenxing" filterable placeholder="请选择">
-                <el-option
-                  v-for="item in fenzifenxingList"
-                  :key="item"
-                  :label="item"
-                  :value="item">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="TNM分期">
-              <el-select class="width-100-p" v-model="tnm" filterable placeholder="请选择">
-                <el-option
-                  v-for="item in figoList"
-                  :key="item"
-                  :label="item"
-                  :value="item">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="病程">
-              <el-select class="width-100-p" v-model="bingcheng" filterable placeholder="请选择">
-                <el-option
-                  v-for="item in bingchengList"
-                  :key="item"
-                  :label="item"
-                  :value="item">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="是否为复发检测">
-              <el-radio-group v-model="informedContent.isRelapse">
-                <el-radio label="0">是</el-radio>
-                <el-radio label="1">否</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="肿瘤家族史(兼容旧版)">
-              <el-input type="textarea" v-model="familyTumorHistory"></el-input>
-            </el-form-item>
-            </template>
-            <div class="section-header">
-              <h4>肿瘤遗传史</h4>
-            </div>
-            <div>
+              </el-form-item>
+            </section>
+
+            <section class="form-section" v-if="groupId !== 7">
+              <div class="section-header">
+                <h4>病理信息</h4>
+              </div>
+              <el-form-item label="疾病类型">
+                <el-select class="width-100-p" v-model="informedContent.cancerType" filterable placeholder="请选择">
+                  <el-option
+                    v-for="item in diseaseList"
+                    :key="item"
+                    :label="item"
+                    :value="item">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="其他癌种" v-if="informedContent.cancerType == '其他癌种'">
+                <el-input v-model="otherDisease"></el-input>
+              </el-form-item>
+              <el-form-item label="组织分型">
+                <el-select class="width-100-p" v-model="zuzhifenxing" filterable placeholder="请选择">
+                  <el-option
+                    v-for="item in zuzhifenxingList"
+                    :key="item"
+                    :label="item"
+                    :value="item">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="FIGO分期">
+                <el-select class="width-100-p" v-model="figo" filterable placeholder="请选择">
+                  <el-option
+                    v-for="item in figoList"
+                    :key="item"
+                    :label="item"
+                    :value="item">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="治疗阶段">
+                <el-select class="width-100-p" v-model="jieduan" filterable placeholder="请选择">
+                  <el-option
+                    v-for="item in jieduanList"
+                    :key="item"
+                    :label="item"
+                    :value="item">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="分子分型">
+                <el-select class="width-100-p" v-model="fenzifenxing" filterable placeholder="请选择">
+                  <el-option
+                    v-for="item in fenzifenxingList"
+                    :key="item"
+                    :label="item"
+                    :value="item">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="TNM分期">
+                <el-select class="width-100-p" v-model="tnm" filterable placeholder="请选择">
+                  <el-option
+                    v-for="item in figoList"
+                    :key="item"
+                    :label="item"
+                    :value="item">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="病程">
+                <el-select class="width-100-p" v-model="bingcheng" filterable placeholder="请选择">
+                  <el-option
+                    v-for="item in bingchengList"
+                    :key="item"
+                    :label="item"
+                    :value="item">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="是否为复发检测">
+                <el-radio-group v-model="informedContent.isRelapse">
+                  <el-radio label="0">是</el-radio>
+                  <el-radio label="1">否</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="肿瘤家族史(兼容旧版)">
+                <el-input type="textarea" v-model="familyTumorHistory"></el-input>
+              </el-form-item>
+            </section>
+
+            <section class="form-section">
+              <div class="section-header">
+                <h4>肿瘤遗传史</h4>
+              </div>
               <el-form-item label="患癌亲属">
                 <el-radio-group v-model="hasFamilyTumorHistory">
                   <el-radio label="有">有</el-radio>
@@ -257,12 +275,12 @@
                 </div>
                 <el-button type="text" @click="addFamilyHistory">添加一个人</el-button>
               </div>
+            </section>
 
-            </div>
-            <div class="section-header">
-              <h4>个人健康状态</h4>
-            </div>
-            <div>
+            <section class="form-section">
+              <div class="section-header">
+                <h4>个人健康状态</h4>
+              </div>
               <el-form-item label="吸烟史">
                 <el-radio-group v-model="personalHealthy.smoking">
                   <el-radio label="偶尔">偶尔</el-radio>
@@ -292,12 +310,12 @@
                   <el-checkbox label="高血压"></el-checkbox>
                 </el-checkbox-group>
               </el-form-item>
-            </div>
+            </section>
 
-            <div class="section-header">
-              <h4>既往史</h4>
-            </div>
-            <div>
+            <section class="form-section">
+              <div class="section-header">
+                <h4>既往史</h4>
+              </div>
               <el-form-item label="肺">
                 <el-checkbox-group v-model="diseaseHistory.lung">
                   <el-checkbox label="肺结节"></el-checkbox>
@@ -353,7 +371,9 @@
                   <el-checkbox label="BRCA基因突变"></el-checkbox>
                 </el-checkbox-group>
               </el-form-item>
-            </div>
+            </section>
+
+            <section class="form-section">
               <div class="section-header">
                 <h4>用药史 <span class="section-hint">近 14 天如服用药物或保健品请注明</span></h4>
               </div>
@@ -363,9 +383,11 @@
               <el-form-item label="药物名称">
                 <el-input v-model="drugHistory.drugTreatment"></el-input>
               </el-form-item>
-              <el-divider content-position="left">以下为兼容旧版知情</el-divider>
+            </section>
+
+            <section class="form-section form-section--muted">
               <div class="section-header">
-                <h4>家族史 <span class="section-hint">只一人</span></h4>
+                <h4>旧版兼容信息 <span class="section-hint">用于历史知情字段回填</span></h4>
               </div>
               <el-form-item label="癌种(旧版)">
                 <el-input v-model="normalFamilyTumorHistory"></el-input>
@@ -376,9 +398,7 @@
               <el-form-item label="发病年龄(旧版)">
                 <el-input v-model="familyTumorAge"></el-input>
               </el-form-item>
-              <div class="section-header">
-                <h4>个人史</h4>
-              </div>
+              <div class="subsection-title">个人史</div>
               <el-form-item label="吸烟史">
                 <el-radio-group v-model="diseaseHistory.smoking">
                   <el-radio label="有">有</el-radio>
@@ -430,20 +450,24 @@
                   <el-checkbox label="石棉"></el-checkbox>
                 </el-checkbox-group>
               </el-form-item>
+            </section>
           </el-form>
-          </div>
-          <div class="panel" v-else-if="groupId === 7">
+
+          <section class="form-section pr-section" v-else-if="groupId === 7">
+            <div class="section-header">
+              <h4>病理报告信息</h4>
+            </div>
             <prEdit ref="prEditRef" :data="{
               orderId: $route.query.orderId,
               solutionId: $route.query.solutionId,
               fileId: $route.query.fileId,
               sampleCode: $route.query.sampleCode
             }"></prEdit>
-          </div>
-        </el-col>
+          </section>
+        </div>
 
-        <el-col :span="10">
-          <div class="panel">
+        <aside class="preview-column">
+          <div class="preview-panel">
             <div class="section-header">
               <h4>知情同意原件</h4>
             </div>
@@ -458,14 +482,19 @@
               <p class="empty-hint">客户未上传或文件正在加载</p>
             </div>
           </div>
-        </el-col>
-      </el-row>
+        </aside>
+      </div>
 
-      <div class="footer-btn">
-        <el-button @click="cancel">取消</el-button>
-        <el-button @click="unread" :loading="submitting">图形不可读</el-button>
-        <el-button v-if="groupId === 7" type="primary" @click="submitPr">提交</el-button>
-        <el-button v-else type="primary" @click="edit" :loading="submitting">保存信息</el-button>
+      <div class="footer-btn" v-if="canEditInformed">
+        <div class="footer-summary">
+          <span>编辑完成后请保存，原件不可辨认时标记为不可读</span>
+        </div>
+        <div class="footer-actions">
+          <el-button size="small" @click="cancel">取消</el-button>
+          <el-button size="small" @click="unread" :loading="submitting">图形不可读</el-button>
+          <el-button v-if="groupId === 7" size="small" type="primary" @click="submitPr">提交</el-button>
+          <el-button v-else size="small" type="primary" @click="edit" :loading="submitting">保存信息</el-button>
+        </div>
       </div>
     </div>
   </div>
@@ -1084,6 +1113,9 @@ export default {
       },
       set: function () {
       }
+    },
+    canEditInformed () {
+      return this.role === 'manager' || this.role === 'jk-service'
     }
   },
   created () {
@@ -1093,122 +1125,270 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
-.user-container {
-  margin: 20px 0;
-  padding: 20px;
-  background: var(--pc-white);
-  border-radius: var(--pc-r-4);
-  box-shadow: var(--pc-sh-1);
-}
+.pc-informed-edit {
+  .user-container {
+    margin: 0;
+    padding: 0 0 14px;
+  }
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding-bottom: 14px;
-  margin-bottom: 16px;
-  border-bottom: var(--pc-bd-hair);
+  .informed-title {
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: var(--pc-bd-hair);
+
+    > div:first-child {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      min-width: 0;
+    }
+  }
 
   .page-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
     font-size: var(--pc-fs-13);
     color: var(--pc-ink-500);
-    .num { font-variant-numeric: tabular-nums; margin-left: 4px; }
-  }
-}
 
-.panel {
-  background: var(--pc-ink-50);
-  border: var(--pc-bd-hair);
-  border-radius: var(--pc-r-4);
-  padding: 16px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin: 16px 0 10px;
-  padding-bottom: 6px;
-  border-bottom: var(--pc-bd-hair);
-
-  &:first-child {
-    margin-top: 0;
+    .num {
+      font-family: var(--pc-font-mono);
+      font-variant-numeric: tabular-nums;
+      color: var(--pc-ink-800);
+    }
   }
 
-  h4 {
-    margin: 0;
-    font-size: var(--pc-fs-14);
+  .workbench-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(540px, 1fr) minmax(360px, 42%);
+    gap: var(--pc-space-16);
+    align-items: start;
+
+    &.is-preview-only {
+      grid-template-columns: minmax(420px, 720px);
+    }
+  }
+
+  .form-column,
+  .preview-column {
+    min-width: 0;
+  }
+
+  .edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pc-space-16);
+  }
+
+  .form-section,
+  .preview-panel {
+    background: var(--pc-white);
+    border: var(--pc-bd-hair);
+    border-radius: var(--pc-r-6);
+  }
+
+  .form-section {
+    padding: var(--pc-space-16) var(--pc-space-16) 4px;
+
+    &.form-section--muted {
+      background: var(--pc-ink-50);
+    }
+  }
+
+  .pr-section {
+    padding-bottom: 16px;
+  }
+
+  .preview-panel {
+    position: sticky;
+    top: var(--pc-space-12);
+    padding: var(--pc-space-16);
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: var(--pc-bd-hair);
+
+    h4 {
+      margin: 0;
+      font-size: var(--pc-fs-14);
+      font-weight: 600;
+      color: var(--pc-ink-800);
+    }
+
+    .section-hint {
+      margin-left: 6px;
+      font-size: var(--pc-fs-12);
+      color: var(--pc-ink-400);
+      font-weight: 400;
+    }
+  }
+
+  .subsection-title {
+    margin: 2px 0 12px;
+    padding-top: 10px;
+    border-top: var(--pc-bd-hair);
+    font-size: var(--pc-fs-13);
     font-weight: 600;
-    color: var(--pc-ink-800);
+    color: var(--pc-ink-700);
   }
 
-  .section-hint {
-    margin-left: 6px;
-    font-size: var(--pc-fs-12);
-    color: var(--pc-ink-400);
-    font-weight: 400;
+  .field-inline-label {
+    padding-left: 10px;
+    color: var(--pc-ink-500);
   }
-}
 
-.cell-group {
-  background: var(--pc-white);
-  border: var(--pc-bd-hair);
-  border-radius: var(--pc-r-4);
-  padding: 10px 12px 0;
-  margin-bottom: 10px;
-}
+  .cell-group {
+    background: var(--pc-ink-50);
+    border: var(--pc-bd-hair);
+    border-radius: var(--pc-r-6);
+    padding: var(--pc-space-12) var(--pc-space-12) 0;
+    margin-bottom: var(--pc-space-12);
+  }
 
-.doc-frame {
-  width: 100%;
-  height: 700px;
-  background: var(--pc-white);
-  border: var(--pc-bd-hair);
-  border-radius: var(--pc-r-4);
-  overflow: hidden;
-
-  object {
+  .doc-frame {
     width: 100%;
-    height: 100%;
-  }
-  .doc-img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    background: var(--pc-ink-100);
-  }
-}
+    height: calc(100vh - 190px);
+    min-height: 520px;
+    background: var(--pc-ink-50);
+    border: var(--pc-bd-hair);
+    border-radius: var(--pc-r-6);
+    overflow: hidden;
 
-.doc-empty {
-  padding: 80px 0 60px;
-  text-align: center;
-  background: var(--pc-white);
-  border: var(--pc-bd-hair);
-  border-radius: var(--pc-r-4);
+    object,
+    embed {
+      width: 100%;
+      height: 100%;
+    }
 
-  .empty-title {
-    margin: 0 0 4px;
-    font-size: var(--pc-fs-14);
-    color: var(--pc-ink-600);
+    .doc-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: var(--pc-ink-100);
+    }
   }
-  .empty-hint {
-    margin: 0;
+
+  .doc-empty {
+    min-height: 520px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    background: var(--pc-ink-50);
+    border: var(--pc-bd-hair);
+    border-radius: var(--pc-r-6);
+
+    .empty-title {
+      margin: 0 0 4px;
+      font-size: var(--pc-fs-14);
+      color: var(--pc-ink-600);
+    }
+
+    .empty-hint {
+      margin: 0;
+      font-size: var(--pc-fs-12);
+      color: var(--pc-ink-400);
+    }
+  }
+
+  .footer-btn {
+    position: sticky;
+    bottom: 0;
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--pc-space-16);
+    margin-top: var(--pc-space-16);
+    padding: var(--pc-space-12) 76px var(--pc-space-12) var(--pc-space-16);
+    background: var(--pc-white);
+    border: var(--pc-bd-hair);
+    border-radius: var(--pc-r-6);
+    box-shadow: var(--pc-sh-2);
+  }
+
+  .footer-summary {
+    min-width: 0;
     font-size: var(--pc-fs-12);
-    color: var(--pc-ink-400);
+    color: var(--pc-ink-500);
+  }
+
+  .footer-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .el-autocomplete,
+  .width-100-p {
+    width: 100%;
+  }
+
+  ::v-deep .el-form-item {
+    margin-bottom: 12px;
+  }
+
+  ::v-deep .el-date-editor.el-input {
+    width: 100%;
+  }
+
+  ::v-deep .el-radio,
+  ::v-deep .el-checkbox {
+    margin-right: 18px;
+  }
+
+  ::v-deep .el-divider {
+    margin: 8px 0 12px;
   }
 }
 
-.footer-btn {
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: var(--pc-bd-hair);
-  text-align: center;
+@media (max-width: 1180px) {
+  .pc-informed-edit {
+    .workbench-grid,
+    .workbench-grid.is-preview-only {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .preview-panel {
+      position: static;
+    }
+
+    .doc-frame,
+    .doc-empty {
+      height: 560px;
+      min-height: 420px;
+    }
+  }
 }
 
-.el-autocomplete { width: 100%; }
-.width-100-p { width: 100%; }
+@media (max-width: 760px) {
+  .pc-informed-edit {
+    .informed-title,
+    .informed-title > div:first-child,
+    .footer-btn {
+      align-items: flex-start;
+      flex-direction: column;
+    }
 
-::v-deep .el-date-editor.el-input { width: 100%; }
+    .footer-btn {
+      padding-right: 16px;
+    }
+
+    .footer-actions {
+      width: 100%;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+  }
+}
 </style>

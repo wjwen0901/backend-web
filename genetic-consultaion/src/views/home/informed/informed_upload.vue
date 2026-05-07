@@ -1,5 +1,5 @@
 <template>
-  <div class="pc-informed-upload">
+  <div class="pc-page pc-informed-upload">
     <div class="pc-page-title">
       <h2>上传知情同意</h2>
       <span class="desc">指定送检医院 / 科室 / 医生，上传知情同意 PDF 或图片</span>

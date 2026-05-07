@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pc-page">
     <div class="opera-box">
       <el-button size="small" type="primary" @click="toExcel">导出 Excel</el-button>
       <span class="page-meta">共 <strong>{{ totalPage }}</strong> 名医生</span>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pc-page">
     <div class="pc-page-title">
       <h2>BRCA · 快递查询</h2>
       <span class="desc">共 {{ totalPage }} 条快递记录</span>

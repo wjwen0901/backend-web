@@ -3,6 +3,18 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
+const mdhcareBackendTarget = process.env.MDHCARE_BACKEND_TARGET || 'http://127.0.0.1:9101'
+const mdhcarePcTarget = process.env.MDHCARE_PC_TARGET || 'http://127.0.0.1:9900'
+const externalLoginRE = /^https?:\/\/(z|qa|www)\.mdhcare\.(cn|com)\/.*login\.html/
+
+function stopExternalLoginRedirect (proxyRes) {
+  const location = proxyRes.headers && proxyRes.headers.location
+  if (proxyRes.statusCode >= 300 && proxyRes.statusCode < 400 && location && externalLoginRE.test(location)) {
+    proxyRes.statusCode = 401
+    proxyRes.statusMessage = 'DEV_UNAUTHORIZED'
+    delete proxyRes.headers.location
+  }
+}
 
 module.exports = {
   dev: {
@@ -12,21 +24,27 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'https://trade.youzan.com',//设置你调用的接口域名和端口号 别忘了加http
+        target: 'https://trade.youzan.com',
         changeOrigin: true,
         pathRewrite: {
-          '^/api': '' //这里理解成用‘/api’代替target里面的地址，后面组件中我们掉接口时直接用api代替 比如我要调用'https://api.douban.com/user/add'，直接写‘/api/user/add’即可，此处的‘api’可以设置为自己想要设置的任何词语，符合规范即可
+          '^/api': ''
         }
       },
       '/mdhcare-backend': {
-        // [LOCAL-DEBUG] 临时指向本地 mdhcare-backend qa profile（提交前还原 47.113.112.104:9101）
-        target: 'http://localhost:9101',
+        target: mdhcareBackendTarget,
         changeOrigin: true,
+        onProxyRes: stopExternalLoginRedirect,
         pathRewrite: {
           '^/mdhcare-backend': '/mdhcare-backend'
         }
+      },
+      '/mdhcare-pc': {
+        target: mdhcarePcTarget,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/mdhcare-pc': '/mdhcare-pc'
+        }
       }
-
     },
 
     // Various Dev Server settings

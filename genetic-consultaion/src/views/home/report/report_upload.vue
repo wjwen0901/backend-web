@@ -1,12 +1,12 @@
 <template>
-  <div class="pc-report-upload">
+  <div class="pc-page pc-report-upload">
     <div class="pc-page-title">
       <h2>上传报告</h2>
       <span class="desc">为指定订单上传 PDF 报告 · 文件名需为「样本唯一编码」</span>
     </div>
 
-    <div class="upload-grid">
-      <div class="upload-main-col">
+    <div class="pc-page-grid pc-page-grid--aside upload-grid">
+      <div class="pc-main-panel upload-main-col">
         <!-- 卡片 1：订单 & 客户 -->
         <div class="pc-card">
           <div class="card-title">订单 &amp; 客户</div>
@@ -101,7 +101,7 @@
       </div>
 
       <!-- 右侧：步骤条 + 概要 -->
-      <div class="upload-side-col">
+      <div class="pc-side-panel upload-side-col">
         <div class="pc-card">
           <div class="card-title">上传流程</div>
           <div class="pc-steps">
@@ -472,7 +472,7 @@ export default {
   .upload-grid {
     display: grid;
     grid-template-columns: 1fr 320px;
-    gap: 16px;
+    gap: var(--pc-space-16);
     align-items: start;
   }
   .upload-side-col { position: sticky; top: 0; }
@@ -493,10 +493,10 @@ export default {
   .file-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px 10px;
+    gap: var(--pc-space-8);
+    padding: var(--pc-space-8) var(--pc-space-12);
     border: 1px solid var(--pc-ink-200);
-    border-radius: 4px;
+    border-radius: var(--pc-r-6);
     font-size: 12.5px;
     margin-bottom: 6px;
     background: #fff;

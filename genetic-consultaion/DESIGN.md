@@ -94,7 +94,7 @@ rounded:
   sm: "4px"
   md: "6px"
   lg: "8px"
-  pill: "999px"
+  pill: "8px"
 spacing:
   xs: "4px"
   sm: "8px"
@@ -291,7 +291,7 @@ components:
 
 ## 4. Elevation
 
-层级靠**轻阴影 + 1px hairline 边框**而非 Material 风的彩色光晕。基线 `pc-sh-1`（极轻）作为卡片默认；hover 才升 `pc-sh-3`。整体风格偏"扁平 + 极轻浮"，不是"漂浮的 Material card"。
+层级靠**1px hairline 边框 + 背景层级 + 极轻阴影**而非 Material 风的彩色光晕。基线 `pc-sh-1` 默认无阴影；hover 也只升到轻量 `pc-sh-3`。整体风格偏"扁平 + 精准分层"，不是"漂浮的 Material card"。
 
 ### Shadow Vocabulary
 - **sh-1** (`box-shadow: 0 1px 2px rgba(15,23,42,.04)`): 卡片、KPI tile 默认。几乎不可见，只为打破"完全平铺"的死板。
@@ -307,19 +307,19 @@ components:
 ## 5. Components
 
 ### Buttons
-- **Shape:** 4px 圆角（`rounded.sm`），32px 高度（size small）。
+- **Shape:** 6px 圆角，32px 高度（size small）。
 - **Primary:** `bg pc-primary-600 / text white`；hover 切 `pc-primary-700`。**用 `!important` 覆盖** —— 因为遗留 `normal.css` 用 `#14a495 !important` 强行染色，design-system 必须用同优先级压住。
 - **Text 按钮:** `color pc-primary-600 / 4px 6px padding`；hover 加 `pc-primary-50` 浅底。表格行操作（"查看 / 编辑 / 更多"）一律用 text 按钮，不用 ghost。
 - **Warning:** `bg pc-warn-600`（橘色），用于"导出"等"会产生外部影响"但非破坏的操作。**不用红色 danger** —— 红色保留给删除 + 阳性。
 - **Success / Danger:** 完整覆盖在 element-overrides，但日常**少用**：success 默认 primary 已够"积极"，danger 仅删除场景。
 
 ### Tags（D3 六色 + 一中性）
-- **Shape:** 999px 全圆 pill，22px 高度，11.5px label。
+- **Shape:** 8px 圆角，22px 高度，11.5px label。
 - **Variants:** `el-tag--{warn|info2|prog|succ|pos|neg}`，分别对应 D3 6 类。中性默认（无 modifier）= `ink-100 bg / ink-700 text`。
 - **Behavior:** Tag 是只读的视觉标签，不参与点击。如果要可点击就不是 Tag，是 Chip（本系统不区分 Chip）。
 
 ### Cards / Containers
-- **Corner Style:** 6px（`rounded.md`）。Tag 全圆、按钮 4px、卡片 6px、外框 8px —— 圆角递进让层级更清楚。
+- **Corner Style:** 6px（`rounded.md`）。按钮 6px、Tag 8px、卡片 6px、外框 8px —— 后台不要过度圆润。
 - **Background:** `#FFFFFF`，1px `pc-ink-200` hairline 边框。
 - **Shadow:** `pc-sh-1` 默认；hover 升 `pc-sh-3`。
 - **Internal Padding:** `16px 20px`（`spacing.lg / xl`）。统一 `pc-card` 类，**不允许自写卡片样式**。
@@ -358,7 +358,7 @@ components:
 - **Do** 多品牌业务页（BRCA / 维汝健 / 安易筛）共用同一套表格、segmented、工具条、批量条骨架；通过菜单 IA 区分入口。
 - **Do** 数字密集位置（订单号、样本编号、金额、计数、KPI 大数）一律 mono `font-family` + `font-feature-settings: 'tnum'`。
 - **Do** 表格 hover 用 `pc-primary-50` 整行浅底；不用阴影抬升。
-- **Do** 按钮 4px 圆角、Tag 全圆、卡片 6px 圆角 —— 圆角递进让层级清楚。
+- **Do** 圆角控制在 6-8px：按钮 6px、Tag 8px、卡片 6px —— 后台保持克制。
 - **Do** focus 状态可见：`box-shadow 0 0 0 3px rgba(14,122,110,.12)` 已在 element-overrides 实现，业务页不要 `outline: none` 后不补。
 - **Do** 顶栏深墨青 `#0B3B47`，**不是品牌绿** —— 让顶栏退到稳重的横梁角色，不与 primary 抢戏。
 - **Do** 空状态文案场景化：不要写"暂无数据"，写"还没有订单 / 还没有客户邀请你 / 这个月还没数据"。
