@@ -1,217 +1,157 @@
 <template>
-  <el-container>
-    <el-header>上传下机文件</el-header>
-    <el-main class="upload-main">
-      <el-form :rules="rules" :model="informedConsent" ref="informedConsent" label-width="100px" label-position="left" size="mini">
-        <el-form-item label="示例文件">
-        </el-form-item>
+  <div class="pc-ru6c-upload">
+    <div class="pc-page-title">
+      <h2>上传下机文件</h2>
+      <span class="desc">上传 .zip 压缩包，系统自动分析并入库</span>
+    </div>
 
-        <el-form-item label="选择图片" prop="fileNum">
-          <div>
-            <div>
-              <div tabindex="0" class="el-upload el-upload--text" id="selectfiles">
-                <div class="el-upload-dragger">
-                  <i class="el-icon-upload"></i>
-                  <div class="el-upload__text">
-                    将文件拖到此处，或<em>点击上传</em>
-                  </div>
-                </div>
+    <div class="upload-grid">
+      <div class="upload-main-col">
+        <div class="pc-card">
+          <div class="card-title">下机文件</div>
+          <el-form :rules="fileRules" :model="fileForm" ref="fileForm" size="small">
+            <el-form-item prop="fileNum">
+              <div tabindex="0" class="pc-dragger" id="selectfiles">
+                <i class="el-icon-upload ic"></i>
+                <div class="dragger-main">将 .zip 文件拖到此处，或<em>点击上传</em></div>
+                <div class="dragger-sub">仅支持 .zip 压缩文件 · 单文件 ≤ 10GB</div>
                 <input type="file" name="file" multiple="multiple" class="el-upload__input">
               </div>
+              <ul class="file-list" id="ossfile">
+                <li
+                  class="file-item is-ready"
+                  :id="file.id"
+                  v-for="file in fileList"
+                  :key="file.id"
+                  :ref="file.id">
+                  <i class="el-icon-document file-ic"></i>
+                  <span class="file-name">{{ file.name }} <span class="file-size">({{ file.size | formatSize }})</span></span>
+                  <el-progress v-if="file.percent !== 100" :percentage="file.percent" :stroke-width="6" class="file-progress"></el-progress>
+                  <el-tag v-else class="el-tag--succ">完成</el-tag>
+                  <i class="el-icon-close file-close" @click="deleteUploadFile(file.id)"></i>
+                </li>
+              </ul>
+              <div id="container"></div>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="el-icon-upload2" @click="submitForm">上传并分析</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+      </div>
+
+      <div class="upload-side-col">
+        <div class="pc-card">
+          <div class="card-title">上传流程</div>
+          <div class="pc-steps">
+            <div class="pc-step" :class="stepCls(1)">
+              <div>
+                <div class="t">1. 准备 .zip 包</div>
+                <div class="d">下机文件压缩为单一 zip</div>
+              </div>
             </div>
-            <div class="el-upload__tip">只能上传.zip压缩文件</div>
-            <ul class="el-upload-list el-upload-list--text" id="ossfile">
-              <li tabindex="0" class="el-upload-list__item is-ready" :id="file.id" v-for="file in fileList" v-bind:key="file.id" ref="file.id">
-                <a class="el-upload-list__item-name"><i class="el-icon-document"></i>{{file.name}} ({{file.size | formatSize}})</a>
-                <label class="el-upload-list__item-status-label">
-                  <i class="el-icon-upload-success el-icon-circle-check"></i>
-                </label>
-                <i class="el-icon-close" @click="deleteUploadFile(file.id)"></i>
-                <i class="el-icon-close-tip">按 delete 键可删除</i>
-                <el-progress :percentage="file.percent" v-if="file.percent !== 100"></el-progress>
-              </li>
-            </ul>
-            <div id="container"></div>
+            <div class="pc-step" :class="stepCls(2)">
+              <div>
+                <div class="t">2. 上传到 OSS</div>
+                <div class="d">分片传输，进度条会显示百分比</div>
+              </div>
+            </div>
+            <div class="pc-step" :class="stepCls(3)">
+              <div>
+                <div class="t">3. 触发分析</div>
+                <div class="d">系统自动调用 release/data 分析模板</div>
+              </div>
+            </div>
+            <div class="pc-step" :class="stepCls(4)">
+              <div>
+                <div class="t">4. 查看结果</div>
+                <div class="d">完成后跳转到分析列表</div>
+              </div>
+            </div>
           </div>
-        </el-form-item>
-        <el-form-item>
-          <el-button class="float-l" type="primary" @click="submitForm">上传并分析</el-button>
-        </el-form-item>
-      </el-form>
-    </el-main>
-  </el-container>
+        </div>
+
+        <div class="pc-card">
+          <div class="card-title">提示</div>
+          <ul class="hints">
+            <li>分析模板默认 <span class="mono">MODEL_renhe</span></li>
+            <li>失败时刷新页面再试 OSS 签名会自动续期</li>
+            <li>大文件请勿关闭页面，进度条会显示百分比</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import plupload from 'plupload'
+import { apiSubmit } from '@/utils/pc'
+
 export default {
-  name: 'informed-upload',
+  name: 'Ru6cUpload',
   data () {
-    // var checkName = (rule, value, callback) => {
-    //   if (!this.informedConsent.name) {
-    //     return callback(new Error('请输入姓名'))
-    //   } else {
-    //     callback()
-    //   }
-    // }
-    // var checkCellphone = (rule, value, callback) => {
-    //   if (!this.informedConsent.cellphone) {
-    //     callback(new Error('请输入手机号码'))
-    //   } else if (!(/^1\d{10}$/.test(parseInt(this.informedConsent.cellphone)))) {
-    //     callback(new Error('请输入11位数字'))
-    //   } else {
-    //     callback()
-    //   }
-    // }
-    var checkFileNum = (rule, value, callback) => {
-      if (this.fileNum === 0) {
-        callback(new Error('请选择文件'))
-      } else {
-        callback()
-      }
+    const checkFileNum = (rule, value, callback) => {
+      if (this.fileNum === 0) callback(new Error('请选择文件'))
+      else callback()
     }
     return {
-      sec: window.localStorage.sec === undefined ? 'upload,upload:informed,upload:report,upload:medical-records,informed:list,report:list' : window.localStorage.sec,
-      informedConsent: {
-        hospital: window.localStorage.hospital !== undefined ? parseInt(window.localStorage.hospital) : '',
-        dept: window.localStorage.dept !== undefined ? parseInt(window.localStorage.dept) : '',
-        doctor: window.localStorage.doctor,
-        name: window.localStorage.fullName === undefined ? '' : window.localStorage.fullName,
-        cellphone: window.localStorage.cellphone === undefined ? '' : window.localStorage.cellphone
+      fileForm: {},
+      fileRules: {
+        fileNum: [{ required: true, validator: checkFileNum, trigger: 'blur' }]
       },
-      rules: {
-        // name: [
-        //   {required: true, validator: checkName, trigger: 'blur'}
-        // ],
-        // cellphone: [
-        //   {required: true, validator: checkCellphone, trigger: 'blur'}
-        // ],
-        hospital: [
-          {required: true, message: '请选择送检医院', trigger: 'change'}
-        ],
-        dept: [
-          {required: true, message: '请选择送检科室', trigger: 'change'}
-        ],
-        doctor: [
-          {required: true, message: '请填写送检医生', trigger: 'blur'}
-        ],
-        fileNum: [
-          {required: true, validator: checkFileNum, trigger: 'blur'}
-        ]
-      },
-      hospitalList: [],
-      deptList: [],
-      hospitalSelLoading: false,
-      deptSelLoading: false,
       fileNum: 0,
-      uploadData: {},
-      showProgress: false,
-
       accessid: '',
       host: '',
       policyBase64: '',
       signature: '',
       callbackbody: '',
-      filename: '',
       key: '',
       expire: 0,
       g_object_name: '',
       g_object_name_type: '',
-      now: Date.parse(new Date()) / 1000,
       uniqueKey: '',
       fileList: [],
-      uploader: {},
-      order: {}
+      uploader: {}
     }
   },
-  props: {
-    fileId: '',
-    beforeUpload: Function,
-    onSuccess: Function,
-    onError: Function,
-    onProgress: Function
+  filters: {
+    formatSize (fileSize) { return plupload.formatSize(fileSize) }
   },
-  beforeCreate () {
-  },
-  mounted () {
-    this.$nextTick(() => {
-      this.upload()
-    })
+  computed: {
+    currentStep () {
+      const allDone = this.fileNum > 0 && this.fileList.every(f => f.percent === 100)
+      if (allDone) return 4
+      if (this.fileList.some(f => f.percent > 0 && f.percent < 100)) return 3
+      if (this.fileNum > 0) return 2
+      return 1
+    }
   },
   methods: {
-    getHospitalList (query) {
-      if (query !== '') {
-        this.hospitalSelLoading = true
-        setTimeout(() => {
-          this.hospitalSelLoading = false
-          this.axios.get('hospital', {
-            params: {
-              keywords: query
-            }
-          }).then(res => {
-            this.hospitalList = res.data
-          }).catch(err => {
-            console.log(err)
-          })
-        }, 200)
-      } else {
-        this.hospitalList = []
-      }
-    },
-    getDeptList (query) {
-      if (query !== '') {
-        this.deptSelLoading = true
-        setTimeout(() => {
-          this.deptSelLoading = false
-          this.axios.get('hospital-dept', {
-            params: {
-              keywords: query
-            }
-          }).then(res => {
-            this.deptList = res.data
-          }).catch(err => {
-            console.log(err)
-          })
-        }, 200)
-      } else {
-        this.deptList = []
-      }
-    },
-    handleUploadError (err) {
-      console.log(err)
-      if (err.status === 403) {
-        this.$notify({
-          message: '您的号码未注册，请微信联系我们注册',
-          type: 'warning'
-        })
-      }
+    stepCls (n) {
+      if (n < this.currentStep) return 'is-done'
+      if (n === this.currentStep) return 'is-current'
+      return ''
     },
     submitForm () {
-      this.$refs.informedConsent.validate((valid) => {
-        if (valid) {
-          this.$nextTick(() => {
-            this.setUploadParam(this.uploader, '', false)
-            // this.$refs.upload.submit()
-            // this.$refs.upload.submit()
-          })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
+      if (this.fileNum === 0) {
+        this.$message.warning('请选择文件')
+        return
+      }
+      this.$nextTick(() => {
+        this.setUploadParam(this.uploader, '', false)
       })
     },
-    // 上传方法 ---待抽提成组件
     sendRequest () {
       const xmlhttp = new XMLHttpRequest()
-      const serverUrl = this.axios.defaults.baseURL + '/oss/upload/policy/ru6c-analysis' + '?userId=' + window.localStorage.userId
+      const serverUrl = this.axios.defaults.baseURL + '/oss/upload/policy/ru6c-analysis?userId=' + window.localStorage.userId
       xmlhttp.open('GET', serverUrl, false)
       xmlhttp.setRequestHeader('Authorization', window.localStorage.token)
       xmlhttp.send('userId=' + window.localStorage.userId)
       return xmlhttp.responseText
     },
     getSignature () {
-      const body = this.sendRequest()
-      const obj = JSON.parse(body)
+      const obj = JSON.parse(this.sendRequest())
       this.host = obj.host
       this.policyBase64 = obj.policy
       this.accessid = obj.accessid
@@ -220,55 +160,34 @@ export default {
       this.callbackbody = obj.callback
       this.key = obj.dir
       this.uniqueKey = obj.uniqueKey
-      return true
     },
     randomString (len = 32) {
       const chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'
-      const maxPos = chars.length
       let pwd = ''
-      for (let i = 0; i < len; i += 1) {
-        pwd += chars.charAt(Math.floor(Math.random() * maxPos))
+      for (let i = 0; i < len; i++) {
+        pwd += chars.charAt(Math.floor(Math.random() * chars.length))
       }
       return pwd
     },
     getSuffix (filename) {
       const pos = filename.lastIndexOf('.')
-      let suffix = ''
-      if (pos !== -1) {
-        suffix = filename.substring(pos)
-      }
-      return suffix
+      return pos !== -1 ? filename.substring(pos) : ''
     },
     calculateObjectName (filename) {
       if (this.g_object_name_type === 'local_name') {
-        this.g_object_name += `${filename}`
+        this.g_object_name += filename
       } else if (this.g_object_name_type === 'random_name') {
-        const suffix = this.getSuffix(filename)
-        this.g_object_name = this.key + this.randomString(10) + suffix
+        this.g_object_name = this.key + this.randomString(10) + this.getSuffix(filename)
       }
-      return ''
     },
-    getUploadedObjectName (filename) {
-      if (this.g_object_name_type === 'local_name') {
-        let tmpName = this.g_object_name
-        tmpName = tmpName.replace(`${filename}`, filename)
-        return tmpName
-      } else if (this.g_object_name_type === 'random_name') {
-        return this.g_object_name
-      }
-      return ''
-    },
-    setUploadParam (up, filename, ret) {
+    setUploadParam (up, filename) {
       this.getSignature()
       this.g_object_name = this.key
-      if (filename !== '') {
-        this.calculateObjectName(filename)
-      }
+      if (filename !== '') this.calculateObjectName(filename)
       const newMultipartParams = {
         key: this.g_object_name + this.uniqueKey + '.' + filename.split('.').pop(),
         policy: this.policyBase64,
         OSSAccessKeyId: this.accessid,
-        // 让服务端返回200,不然，默认会返回204
         success_action_status: '200',
         signature: this.signature,
         callback: this.callbackbody,
@@ -282,12 +201,9 @@ export default {
     },
     deleteUploadFile (id) {
       this.uploader.removeFile(id)
-      for (let i = 0; i < this.fileList.length; i++) {
-        if (id === this.fileList[i].id) {
-          console.log(id === this.fileList[i].id)
-          this.fileList.splice(i, 1)
-        }
-      }
+      const idx = this.fileList.findIndex(f => f.id === id)
+      if (idx > -1) this.fileList.splice(idx, 1)
+      this.fileNum = this.fileList.length
     },
     upload () {
       const that = this
@@ -300,163 +216,171 @@ export default {
         silverlight_xap_url: '../../static/plupload-2.3.6/js/Moxie.xap',
         max_retries: 3,
         filters: {
-          mime_types: [{
-            title: '允许上传文件类型',
-            extensions: 'zip'
-          }],
-          // 最大只能上传10GB的文件
+          mime_types: [{ title: '允许上传文件类型', extensions: 'zip' }],
           max_file_size: '10gb',
-          // 不允许队列中存在重复文件
           prevent_duplicates: true
         },
         init: {
-          // PostInit: () => {
-          //   document.getElementById('postfiles').onclick = () => {
-          //     that.setUploadParam(uploader, '', false)
-          //     return false
-          //   }
-          // },
-          FilesAdded: (up, files) => {
+          FilesAdded: (up) => {
             that.fileList = up.files
             that.fileNum = up.files.length
           },
           BeforeUpload: (up, file) => {
-            that.setUploadParam(up, file.name, true)
-          },
-          UploadProgress: (up, file) => {
+            that.setUploadParam(up, file.name)
           },
           FileUploaded: (up, file, info) => {
             const d = document.getElementById(file.id)
-            if (info.status === 200) {
-              d.setAttribute('class', 'el-upload-list__item is-success')
-              console.log(up)
-              console.log(file.mime_types)
-              const param = {
-                userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
-                fileName: file.name,
-                size: file.size,
-                mimeType: file.type,
-                uniqueKey: up.settings.multipart_params.uniqueKey,
-                filePath: up.settings.multipart_params.key,
-                objectKey: up.settings.multipart_params.key,
-                template: 'MODEL_renhe'
-              }
-              if (window.localStorage.companyId !== undefined) {
-                param.companyId = window.localStorage.companyId
-              }
-              let instance = that.axios.create({
-                headers: {
-                  'Authorization': window.localStorage.token,
-                  'Content-Type': 'application/json'
-                }
-              })
-              instance({
-                method: 'post',
-                url: 'release/data',
-                data: param,
-                headers: {
-                  'X-Requested-With': 'XMLHttpRequest',
-                  'Content-Type': 'application/json'
-                }
-              }).then(function (res) {
-                that.$message.error(err.data.message)
-                console.log(err)
-              })
-            } else {
+            if (info.status !== 200) {
               d.setAttribute('class', 'el-upload-list__item is-warning')
+              return
             }
+            d.setAttribute('class', 'el-upload-list__item is-success')
+            const param = {
+              userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
+              fileName: file.name,
+              size: file.size,
+              mimeType: file.type,
+              uniqueKey: up.settings.multipart_params.uniqueKey,
+              filePath: up.settings.multipart_params.key,
+              objectKey: up.settings.multipart_params.key,
+              template: 'MODEL_renhe'
+            }
+            if (window.localStorage.companyId !== undefined) param.companyId = window.localStorage.companyId
+
+            apiSubmit(that.axios, 'post', 'release/data', param)
+              .catch(err => {
+                console.log(err)
+                that.$message.error((err && err.data && err.data.message) || '触发分析失败')
+              })
           },
-          UploadComplete: (up) => {
-            this.$notify({
-              message: '上传成功',
-              type: 'success',
-              customClass: 'my-message'
-            })
-            this.$confirm('上传成功', '', {
+          UploadComplete: () => {
+            that.$notify({ message: '上传成功', type: 'success', customClass: 'pc-toast' })
+            that.$confirm('上传成功，是否查看分析列表?', '上传完成', {
               confirmButtonText: '查看列表',
               cancelButtonText: '继续上传',
               type: 'success'
             }).then(() => {
-              this.$router.push('/ru6c/list')
-            }).catch(() => {
-            });
+              that.$router.push('/ru6c/list')
+            }).catch(() => {})
           },
           Error: (up, err) => {
-            console.log('上传失败：', err, that.onError, up)
+            console.log('上传失败：', err, up)
             if (err.code === -600) {
-              this.$message.error('文件大小超出限制，限制大小为5GB')
+              that.$message.error('文件大小超出限制，限制大小为 10GB')
             } else if (err.status === 403) {
-              this.$message.error('页面失效，请刷新页面后重新上传文件!')
+              that.$message.error('页面失效，请刷新页面后重新上传')
             } else {
-              this.$message.error('上传失败，请刷新页面后重新上传文件！')
-            }
-            if (that.onError) {
-              that.onError(err.message, up, err)
+              that.$message.error('上传失败，请刷新页面后重试')
             }
           }
         }
       })
       uploader.init()
       that.uploader = uploader
-    },
-    getOrder () {
-      this.axios.get('order/' + this.$route.query.orderId).then(res => {
-        this.order = res.data
-      }).catch(err => {
-        console.log(err)
-      })
-    },
-    initData () {
-      this.getHospitalList()
-      this.getDeptList()
-      if (this.$route.query.orderId !== undefined) {
-        this.getOrder()
-      }
     }
   },
-  created () {
-    let loading = this.$loading({
-      lock: true,
-      text: 'Loading',
-      spinner: 'el-icon-loading',
-      background: 'rgba(0, 0, 0, 0.7)'
-    })
-    this.initData()
-    loading.close()
-  },
-  filters: {
-    formatSize (fileSize) {
-      return plupload.formatSize(fileSize)
-    }
+  mounted () {
+    this.$nextTick(() => { this.upload() })
   }
 }
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-  .my-message {
-    width: 80%;
-    height: 200px;
-    min-width: auto;
-    background-color: rgba(0, 0, 0, .6);
-    border-color: rgba(0, 0, 0, .6);
+.pc-ru6c-upload {
+  .upload-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+    gap: 16px;
   }
-  .el-container {
-    background: #fff;
+
+  .upload-main-col,
+  .upload-side-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
   }
-  .upload-main {
-    background: #f2f2f2;
-    overflow: hidden;
+
+  .card-title {
+    font-size: var(--pc-fs-14);
+    font-weight: 600;
+    color: var(--pc-ink-800);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: var(--pc-bd-hair);
   }
-  /* TODO(Sprint 3): 删 !important 有视觉回归风险（同 informed_upload.vue），待 .pc-section-header 抽出后替换 */
-  .el-header {
-    margin-top: 20px;
-    text-align: left;
-    height: 40px !important;
+
+  .mono {
+    font-family: var(--pc-font-mono);
+    font-size: var(--pc-fs-12);
+    background: var(--pc-ink-100);
+    color: var(--pc-ink-700);
+    padding: 1px 6px;
+    border-radius: var(--pc-r-2);
   }
-  .float-l {
-    float: left;
+
+  .file-list {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
-  .width-100-p {
-    width: 100%
+
+  .file-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: var(--pc-ink-50);
+    border: var(--pc-bd-hair);
+    border-radius: var(--pc-r-4);
+    font-size: var(--pc-fs-13);
+
+    &.is-ready { color: var(--pc-ink-700); }
+    &.is-success { color: var(--pc-succ-700); background: var(--pc-succ-100); }
+    &.is-warning { color: var(--pc-warn-700); background: var(--pc-warn-100); }
   }
+
+  .file-ic { color: var(--pc-ink-500); }
+  .file-name { flex: 1; word-break: break-all; }
+  .file-size { color: var(--pc-ink-400); margin-left: 4px; font-variant-numeric: tabular-nums; }
+  .file-progress { width: 140px; }
+  .file-close {
+    color: var(--pc-ink-400);
+    cursor: pointer;
+    transition: color var(--pc-dur-2);
+    &:hover { color: var(--pc-pos-600); }
+  }
+
+  .hints {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--pc-fs-12);
+    color: var(--pc-ink-600);
+    line-height: 1.7;
+
+    li {
+      padding-left: 14px;
+      position: relative;
+      &::before {
+        content: '';
+        position: absolute;
+        left: 4px;
+        top: 9px;
+        width: 4px;
+        height: 4px;
+        background: var(--pc-ink-300);
+        border-radius: 50%;
+      }
+    }
+  }
+}
+
+::v-deep .pc-toast {
+  width: auto;
+  max-width: 320px;
+}
 </style>
