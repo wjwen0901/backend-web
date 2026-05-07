@@ -337,26 +337,31 @@ export default {
     handleSelect (key) {
       // el-menu 已经走 router 模式（通过 $router.push），这里只更新 active
       this.activeIndex = key
-      if (this.$route.path !== key) {
+      if (this.$route.fullPath !== key) {
         this.$router.push(key).catch(() => {})
       }
     },
+    pathOf (key) {
+      // tab key 是 fullPath（含 query），map 用 path 索引
+      return (key || '').split('?')[0] || '/'
+    },
     iconForKey (key) {
-      return ICON_MAP[key] || 'ri-file-line'
+      return ICON_MAP[this.pathOf(key)] || 'ri-file-line'
     },
     titleFromKey (key) {
-      const c = CRUMB_MAP[key]
-      if (c && c.length) return c[c.length - 1]
-      // route meta.title fallback
-      const matched = this.$router.resolve(key)
-      if (matched && matched.route && matched.route.meta && matched.route.meta.title) return matched.route.meta.title
-      return key
-    },
-    syncFromRoute (path) {
-      this.activeIndex = path
+      const path = this.pathOf(key)
       const c = CRUMB_MAP[path]
-      this.crumbPath = c ? c.slice() : [this.titleFromKey(path)]
-      this.openTab(path)
+      if (c && c.length) return c[c.length - 1]
+      const matched = this.$router.resolve(path)
+      if (matched && matched.route && matched.route.meta && matched.route.meta.title) return matched.route.meta.title
+      return path
+    },
+    syncFromRoute (fullPath) {
+      this.activeIndex = fullPath
+      const path = this.pathOf(fullPath)
+      const c = CRUMB_MAP[path]
+      this.crumbPath = c ? c.slice() : [this.titleFromKey(fullPath)]
+      this.openTab(fullPath)
     },
     openTab (key) {
       if (this.tabs.find(t => t.key === key)) return
@@ -399,11 +404,11 @@ export default {
   },
   watch: {
     '$route' (to) {
-      this.syncFromRoute(to.path)
+      this.syncFromRoute(to.fullPath)
     }
   },
   created () {
-    this.syncFromRoute(this.$route.path)
+    this.syncFromRoute(this.$route.fullPath)
   }
 }
 </script>
