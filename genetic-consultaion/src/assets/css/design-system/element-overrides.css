@@ -651,6 +651,8 @@
 #app .el-tag--prog   { background: var(--pc-prog-100); color: var(--pc-prog-700); border-color: var(--pc-prog-100); }
 #app .el-tag--success,
 #app .el-tag--succ   { background: var(--pc-succ-100); color: var(--pc-succ-700); border-color: var(--pc-succ-100); }
+#app .el-tag--success.is-plain,
+#app .el-tag--plain.el-tag--success { background: var(--pc-succ-soft); color: var(--pc-succ-ink); border-color: var(--pc-succ-line); }
 #app .el-tag--danger,
 #app .el-tag--pos    { background: var(--pc-pos-100);  color: var(--pc-pos-700);  border-color: var(--pc-pos-100); }
 #app .el-tag--neg    { background: var(--pc-neg-100);  color: var(--pc-neg-700);  border-color: var(--pc-neg-100); }

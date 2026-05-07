@@ -59,6 +59,10 @@
   --pc-succ-700:    #047857;
   --pc-succ-600:    #059669;
   --pc-succ-100:    #D1FAE5;
+  /* success · plain 变体（淡冷调，给 effect="plain" tag / 复核完全匹配等场景）*/
+  --pc-succ-ink:    #2D6B5E;
+  --pc-succ-soft:   #EDF5F2;
+  --pc-succ-line:   #D9E8E3;
   /* positive · 阳性 (10) — 业务"阳性"是医学正报告，用红色高警示 */
   --pc-pos-700:     #B91C1C;
   --pc-pos-600:     #DC2626;
