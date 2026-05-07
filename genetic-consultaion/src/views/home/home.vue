@@ -322,6 +322,10 @@ export default {
   methods: {
     logout () {
       window.localStorage.clear()
+      if (process.env.NODE_ENV === 'development') {
+        window.location.href = process.env.DEV_LOGIN_PATH || '/#/dashboard'
+        return
+      }
       if (this.axios.defaults.baseURL.includes('qa.mdhcare.cn')) {
         window.location.href = 'http://qa.mdhcare.cn/website/login.html'
       } else if (this.axios.defaults.baseURL.includes('z.mdhcare.cn/z/')) {

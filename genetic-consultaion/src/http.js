@@ -27,9 +27,8 @@ axios.interceptors.request.use(
     err => {
         return Promise.reject(err)
     })
-// production
-const linkUrl =  process.env.NODE_ENV === 'production' ? 'https://z.mdhcare.cn/login.html':'https://qa.mdhcare.cn/website/login.html'
-// const linkUrl =  'http://47.113.112.104:9101/login.html'
+const isDev = process.env.NODE_ENV === 'development'
+const linkUrl = process.env.NODE_ENV === 'production' ? 'https://z.mdhcare.cn/login.html' : process.env.DEV_LOGIN_PATH
 axios.interceptors.response.use(
     response => {
         return response
@@ -39,12 +38,16 @@ axios.interceptors.response.use(
             switch (error.response.status) {
                 case 401:
                     window.localStorage.clear()
-                    window.location.href = linkUrl
+                    if (!isDev && linkUrl) {
+                        window.location.href = linkUrl
+                    }
             }
         }else{
-            window.location.href = linkUrl
+            if (!isDev && linkUrl) {
+                window.location.href = linkUrl
+            }
         }
-        return Promise.reject(error.response.data)
+        return Promise.reject(error.response ? error.response.data : error)
     })
 
 export default axios
