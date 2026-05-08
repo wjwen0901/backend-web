@@ -42,35 +42,40 @@
   --pc-ink-50:  #F9FAFB;       /* 背景 surface-1 */
   --pc-white:   #FFFFFF;
 
-  /* ---- 状态语义色（D3 · 6 类语义 token, 11 业务状态映射到这里）---- */
+  /* ---- 状态语义色（Clinical · 6 类语义 token, 业务状态映射到这里）---- */
   /* warn   · 待付款 (1) */
-  --pc-warn-700:    #B45309;
-  --pc-warn-600:    #D97706;
-  --pc-warn-100:    #FEF3C7;
+  --pc-warn-700:    #925914;
+  --pc-warn-600:    #C9831E;
+  --pc-warn-100:    #FFF4D8;
+  --pc-warn-line:   #F2D9A6;
   /* info   · 已下单 / 待采样 (2,3) */
-  --pc-info-700:    #1D4ED8;
-  --pc-info-600:    #2563EB;
-  --pc-info-100:    #DBEAFE;
-  /* progress · 待回寄 / 已签收 / 待复核 (4,5,6)，归入信息蓝，不再引入装饰紫 */
-  --pc-prog-700:    var(--pc-info-700);
-  --pc-prog-600:    var(--pc-info-600);
-  --pc-prog-100:    var(--pc-info-100);
+  --pc-info-700:    #1F5D8B;
+  --pc-info-600:    #2A74A8;
+  --pc-info-100:    #EAF4FB;
+  --pc-info-line:   #D2E6F3;
+  /* progress · 寄样中 / 已签收 / 待复核 */
+  --pc-prog-700:    #465C86;
+  --pc-prog-600:    #6273A6;
+  --pc-prog-100:    #EEF2F8;
+  --pc-prog-line:   #DCE4F0;
   /* success · 已出报告 / 已审核 / 已寄出 (7,8,9) */
-  --pc-succ-700:    #047857;
-  --pc-succ-600:    #059669;
-  --pc-succ-100:    #D1FAE5;
+  --pc-succ-700:    #275E53;
+  --pc-succ-600:    #2F806E;
+  --pc-succ-100:    #EDF5F2;
   /* success · plain 变体（淡冷调，给 effect="plain" tag / 复核完全匹配等场景）*/
-  --pc-succ-ink:    #2D6B5E;
+  --pc-succ-ink:    #275E53;
   --pc-succ-soft:   #EDF5F2;
-  --pc-succ-line:   #D9E8E3;
+  --pc-succ-line:   #D8E8E2;
   /* positive · 阳性 (10) — 业务"阳性"是医学正报告，用红色高警示 */
-  --pc-pos-700:     #B91C1C;
-  --pc-pos-600:     #DC2626;
-  --pc-pos-100:     #FEE2E2;
+  --pc-pos-700:     #A33830;
+  --pc-pos-600:     #C24A3D;
+  --pc-pos-100:     #FCEEEE;
+  --pc-pos-line:    #F1D1CF;
   /* negative · 阴性 (11) */
-  --pc-neg-700:     #166534;
-  --pc-neg-600:     #16A34A;
-  --pc-neg-100:     #DCFCE7;
+  --pc-neg-700:     #2D6D47;
+  --pc-neg-600:     #39915C;
+  --pc-neg-100:     #ECF6EF;
+  --pc-neg-line:    #D4E8DA;
 
   /* ---- Type / radius / shadow / spacing ---- */
   --pc-font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",

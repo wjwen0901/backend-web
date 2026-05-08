@@ -49,7 +49,7 @@
         <el-table-column prop="invoiceType" label="类型" width="100" fixed="left"></el-table-column>
         <el-table-column label="状态" width="120" fixed="left">
           <template slot-scope="scope">
-            <el-tag :type="invoiceStatusType(scope.row.statusStr)" size="mini" disable-transitions>{{ scope.row.statusStr || '—' }}</el-tag>
+            <el-tag :class="tagClassOf(invoiceStatusType(scope.row.statusStr))" size="mini" disable-transitions>{{ scope.row.statusStr || '—' }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="title" label="抬头" min-width="220" show-overflow-tooltip>
@@ -237,7 +237,7 @@
 
 <script>
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
-import { formatDate, formatAddress, BRCA_INVOICE_STATUS_TYPE, typeOf, downloadBlob, dateStr } from '@/utils/pc'
+import { formatDate, formatAddress, BRCA_INVOICE_STATUS_TYPE, typeOf, tagClassOf, downloadBlob, dateStr } from '@/utils/pc'
 
 export default {
   name: 'BrcaInvoice',
@@ -314,6 +314,7 @@ export default {
     this.getStatus()
   },
   methods: {
+    tagClassOf,
     invoiceStatusType (statusStr) { return typeOf(BRCA_INVOICE_STATUS_TYPE, statusStr) },
     formatAddress: formatAddress,
     handleSearch () {

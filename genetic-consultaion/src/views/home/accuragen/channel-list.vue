@@ -44,7 +44,7 @@
         </el-table-column>
         <el-table-column label="状态" width="110">
           <template slot-scope="scope">
-            <el-tag :type="scope.row.state === 3 ? 'success' : 'warning'" size="mini" disable-transitions>
+            <el-tag :class="tagClassOf(stateLabel(scope.row.state))" size="mini" disable-transitions>
               {{ stateLabel(scope.row.state) }}
             </el-tag>
           </template>
@@ -132,7 +132,7 @@
 </template>
 
 <script>
-import { formatDate, apiSubmit } from '@/utils/pc'
+import { formatDate, apiSubmit, tagClassOf } from '@/utils/pc'
 
 export default {
   name: 'AccuragenChannelList',
@@ -154,6 +154,7 @@ export default {
   },
   filters: { formatDate },
   methods: {
+    tagClassOf,
     stateLabel (state) {
       return state === 3 ? '审核通过' : '待审核'
     },

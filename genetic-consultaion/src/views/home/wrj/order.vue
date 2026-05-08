@@ -88,7 +88,7 @@
         </el-table-column>
         <el-table-column label="状态" width="120" fixed="left">
           <template slot-scope="scope">
-            <el-tag :type="brcaOrderStatusType(scope.row.status)" size="mini" disable-transitions>{{ scope.row.statusStr }}</el-tag>
+            <el-tag :class="tagClassOf(brcaOrderStatusType(scope.row.status))" size="mini" disable-transitions>{{ scope.row.statusStr }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="受检者" width="160" fixed="left" show-overflow-tooltip>
@@ -177,7 +177,8 @@ import {
   brcaOrderStatusType,
   canUploadBrcaReport,
   BRCA_ORDER_STATUS_OPTIONS,
-  payChannelLabel
+  payChannelLabel,
+  tagClassOf
 } from '@/utils/pc'
 
 export default {
@@ -208,6 +209,7 @@ export default {
   },
   filters: { formatDate },
   methods: {
+    tagClassOf,
     brcaOrderStatusType: brcaOrderStatusType,
     canUploadBrcaReport: canUploadBrcaReport,
     payChannelLabel,

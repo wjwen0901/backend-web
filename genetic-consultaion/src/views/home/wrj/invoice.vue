@@ -23,7 +23,7 @@
         <el-table-column prop="invoiceType" label="类型" width="110" fixed="left"></el-table-column>
         <el-table-column label="状态" width="120" fixed="left">
           <template slot-scope="scope">
-            <el-tag :type="invoiceStatusType(scope.row.statusStr)" size="mini" disable-transitions>{{ scope.row.statusStr || '—' }}</el-tag>
+            <el-tag :class="tagClassOf(invoiceStatusType(scope.row.statusStr))" size="mini" disable-transitions>{{ scope.row.statusStr || '—' }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="title" label="抬头" min-width="180" show-overflow-tooltip>
@@ -174,7 +174,8 @@ import {
   formatAddress,
   apiSubmit,
   BRCA_INVOICE_STATUS_TYPE,
-  typeOf
+  typeOf,
+  tagClassOf
 } from '@/utils/pc'
 
 export default {
@@ -218,6 +219,7 @@ export default {
   },
   filters: { formatDate },
   methods: {
+    tagClassOf,
     invoiceStatusType (statusStr) { return typeOf(BRCA_INVOICE_STATUS_TYPE, statusStr) },
     formatAddress: formatAddress,
     _initData () { this.getData() },

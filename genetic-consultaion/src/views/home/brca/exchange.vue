@@ -19,7 +19,7 @@
         <el-table-column label="兑换商品" width="240" prop="rewardName" fixed="left" show-overflow-tooltip></el-table-column>
         <el-table-column label="状态" width="100" fixed="left">
           <template slot-scope="scope">
-            <el-tag :type="statusType(scope.row.statusStr)" size="mini" disable-transitions>{{ scope.row.statusStr || '—' }}</el-tag>
+            <el-tag :class="tagClassOf(statusType(scope.row.statusStr))" size="mini" disable-transitions>{{ scope.row.statusStr || '—' }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="申请时间" width="140">
@@ -113,7 +113,7 @@
 </template>
 
 <script>
-import { formatDate, formatAddress, apiSubmit, BRCA_EXCHANGE_STATUS_TYPE, typeOf } from '@/utils/pc'
+import { formatDate, formatAddress, apiSubmit, BRCA_EXCHANGE_STATUS_TYPE, typeOf, tagClassOf } from '@/utils/pc'
 
 export default {
   name: 'BrcaExchange',
@@ -137,6 +137,7 @@ export default {
   },
   filters: { formatDate },
   methods: {
+    tagClassOf,
     statusType (statusStr) { return typeOf(BRCA_EXCHANGE_STATUS_TYPE, statusStr) },
     formatAddress: formatAddress,
     _initData () {

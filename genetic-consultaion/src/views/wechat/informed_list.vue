@@ -19,7 +19,7 @@
                   <span v-if="scope.row.cellphone!== undefined && scope.row.cellphone!== ''">({{scope.row.cellphone}})</span>
                 </span>
                 <!--<span v-else>信息识别中</span>-->
-                <el-tag type="info" class="status" size="mini">{{scope.row.state | stateFilter}}</el-tag>
+                <el-tag :class="['status', tagClassOf(stateLabel(scope.row.state))]" size="mini">{{ stateLabel(scope.row.state) }}</el-tag>
               </div>
               <div>
                 送检医院：{{scope.row.hospitalName}}
@@ -48,6 +48,8 @@
   </el-container>
 </template>
 <script>
+import { tagClassOf } from '@/utils/pc'
+
 export default {
   name: 'informed_list',
   data () {
@@ -88,6 +90,13 @@ export default {
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
+    },
+    tagClassOf,
+    stateLabel (state) {
+      if (state <= 1) return '检测中'
+      if (state === 2) return '无法识别'
+      if (state === 3) return '报告已出'
+      return '未知'
     }
   },
   watch: {},

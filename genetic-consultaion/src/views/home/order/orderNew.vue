@@ -498,7 +498,7 @@ export default {
       }
       console.log(this.checkIds)
     },
-    // statusStr → 设计系统 6 类语义 Tag class（D3）
+    // statusStr → 设计系统 6 类语义 Tag class（Clinical）
     tagClassForStatusStr (val) {
       return tagClassOf(val)
     },

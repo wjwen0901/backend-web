@@ -54,6 +54,9 @@
           prop="statusStr"
           label="状态"
           width="100">
+          <template slot-scope="scope">
+            <el-tag size="mini" :class="tagClassOf(scope.row.statusStr)" disable-transitions>{{ scope.row.statusStr || '—' }}</el-tag>
+          </template>
         </el-table-column>
         <el-table-column
           fixed="right"
@@ -113,6 +116,7 @@
 <script>
 
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
+import { tagClassOf } from '@/utils/pc'
 export default {
   components: {},
   name: 'UserList',
@@ -131,6 +135,7 @@ export default {
     }
   },
   methods: {
+    tagClassOf,
     _initData () {
       this.getData()
     },

@@ -74,10 +74,10 @@
           width="180"
           align="center">
           <template slot-scope="scope">
-            <el-tag effect="plain" type="success" size="small" v-if="scope.row.recheckState === 0">{{scope.row.recheckState | stateFilter}}</el-tag>
-            <el-tag effect="plain" type="warning" size="small" v-else-if="scope.row.recheckState === 1"  @click="toRecheck(scope.row.id, scope.row.informedId)">{{scope.row.recheckState | stateFilter}}</el-tag>
-            <el-tag effect="plain" type="danger" size="small" v-else-if="scope.row.id && !scope.row.informedId"  @click="toEditReport(scope.row.id, scope.row.informedId)">人工检验</el-tag>
-            <el-tag effect="plain" type="danger" size="small" v-else-if="!scope.row.id && scope.row.informedId" @click="toEditInformed(scope.row.id, scope.row.informedId)">人工检验</el-tag>
+            <el-tag effect="plain" :class="tagClassOf(recheckStateLabel(scope.row.recheckState))" size="small" v-if="scope.row.recheckState === 0">{{ recheckStateLabel(scope.row.recheckState) }}</el-tag>
+            <el-tag effect="plain" :class="tagClassOf(recheckStateLabel(scope.row.recheckState))" size="small" v-else-if="scope.row.recheckState === 1"  @click="toRecheck(scope.row.id, scope.row.informedId)">{{ recheckStateLabel(scope.row.recheckState) }}</el-tag>
+            <el-tag effect="plain" :class="tagClassOf('人工检验')" size="small" v-else-if="scope.row.id && !scope.row.informedId"  @click="toEditReport(scope.row.id, scope.row.informedId)">人工检验</el-tag>
+            <el-tag effect="plain" :class="tagClassOf('人工检验')" size="small" v-else-if="!scope.row.id && scope.row.informedId" @click="toEditInformed(scope.row.id, scope.row.informedId)">人工检验</el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -209,6 +209,8 @@
   </div>
 </template>
 <script>
+import { tagClassOf } from '@/utils/pc'
+
 export default {
   components: {},
   name: 'ReportList',
@@ -232,6 +234,12 @@ export default {
     }
   },
   methods: {
+    tagClassOf,
+    recheckStateLabel (state) {
+      if (state === 0) return '完全匹配'
+      if (state === 1) return '点击复核'
+      return ''
+    },
     _initData () {
       if (window.sessionStorage.reviewDataPageNum && window.sessionStorage.reviewDataPageNum !== 'undefined') {
         this.pageNum = parseInt(window.sessionStorage.reviewDataPageNum)
@@ -366,12 +374,6 @@ export default {
         _this._initData()
         _this.sendEmailFormVisible = false
       })
-    }
-  },
-  filters: {
-    stateFilter: function (state) {
-      if (state === 0) return '完全匹配'
-      if (state === 1) return '点击复核'
     }
   },
   computed: {},

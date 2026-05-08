@@ -42,7 +42,7 @@
         </el-table-column>
         <el-table-column label="状态" width="110">
           <template slot-scope="scope">
-            <el-tag :type="statusType(scope.row.status)" size="mini" disable-transitions>{{ statusLabel(scope.row.status) }}</el-tag>
+            <el-tag :class="tagClassOf(statusType(scope.row.status))" size="mini" disable-transitions>{{ statusLabel(scope.row.status) }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="银行卡" min-width="280" show-overflow-tooltip>
@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import { formatDate, BRCA_WITHDRAW_STATUS, statusOf } from '@/utils/pc'
+import { formatDate, BRCA_WITHDRAW_STATUS, statusOf, tagClassOf } from '@/utils/pc'
 
 export default {
   name: 'BrcaWithdraw',
@@ -118,6 +118,7 @@ export default {
   },
   filters: { formatDate },
   methods: {
+    tagClassOf,
     statusType (s) { return statusOf(BRCA_WITHDRAW_STATUS, s).type },
     statusLabel (s) { return statusOf(BRCA_WITHDRAW_STATUS, s).label },
     _initData () { this.getData() },

@@ -45,8 +45,8 @@
         <el-table-column 
           label="状态">
            <template slot-scope="scope">
-            <span v-if="scope.row.state==1">暂存</span>
-            <span v-if="scope.row.state==0">发布</span>
+            <el-tag v-if="scope.row.state==1" size="mini" disable-transitions>暂存</el-tag>
+            <el-tag v-if="scope.row.state==0" size="mini" class="el-tag--succ" disable-transitions>发布</el-tag>
           </template>
         </el-table-column>
         <el-table-column

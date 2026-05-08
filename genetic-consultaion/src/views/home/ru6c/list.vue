@@ -45,8 +45,7 @@
                 prop="modifyTime"
                 label="分析状态">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.reportState === 'ann'" type="warning">{{scope.row.reportState | stateFilter}}</el-tag>
-                  <el-tag v-if="scope.row.reportState !== 'ann'" type="success">{{scope.row.reportState | stateFilter}}</el-tag>
+                  <el-tag :class="tagClassOf(stateLabel(scope.row.reportState))">{{ stateLabel(scope.row.reportState) }}</el-tag>
                 </template>
               </el-table-column>
               <el-table-column
@@ -92,8 +91,9 @@
           prop="state"
           label="分析状态">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.reportList && scope.row.reportList[scope.row.reportList.length-1].reportState === 'ann'" type="warning">{{scope.row.reportList[scope.row.reportList.length-1].reportState | stateFilter}}</el-tag>
-            <el-tag v-if="scope.row.reportList && scope.row.reportList[scope.row.reportList.length-1].reportState !== 'ann'" type="success">{{scope.row.reportList[scope.row.reportList.length-1].reportState | stateFilter}}</el-tag>
+            <el-tag v-if="scope.row.reportList" :class="tagClassOf(stateLabel(scope.row.reportList[scope.row.reportList.length-1].reportState))">
+              {{ stateLabel(scope.row.reportList[scope.row.reportList.length-1].reportState) }}
+            </el-tag>
           </template>
         </el-table-column>
 <!--        <el-table-column-->
@@ -121,6 +121,7 @@
 <script>
 import FileSaver from 'file-saver'
 import { Loading } from 'element-ui';
+import { tagClassOf } from '@/utils/pc'
 export default {
   components: {},
   name: 'InformedUpload',
@@ -218,6 +219,10 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    tagClassOf,
+    stateLabel (state) {
+      return state === 'ann' ? '分析中' : '报告完成'
     }
   },
   filters: {

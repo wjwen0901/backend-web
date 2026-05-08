@@ -106,7 +106,7 @@
         </el-table-column>
         <el-table-column label="状态" width="120" fixed="left">
           <template slot-scope="scope">
-            <el-tag :type="brcaStatusType(scope.row.status)" size="mini" disable-transitions>
+            <el-tag :class="tagClassOf(brcaStatusType(scope.row.status))" size="mini" disable-transitions>
               {{ scope.row.statusStr }}
             </el-tag>
           </template>
@@ -252,7 +252,8 @@ import {
   apiSubmit,
   downloadBlob,
   dateStr,
-  payChannelLabel
+  payChannelLabel,
+  tagClassOf
 } from '@/utils/pc'
 
 export default {
@@ -289,6 +290,7 @@ export default {
   },
   filters: { formatDate },
   methods: {
+    tagClassOf,
     brcaStatusType: brcaOrderStatusType,
     canUploadReport: canUploadBrcaReport,
     payChannelLabel,

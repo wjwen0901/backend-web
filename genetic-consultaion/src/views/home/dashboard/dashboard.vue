@@ -345,9 +345,9 @@ export default {
     },
     statusTone (status) {
       if (status.indexOf('阳性') !== -1 || status.indexOf('异常') !== -1 || status.indexOf('取消') !== -1) return 'pos'
-      if (status.indexOf('待付款') !== -1 || status.indexOf('收款码待付款') !== -1) return 'warn'
+      if (status.indexOf('待付款') !== -1 || status.indexOf('收款码待付款') !== -1 || status.indexOf('待回寄') !== -1) return 'warn'
       if (status.indexOf('已下单') !== -1 || status.indexOf('待采样') !== -1) return 'info2'
-      if (status.indexOf('待回寄') !== -1 || status.indexOf('寄样') !== -1 || status.indexOf('签收') !== -1 || status.indexOf('检测') !== -1 || status.indexOf('复核') !== -1) return 'prog'
+      if (status.indexOf('寄样') !== -1 || status.indexOf('签收') !== -1 || status.indexOf('检测') !== -1 || status.indexOf('复核') !== -1) return 'prog'
       if (status.indexOf('报告') !== -1 || status.indexOf('审核') !== -1 || status.indexOf('寄出') !== -1) return 'succ'
       if (status.indexOf('阴性') !== -1) return 'neg'
       return 'info2'

@@ -93,6 +93,9 @@
           prop="statusStr"
           label="订单状态"
           width="90">
+          <template slot-scope="scope">
+            <el-tag size="mini" :class="tagClassOf(scope.row.statusStr)" disable-transitions>{{ scope.row.statusStr || '—' }}</el-tag>
+          </template>
         </el-table-column>
         <el-table-column
         header-align="center"
@@ -122,6 +125,8 @@
   </div>
 </template>
 <script>
+import { tagClassOf } from '@/utils/pc'
+
 export default {
   components: {},
   name: 'orderList',
@@ -149,6 +154,7 @@ export default {
     }
   },
   methods: {
+    tagClassOf,
     //复选框选中状态
     handleSelectionChange(val){
       this.checkIds = val

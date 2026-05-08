@@ -44,7 +44,9 @@
           prop="status"
           label="状态" >
           <template slot-scope="scope">
-            {{scope.row.status | withdrawStatusFilter}}
+            <el-tag size="mini" :class="tagClassOf(withdrawStatusLabel(scope.row.status))">
+              {{ withdrawStatusLabel(scope.row.status) }}
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -77,7 +79,7 @@
           width="180">
           <template slot-scope="scope">
             <el-button @click="toCheck(scope.row.id)" type="text" size="small" v-if="userId != 2222">审核</el-button>
-            <el-button @click="toIncome(scope.row.id)" type="text" size="small" v-if="userId != 2222">确认到帐</el-button>
+            <el-button @click="toIncome(scope.row.id)" type="text" size="small" v-if="userId != 2222">确认到账</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -133,6 +135,7 @@
   </div>
 </template>
 <script>
+import { tagClassOf, statusOf, BRCA_WITHDRAW_STATUS } from '@/utils/pc'
 
 export default {
   components: {},
@@ -172,6 +175,10 @@ export default {
   methods: {
     _initData () {
       this.getData()
+    },
+    tagClassOf,
+    withdrawStatusLabel (status) {
+      return statusOf(BRCA_WITHDRAW_STATUS, status).label
     },
     getData () {
       this.resourceList = []
@@ -244,7 +251,7 @@ export default {
       this.dialogEditFormVisible = true
     },
     toCheck (id) {
-      this.$confirm('审核通过将发送短信、邮件给客户，为了避免带给客户不好的感受，请确定是否一定可3天内到帐。', '审核提示', {
+      this.$confirm('审核通过将发送短信、邮件给客户，为了避免带给客户不好的感受，请确定是否一定可3天内到账。', '审核提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'info'
@@ -270,7 +277,7 @@ export default {
       })
     },
     toIncome (id) {
-      this.$confirm('确认将提现状态改成"已到帐"吗？', '确认', {
+      this.$confirm('确认将提现状态改成"已到账"吗？', '确认', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'info'
@@ -335,7 +342,7 @@ export default {
       } else if (status == 1) {
         return "转账中"
       } else if (status == 2) {
-        return "已到帐"
+        return "已到账"
       }
     }
   },

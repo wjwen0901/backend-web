@@ -56,8 +56,8 @@
         </el-table-column>
         <el-table-column label="状态" width="100">
           <template slot-scope="scope">
-            <el-tag :type="scope.row.state === 0 ? 'success' : 'info'" size="mini" disable-transitions>
-              {{ scope.row.state === 0 ? '启用' : '已停用' }}
+            <el-tag :class="tagClassOf(stateLabel(scope.row.state))" size="mini" disable-transitions>
+              {{ stateLabel(scope.row.state) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -90,7 +90,7 @@
 </template>
 
 <script>
-import { formatDate } from '@/utils/pc'
+import { formatDate, tagClassOf } from '@/utils/pc'
 
 export default {
   name: 'HospitalList',
@@ -116,6 +116,10 @@ export default {
   },
   filters: { formatDate },
   methods: {
+    tagClassOf,
+    stateLabel (state) {
+      return state === 0 ? '启用' : '已停用'
+    },
     _initData () {
       this.getData()
     },

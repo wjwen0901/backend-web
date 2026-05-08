@@ -25,7 +25,7 @@
         </el-table-column>
         <el-table-column label="状态" width="120">
           <template slot-scope="scope">
-            <el-tag :type="statusType(scope.row.status)" size="mini" disable-transitions>{{ statusLabel(scope.row.status) }}</el-tag>
+            <el-tag :class="tagClassOf(statusType(scope.row.status))" size="mini" disable-transitions>{{ statusLabel(scope.row.status) }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="接收信息" min-width="280">
@@ -157,7 +157,7 @@
 
 <script>
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
-import { formatDate, formatAddress, apiSubmit, BRCA_PAPER_REPORT_STATUS, statusOf } from '@/utils/pc'
+import { formatDate, formatAddress, apiSubmit, BRCA_PAPER_REPORT_STATUS, statusOf, tagClassOf } from '@/utils/pc'
 
 export default {
   name: 'AccuragenPaperReport',
@@ -199,6 +199,7 @@ export default {
   },
   filters: { formatDate },
   methods: {
+    tagClassOf,
     statusType (s) { return statusOf(BRCA_PAPER_REPORT_STATUS, s).type },
     statusLabel (s) {
       const found = BRCA_PAPER_REPORT_STATUS[s]

@@ -66,6 +66,9 @@
           label="当前状态"
           align="center"
           width="80">
+          <template slot-scope="scope">
+            <el-tag size="mini" :class="tagClassOf(scope.row.statusStr)" disable-transitions>{{ scope.row.statusStr || '—' }}</el-tag>
+          </template>
         </el-table-column>
         <el-table-column
           prop="statusStr"
@@ -261,6 +264,7 @@
 <script>
 
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
+import { tagClassOf } from '@/utils/pc'
 export default {
   components: {},
   name: 'UserList',
@@ -328,6 +332,7 @@ export default {
     }
   },
   methods: {
+    tagClassOf,
     //设置弹窗表格颜色
     tableRowClassName({row, rowIndex}){
       if (rowIndex%2 === 1) {

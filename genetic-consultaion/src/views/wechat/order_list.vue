@@ -21,7 +21,7 @@
               <div v-if="scope.row.pName != undefined">
                 受检者：{{scope.row.pName}}({{scope.row.pCellphone}})
               </div>
-              <span class="status">{{scope.row.statusStr}}</span>
+              <el-tag size="mini" :class="['status', tagClassOf(scope.row.statusStr)]" disable-transitions>{{scope.row.statusStr}}</el-tag>
             </div>
             <div class="item-title">
               {{scope.row.itemTitle}}
@@ -44,6 +44,8 @@
   </el-container>
 </template>
 <script>
+import { tagClassOf } from '@/utils/pc'
+
 export default {
   name: 'informed_list',
   data () {
@@ -56,6 +58,7 @@ export default {
     }
   },
   methods: {
+    tagClassOf,
     getList () {
       this.axios.get('order/page', {
         params: {

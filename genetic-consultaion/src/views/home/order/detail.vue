@@ -11,7 +11,7 @@
           <el-row class="order-detail">
             <span class="order-detail-title">订单编号:</span>
             <span>{{order.orderNo}}</span>
-            <el-tag type="info" size="mini">{{order.statusStr}}</el-tag>
+            <el-tag :class="tagClassOf(order.statusStr)" size="mini">{{order.statusStr}}</el-tag>
           </el-row>
           <el-row class="order-detail">
             <span class="order-detail-title">检测产品:</span>
@@ -79,7 +79,7 @@
                 label="状态"
                 width="180">
                 <template slot-scope="scope">
-                  <el-tag size="mini">{{scope.row.state | stateFilter}}</el-tag>
+                  <el-tag size="mini" :class="tagClassOf(stateLabel(scope.row.state))">{{ stateLabel(scope.row.state) }}</el-tag>
                 </template>
               </el-table-column>
               <el-table-column
@@ -99,6 +99,8 @@
   </div>
 </template>
 <script>
+import { tagClassOf } from '@/utils/pc'
+
 export default {
   components: {},
   name: 'orderList',
@@ -187,6 +189,13 @@ export default {
           //   message: '已取消删除'
           // });          
         });
+    },
+    tagClassOf,
+    stateLabel (state) {
+      if (state <= 1) return '实验中'
+      if (state === 2) return '无法识别'
+      if (state === 3) return '报告已出'
+      return '未知'
     }
   },
   filters: {

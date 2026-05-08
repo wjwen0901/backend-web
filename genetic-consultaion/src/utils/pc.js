@@ -3,7 +3,7 @@
  * 来自 handoff/prototype-v2/pc.js + Sprint 3 extract 抽出的业务状态 map
  * =========================================================== */
 
-// ---- 通用 11 业务状态 → 6 类语义 token (D3) ----
+// ---- 通用业务状态 → 6 类语义 token (Clinical) ----
 // 来自原型 v2，用于 Dashboard / Stat 卡 / order/orderNew 等通用统计场景
 // 1 待付款 / 2 已下单 / 3 待采样 / 4 待回寄 / 5 已签收 / 6 待复核
 // 7 已出报告 / 8 已审核 / 9 已寄出 / 10 阳性 / 11 阴性
@@ -11,7 +11,7 @@ const STATUS_MAP = {
   1: { type: 'warn', label: '待付款' },
   2: { type: 'info2', label: '已下单' },
   3: { type: 'info2', label: '待采样' },
-  4: { type: 'prog', label: '待回寄' },
+  4: { type: 'warn', label: '待回寄' },
   5: { type: 'prog', label: '已签收' },
   6: { type: 'prog', label: '待复核' },
   7: { type: 'succ', label: '已出报告' },
@@ -37,31 +37,45 @@ const STATUS_TEXT_TYPE = {
   '待发货': 'warn',
   '待审核': 'warn',
   '新增': 'warn',
+  '点击复核': 'warn',
   '已下单': 'info2',
   '待采样': 'info2',
   '已录入': 'info2',
-  '待回寄': 'prog',
+  '待回寄': 'warn',
   '寄样中': 'prog',
   '已签收': 'prog',
   '检测中': 'prog',
+  '实验中': 'prog',
+  '分析中': 'prog',
   '待复核': 'prog',
   '转账中': 'prog',
   '已发货': 'prog',
   '待寄出': 'prog',
   '已确定': 'prog',
+  '已申请': 'warn',
+  '已发送邮件': 'succ',
   '未打印': 'prog',
+  '完全匹配': 'succ',
   '已出报告': 'succ',
   '报告已出': 'succ',
+  '报告完成': 'succ',
   '已审核': 'succ',
+  '审核通过': 'succ',
   '已寄出': 'succ',
   '已完成': 'succ',
   '已到账': 'succ',
+  '已到帐': 'succ',
   '已打印': 'succ',
+  '关联知情': 'succ',
+  '已发起解读': 'succ',
+  '完成': 'succ',
+  '发布': 'succ',
   '启用': 'succ',
   '阳性': 'pos',
   '无法识别': 'pos',
   '人工检验': 'pos',
   '阴性': 'neg',
+  '暂存': '',
   '已取消': '',
   '已取消订单': '',
   '未开票': '',
@@ -93,16 +107,16 @@ function statusCounts (list) {
 // ---- BRCA 业务专属 status 映射（与通用 STATUS_MAP 编码不一致，单独维护） ----
 // BRCA 后端 0-10 ≠ pc.js 1-11，单独 map 避免误用
 
-// brca/order.vue：订单 status 0/1/2/3/4/5/7/10 → D3 type
+// brca/order.vue：订单 status 0/1/2/3/4/5/7/10 → Clinical type
 const BRCA_ORDER_STATUS_TYPE = {
-  0: 'warn',   // 待付款
-  1: 'info2',  // 待采样
-  2: 'info2',  // 待回寄
-  3: 'prog',   // 寄样中
-  4: 'prog',   // 检测中
-  5: 'succ',   // 报告已出
-  7: 'succ',   // 已发起解读
-  10: ''       // 已取消
+  0: 'warn', // 待付款
+  1: 'info2', // 待采样
+  2: 'warn', // 待回寄
+  3: 'prog', // 寄样中
+  4: 'prog', // 检测中
+  5: 'succ', // 报告已出
+  7: 'succ', // 已发起解读
+  10: '' // 已取消
 }
 
 // brca/order.vue 状态下拉枚举
@@ -163,18 +177,18 @@ const BRCA_EXCHANGE_STATUS_TYPE = {
 
 // informed/list.vue + data_collect/informed_list.vue：知情同意 state 0/1/2/3
 const INFORMED_STATE_MAP = {
-  0: { type: 'warn',  label: '新增' },
+  0: { type: 'warn', label: '新增' },
   1: { type: 'info2', label: '已录入' },
-  2: { type: 'pos',   label: '无法识别' },
-  3: { type: 'succ',  label: '报告已出' }
+  2: { type: 'pos', label: '无法识别' },
+  3: { type: 'succ', label: '报告已出' }
 }
 
 // data_collect/report_list.vue：报告 state 0/1/2/3
 const REPORT_STATE_MAP = {
-  0: { type: 'warn',  label: '新增' },
+  0: { type: 'warn', label: '新增' },
   1: { type: 'info2', label: '已录入' },
-  2: { type: 'pos',   label: '无法识别' },
-  3: { type: 'succ',  label: '关联知情' }
+  2: { type: 'pos', label: '无法识别' },
+  3: { type: 'succ', label: '关联知情' }
 }
 
 // trade_order.pay_type → 展示标签。两套历史枚举共存：
