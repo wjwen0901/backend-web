@@ -231,6 +231,7 @@
 <script>
 import NP from 'number-precision'
 import { tagClassOf } from '@/utils/pc'
+import { limitPageRows } from '@/utils/pagination'
 export default {
   data () {
     return {
@@ -577,16 +578,16 @@ export default {
           condition: this.condition ? this.condition.trim() : ''
         }
       }).then(res => {
-        this.orderList = res.data.list
         this.pageSize = res.data.pageSize
         this.pageNum = res.data.pageNum
+        this.orderList = limitPageRows(res.data.list, this.pageSize)
         this.totalPage = res.data.total
         this.loading = false
         // 翻页复选框处理
         const obj = window.sessionStorage.getItem('checkPage')
         const arr = JSON.parse(obj)
         if (arr && arr[this.pageNum]) {
-          this.orderList = arr[this.pageNum].data
+          this.orderList = limitPageRows(arr[this.pageNum].data, this.pageSize)
         } else {
           this.orderList.forEach(item => { // 处理后端传过来的数据,如果没有可以判断是否勾选复选框的字段,则需给数据作处理,加上一个isChecked字段,判断复选框勾选
             this.$set(item, 'isChecked', false) // 添加判断的字段
@@ -760,6 +761,10 @@ export default {
       .person-sub,
       .person-orderer {
         margin-top: 3px;
+      }
+
+      .person-orderer {
+        font-weight: 600;
       }
 
       .time-cell {

@@ -27,8 +27,18 @@
           @click="toExport">导出选中 ({{ multipleSelection.length }})</el-button>
       </div>
 
+      <div
+        v-show="tableScrollTopVisible"
+        ref="tableScrollTop"
+        class="table-scroll-top"
+        @scroll="handleTopScroll">
+        <div class="table-scroll-top__inner" :style="{ width: tableScrollWidth + 'px' }"></div>
+      </div>
+
       <el-table
+        ref="informedTable"
         @selection-change="handleSelectionChange"
+        @header-dragend="handleHeaderDragend"
         :data="informedList"
         size="small"
         border
@@ -36,7 +46,7 @@
         element-loading-text="加载知情同意"
         style="width: 100%">
         <el-table-column fixed type="selection" width="40"></el-table-column>
-        <el-table-column prop="sampleCode" label="条码编号" width="140">
+        <el-table-column prop="sampleCode" label="条码编号" :width="columnWidths.sampleCode">
           <template slot-scope="scope">
             <span class="num">{{ scope.row.sampleCode || '—' }}</span>
           </template>
@@ -53,7 +63,7 @@
             <span v-else class="muted">—</span>
           </template>
         </el-table-column>
-        <el-table-column prop="solutionName" label="检测项目" min-width="160" show-overflow-tooltip>
+        <el-table-column prop="solutionName" label="检测项目" :width="columnWidths.solutionName" show-overflow-tooltip>
           <template slot-scope="scope">
             <span v-if="scope.row.solutionName">{{ scope.row.solutionName }}</span>
             <span v-else class="muted">—</span>
@@ -119,6 +129,14 @@
 
 <script>
 import { formatDate, INFORMED_STATE_MAP, downloadBlob, dateStr } from '@/utils/pc'
+import { readColumnWidths, saveColumnWidth } from '@/utils/table-column-widths'
+import { limitPageRows } from '@/utils/pagination'
+
+const COLUMN_WIDTH_STORAGE_KEY = 'pc:data-collect-informed-list:columns:v1'
+const DEFAULT_COLUMN_WIDTHS = {
+  sampleCode: 120,
+  solutionName: 230
+}
 
 export default {
   name: 'DataCollectInformedList',
@@ -132,6 +150,12 @@ export default {
       condition: '',
       loading: false,
       exporting: false,
+      columnWidths: readColumnWidths(window.localStorage, COLUMN_WIDTH_STORAGE_KEY, DEFAULT_COLUMN_WIDTHS),
+      tableScrollWidth: 0,
+      tableScrollTopVisible: false,
+      tableBodyWrapper: null,
+      tableResizeHandler: null,
+      syncingTableScroll: false,
       userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined
     }
   },
@@ -150,15 +174,18 @@ export default {
           searchCondition: this.condition
         }
       }).then(res => {
-        this.informedList = res.data.list || []
         this.pageSize = res.data.pageSize
         this.pageNum = res.data.pageNum
+        // TODO(待联调通过后撤除): 后端 selectAllAndUser 已去除 1:N join，
+        // QA 真机验证通过后改回 this.informedList = res.data.list || []
+        this.informedList = limitPageRows(res.data.list, this.pageSize)
         this.totalPage = res.data.total
       }).catch(err => {
         console.log(err)
         this.$message.error('知情同意加载失败，请稍后重试')
       }).then(() => {
         this.loading = false
+        this.scheduleTableScrollSync()
       })
     },
     handleSizeChange (val) {
@@ -219,10 +246,71 @@ export default {
     },
     handleSelectionChange (value) {
       this.multipleSelection = value
+    },
+    handleHeaderDragend (newWidth, oldWidth, column) {
+      const prop = column && column.property
+      this.columnWidths = saveColumnWidth(window.localStorage, COLUMN_WIDTH_STORAGE_KEY, this.columnWidths, prop, newWidth, DEFAULT_COLUMN_WIDTHS)
+      this.scheduleTableScrollSync()
+    },
+    getTableBodyWrapper () {
+      const table = this.$refs.informedTable && this.$refs.informedTable.$el
+      return table ? table.querySelector('.el-table__body-wrapper') : null
+    },
+    bindTableBodyScroll () {
+      const body = this.getTableBodyWrapper()
+      if (this.tableBodyWrapper === body) return
+      if (this.tableBodyWrapper) {
+        this.tableBodyWrapper.removeEventListener('scroll', this.handleTableBodyScroll)
+      }
+      this.tableBodyWrapper = body
+      if (body) body.addEventListener('scroll', this.handleTableBodyScroll)
+    },
+    scheduleTableScrollSync () {
+      this.$nextTick(() => {
+        this.bindTableBodyScroll()
+        this.syncTableScrollMetrics()
+      })
+    },
+    syncTableScrollMetrics () {
+      const top = this.$refs.tableScrollTop
+      const body = this.getTableBodyWrapper()
+      if (!top || !body) return
+      this.tableScrollWidth = body.scrollWidth
+      this.tableScrollTopVisible = body.scrollWidth > body.clientWidth
+      top.scrollLeft = body.scrollLeft
+    },
+    handleTopScroll () {
+      const top = this.$refs.tableScrollTop
+      const body = this.getTableBodyWrapper()
+      if (!top || !body || this.syncingTableScroll || body.scrollLeft === top.scrollLeft) return
+      this.syncingTableScroll = true
+      body.scrollLeft = top.scrollLeft
+      this.syncingTableScroll = false
+    },
+    handleTableBodyScroll () {
+      const top = this.$refs.tableScrollTop
+      const body = this.getTableBodyWrapper()
+      if (!top || !body || this.syncingTableScroll || top.scrollLeft === body.scrollLeft) return
+      this.syncingTableScroll = true
+      top.scrollLeft = body.scrollLeft
+      this.syncingTableScroll = false
     }
   },
   created () {
     this._initData()
+  },
+  mounted () {
+    this.tableResizeHandler = () => this.scheduleTableScrollSync()
+    window.addEventListener('resize', this.tableResizeHandler)
+    this.scheduleTableScrollSync()
+  },
+  beforeDestroy () {
+    if (this.tableBodyWrapper) {
+      this.tableBodyWrapper.removeEventListener('scroll', this.handleTableBodyScroll)
+    }
+    if (this.tableResizeHandler) {
+      window.removeEventListener('resize', this.tableResizeHandler)
+    }
   }
 }
 </script>
@@ -273,5 +361,16 @@ export default {
 ::v-deep .el-table {
   .num { font-variant-numeric: tabular-nums; }
   .muted { color: var(--pc-ink-400); }
+}
+
+.table-scroll-top {
+  height: 14px;
+  margin-bottom: 4px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.table-scroll-top__inner {
+  height: 1px;
 }
 </style>

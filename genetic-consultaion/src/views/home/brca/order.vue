@@ -89,6 +89,14 @@
         <span class="opera-hint" v-if="!hasSelection">勾选订单后启用批量操作</span>
       </div>
 
+      <div
+        v-show="tableScrollTopVisible"
+        ref="tableScrollTop"
+        class="table-scroll-top"
+        @scroll="handleTopScroll">
+        <div class="table-scroll-top__inner" :style="{ width: tableScrollWidth + 'px' }"></div>
+      </div>
+
       <el-table
         ref="table"
         :data="orderList"
@@ -273,6 +281,11 @@ export default {
       userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
       dialogDistributionVisible: false,
       dialogDistributionSalesVisible: false,
+      tableScrollWidth: 0,
+      tableScrollTopVisible: false,
+      tableBodyWrapper: null,
+      tableResizeHandler: null,
+      syncingTableScroll: false,
       statusOptions: BRCA_ORDER_STATUS_OPTIONS
     }
   },
@@ -327,6 +340,7 @@ export default {
         this.$message.error('订单加载失败，请稍后重试')
       }).then(() => {
         this.loading = false
+        this.scheduleTableScrollSync()
       })
     },
     handleSearch () {
@@ -449,10 +463,66 @@ export default {
         console.log(err)
         this.$message.error('导出失败，请稍后重试')
       })
+    },
+    getTableBodyWrapper () {
+      const table = this.$refs.table && this.$refs.table.$el
+      return table ? table.querySelector('.el-table__body-wrapper') : null
+    },
+    bindTableBodyScroll () {
+      const body = this.getTableBodyWrapper()
+      if (this.tableBodyWrapper === body) return
+      if (this.tableBodyWrapper) {
+        this.tableBodyWrapper.removeEventListener('scroll', this.handleTableBodyScroll)
+      }
+      this.tableBodyWrapper = body
+      if (body) body.addEventListener('scroll', this.handleTableBodyScroll)
+    },
+    scheduleTableScrollSync () {
+      this.$nextTick(() => {
+        this.bindTableBodyScroll()
+        this.syncTableScrollMetrics()
+      })
+    },
+    syncTableScrollMetrics () {
+      const top = this.$refs.tableScrollTop
+      const body = this.getTableBodyWrapper()
+      if (!top || !body) return
+      this.tableScrollWidth = body.scrollWidth
+      this.tableScrollTopVisible = body.scrollWidth > body.clientWidth
+      top.scrollLeft = body.scrollLeft
+    },
+    handleTopScroll () {
+      const top = this.$refs.tableScrollTop
+      const body = this.getTableBodyWrapper()
+      if (!top || !body || this.syncingTableScroll || body.scrollLeft === top.scrollLeft) return
+      this.syncingTableScroll = true
+      body.scrollLeft = top.scrollLeft
+      this.syncingTableScroll = false
+    },
+    handleTableBodyScroll () {
+      const top = this.$refs.tableScrollTop
+      const body = this.getTableBodyWrapper()
+      if (!top || !body || this.syncingTableScroll || top.scrollLeft === body.scrollLeft) return
+      this.syncingTableScroll = true
+      top.scrollLeft = body.scrollLeft
+      this.syncingTableScroll = false
     }
   },
   created () {
     this._initData()
+  },
+  mounted () {
+    this.tableResizeHandler = () => this.scheduleTableScrollSync()
+    window.addEventListener('resize', this.tableResizeHandler)
+    this.scheduleTableScrollSync()
+  },
+  beforeDestroy () {
+    if (this.tableBodyWrapper) {
+      this.tableBodyWrapper.removeEventListener('scroll', this.handleTableBodyScroll)
+    }
+    if (this.tableResizeHandler) {
+      window.removeEventListener('resize', this.tableResizeHandler)
+    }
   }
 }
 </script>
@@ -624,5 +694,16 @@ export default {
   .cell .el-button--text {
     padding: 0 4px;
   }
+}
+
+.table-scroll-top {
+  height: 14px;
+  margin-bottom: 4px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.table-scroll-top__inner {
+  height: 1px;
 }
 </style>

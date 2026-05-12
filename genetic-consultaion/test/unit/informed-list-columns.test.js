@@ -1,0 +1,23 @@
+const assert = require('assert')
+const fs = require('fs')
+const path = require('path')
+
+const source = fs.readFileSync(path.join(__dirname, '../../src/views/home/data_collect/informed_list.vue'), 'utf8')
+
+assert.ok(source.includes('@header-dragend="handleHeaderDragend"'))
+assert.ok(source.includes('sampleCode: 120'))
+assert.ok(source.includes('solutionName: 230'))
+assert.ok(source.includes('prop="sampleCode" label="条码编号" :width="columnWidths.sampleCode"'))
+assert.ok(source.includes('prop="solutionName" label="检测项目" :width="columnWidths.solutionName"'))
+assert.ok(source.includes("import { limitPageRows } from '@/utils/pagination'"))
+assert.ok(source.includes('this.informedList = limitPageRows(res.data.list, this.pageSize)'))
+assert.ok(source.includes('ref="tableScrollTop"'))
+assert.ok(source.includes('@scroll="handleTopScroll"'))
+assert.ok(source.includes('ref="informedTable"'))
+assert.ok(source.includes('tableScrollWidth: 0'))
+assert.ok(source.includes('scheduleTableScrollSync'))
+assert.ok(source.includes('handleTopScroll'))
+assert.ok(source.includes('handleTableBodyScroll'))
+assert.ok(source.includes('beforeDestroy'))
+
+console.log('informed list column widths ok')
