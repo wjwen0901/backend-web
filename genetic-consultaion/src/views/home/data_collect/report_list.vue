@@ -2,10 +2,6 @@
   <div class="pc-page">
     <div class="user-container">
       <div class="page-header">
-        <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item>报告管理</el-breadcrumb-item>
-          <el-breadcrumb-item>报告列表</el-breadcrumb-item>
-        </el-breadcrumb>
         <div class="page-meta">共 <strong>{{ totalPage }}</strong> 份检测报告</div>
       </div>
 

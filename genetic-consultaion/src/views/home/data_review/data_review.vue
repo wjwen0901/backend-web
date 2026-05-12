@@ -1,8 +1,5 @@
 <template>
   <div>
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>信息复核</el-breadcrumb-item>
-    </el-breadcrumb>
     <div class="user-container">
       <div class="search-box">
         <el-form :inline="true" label-width="80px" label-position="left">
@@ -311,7 +308,8 @@ export default {
           message: '审核成功',
           type: 'success'
         })
-        this.$router.push('/review')
+        this.dialogFormVisible = false
+        this.getData()
       }).catch(err => {
         this.$message({
           message: '审核失败',
