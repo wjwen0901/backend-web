@@ -1,14 +1,8 @@
 <template>
   <div class="pc-page">
     <div class="user-container">
-      <div class="page-header">
-        <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item>报告管理</el-breadcrumb-item>
-          <el-breadcrumb-item :to="{ path: '/report/list' }" v-if="role === 'firm-service' || role === 'manager' || role === 'jk-service'">报告</el-breadcrumb-item>
-          <el-breadcrumb-item :to="{ path: '/report/info/list' }" v-if="role === 'channel'">报告</el-breadcrumb-item>
-          <el-breadcrumb-item>编辑</el-breadcrumb-item>
-        </el-breadcrumb>
-        <div class="page-meta" v-if="report.truename || report.sampleCode">
+      <div class="page-header" v-if="report.truename || report.sampleCode">
+        <div class="page-meta">
           <span v-if="report.truename">{{ report.truename }}</span>
           <span v-if="report.sampleCode" class="num">· {{ report.sampleCode }}</span>
         </div>
@@ -91,6 +85,8 @@
 </template>
 
 <script>
+import { closeCurrentTab } from '@/utils/tabs'
+
 export default {
   name: 'ReportEdit',
   data () {
@@ -142,9 +138,9 @@ export default {
         .then(() => {
           this.$message.success('已保存')
           if (this.role === 'firm-service' || this.role === 'manager' || this.role === 'jk-service') {
-            this.$router.push('/report/list')
+            closeCurrentTab(this, '/report/list')
           } else {
-            this.$router.push('/report/info/list')
+            closeCurrentTab(this, '/report/info/list')
           }
         })
         .catch(err => {

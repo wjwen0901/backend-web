@@ -175,19 +175,16 @@
         </div>
         <div class="pc-tabs-actions">
           <i class="el-icon-refresh" title="刷新" @click="refreshTab"></i>
-          <el-dropdown trigger="click" @command="tabCommand">
-            <i class="el-icon-arrow-down"></i>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="closeOthers">关闭其他</el-dropdown-item>
-              <el-dropdown-item command="closeAll">全部关闭</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+          <button type="button" class="pc-tabs-close-all" @click="closeAllTabs">全部关闭</button>
         </div>
       </div>
 
       <el-main>
+        <keep-alive :max="12">
+          <router-view v-if="activeTabCacheable" :key="cachedActiveViewKey"></router-view>
+        </keep-alive>
         <transition name="pc-fade" mode="out-in" :duration="200">
-          <router-view :key="activeIndex"></router-view>
+          <router-view v-if="!activeTabCacheable" :key="activeIndex"></router-view>
         </transition>
       </el-main>
     </el-container>
@@ -195,6 +192,8 @@
 </template>
 
 <script>
+import { bumpCacheVersion, bumpCacheVersions, cacheKeyForTab, closeTabByKey, isCacheableTabKey } from '@/utils/tabs'
+
 const ICON_MAP = {
   '/dashboard': 'ri-dashboard-2-line',
   '/order': 'ri-shopping-bag-3-line',
@@ -307,6 +306,7 @@ export default {
       openMenu: ['biz-order', 'biz-report', 'biz-informed', 'biz-finance'],
       crumbPath: ['总览', '运营总览'],
       tabs: [{ key: '/dashboard', title: '运营总览', icon: 'ri-dashboard-2-line' }],
+      tabCacheVersions: {},
       tabReloadKey: 0
     }
   },
@@ -317,6 +317,12 @@ export default {
     },
     roleLabel () {
       return ROLE_LABEL[this.role] || this.role || '运营'
+    },
+    activeTabCacheable () {
+      return isCacheableTabKey(this.activeIndex)
+    },
+    cachedActiveViewKey () {
+      return cacheKeyForTab(this.activeIndex, this.tabCacheVersions)
     }
   },
   methods: {
@@ -380,26 +386,37 @@ export default {
     closeTab (key) {
       const idx = this.tabs.findIndex(t => t.key === key)
       if (idx < 0) return
+      this.tabCacheVersions = bumpCacheVersion(this.tabCacheVersions, key)
       this.tabs.splice(idx, 1)
       if (key === this.activeIndex) {
         const next = this.tabs[idx] || this.tabs[idx - 1] || this.tabs[0]
         if (next) this.$router.push(next.key).catch(() => {})
       }
     },
+    closeTabAndGo (payload) {
+      const key = (payload && payload.key) || this.activeIndex
+      const target = payload && payload.target
+      this.tabCacheVersions = bumpCacheVersion(this.tabCacheVersions, key)
+      const result = closeTabByKey(this.tabs, key, target)
+      this.tabs = result.tabs
+      if (this.$route.fullPath !== result.target) {
+        this.$router.push(result.target).catch(() => {})
+      }
+    },
     refreshTab () {
       // 通过改变 router-view 的 key 触发组件重建
       const k = this.activeIndex
+      if (isCacheableTabKey(k)) {
+        this.tabCacheVersions = bumpCacheVersion(this.tabCacheVersions, k)
+        return
+      }
       this.activeIndex = ''
       this.$nextTick(() => { this.activeIndex = k })
     },
-    tabCommand (cmd) {
-      const k = this.activeIndex
-      if (cmd === 'closeOthers') {
-        this.tabs = this.tabs.filter(t => t.key === '/dashboard' || t.key === k)
-      } else if (cmd === 'closeAll') {
-        this.tabs = this.tabs.filter(t => t.key === '/dashboard')
-        this.$router.push('/dashboard').catch(() => {})
-      }
+    closeAllTabs () {
+      this.tabCacheVersions = bumpCacheVersions(this.tabCacheVersions, this.tabs.map(t => t.key))
+      this.tabs = this.tabs.filter(t => t.key === '/dashboard')
+      this.$router.push('/dashboard').catch(() => {})
     }
   },
   watch: {
@@ -408,7 +425,11 @@ export default {
     }
   },
   created () {
+    this.$root.$on('pc-close-tab', this.closeTabAndGo)
     this.syncFromRoute(this.$route.fullPath)
+  },
+  beforeDestroy () {
+    this.$root.$off('pc-close-tab', this.closeTabAndGo)
   }
 }
 </script>

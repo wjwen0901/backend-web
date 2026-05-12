@@ -210,6 +210,24 @@
   transition: all var(--pc-dur-2);
 }
 #app .pc-tabs-actions i:hover { background: var(--pc-ink-50); color: var(--pc-ink-800); }
+#app .pc-tabs-close-all {
+  height: 28px;
+  min-width: 64px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--pc-ink-600);
+  font-size: 13px;
+  line-height: 28px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all var(--pc-dur-2);
+}
+#app .pc-tabs-close-all:hover {
+  background: var(--pc-ink-50);
+  color: var(--pc-ink-900);
+}
 
 /* ===== 侧栏 ===== */
 #app .el-aside {

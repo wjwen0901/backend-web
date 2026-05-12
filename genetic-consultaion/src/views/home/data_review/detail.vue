@@ -1,12 +1,8 @@
 <template>
   <div class="pc-page">
     <div class="review-container">
-      <div class="page-header">
-        <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item :to="{ path: '/review' }">信息复核</el-breadcrumb-item>
-          <el-breadcrumb-item>信息详情</el-breadcrumb-item>
-        </el-breadcrumb>
-        <div class="page-meta" v-if="informedList.length">
+      <div class="page-header" v-if="informedList.length">
+        <div class="page-meta">
           匹配 <strong>{{ informedList.length }}</strong> 份知情同意
         </div>
       </div>
@@ -93,6 +89,7 @@
 
 <script>
 import { apiSubmit } from '@/utils/pc'
+import { closeCurrentTab } from '@/utils/tabs'
 
 export default {
   name: 'ReviewDetail',
@@ -183,7 +180,7 @@ export default {
       Promise.all(tasks)
         .then(() => {
           this.$message.success('已审核通过')
-          this.$router.push('/review')
+          closeCurrentTab(this, '/review')
         })
         .catch(err => {
           console.log(err)

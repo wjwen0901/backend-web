@@ -588,6 +588,7 @@
 
 <script>
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
+import { closeCurrentTab } from '@/utils/tabs'
 export default {
   props:['data'],
   data(){
@@ -1049,6 +1050,12 @@ export default {
     },
     /*提交接口*/
     setPost(){
+      const loading = this.$loading({
+        lock: true,
+        text: '正在提交，请稍候...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(255, 255, 255, 0.7)'
+      })
       this.axios.put('/informed/pr/'+ this.$route.query.informedId,{
         ...this.formData
       }).then(res => {
@@ -1057,13 +1064,18 @@ export default {
             message: '编辑成功',
             type: 'success'
           });
-          this.$router.push('/informed/list')
+          closeCurrentTab(this, '/informed/list')
         } else {
           this.$message({
             message: '编辑失败',
             type: 'warning'
           });
         }
+      }).catch(err => {
+        console.log(err)
+        this.$message.error('提交失败，请稍后重试')
+      }).then(() => {
+        loading.close()
       })
     },
     /*获取订单信息*/

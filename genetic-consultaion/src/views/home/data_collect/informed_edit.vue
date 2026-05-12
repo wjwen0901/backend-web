@@ -502,6 +502,7 @@
 <script>
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
 import prEdit from './components/pr-edit'
+import { closeCurrentTab } from '@/utils/tabs'
 export default {
   name: 'EditInformed',
   components: {prEdit},
@@ -751,6 +752,12 @@ export default {
     },
     edit () {
       this.submitting = true
+      const loading = this.$loading({
+        lock: true,
+        text: '正在保存，请稍候...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(255, 255, 255, 0.7)'
+      })
       delete this.informedContent.createTime
       let moreInfo = []
 
@@ -1029,13 +1036,16 @@ export default {
       this.axios.put('informed/' + this.$route.query.informedId, this.informedContent)
         .then(() => {
           this.$message.success('已保存')
-          this.$router.push('/informed/list')
+          closeCurrentTab(this, '/informed/list')
         })
         .catch(err => {
           console.log(err)
           this.$message.error('保存失败，请稍后重试')
         })
-        .then(() => { this.submitting = false })
+        .then(() => {
+          this.submitting = false
+          loading.close()
+        })
     },
     submitPr () {
       if (this.$refs.prEditRef) this.$refs.prEditRef.submitForm('formData')
