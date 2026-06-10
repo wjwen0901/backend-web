@@ -99,6 +99,15 @@
           <el-menu-item index="/product-cl">产品数据维护</el-menu-item>
         </el-submenu>
 
+        <li class="pc-menu-group">互医管理</li>
+        <el-submenu index="biz-consultation" v-if="sec.includes('system') || sec.includes('consultation:manage')">
+          <template slot="title"><i class="ri-user-heart-line"></i><span>互医问询</span></template>
+          <el-menu-item index="/consultation/doctor">医生管理</el-menu-item>
+          <el-menu-item index="/consultation/indication">适应症配置</el-menu-item>
+          <el-menu-item index="/consultation/template">话术模板</el-menu-item>
+          <el-menu-item index="/consultation/record">问诊记录</el-menu-item>
+        </el-submenu>
+
         <li class="pc-menu-group">系统</li>
         <el-submenu index="system" v-if="sec.includes('system')">
           <template slot="title"><i class="ri-team-line"></i><span>账号与权限</span></template>
@@ -242,6 +251,10 @@ const ICON_MAP = {
 
 const CRUMB_MAP = {
   '/dashboard': ['总览', '运营总览'],
+  '/consultation/doctor': ['互医管理', '医生管理'],
+  '/consultation/indication': ['互医管理', '适应症配置'],
+  '/consultation/template': ['互医管理', '话术模板'],
+  '/consultation/record': ['互医管理', '问诊记录'],
   '/order': ['订单与样本', '订单管理'],
   '/brca/order': ['订单与样本', 'BRCA 订单'],
   '/wrj/order': ['订单与样本', '维汝健订单'],

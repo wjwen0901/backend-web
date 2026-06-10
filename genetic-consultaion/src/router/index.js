@@ -488,6 +488,26 @@ const routes = [{
           path: '/ru6c/list',
           name: 'Ru6cList',
           component: resolve => require(['@/views/home/ru6c/list'], resolve)
+        },
+        {
+          path: '/consultation/doctor',
+          name: 'ConsultationDoctor',
+          component: resolve => require(['@/views/home/consultation/doctor'], resolve)
+        },
+        {
+          path: '/consultation/indication',
+          name: 'ConsultationIndication',
+          component: resolve => require(['@/views/home/consultation/indication'], resolve)
+        },
+        {
+          path: '/consultation/template',
+          name: 'ConsultationTemplate',
+          component: resolve => require(['@/views/home/consultation/template'], resolve)
+        },
+        {
+          path: '/consultation/record',
+          name: 'ConsultationRecord',
+          component: resolve => require(['@/views/home/consultation/record'], resolve)
         }
 
     ]
