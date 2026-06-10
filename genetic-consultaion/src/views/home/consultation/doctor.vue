@@ -168,10 +168,11 @@ export default {
       avatarUploading: false,
       dialogVisible: false,
       doctor: {},
+      // 医生的 general = 全科兜底：精确分类无可用医生时承接所有分类的问诊
       categoryOptions: [
         { value: 'oncology', label: '肿瘤检测' },
         { value: 'genetic', label: '遗传检测' },
-        { value: 'general', label: '通用' }
+        { value: 'general', label: '全科 / 兜底（general）' }
       ],
       rules: {
         name: [{ required: true, message: '请输入医生姓名', trigger: 'blur' }],

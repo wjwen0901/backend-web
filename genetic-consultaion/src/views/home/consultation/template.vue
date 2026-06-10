@@ -156,10 +156,11 @@ export default {
       submitting: false,
       dialogVisible: false,
       tpl: {},
+      // general 是"通用类产品"的专属分类，≠ 留空的"通用兜底"（兜底对所有分类生效）
       categoryOptions: [
         { value: 'oncology', label: '肿瘤检测' },
         { value: 'genetic', label: '遗传检测' },
-        { value: 'general', label: '通用' }
+        { value: 'general', label: '通用类产品（general）' }
       ],
       varDefs: [
         { key: 'patientName' },
