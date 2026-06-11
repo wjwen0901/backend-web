@@ -114,7 +114,7 @@
                   <i class="el-icon-document"></i>
                   <h3>{{ emptyTitle }}</h3>
                   <p>{{ emptyReason }}</p>
-                  <el-button v-if="activeStatusStr || condition" type="primary" size="small" @click="resetFilters">清空筛选</el-button>
+                  <el-button v-if="activeStatusStr || condition || locateOrderId" type="primary" size="small" @click="resetFilters">清空筛选</el-button>
                   <el-button v-else size="small" @click="getData">刷新订单</el-button>
                 </div>
               </td>
@@ -578,6 +578,7 @@ export default {
     },
     getData () {
       this.loading = true
+      const wasLocating = !!this.locateOrderId
       this.axios.get('order/user', {
         params: {
           userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
@@ -592,6 +593,8 @@ export default {
         this.orderList = limitPageRows(res.data.list, this.pageSize)
         this.totalPage = res.data.total
         this.loading = false
+        // 定位单条完成后清除，后续翻页/刷新恢复全量列表
+        if (wasLocating) this.locateOrderId = null
         // 翻页复选框处理
         const obj = window.sessionStorage.getItem('checkPage')
         const arr = JSON.parse(obj)

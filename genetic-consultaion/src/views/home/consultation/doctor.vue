@@ -15,7 +15,7 @@
           <span class="switch-label">H5 问诊总开关</span>
           <el-switch
             v-model="h5Enabled"
-            :loading="switchLoading"
+            :disabled="switchLoading"
             active-color="#18806a"
             active-text="已开启 · 调用方进入问诊"
             inactive-text="已关闭 · 走原下单流程"
@@ -213,6 +213,7 @@ export default {
       })
     },
     onSwitchChange (val) {
+      if (this.switchLoading) return
       this.switchLoading = true
       this.axios.post('saas/consultation/switch', { enabled: val }).then(res => {
         const body = res.data || {}
