@@ -275,6 +275,7 @@ export default {
       emailList: [],
       roleCode: window.localStorage.role,
       condition: null,
+      locateOrderId: null,
       userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
       activeStatusStr: '',
       barX: 0,
@@ -311,7 +312,13 @@ export default {
     this.$nextTick(() => this.moveBar())
   },
   created () {
-
+    // 从问诊记录等页跳入：condition=订单号搜索；orderId=内部 id 精确定位（待付款收款码单无订单号）
+    if (this.$route.query.condition) {
+      this.condition = this.$route.query.condition
+    }
+    if (this.$route.query.orderId) {
+      this.locateOrderId = Number(this.$route.query.orderId)
+    }
   },
   destroyed () {
     window.sessionStorage.removeItem('checkPage')
@@ -384,6 +391,7 @@ export default {
     },
     resetFilters () {
       this.condition = null
+      this.locateOrderId = null
       this.activeStatusStr = ''
       this.pageNum = 1
       this.getData()
@@ -575,7 +583,8 @@ export default {
           userId: window.localStorage.userId ? parseInt(window.localStorage.userId) : undefined,
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          condition: this.condition ? this.condition.trim() : ''
+          condition: this.condition ? this.condition.trim() : '',
+          orderId: this.locateOrderId || undefined
         }
       }).then(res => {
         this.pageSize = res.data.pageSize

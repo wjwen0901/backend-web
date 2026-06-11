@@ -70,9 +70,16 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="关联订单" width="90">
+        <el-table-column label="关联订单" width="190">
           <template slot-scope="scope">
-            <span class="num" v-if="scope.row.tradeOrderId">#{{ scope.row.tradeOrderId }}</span>
+            <el-button
+              v-if="scope.row.tradeOrderId"
+              type="text"
+              size="mini"
+              class="order-link num"
+              @click="toOrder(scope.row.tradeOrderNo, scope.row.tradeOrderId)">
+              {{ scope.row.tradeOrderNo || ('#' + scope.row.tradeOrderId) }}
+            </el-button>
             <span class="muted" v-else>—</span>
           </template>
         </el-table-column>
@@ -121,7 +128,18 @@
               <span class="meta-label">适应症</span><span class="meta-value">{{ detail.session.indication || '—' }}</span>
               <span class="meta-label">产品 ID</span><span class="meta-value num">#{{ detail.session.productId }}</span>
               <span class="meta-label">来源</span><span class="meta-value">{{ detail.session.source }}</span>
-              <span class="meta-label">关联订单</span><span class="meta-value num">{{ detail.session.tradeOrderId ? '#' + detail.session.tradeOrderId : '未下单' }}</span>
+              <span class="meta-label">关联订单</span>
+              <span class="meta-value num">
+                <el-button
+                  v-if="detail.session.tradeOrderId"
+                  type="text"
+                  size="mini"
+                  class="order-link num"
+                  @click="toOrder(detail.tradeOrderNo, detail.session.tradeOrderId)">
+                  {{ detail.tradeOrderNo || ('#' + detail.session.tradeOrderId) }} →
+                </el-button>
+                <template v-else>未下单</template>
+              </span>
               <span class="meta-label">创建时间</span><span class="meta-value num">{{ detail.session.createTime | formatDate }}</span>
               <span class="meta-label">医院归档号</span><span class="meta-value num">{{ detail.session.hospitalRefId || '—' }}</span>
             </div>
@@ -282,6 +300,11 @@ export default {
       const map = { pathology: '病理报告', diagnosis: '诊断单', other: '其他' }
       return map[fileType] || fileType
     },
+    toOrder (orderNo, orderId) {
+      // 跳订单管理页：有订单号按号搜索；待付款收款码订单尚无订单号，用内部 id 精确定位（后端 orderId 参数）
+      const query = orderNo ? { condition: orderNo } : { orderId: String(orderId) }
+      this.$router.push({ path: '/order', query: query })
+    },
     toDetail (id) {
       this.detail = {}
       this.detailVisible = true
@@ -433,6 +456,11 @@ export default {
 
 .num { font-variant-numeric: tabular-nums; }
 .muted { color: var(--pc-ink-400); }
+
+.order-link {
+  padding: 0;
+  font-size: var(--pc-fs-13);
+}
 
 ::v-deep .el-table {
   .num { font-variant-numeric: tabular-nums; }
