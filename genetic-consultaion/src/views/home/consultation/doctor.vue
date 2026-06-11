@@ -9,6 +9,22 @@
         <div class="page-meta">共 <strong>{{ totalPage }}</strong> 位医生</div>
       </div>
 
+      <!-- H5 问诊总开关：控制调用方(易见康/吉因加)是否进入 H5 问诊 -->
+      <div class="switch-bar">
+        <div class="switch-main">
+          <span class="switch-label">H5 问诊总开关</span>
+          <el-switch
+            v-model="h5Enabled"
+            :loading="switchLoading"
+            active-color="#18806a"
+            active-text="已开启 · 调用方进入问诊"
+            inactive-text="已关闭 · 走原下单流程"
+            @change="onSwitchChange">
+          </el-switch>
+        </div>
+        <span class="switch-hint">关闭后，易见康 / 吉因加点击送检将跳过问诊直接进入原下单流程，立即生效</span>
+      </div>
+
       <div class="opera-bar">
         <div class="filters">
           <el-input
@@ -167,6 +183,8 @@ export default {
       submitting: false,
       avatarUploading: false,
       dialogVisible: false,
+      h5Enabled: false,
+      switchLoading: false,
       doctor: {},
       // 医生的 general = 全科兜底：精确分类无可用医生时承接所有分类的问诊
       categoryOptions: [
@@ -184,6 +202,33 @@ export default {
     }
   },
   methods: {
+    getSwitch () {
+      this.axios.get('saas/consultation/switch').then(res => {
+        const body = res.data || {}
+        if (body.code === 200 && body.data) {
+          this.h5Enabled = !!body.data.enabled
+        }
+      }).catch(() => {
+        // 读取失败不打断页面，开关保持默认关闭态显示
+      })
+    },
+    onSwitchChange (val) {
+      this.switchLoading = true
+      this.axios.post('saas/consultation/switch', { enabled: val }).then(res => {
+        const body = res.data || {}
+        if (body.code === 200) {
+          this.$message.success(val ? 'H5 问诊已开启' : 'H5 问诊已关闭')
+        } else {
+          this.h5Enabled = !val
+          this.$message.error(body.message || '开关设置失败')
+        }
+      }).catch(() => {
+        this.h5Enabled = !val
+        this.$message.error('开关设置失败，请稍后重试')
+      }).then(() => {
+        this.switchLoading = false
+      })
+    },
     getData () {
       this.loading = true
       this.axios.get('saas/consultation/doctor/list', {
@@ -322,6 +367,7 @@ export default {
     }
   },
   created () {
+    this.getSwitch()
     this.getData()
   }
 }
@@ -352,6 +398,32 @@ export default {
       font-weight: 600;
       font-variant-numeric: tabular-nums;
     }
+  }
+}
+
+.switch-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  background: var(--pc-bg-soft, #f6f8f8);
+  border: var(--pc-bd-hair);
+  border-radius: var(--pc-r-4);
+
+  .switch-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .switch-label {
+    font-size: var(--pc-fs-14);
+    font-weight: 600;
+    color: var(--pc-ink-800);
+  }
+  .switch-hint {
+    font-size: var(--pc-fs-12);
+    color: var(--pc-ink-400);
   }
 }
 
